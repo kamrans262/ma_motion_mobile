@@ -88,6 +88,23 @@ class ArtworkMakerInfoPage extends StatelessWidget {
                           ),
                         ),
                       ],
+                      if ((maker?.contactEmail ?? '').isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        Text(
+                          'Email',
+                          style: AppTextStyles.onboardingHelper.copyWith(
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          maker!.contactEmail!,
+                          key: const Key('artwork_maker_info_email'),
+                          style: AppTextStyles.onboardingHelper.copyWith(
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ],
                       if ((maker?.location ?? '').isNotEmpty) ...[
                         const SizedBox(height: 14),
                         Text(
@@ -108,7 +125,7 @@ class ArtworkMakerInfoPage extends StatelessWidget {
                       const SizedBox(height: 18),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.favorite_border_rounded,
                             size: 23,
                             color: AppColors.white,
@@ -141,15 +158,16 @@ class ArtworkMakerInfoPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 26),
-              Text(
-                'Contact email is kept private.',
-                key: const Key('artwork_private_email_notice'),
-                textAlign: TextAlign.center,
-                style: AppTextStyles.onboardingHelper.copyWith(
-                  fontSize: 11,
-                  color: AppColors.mutedText.withValues(alpha: 0.78),
+              if ((maker?.contactEmail ?? '').isEmpty)
+                Text(
+                  'Contact email is kept private unless the Maker shares it.',
+                  key: const Key('artwork_private_email_notice'),
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.onboardingHelper.copyWith(
+                    fontSize: 11,
+                    color: AppColors.mutedText.withValues(alpha: 0.78),
+                  ),
                 ),
-              ),
             ],
           ),
         );
