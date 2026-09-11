@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
 import '../../features/auth/presentation/screens/maker_auth_screen.dart';
 import '../../features/auth/presentation/screens/maker_session_gate_screen.dart';
@@ -82,6 +83,9 @@ GoRouter createAppRouter({
         builder: (context, state) => MakerArtworkDiscoveryScreen(
           onSearchTap: () => context.push('/maker/discovery/search'),
           onFilterTap: () => context.push('/maker/discovery/filter'),
+          onArtworkTap: (artwork) {
+            context.push('/maker/discovery/artwork/${artwork.id}');
+          },
         ),
       ),
       GoRoute(
@@ -89,6 +93,9 @@ GoRouter createAppRouter({
         builder: (context, state) => DiscoverySearchScreen(
           onBack: () => context.pop(),
           onFilterTap: () => context.push('/maker/discovery/filter'),
+          onArtworkTap: (artwork) {
+            context.push('/maker/discovery/artwork/${artwork.id}');
+          },
         ),
       ),
       GoRoute(
@@ -97,6 +104,23 @@ GoRouter createAppRouter({
           onClose: () => context.pop(),
           onApplied: () => context.pop(),
         ),
+      ),
+      GoRoute(
+        path: '/maker/discovery/artwork/:artworkId',
+        builder: (context, state) {
+          final artworkId = int.tryParse(
+            state.pathParameters['artworkId'] ?? '',
+          );
+
+          if (artworkId == null) {
+            return const Scaffold(body: Center(child: Text('Invalid artwork')));
+          }
+
+          return ArtworkViewerScreen(
+            artworkId: artworkId,
+            onClose: () => context.pop(),
+          );
+        },
       ),
     ],
     errorBuilder: (context, state) {
