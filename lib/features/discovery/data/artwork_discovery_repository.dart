@@ -7,6 +7,7 @@ import '../../../core/network/pagination_meta.dart';
 import '../../../core/providers/core_providers.dart';
 import '../domain/discovery_artwork.dart';
 import '../domain/discovery_artwork_page.dart';
+import '../domain/discovery_query.dart';
 
 final artworkDiscoveryRepositoryProvider =
     Provider<ArtworkDiscoveryRepositoryContract>((ref) {
@@ -14,7 +15,11 @@ final artworkDiscoveryRepositoryProvider =
     });
 
 abstract interface class ArtworkDiscoveryRepositoryContract {
-  Future<DiscoveryArtworkPage> fetchPage({required int page, int perPage});
+  Future<DiscoveryArtworkPage> fetchPage({
+    required int page,
+    int perPage,
+    DiscoveryQuery query,
+  });
 }
 
 class ArtworkDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
@@ -26,11 +31,12 @@ class ArtworkDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
   Future<DiscoveryArtworkPage> fetchPage({
     required int page,
     int perPage = 24,
+    DiscoveryQuery query = const DiscoveryQuery(),
   }) async {
     final response = await api.get(
       ApiPaths.discoveryArtworks,
       requiresAuth: false,
-      queryParameters: <String, dynamic>{'page': page, 'per_page': perPage},
+      queryParameters: query.toQueryParameters(page: page, perPage: perPage),
     );
 
     final envelope = ApiEnvelope(raw: response);

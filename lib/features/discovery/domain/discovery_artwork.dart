@@ -11,7 +11,7 @@ class DiscoveryTaxonomy {
 
   factory DiscoveryTaxonomy.fromMap(Map<String, dynamic> map) {
     return DiscoveryTaxonomy(
-      id: _asInt(map['id']) ?? 0,
+      id: asInt(map['id']) ?? 0,
       name: map['name']?.toString() ?? '',
       slug: map['slug']?.toString() ?? '',
     );
@@ -41,14 +41,14 @@ class DiscoveryLocation {
 
   factory DiscoveryLocation.fromMap(Map<String, dynamic> map) {
     return DiscoveryLocation(
-      id: _asInt(map['id']) ?? 0,
+      id: asInt(map['id']) ?? 0,
       label: map['label']?.toString() ?? '',
-      city: _nullableString(map['city']),
-      region: _nullableString(map['region']),
-      postalCode: _nullableString(map['postal_code']),
-      countryCode: _nullableString(map['country_code']),
-      latitude: _asDouble(map['latitude']),
-      longitude: _asDouble(map['longitude']),
+      city: nullableString(map['city']),
+      region: nullableString(map['region']),
+      postalCode: nullableString(map['postal_code']),
+      countryCode: nullableString(map['country_code']),
+      latitude: asDouble(map['latitude']),
+      longitude: asDouble(map['longitude']),
     );
   }
 }
@@ -81,22 +81,21 @@ class DiscoveryArtworkMedia {
   bool get isVideo {
     final normalizedKind = kind.trim().toLowerCase();
     final normalizedMime = mimeType?.trim().toLowerCase() ?? '';
-
     return normalizedKind == 'video' || normalizedMime.startsWith('video/');
   }
 
   factory DiscoveryArtworkMedia.fromMap(Map<String, dynamic> map) {
     return DiscoveryArtworkMedia(
-      id: _asInt(map['id']) ?? 0,
+      id: asInt(map['id']) ?? 0,
       kind: map['kind']?.toString() ?? 'image',
       url: map['url']?.toString() ?? '',
-      mimeType: _nullableString(map['mime_type']),
-      sizeBytes: _asInt(map['size_bytes']),
-      width: _asInt(map['width']),
-      height: _asInt(map['height']),
-      altText: _nullableString(map['alt_text']),
-      sortOrder: _asInt(map['sort_order']),
-      isPrimary: _asBool(map['is_primary']),
+      mimeType: nullableString(map['mime_type']),
+      sizeBytes: asInt(map['size_bytes']),
+      width: asInt(map['width']),
+      height: asInt(map['height']),
+      altText: nullableString(map['alt_text']),
+      sortOrder: asInt(map['sort_order']),
+      isPrimary: asBool(map['is_primary']),
     );
   }
 }
@@ -118,11 +117,11 @@ class DiscoveryMakerPreview {
 
   factory DiscoveryMakerPreview.fromMap(Map<String, dynamic> map) {
     return DiscoveryMakerPreview(
-      id: _asInt(map['id']) ?? 0,
+      id: asInt(map['id']) ?? 0,
       name: map['name']?.toString() ?? '',
-      bio: _nullableString(map['bio']),
-      profileImageUrl: _nullableString(map['profile_image_url']),
-      savedCount: _asInt(map['saved_count']) ?? 0,
+      bio: nullableString(map['bio']),
+      profileImageUrl: nullableString(map['profile_image_url']),
+      savedCount: asInt(map['saved_count']) ?? 0,
     );
   }
 }
@@ -157,16 +156,16 @@ class DiscoveryArtwork {
   final DateTime? createdAt;
 
   factory DiscoveryArtwork.fromMap(Map<String, dynamic> map) {
-    final mediaMap = _mapOrNull(map['primary_media']);
-    final typeMap = _mapOrNull(map['type']);
-    final styleMap = _mapOrNull(map['style']);
-    final locationMap = _mapOrNull(map['location']);
-    final makerMap = _mapOrNull(map['maker']);
+    final mediaMap = mapOrNull(map['primary_media']);
+    final typeMap = mapOrNull(map['type']);
+    final styleMap = mapOrNull(map['style']);
+    final locationMap = mapOrNull(map['location']);
+    final makerMap = mapOrNull(map['maker']);
 
     return DiscoveryArtwork(
-      id: _asInt(map['id']) ?? 0,
+      id: asInt(map['id']) ?? 0,
       title: map['title']?.toString() ?? '',
-      description: _nullableString(map['description']),
+      description: nullableString(map['description']),
       primaryMedia: mediaMap == null
           ? null
           : DiscoveryArtworkMedia.fromMap(mediaMap),
@@ -175,52 +174,41 @@ class DiscoveryArtwork {
       location: locationMap == null
           ? null
           : DiscoveryLocation.fromMap(locationMap),
-      locationText: _nullableString(map['location_text']),
-      locationSource: _nullableString(map['location_source']),
-      distanceKm: _asDouble(map['distance_km']),
+      locationText: nullableString(map['location_text']),
+      locationSource: nullableString(map['location_source']),
+      distanceKm: asDouble(map['distance_km']),
       maker: makerMap == null ? null : DiscoveryMakerPreview.fromMap(makerMap),
       createdAt: DateTime.tryParse(map['created_at']?.toString() ?? ''),
     );
   }
 }
 
-Map<String, dynamic>? _mapOrNull(Object? value) {
-  if (value is Map<String, dynamic>) {
-    return value;
-  }
-
-  if (value is Map) {
-    return Map<String, dynamic>.from(value);
-  }
-
+Map<String, dynamic>? mapOrNull(Object? value) {
+  if (value is Map<String, dynamic>) return value;
+  if (value is Map) return Map<String, dynamic>.from(value);
   return null;
 }
 
-int? _asInt(Object? value) {
-  if (value is int) {
-    return value;
-  }
+List<dynamic> listOrEmpty(Object? value) {
+  return value is List ? value : const <dynamic>[];
+}
 
+int? asInt(Object? value) {
+  if (value is int) return value;
   return int.tryParse(value?.toString() ?? '');
 }
 
-double? _asDouble(Object? value) {
-  if (value is num) {
-    return value.toDouble();
-  }
-
+double? asDouble(Object? value) {
+  if (value is num) return value.toDouble();
   return double.tryParse(value?.toString() ?? '');
 }
 
-bool _asBool(Object? value) {
-  if (value is bool) {
-    return value;
-  }
-
+bool asBool(Object? value) {
+  if (value is bool) return value;
   return value == 1 || value == '1' || value == 'true';
 }
 
-String? _nullableString(Object? value) {
+String? nullableString(Object? value) {
   final text = value?.toString().trim() ?? '';
   return text.isEmpty ? null : text;
 }

@@ -14,7 +14,7 @@ class DiscoveryArtworkTile extends StatelessWidget {
     final media = artwork.primaryMedia;
 
     return Semantics(
-      button: true,
+      button: onTap != null,
       label: artwork.title.isEmpty ? 'Artwork' : artwork.title,
       child: Material(
         color: const Color(0xFF13271D),
@@ -58,10 +58,7 @@ class _ArtworkImage extends StatelessWidget {
       fit: BoxFit.cover,
       filterQuality: FilterQuality.medium,
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-        if (wasSynchronouslyLoaded || frame != null) {
-          return child;
-        }
-
+        if (wasSynchronouslyLoaded || frame != null) return child;
         return const _ArtworkLoading();
       },
       errorBuilder: (context, error, stackTrace) {
