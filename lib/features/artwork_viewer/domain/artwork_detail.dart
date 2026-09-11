@@ -8,6 +8,8 @@ class ArtworkDetailMaker {
     this.location,
     this.profileImageUrl,
     this.websiteUrl,
+    this.contactEmail,
+    this.showShowsOnInfoPage = true,
     this.savedCount = 0,
   });
 
@@ -17,6 +19,8 @@ class ArtworkDetailMaker {
   final String? location;
   final String? profileImageUrl;
   final String? websiteUrl;
+  final String? contactEmail;
+  final bool showShowsOnInfoPage;
   final int savedCount;
 
   factory ArtworkDetailMaker.fromMap(Map<String, dynamic> map) {
@@ -27,6 +31,10 @@ class ArtworkDetailMaker {
       location: _nullableString(map['location']),
       profileImageUrl: _nullableString(map['profile_image_url']),
       websiteUrl: _nullableString(map['website_url']),
+      contactEmail: _nullableString(map['contact_email']),
+      showShowsOnInfoPage: _asBoolDefaultTrue(
+        map['show_shows_on_info_page'],
+      ),
       savedCount: _asInt(map['saved_count']) ?? 0,
     );
   }
@@ -118,6 +126,13 @@ int? _asInt(Object? value) {
   }
 
   return int.tryParse(value?.toString() ?? '');
+}
+
+bool _asBoolDefaultTrue(Object? value) {
+  if (value == null) return true;
+  if (value is bool) return value;
+
+  return value == 1 || value == '1' || value == 'true';
 }
 
 String? _nullableString(Object? value) {
