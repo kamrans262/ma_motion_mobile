@@ -10,6 +10,7 @@ import '../../features/discovery/presentation/screens/discovery_search_screen.da
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
 import '../../features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
 GoRouter createAppRouter({
@@ -86,6 +87,11 @@ GoRouter createAppRouter({
           onArtworkTap: (artwork) {
             context.push('/maker/discovery/artwork/${artwork.id}');
           },
+          onBottomNavigationTap: (index) {
+            if (index == 5) {
+              context.push('/maker/settings');
+            }
+          },
         ),
       ),
       GoRoute(
@@ -103,6 +109,13 @@ GoRouter createAppRouter({
         builder: (context, state) => DiscoveryFilterScreen(
           onClose: () => context.pop(),
           onApplied: () => context.pop(),
+        ),
+      ),
+      GoRoute(
+        path: '/maker/settings',
+        builder: (context, state) => MakerInfoSettingsScreen(
+          onClose: () => context.pop(),
+          onSwitchedToAppreciator: () => context.go('/join'),
         ),
       ),
       GoRoute(
