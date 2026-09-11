@@ -1,0 +1,116 @@
+name: ma_motion_mobile
+description: "MA Motion mobile application."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ============================================================
+  # UI / PLATFORM
+  # ============================================================
+  cupertino_icons: ^1.0.8
+
+  # ============================================================
+  # STATE MANAGEMENT
+  # ============================================================
+  # Main application state management.
+  flutter_riverpod: ^3.4.3
+
+  # ============================================================
+  # NETWORKING / API
+  # ============================================================
+  # Laravel API communication, interceptors, multipart uploads,
+  # request cancellation, timeout handling, etc.
+  dio: ^5.11.1
+
+  # ============================================================
+  # ROUTING / NAVIGATION
+  # ============================================================
+  # Centralized navigation, auth guards, role guards,
+  # deep-link-ready routing.
+  go_router: ^18.0.1
+
+  # ============================================================
+  # SECURE STORAGE
+  # ============================================================
+  # Securely stores authentication tokens and sensitive values.
+  # ============================================================
+  # LOCAL PREFERENCES
+  # ============================================================
+  # Non-sensitive settings such as:
+  # - onboarding completed
+  # - intro viewed
+  # - simple UI preferences
+  # ============================================================
+  # NETWORK CONNECTIVITY
+  # ============================================================
+  # Helps react to connectivity changes.
+  # Actual API requests will still handle network errors themselves.
+  # ============================================================
+  # NETWORK IMAGES / CACHING
+  # ============================================================
+  # Maker profile images, artwork, galleries, show images, etc.
+  # ============================================================
+  # IMAGE / MEDIA SELECTION
+  # ============================================================
+  # Camera/gallery image selection for:
+  # - profile image
+  # - artwork
+  # - show images
+  # - Maker media
+  image_picker: ^1.2.3
+
+  # General file/media picker when non-image files are required.
+  # ============================================================
+  # LOCATION
+  # ============================================================
+  # Current device location for nearby Maker discovery
+  # and radius-based searches.
+  # Central permission handling for location, camera,
+  # photos and notifications where required.
+  # ============================================================
+  # FORMATTING
+  # ============================================================
+  # Dates, times, numbers and other formatting.
+  intl: ^0.20.3
+  flutter_secure_storage: 11.0.0
+
+  # ============================================================
+  # EXTERNAL LINKS
+  # ============================================================
+  # Opens external websites, email links, telephone links, etc.
+  # ============================================================
+  # SOCIAL AUTHENTICATION
+  # ============================================================
+  # Google authentication.
+  # Apple authentication.
+  # ============================================================
+  # FIREBASE / PUSH NOTIFICATIONS
+  # ============================================================
+  # Firebase initialization.
+  # Firebase Cloud Messaging push notifications.
+  # Foreground/local notification presentation.
+  # ============================================================
+  # APPLICATION INFORMATION
+  # ============================================================
+  # App version/build number for settings/about/support.
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  # ============================================================
+  # MA MOTION ASSETS
+  # ============================================================
+  assets:
+    - assets/logo.png
