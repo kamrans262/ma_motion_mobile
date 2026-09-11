@@ -1,0 +1,88 @@
+name: Maker Info Settings Mobile CI
+
+on:
+  push:
+    branches:
+      - ci/maker-info-settings
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  flutter-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout module branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install exact MA Motion Flutter revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none --no-checkout https://github.com/flutter/flutter.git "$HOME/flutter"
+          git -C "$HOME/flutter" fetch --depth=1 origin e8113bf45620cbeb8aff64947ee4c93e16adb4cf
+          git -C "$HOME/flutter" checkout --detach FETCH_HEAD
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Resolve locked dependencies
+        run: flutter pub get
+
+      - name: Format exact source and persist formatter output
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format lib test
+          if ! git diff --quiet -- lib test; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add lib test
+            git commit -m "style: format maker info settings"
+            git push origin HEAD:ci/maker-info-settings
+          fi
+
+      - name: Verify formatting is stable
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Flutter analyzer
+        run: flutter analyze
+
+      - name: Maker Settings repository tests
+        run: flutter test test/features/settings/maker_info_settings_repository_test.dart
+
+      - name: Maker Settings widget tests
+        run: flutter test test/features/settings/maker_info_settings_screen_test.dart
+
+      - name: Maker Settings navigation test
+        run: flutter test test/features/settings/maker_settings_navigation_test.dart
+
+      - name: Artwork viewer visibility contract test
+        run: flutter test test/features/settings/artwork_viewer_visibility_contract_test.dart
+
+      - name: Prior Artwork Viewer regression
+        run: flutter test test/features/artwork_viewer/artwork_viewer_screen_test.dart
+
+      - name: Prior Search Filter regression
+        run: flutter test test/features/discovery/discovery_filter_screen_test.dart
+
+      - name: Prior Discovery regression
+        run: flutter test test/features/discovery/maker_artwork_discovery_screen_test.dart
+
+      - name: Prior Auth regression
+        run: flutter test test/features/auth/maker_entry_repository_test.dart
+
+      - name: Prior Onboarding regression
+        run: flutter test test/features/onboarding/maker_registration_backend_submission_test.dart
+
+      - name: Startup regression
+        run: flutter test test/widget_test.dart
+
+      - name: Full Flutter regression
+        run: flutter test
