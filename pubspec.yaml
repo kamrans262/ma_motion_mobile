@@ -1,0 +1,143 @@
+name: ma_motion_mobile
+description: "MA Motion mobile application."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ============================================================
+  # UI / PLATFORM
+  # ============================================================
+  cupertino_icons: ^1.0.8
+
+  # ============================================================
+  # STATE MANAGEMENT
+  # ============================================================
+  # Main application state management.
+  flutter_riverpod: ^3.4.3
+
+  # ============================================================
+  # NETWORKING / API
+  # ============================================================
+  # Laravel API communication, interceptors, multipart uploads,
+  # request cancellation, timeout handling, etc.
+  dio: ^5.11.1
+
+  # ============================================================
+  # ROUTING / NAVIGATION
+  # ============================================================
+  # Centralized navigation, auth guards, role guards,
+  # deep-link-ready routing.
+  go_router: ^18.0.1
+
+  # ============================================================
+  # SECURE STORAGE
+  # ============================================================
+  # Securely stores authentication tokens and sensitive values.
+  flutter_secure_storage: ^11.0.0
+
+  # ============================================================
+  # LOCAL PREFERENCES
+  # ============================================================
+  # Non-sensitive settings such as:
+  # - onboarding completed
+  # - intro viewed
+  # - simple UI preferences
+  shared_preferences: ^2.5.5
+
+  # ============================================================
+  # NETWORK CONNECTIVITY
+  # ============================================================
+  # Helps react to connectivity changes.
+  # Actual API requests will still handle network errors themselves.
+  connectivity_plus: ^7.3.1
+
+  # ============================================================
+  # NETWORK IMAGES / CACHING
+  # ============================================================
+  # Maker profile images, artwork, galleries, show images, etc.
+  cached_network_image: ^4.0.0
+
+  # ============================================================
+  # IMAGE / MEDIA SELECTION
+  # ============================================================
+  # Camera/gallery image selection for:
+  # - profile image
+  # - artwork
+  # - show images
+  # - Maker media
+  image_picker: ^1.2.3
+
+  # General file/media picker when non-image files are required.
+  file_picker: ^12.2.0
+
+  # ============================================================
+  # LOCATION
+  # ============================================================
+  # Current device location for nearby Maker discovery
+  # and radius-based searches.
+  geolocator: ^14.0.3
+
+  # Central permission handling for location, camera,
+  # photos and notifications where required.
+  permission_handler: ^13.0.2
+
+  # ============================================================
+  # FORMATTING
+  # ============================================================
+  # Dates, times, numbers and other formatting.
+  intl: ^0.20.3
+
+  # ============================================================
+  # EXTERNAL LINKS
+  # ============================================================
+  # Opens external websites, email links, telephone links, etc.
+  url_launcher: ^6.3.2
+
+  # ============================================================
+  # SOCIAL AUTHENTICATION
+  # ============================================================
+  # Google authentication.
+  google_sign_in: ^7.2.0
+
+  # Apple authentication.
+  sign_in_with_apple: ^8.2.0
+
+  # ============================================================
+  # FIREBASE / PUSH NOTIFICATIONS
+  # ============================================================
+  # Firebase initialization.
+  firebase_core: ^4.14.0
+
+  # Firebase Cloud Messaging push notifications.
+  firebase_messaging: ^16.6.0
+
+  # Foreground/local notification presentation.
+  flutter_local_notifications: ^22.3.0
+
+  # ============================================================
+  # APPLICATION INFORMATION
+  # ============================================================
+  # App version/build number for settings/about/support.
+  package_info_plus: ^10.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  # ============================================================
+  # MA MOTION ASSETS
+  # ============================================================
+  assets:
+    - assets/logo.png
