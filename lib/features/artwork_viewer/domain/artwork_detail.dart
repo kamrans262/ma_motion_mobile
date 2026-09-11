@@ -32,9 +32,7 @@ class ArtworkDetailMaker {
       profileImageUrl: _nullableString(map['profile_image_url']),
       websiteUrl: _nullableString(map['website_url']),
       contactEmail: _nullableString(map['contact_email']),
-      showShowsOnInfoPage: _asBoolDefaultTrue(
-        map['show_shows_on_info_page'],
-      ),
+      showShowsOnInfoPage: _asBoolDefaultTrue(map['show_shows_on_info_page']),
       savedCount: _asInt(map['saved_count']) ?? 0,
     );
   }

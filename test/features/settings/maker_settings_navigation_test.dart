@@ -56,12 +56,7 @@ class _EmptyDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
   }) async {
     return const DiscoveryArtworkPage(
       items: [],
-      meta: PaginationMeta(
-        currentPage: 1,
-        lastPage: 1,
-        perPage: 24,
-        total: 0,
-      ),
+      meta: PaginationMeta(currentPage: 1, lastPage: 1, perPage: 24, total: 0),
     );
   }
 }

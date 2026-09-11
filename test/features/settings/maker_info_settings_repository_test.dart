@@ -12,14 +12,8 @@ import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_mo
 void main() {
   test('loads private profile, statistics and live taxonomy', () async {
     final api = _FakeApiGateway();
-    final auth = AuthRepository(
-      api: api,
-      tokenStore: _MemoryTokenStore(),
-    );
-    final repository = MakerInfoSettingsRepository(
-      api: api,
-      auth: auth,
-    );
+    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
 
     final data = await repository.load();
 
@@ -36,51 +30,42 @@ void main() {
     expect(data.carousel.single.slot, 1);
   });
 
-  test('saves Figma Maker Info settings to protected profile endpoint', () async {
-    final api = _FakeApiGateway();
-    final auth = AuthRepository(
-      api: api,
-      tokenStore: _MemoryTokenStore(),
-    );
-    final repository = MakerInfoSettingsRepository(
-      api: api,
-      auth: auth,
-    );
+  test(
+    'saves Figma Maker Info settings to protected profile endpoint',
+    () async {
+      final api = _FakeApiGateway();
+      final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+      final repository = MakerInfoSettingsRepository(api: api, auth: auth);
 
-    await repository.saveProfile(
-      const MakerInfoSettingsDraft(
-        name: 'Artist Ken',
-        bio: 'Statement',
-        locationText: 'Chicago, IL',
-        website: 'artist.example',
-        email: 'contact@artist.example',
-        locationId: 3,
-        showWebsite: true,
-        showEmail: true,
-        showShows: false,
-        typeIds: <int>{1},
-        styleIds: <int>{2},
-      ),
-    );
+      await repository.saveProfile(
+        const MakerInfoSettingsDraft(
+          name: 'Artist Ken',
+          bio: 'Statement',
+          locationText: 'Chicago, IL',
+          website: 'artist.example',
+          email: 'contact@artist.example',
+          locationId: 3,
+          showWebsite: true,
+          showEmail: true,
+          showShows: false,
+          typeIds: <int>{1},
+          styleIds: <int>{2},
+        ),
+      );
 
-    expect(api.lastPatchPath, ApiPaths.makerProfile);
-    expect(api.lastPatchData?['location_id'], 3);
-    expect(api.lastPatchData?['show_email_on_info_page'], isTrue);
-    expect(api.lastPatchData?['show_shows_on_info_page'], isFalse);
-    expect(api.lastPatchData?['type_ids'], <int>[1]);
-    expect(api.lastPatchData?['style_ids'], <int>[2]);
-  });
+      expect(api.lastPatchPath, ApiPaths.makerProfile);
+      expect(api.lastPatchData?['location_id'], 3);
+      expect(api.lastPatchData?['show_email_on_info_page'], isTrue);
+      expect(api.lastPatchData?['show_shows_on_info_page'], isFalse);
+      expect(api.lastPatchData?['type_ids'], <int>[1]);
+      expect(api.lastPatchData?['style_ids'], <int>[2]);
+    },
+  );
 
   test('uploads carousel slot using multipart data', () async {
     final api = _FakeApiGateway();
-    final auth = AuthRepository(
-      api: api,
-      tokenStore: _MemoryTokenStore(),
-    );
-    final repository = MakerInfoSettingsRepository(
-      api: api,
-      auth: auth,
-    );
+    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
 
     final item = await repository.saveCarouselSlot(
       slot: 2,
@@ -148,11 +133,7 @@ class _FakeApiGateway implements ApiGateway {
           'show_email_on_info_page': false,
           'show_shows_on_info_page': true,
           'types': <dynamic>[
-            <String, dynamic>{
-              'id': 1,
-              'name': 'Painting',
-              'slug': 'painting',
-            },
+            <String, dynamic>{'id': 1, 'name': 'Painting', 'slug': 'painting'},
           ],
           'styles': <dynamic>[
             <String, dynamic>{
@@ -177,9 +158,7 @@ class _FakeApiGateway implements ApiGateway {
     if (path == ApiPaths.makerStatistics) {
       return <String, dynamic>{
         'success': true,
-        'data': <String, dynamic>{
-          'profile_saved_count': 37,
-        },
+        'data': <String, dynamic>{'profile_saved_count': 37},
       };
     }
 
@@ -188,11 +167,7 @@ class _FakeApiGateway implements ApiGateway {
         'success': true,
         'data': <String, dynamic>{
           'types': <dynamic>[
-            <String, dynamic>{
-              'id': 1,
-              'name': 'Painting',
-              'slug': 'painting',
-            },
+            <String, dynamic>{'id': 1, 'name': 'Painting', 'slug': 'painting'},
           ],
           'styles': <dynamic>[
             <String, dynamic>{
@@ -221,10 +196,7 @@ class _FakeApiGateway implements ApiGateway {
       lastPatchData = Map<String, dynamic>.from(data);
     }
 
-    return <String, dynamic>{
-      'success': true,
-      'data': <String, dynamic>{},
-    };
+    return <String, dynamic>{'success': true, 'data': <String, dynamic>{}};
   }
 
   @override
@@ -268,9 +240,6 @@ class _FakeApiGateway implements ApiGateway {
   }) async {
     lastDeletePath = path;
 
-    return <String, dynamic>{
-      'success': true,
-      'data': null,
-    };
+    return <String, dynamic>{'success': true, 'data': null};
   }
 }

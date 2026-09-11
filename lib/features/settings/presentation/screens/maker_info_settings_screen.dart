@@ -91,8 +91,7 @@ class _MakerInfoSettingsScreenState
     });
 
     try {
-      final data =
-          await ref.read(makerInfoSettingsRepositoryProvider).load();
+      final data = await ref.read(makerInfoSettingsRepositoryProvider).load();
 
       if (!mounted) return;
 
@@ -172,10 +171,9 @@ class _MakerInfoSettingsScreenState
           locationText: _locationController.text,
           website: _websiteController.text,
           email: _emailController.text,
-          locationId:
-              _locationController.text.trim() == _initialLocationText
-                  ? _managedLocationId
-                  : null,
+          locationId: _locationController.text.trim() == _initialLocationText
+              ? _managedLocationId
+              : null,
           showWebsite: _showWebsite,
           showEmail: _showEmail,
           showShows: _showShows,
@@ -345,16 +343,11 @@ class _MakerInfoSettingsScreenState
       body: SafeArea(
         child: _loading
             ? const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primary,
-                ),
+                child: CircularProgressIndicator(color: AppColors.primary),
               )
             : _errorMessage != null && _data == null
-                ? _LoadError(
-                    message: _errorMessage!,
-                    onRetry: _load,
-                  )
-                : _buildForm(),
+            ? _LoadError(message: _errorMessage!, onRetry: _load)
+            : _buildForm(),
       ),
       bottomNavigationBar: _loading || _data == null
           ? null
@@ -406,12 +399,7 @@ class _MakerInfoSettingsScreenState
 
         return ListView(
           key: const Key('maker_settings_scroll'),
-          padding: EdgeInsets.fromLTRB(
-            horizontal,
-            24,
-            horizontal,
-            28,
-          ),
+          padding: EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
           children: [
             Text(
               'Maker Info Setting',
@@ -537,14 +525,11 @@ class _MakerInfoSettingsScreenState
             for (var slot = 1; slot <= 3; slot++) ...[
               _CarouselEditor(
                 slot: slot,
-                label: slot == 1
-                    ? 'Content 1 (Salon Photo)'
-                    : 'Content $slot',
+                label: slot == 1 ? 'Content 1 (Salon Photo)' : 'Content $slot',
                 existing: _deletedSlots.contains(slot)
                     ? null
                     : _existingItem(data, slot),
-                fallbackImageUrl:
-                    slot == 1 ? data.profileImageUrl : null,
+                fallbackImageUrl: slot == 1 ? data.profileImageUrl : null,
                 pending: _pendingMedia[slot],
                 captionController: _captionControllers[slot]!,
                 onChoose: () => _chooseMedia(slot),
@@ -562,9 +547,7 @@ class _MakerInfoSettingsScreenState
               ),
               child: const Text(
                 'Switch to Appreciator',
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                ),
+                style: TextStyle(decoration: TextDecoration.underline),
               ),
             ),
             if (_errorMessage != null) ...[
@@ -659,16 +642,11 @@ class _LabeledField extends StatelessWidget {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(
-                  color: AppColors.primary50,
-                ),
+                borderSide: BorderSide(color: AppColors.primary50),
               ),
               focusedBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(
-                  color: AppColors.primary,
-                  width: 1.2,
-                ),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.2),
               ),
             ),
           ),
@@ -845,9 +823,7 @@ class _CarouselEditor extends StatelessWidget {
                 width: 98,
                 height: 98,
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColors.primary50,
-                  ),
+                  border: Border.all(color: AppColors.primary50),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: _CarouselPreview(
@@ -896,15 +872,11 @@ class _CarouselEditor extends StatelessWidget {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(
-                color: AppColors.primary50,
-              ),
+              borderSide: BorderSide(color: AppColors.primary50),
             ),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(
-                color: AppColors.primary,
-              ),
+              borderSide: BorderSide(color: AppColors.primary),
             ),
           ),
         ),
@@ -978,11 +950,7 @@ class _AddPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Icon(
-        Icons.add,
-        color: AppColors.mutedText,
-        size: 28,
-      ),
+      child: Icon(Icons.add, color: AppColors.mutedText, size: 28),
     );
   }
 }
@@ -1006,10 +974,7 @@ class _VideoPlaceholder extends StatelessWidget {
 }
 
 class _LoadError extends StatelessWidget {
-  const _LoadError({
-    required this.message,
-    required this.onRetry,
-  });
+  const _LoadError({required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
@@ -1043,7 +1008,4 @@ class _LoadError extends StatelessWidget {
   }
 }
 
-enum _MediaChoice {
-  image,
-  video,
-}
+enum _MediaChoice { image, video }

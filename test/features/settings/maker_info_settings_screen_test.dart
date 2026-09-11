@@ -10,118 +10,102 @@ import 'package:ma_motion_mobile/features/settings/presentation/screens/maker_in
 void main() {
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets(
-    'renders Maker Info Setting and saves profile changes',
-    (WidgetTester tester) async {
-      final repository = _FakeSettingsRepository();
+  testWidgets('renders Maker Info Setting and saves profile changes', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
-          ],
-          child: MaterialApp(
-            home: MakerInfoSettingsScreen(
-              onClose: () {
-                repository.closeCalls++;
-              },
-              onSwitchedToAppreciator: _noop,
-            ),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(
+            onClose: () {
+              repository.closeCalls++;
+            },
+            onSwitchedToAppreciator: _noop,
           ),
         ),
-      );
+      ),
+    );
 
-      await _finishInitialLoad(tester);
+    await _finishInitialLoad(tester);
 
-      expect(find.text('Maker Info Setting'), findsOneWidget);
-      expect(
-        find.byKey(const Key('maker_settings_saved_count')),
-        findsOneWidget,
-      );
-      expect(find.textContaining('37 People'), findsOneWidget);
+    expect(find.text('Maker Info Setting'), findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
+    expect(find.textContaining('37 People'), findsOneWidget);
 
-      final settingsList = find.byKey(const Key('maker_settings_scroll'));
-      expect(settingsList, findsOneWidget);
+    final settingsList = find.byKey(const Key('maker_settings_scroll'));
+    expect(settingsList, findsOneWidget);
 
-      final emailSwitch = find.byKey(
-        const Key('maker_settings_email_visibility'),
-      );
-      await _scrollIntoSafeTapRegion(
-        tester,
-        target: emailSwitch,
-        scrollView: settingsList,
-      );
+    final emailSwitch = find.byKey(
+      const Key('maker_settings_email_visibility'),
+    );
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: emailSwitch,
+      scrollView: settingsList,
+    );
 
-      await tester.tap(emailSwitch.hitTestable());
-      await tester.pump();
-      expect(tester.widget<Switch>(emailSwitch).value, isTrue);
+    await tester.tap(emailSwitch.hitTestable());
+    await tester.pump();
+    expect(tester.widget<Switch>(emailSwitch).value, isTrue);
 
-      expect(
-        find.byKey(const Key('maker_settings_save_close')),
-        findsOneWidget,
-      );
+    expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
 
-      await tester.tap(
-        find.byKey(const Key('maker_settings_save_close')),
-      );
-      await tester.pump();
-      await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('maker_settings_save_close')));
+    await tester.pump();
+    await tester.pumpAndSettle();
 
-      expect(repository.saveCalls, 1);
-      expect(repository.lastDraft?.locationId, 3);
-      expect(repository.lastDraft?.showEmail, isTrue);
-      expect(repository.closeCalls, 1);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(repository.saveCalls, 1);
+    expect(repository.lastDraft?.locationId, 3);
+    expect(repository.lastDraft?.showEmail, isTrue);
+    expect(repository.closeCalls, 1);
+    expect(tester.takeException(), isNull);
+  });
 
-  testWidgets(
-    'Maker settings has no overflow on 320x520 viewport',
-    (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(320, 520));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets('Maker settings has no overflow on 320x520 viewport', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 520));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      final repository = _FakeSettingsRepository();
+    final repository = _FakeSettingsRepository();
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
-          ],
-          child: const MaterialApp(
-            home: MakerInfoSettingsScreen(
-              onClose: _noop,
-              onSwitchedToAppreciator: _noop,
-            ),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(
+          home: MakerInfoSettingsScreen(
+            onClose: _noop,
+            onSwitchedToAppreciator: _noop,
           ),
         ),
-      );
+      ),
+    );
 
-      await _finishInitialLoad(tester);
+    await _finishInitialLoad(tester);
 
-      expect(find.text('Maker Info Setting'), findsOneWidget);
-      expect(
-        find.byKey(const Key('maker_settings_save_close')),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
+    expect(find.text('Maker Info Setting'), findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
+    expect(tester.takeException(), isNull);
 
-      final settingsList = find.byKey(const Key('maker_settings_scroll'));
-      expect(settingsList, findsOneWidget);
+    final settingsList = find.byKey(const Key('maker_settings_scroll'));
+    expect(settingsList, findsOneWidget);
 
-      await tester.dragUntilVisible(
-        find.byKey(const Key('maker_settings_carousel_3')),
-        settingsList,
-        const Offset(0, -300),
-      );
+    await tester.dragUntilVisible(
+      find.byKey(const Key('maker_settings_carousel_3')),
+      settingsList,
+      const Offset(0, -300),
+    );
 
-      expect(
-        find.byKey(const Key('maker_settings_carousel_3')),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(find.byKey(const Key('maker_settings_carousel_3')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'Switch to Appreciator logs out and invokes role-selection navigation',
@@ -205,9 +189,7 @@ void main() {
       await tester.enterText(caption, 'Caption without selected media');
       await tester.pump();
 
-      await tester.tap(
-        find.byKey(const Key('maker_settings_save_close')),
-      );
+      await tester.tap(find.byKey(const Key('maker_settings_save_close')));
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -225,11 +207,7 @@ Future<void> _scrollIntoSafeTapRegion(
   required Finder target,
   required Finder scrollView,
 }) async {
-  await tester.dragUntilVisible(
-    target,
-    scrollView,
-    const Offset(0, -240),
-  );
+  await tester.dragUntilVisible(target, scrollView, const Offset(0, -240));
   await tester.pump();
 
   await Scrollable.ensureVisible(
@@ -249,8 +227,7 @@ Future<void> _finishInitialLoad(WidgetTester tester) async {
 
 void _noop() {}
 
-class _FakeSettingsRepository
-    implements MakerInfoSettingsRepositoryContract {
+class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int saveCalls = 0;
   int closeCalls = 0;
   int logoutCalls = 0;
@@ -276,11 +253,7 @@ class _FakeSettingsRepository
       carousel: <MakerCarouselItem>[],
       savedCount: 37,
       availableTypes: <MakerSettingsTaxonomyOption>[
-        MakerSettingsTaxonomyOption(
-          id: 1,
-          name: 'Painting',
-          slug: 'painting',
-        ),
+        MakerSettingsTaxonomyOption(id: 1, name: 'Painting', slug: 'painting'),
       ],
       availableStyles: <MakerSettingsTaxonomyOption>[
         MakerSettingsTaxonomyOption(
@@ -307,11 +280,7 @@ class _FakeSettingsRepository
   }) async {
     saveCarouselCalls++;
 
-    return MakerCarouselItem(
-      slot: slot,
-      kind: 'image',
-      caption: caption,
-    );
+    return MakerCarouselItem(slot: slot, kind: 'image', caption: caption);
   }
 
   @override

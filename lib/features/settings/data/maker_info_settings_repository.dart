@@ -12,11 +12,11 @@ import '../domain/maker_info_settings_models.dart';
 
 final makerInfoSettingsRepositoryProvider =
     Provider<MakerInfoSettingsRepositoryContract>((ref) {
-  return MakerInfoSettingsRepository(
-    api: ref.watch(apiGatewayProvider),
-    auth: ref.watch(authRepositoryProvider),
-  );
-});
+      return MakerInfoSettingsRepository(
+        api: ref.watch(apiGatewayProvider),
+        auth: ref.watch(authRepositoryProvider),
+      );
+    });
 
 abstract interface class MakerInfoSettingsRepositoryContract {
   Future<MakerInfoSettingsData> load();
@@ -37,10 +37,7 @@ abstract interface class MakerInfoSettingsRepositoryContract {
 
 class MakerInfoSettingsRepository
     implements MakerInfoSettingsRepositoryContract {
-  const MakerInfoSettingsRepository({
-    required this.api,
-    required this.auth,
-  });
+  const MakerInfoSettingsRepository({required this.api, required this.auth});
 
   final ApiGateway api;
   final AuthRepository auth;
@@ -88,10 +85,11 @@ class MakerInfoSettingsRepository
       website: profile['website_url']?.toString() ?? '',
       email: profile['contact_email']?.toString() ?? '',
       profileImageUrl: _nullableString(profile['profile_image_url']),
-      managedLocationId: _asInt(
-        _mapOrNull(profile['managed_location'])?['id'],
+      managedLocationId: _asInt(_mapOrNull(profile['managed_location'])?['id']),
+      showWebsite: _asBool(
+        profile['show_website_on_info_page'],
+        fallback: true,
       ),
-      showWebsite: _asBool(profile['show_website_on_info_page'], fallback: true),
       showEmail: _asBool(profile['show_email_on_info_page']),
       showShows: _asBool(profile['show_shows_on_info_page'], fallback: true),
       selectedTypeIds: selectedTypeIds,
@@ -140,10 +138,7 @@ class MakerInfoSettingsRepository
       formData.files.add(
         MapEntry<String, MultipartFile>(
           'media',
-          MultipartFile.fromBytes(
-            bytes,
-            filename: fileName,
-          ),
+          MultipartFile.fromBytes(bytes, filename: fileName),
         ),
       );
     }
@@ -153,9 +148,7 @@ class MakerInfoSettingsRepository
       data: formData,
     );
 
-    return MakerCarouselItem.fromMap(
-      ApiEnvelope(raw: response).dataMap,
-    );
+    return MakerCarouselItem.fromMap(ApiEnvelope(raw: response).dataMap);
   }
 
   @override
