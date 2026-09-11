@@ -1,18 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../widgets/ma_dotted_background.dart';
+import '../../../../core/widgets/ma_dotted_background.dart';
+import '../widgets/ma_full_logo.dart';
 
-/// MA Motion launch experience.
-///
-/// This is ONE splash screen with a continuous animation:
-/// 1. MA logo is presented first.
-/// 2. Logo fades/scales away.
-/// 3. Welcome copy animates into the same scene.
-/// 4. [onFinished] is called when the sequence completes.
+/// One continuous MA Motion splash animation:
+/// logo first, then animated welcome copy.
 class MaSplashSequenceScreen extends StatefulWidget {
   const MaSplashSequenceScreen({
     super.key,
@@ -47,10 +40,6 @@ class _MaSplashSequenceScreenState extends State<MaSplashSequenceScreen>
   @override
   void initState() {
     super.initState();
-
-    unawaited(
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
-    );
 
     _controller = AnimationController(vsync: this, duration: widget.duration);
 
@@ -126,8 +115,6 @@ class _MaSplashSequenceScreenState extends State<MaSplashSequenceScreen>
       ..removeStatusListener(_handleStatus)
       ..dispose();
 
-    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
-
     super.dispose();
   }
 
@@ -183,27 +170,7 @@ class _MaSplashLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final targetWidth = constraints.maxWidth * 0.52;
-
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
-            child: SizedBox(
-              width: targetWidth,
-              child: Image.asset(
-                'assets/logo.png',
-                key: const Key('ma_splash_logo'),
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-                semanticLabel: 'MA space for art logo',
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    return const MaFullLogo();
   }
 }
 

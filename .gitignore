@@ -49,3 +49,6 @@ app.*.map.json
 
 # MA Motion local installer backups
 .ma_motion_backups/
+
+# MA Motion local installer backups
+.ma_motion_backups/

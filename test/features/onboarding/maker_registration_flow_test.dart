@@ -1,0 +1,166 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/features/onboarding/application/maker_registration_controller.dart';
+import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+
+void main() {
+  Widget app({int initialStep = 0, VoidCallback? onExit}) {
+    return ProviderScope(
+      child: MaterialApp(
+        home: MakerRegistrationFlowScreen(
+          initialStep: initialStep,
+          onExit: onExit ?? () {},
+        ),
+      ),
+    );
+  }
+
+  testWidgets('maker flow starts with name and seven progress dots', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app());
+
+    expect(find.text("What's your name or studio name?"), findsOneWidget);
+    expect(find.byKey(const Key('maker_name_field')), findsOneWidget);
+
+    for (var index = 0; index < 7; index++) {
+      expect(find.byKey(Key('maker_step_dot_$index')), findsOneWidget);
+    }
+
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('name Next validates and then moves to location', (tester) async {
+    await tester.pumpWidget(app());
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pump();
+
+    expect(find.byKey(const Key('maker_validation_message')), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const Key('maker_name_field')),
+      'MA Studio',
+    );
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Where are you based?'), findsOneWidget);
+    expect(find.byKey(const Key('maker_location_field')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Back from first maker step exits to role selection', (
+    tester,
+  ) async {
+    var exited = false;
+
+    await tester.pumpWidget(app(onExit: () => exited = true));
+
+    await tester.tap(find.byKey(const Key('maker_back_button')));
+    await tester.pump();
+
+    expect(exited, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('progress dots keep about 50px bottom spacing without an inset', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app());
+    await tester.pump();
+
+    final gap = tester.widget<SizedBox>(
+      find.byKey(const Key('maker_dots_bottom_gap')),
+    );
+
+    expect(gap.height, 50);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('type and style step is scroll-safe on compact phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app(initialStep: 3));
+    await tester.pump();
+
+    expect(find.text('What kind of work do\nyou make?'), findsOneWidget);
+    expect(find.byKey(const Key('maker_type_options')), findsOneWidget);
+    expect(find.byKey(const Key('maker_style_options')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('email step renders responsive reusable email field', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app(initialStep: 5));
+
+    expect(find.text('Email Address'), findsOneWidget);
+    expect(find.byKey(const Key('maker_email_field')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('salon preview uses platform-neutral memory image', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    // 1x1 transparent PNG.
+    final bytes = base64Decode(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk'
+      'YAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+    );
+
+    container
+        .read(makerRegistrationProvider.notifier)
+        .setImage(
+          bytes: bytes,
+          name: 'salon.png',
+          path: 'native/path/is/optional.png',
+        );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          home: MakerRegistrationFlowScreen(initialStep: 6, onExit: () {}),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('maker_salon_image_preview')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('salon image step renders upload control', (tester) async {
+    await tester.pumpWidget(app(initialStep: 6));
+
+    expect(find.text('Upload your salon image'), findsOneWidget);
+    expect(find.byKey(const Key('maker_salon_image_picker')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+}

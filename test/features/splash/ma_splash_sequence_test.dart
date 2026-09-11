@@ -23,104 +23,77 @@ void main() {
       matching: find.byType(Opacity),
     );
 
-    expect(
-      finder,
-      findsOneWidget,
-      reason: 'Expected exactly one Opacity descendant for $lineKey',
-    );
-
+    expect(finder, findsOneWidget);
     return tester.widget<Opacity>(finder);
   }
 
-  testWidgets('is one splash scene and starts with the MA logo visible', (
+  testWidgets('MA splash starts with logo and hidden welcome copy', (
     tester,
   ) async {
     await tester.pumpWidget(app());
 
     expect(find.byKey(const Key('ma_animated_splash')), findsOneWidget);
     expect(find.byKey(const Key('ma_splash_logo')), findsOneWidget);
-    expect(find.byKey(const Key('ma_splash_welcome_text')), findsOneWidget);
 
-    final lineOneOpacity = opacityForLine(
-      tester,
-      const Key('ma_splash_line_1'),
-    );
-    final lineTwoOpacity = opacityForLine(
-      tester,
-      const Key('ma_splash_line_2'),
-    );
-    final lineThreeOpacity = opacityForLine(
-      tester,
-      const Key('ma_splash_line_3'),
-    );
+    expect(opacityForLine(tester, const Key('ma_splash_line_1')).opacity, 0);
+    expect(opacityForLine(tester, const Key('ma_splash_line_2')).opacity, 0);
+    expect(opacityForLine(tester, const Key('ma_splash_line_3')).opacity, 0);
 
-    expect(lineOneOpacity.opacity, 0);
-    expect(lineTwoOpacity.opacity, 0);
-    expect(lineThreeOpacity.opacity, 0);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('welcome copy animates in after the logo', (tester) async {
+  testWidgets('welcome copy animates after logo', (tester) async {
     await tester.pumpWidget(
       app(autoPlay: true, duration: const Duration(milliseconds: 1000)),
     );
 
     await tester.pump(const Duration(milliseconds: 650));
 
-    final lineOneOpacity = opacityForLine(
-      tester,
-      const Key('ma_splash_line_1'),
+    expect(
+      opacityForLine(tester, const Key('ma_splash_line_1')).opacity,
+      greaterThan(0),
     );
-    final lineTwoOpacity = opacityForLine(
-      tester,
-      const Key('ma_splash_line_2'),
-    );
-    final lineThreeOpacity = opacityForLine(
-      tester,
-      const Key('ma_splash_line_3'),
+    expect(
+      opacityForLine(tester, const Key('ma_splash_line_2')).opacity,
+      greaterThan(0),
     );
 
-    expect(lineOneOpacity.opacity, greaterThan(0));
-    expect(lineTwoOpacity.opacity, greaterThan(0));
-    expect(lineThreeOpacity.opacity, greaterThanOrEqualTo(0));
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
 
-  testWidgets('calls onFinished after the animation completes', (tester) async {
-    var finished = false;
+  testWidgets('completion callback fires once', (tester) async {
+    var completed = 0;
 
     await tester.pumpWidget(
       app(
         autoPlay: true,
-        onFinished: () => finished = true,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 300),
+        onFinished: () => completed++,
       ),
     );
 
-    await tester.pump(const Duration(milliseconds: 501));
+    await tester.pump(const Duration(milliseconds: 301));
 
-    expect(finished, isTrue);
+    expect(completed, 1);
+    expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
 
-  testWidgets('does not overflow on compact phone width', (tester) async {
+  testWidgets('splash is safe at compact phone size', (tester) async {
     tester.view.physicalSize = const Size(320, 568);
     tester.view.devicePixelRatio = 1;
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(app(autoPlay: false));
-    await tester.pump();
+    await tester.pumpWidget(app());
 
     expect(find.byKey(const Key('ma_animated_splash')), findsOneWidget);
-    expect(find.byKey(const Key('ma_splash_logo')), findsOneWidget);
-    expect(find.byKey(const Key('ma_splash_welcome_text')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

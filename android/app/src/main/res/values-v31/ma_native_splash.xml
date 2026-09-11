@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MaLaunchTheme" parent="@style/LaunchTheme">
+        <item name="android:windowBackground">@color/ma_native_splash_background</item>
+        <item name="android:windowSplashScreenBackground">@color/ma_native_splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ma_transparent_native_icon</item>
+        <item name="android:windowSplashScreenAnimationDuration">0</item>
+        <item name="android:statusBarColor">@color/ma_native_splash_background</item>
+        <item name="android:navigationBarColor">@color/ma_native_splash_background</item>
+    </style>
+</resources>

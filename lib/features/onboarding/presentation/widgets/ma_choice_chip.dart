@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+
+class MaChoiceChip extends StatelessWidget {
+  const MaChoiceChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.zero,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          constraints: const BoxConstraints(minHeight: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.primary : Colors.transparent,
+            border: Border.all(color: AppColors.primary, width: 1.1),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
+          ),
+        ),
+      ),
+    );
+  }
+}
