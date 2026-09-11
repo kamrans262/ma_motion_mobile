@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
 import '../../features/auth/presentation/screens/maker_auth_screen.dart';
 import '../../features/auth/presentation/screens/maker_session_gate_screen.dart';
+import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
+import '../../features/discovery/presentation/screens/discovery_search_screen.dart';
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
@@ -36,12 +38,8 @@ GoRouter createAppRouter({
           autoPlay: splashAutoPlay,
           duration: splashDuration,
           onFinished: () {
-            // Keep the existing animation behavior. Only the post-splash
-            // destination changes so an existing secure session can be restored.
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (context.mounted) {
-                context.go('/session-gate');
-              }
+              if (context.mounted) context.go('/session-gate');
             });
           },
         ),
@@ -60,10 +58,7 @@ GoRouter createAppRouter({
         path: '/join',
         builder: (context, state) => MaRoleSelectionScreen(
           onMaker: () => context.go('/maker-auth'),
-          onAppreciator: () {
-            // Appreciator flow remains intentionally separate until its
-            // supplied screens are implemented.
-          },
+          onAppreciator: () {},
         ),
       ),
       GoRoute(
@@ -84,7 +79,24 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/maker/discovery',
-        builder: (context, state) => const MakerArtworkDiscoveryScreen(),
+        builder: (context, state) => MakerArtworkDiscoveryScreen(
+          onSearchTap: () => context.push('/maker/discovery/search'),
+          onFilterTap: () => context.push('/maker/discovery/filter'),
+        ),
+      ),
+      GoRoute(
+        path: '/maker/discovery/search',
+        builder: (context, state) => DiscoverySearchScreen(
+          onBack: () => context.pop(),
+          onFilterTap: () => context.push('/maker/discovery/filter'),
+        ),
+      ),
+      GoRoute(
+        path: '/maker/discovery/filter',
+        builder: (context, state) => DiscoveryFilterScreen(
+          onClose: () => context.pop(),
+          onApplied: () => context.pop(),
+        ),
       ),
     ],
     errorBuilder: (context, state) {
