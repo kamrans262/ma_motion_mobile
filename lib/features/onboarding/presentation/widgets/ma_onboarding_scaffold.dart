@@ -20,6 +20,7 @@ class MaOnboardingScaffold extends StatelessWidget {
     required this.onNext,
     required this.onBack,
     this.validationMessage,
+    this.isBusy = false,
   });
 
   final String heading;
@@ -30,6 +31,7 @@ class MaOnboardingScaffold extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
   final String? validationMessage;
+  final bool isBusy;
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +58,12 @@ class MaOnboardingScaffold extends StatelessWidget {
 
                   final buttonHorizontalPadding = width < 360 ? 20.0 : 50.0;
 
-                  // Keep the progress dots visually about 50 logical pixels
-                  // from the physical bottom of the display while still
-                  // respecting gesture/navigation safe-area insets.
-                  final mediaQuery = MediaQuery.of(context);
-                  final deviceBottomInset = mediaQuery.viewPadding.bottom;
-                  final keyboardOpen = mediaQuery.viewInsets.bottom > 0;
-
-                  final dotsBottomGap = keyboardOpen
-                      ? 12.0
-                      : math.max(16.0, 50.0 - deviceBottomInset);
+                  final deviceBottomInset = MediaQuery.viewPaddingOf(context)
+                      .bottom;
+                  final dotsBottomGap = math.max(
+                    16.0,
+                    50.0 - deviceBottomInset,
+                  );
 
                   final topGap = height < 650
                       ? 36.0
@@ -113,14 +111,14 @@ class MaOnboardingScaffold extends StatelessWidget {
                           children: [
                             MaOnboardingButton(
                               key: const Key('maker_next_button'),
-                              label: 'Next',
-                              onPressed: onNext,
+                              label: isBusy ? 'Saving...' : 'Next',
+                              onPressed: isBusy ? null : onNext,
                             ),
                             const SizedBox(height: 14),
                             MaOnboardingButton(
                               key: const Key('maker_back_button'),
                               label: 'Back',
-                              onPressed: onBack,
+                              onPressed: isBusy ? null : onBack,
                               filled: false,
                             ),
                             const SizedBox(height: 30),
