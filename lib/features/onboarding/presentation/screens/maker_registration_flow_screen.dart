@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../application/maker_registration_controller.dart';
+import '../../data/maker_onboarding_repository.dart';
 import '../../domain/maker_registration_options.dart';
 import '../widgets/ma_choice_chip.dart';
 import '../widgets/ma_onboarding_scaffold.dart';
@@ -43,6 +46,8 @@ class _MakerRegistrationFlowScreenState
 
   late int _step;
   String? _validationMessage;
+  bool _isSubmitting = false;
+  bool _submissionCompleted = false;
 
   @override
   void initState() {
@@ -75,10 +80,15 @@ class _MakerRegistrationFlowScreenState
     setState(() {
       _step = step;
       _validationMessage = null;
+      _submissionCompleted = false;
     });
   }
 
   void _back() {
+    if (_isSubmitting) {
+      return;
+    }
+
     if (_step == 0) {
       widget.onExit();
       return;
@@ -139,16 +149,71 @@ class _MakerRegistrationFlowScreenState
   }
 
   void _next() {
-    if (!_validateCurrentStep()) {
+    unawaited(_handleNext());
+  }
+
+  Future<void> _handleNext() async {
+    if (_isSubmitting || _submissionCompleted || !_validateCurrentStep()) {
       return;
     }
 
-    if (_step == MakerRegistrationFlowScreen.totalSteps - 1) {
-      widget.onCompleted?.call();
+    if (_step != MakerRegistrationFlowScreen.totalSteps - 1) {
+      _goToStep(_step + 1);
       return;
     }
 
-    _goToStep(_step + 1);
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _isSubmitting = true;
+      _validationMessage = null;
+    });
+
+    try {
+      final draft = ref.read(makerRegistrationProvider);
+      await ref
+          .read(makerOnboardingRepositoryProvider)
+          .completeMakerProfile(draft);
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _submissionCompleted = true;
+        _validationMessage = widget.onCompleted == null
+            ? 'Profile saved successfully.'
+            : null;
+      });
+
+      if (widget.onCompleted != null) {
+        ref.read(makerRegistrationProvider.notifier).reset();
+        widget.onCompleted!.call();
+      }
+    } on ApiException catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _validationMessage = error.message;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _validationMessage =
+            'We could not save your profile. Please try again.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 
   Future<void> _pickImage() async {
@@ -179,6 +244,7 @@ class _MakerRegistrationFlowScreenState
 
     setState(() {
       _validationMessage = null;
+      _submissionCompleted = false;
     });
   }
 
@@ -320,7 +386,11 @@ class _MakerRegistrationFlowScreenState
           onNext: _next,
           onBack: _back,
           validationMessage: _validationMessage,
-          child: _SalonImagePicker(imageBytes: imageBytes, onTap: _pickImage),
+          isBusy: _isSubmitting,
+          child: _SalonImagePicker(
+            imageBytes: imageBytes,
+            onTap: _isSubmitting ? () {} : _pickImage,
+          ),
         );
 
       default:
