@@ -149,6 +149,22 @@ void main() {
 
     expect(repository.lastQuery?.search, 'Mara');
     expect(repository.requestedPages.last, 1);
+    final searchField = tester.widget<TextField>(
+      find.byKey(const Key('discovery_inline_search')),
+    );
+    expect(
+      searchField.decoration?.enabledBorder,
+      isA<UnderlineInputBorder>(),
+    );
+
+    final searchIconCenter = tester.getCenter(
+      find.byKey(const Key('discovery_search_svg')),
+    );
+    final filterIconCenter = tester.getCenter(
+      find.byKey(const Key('discovery_filter_svg')),
+    );
+    expect(searchIconCenter.dy, closeTo(filterIconCenter.dy, 0.5));
+
     expect(
       find.byKey(const Key('maker_artwork_discovery_grid')),
       findsOneWidget,
