@@ -65,6 +65,8 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
 
       ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
       ref.invalidate(savedArtworksControllerProvider);
+    } catch (_) {
+      // Keep the current viewer state intact if persistence is unavailable.
     } finally {
       if (mounted) {
         setState(() {
@@ -92,7 +94,11 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   Widget build(BuildContext context) {
     final asyncDetail = ref.watch(artworkDetailProvider(widget.artworkId));
     final asyncSaved = ref.watch(artworkSavedStatusProvider(widget.artworkId));
-    final isSaved = asyncSaved.value ?? false;
+    final isSaved = asyncSaved.when(
+      data: (value) => value,
+      loading: () => false,
+      error: (error, stackTrace) => false,
+    );
 
     return Scaffold(
       key: const Key('artwork_viewer_screen'),
