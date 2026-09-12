@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -16,9 +17,15 @@ import '../widgets/artwork_maker_info_page.dart';
 import '../widgets/artwork_viewer_dots.dart';
 
 class ArtworkViewerScreen extends ConsumerStatefulWidget {
-  const ArtworkViewerScreen({super.key, required this.artworkId, this.onClose});
+  const ArtworkViewerScreen({
+    super.key,
+    required this.artworkId,
+    this.initialArtwork,
+    this.onClose,
+  });
 
   final int artworkId;
+  final DiscoveryArtwork? initialArtwork;
   final VoidCallback? onClose;
 
   @override
@@ -30,6 +37,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   late final PageController _pageController;
   int _currentPage = 0;
   bool _isSaving = false;
+  final Set<String> _precachedUrls = <String>{};
 
   @override
   void initState() {
@@ -96,22 +104,59 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       error: (error, stackTrace) => false,
     );
 
+    final seededArtwork = widget.initialArtwork == null
+        ? null
+        : ArtworkDetail.fromDiscovery(widget.initialArtwork!);
+    final artwork = asyncDetail.value ?? seededArtwork;
+
+    if (artwork != null) {
+      _scheduleMediaPrecache(artwork);
+    }
+
     return Scaffold(
       key: const Key('artwork_viewer_screen'),
-      backgroundColor: AppColors.black,
-      body: asyncDetail.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
-        error: (error, stackTrace) => _ViewerError(
-          onRetry: () {
-            ref.invalidate(artworkDetailProvider(widget.artworkId));
-          },
-          onClose: widget.onClose,
-        ),
-        data: (artwork) => _buildViewer(context, artwork, isSaved: isSaved),
-      ),
+      backgroundColor: AppColors.artworkBackground,
+      body: artwork != null
+          ? _buildViewer(context, artwork, isSaved: isSaved)
+          : asyncDetail.when(
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              error: (error, stackTrace) => _ViewerError(
+                onRetry: () {
+                  ref.invalidate(artworkDetailProvider(widget.artworkId));
+                },
+                onClose: widget.onClose,
+              ),
+              data: (_) => const SizedBox.shrink(),
+            ),
     );
+  }
+
+  void _scheduleMediaPrecache(ArtworkDetail artwork) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final candidates = <DiscoveryArtworkMedia?>[
+        artwork.primaryMedia,
+        ...artwork.media,
+      ];
+
+      for (final media in candidates) {
+        final url = media?.url.trim() ?? '';
+        if (url.isEmpty || media?.isVideo == true || !_precachedUrls.add(url)) {
+          continue;
+        }
+
+        unawaited(
+          precacheImage(
+            NetworkImage(url),
+            context,
+            onError: (error, stackTrace) {},
+          ),
+        );
+      }
+    });
   }
 
   Widget _buildViewer(
