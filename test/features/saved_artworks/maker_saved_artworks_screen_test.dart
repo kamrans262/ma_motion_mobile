@@ -8,8 +8,10 @@ import 'package:ma_motion_mobile/features/saved_artworks/data/saved_artworks_rep
 import 'package:ma_motion_mobile/features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 
 void main() {
+  WidgetController.hitTestWarningShouldBeFatal = true;
+
   testWidgets(
-    'saved artwork destination is paginated removable and keeps nav functional',
+    'saved artwork grid uses the same 1 to 4 column controls',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(430, 932));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -36,16 +38,22 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const Key('artwork_tile_91')), findsOneWidget);
-      expect(
-        tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
-        const Size(16, 16),
+
+      var grid = tester.widget<GridView>(
+        find.byKey(const Key('maker_saved_artworks_grid')),
       );
-      expect(
-        tester
-            .getSize(find.byKey(const Key('maker_bottom_navigation_surface')))
-            .height,
-        65,
+      var delegate =
+          grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+      expect(delegate.crossAxisCount, 2);
+
+      await tester.tap(find.byKey(const Key('maker_nav_4')).hitTestable());
+      await tester.pump();
+
+      grid = tester.widget<GridView>(
+        find.byKey(const Key('maker_saved_artworks_grid')),
       );
+      delegate = grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+      expect(delegate.crossAxisCount, 4);
 
       await tester.tap(
         find.byKey(const Key('saved_artwork_remove_91')).hitTestable(),
