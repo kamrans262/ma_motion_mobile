@@ -70,6 +70,10 @@ class MaOnboardingScaffold extends StatelessWidget {
                   final footerHorizontal = (width * 0.116)
                       .clamp(24.0, 50.0)
                       .toDouble();
+                  final dotsBottomGap = math.max(
+                    50.0,
+                    media.padding.bottom + 20,
+                  );
 
                   return Column(
                     children: [
@@ -115,11 +119,8 @@ class MaOnboardingScaffold extends StatelessWidget {
                       if (!keyboardOpen)
                         Padding(
                           key: const Key('maker_onboarding_footer'),
-                          padding: EdgeInsets.fromLTRB(
-                            footerHorizontal,
-                            0,
-                            footerHorizontal,
-                            math.max(14, media.padding.bottom),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: footerHorizontal,
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -141,9 +142,9 @@ class MaOnboardingScaffold extends StatelessWidget {
                                 currentStep: currentStep,
                                 totalSteps: totalSteps,
                               ),
-                              const SizedBox(
-                                key: Key('maker_dots_bottom_gap'),
-                                height: 20,
+                              SizedBox(
+                                key: const Key('maker_dots_bottom_gap'),
+                                height: dotsBottomGap,
                               ),
                             ],
                           ),
