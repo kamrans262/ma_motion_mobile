@@ -39,17 +39,35 @@ void main() {
     );
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
-      const Size(16, 16),
+      const Size(18, 18),
     );
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))),
-      const Size(16, 16),
+      const Size(18, 18),
     );
     expect(
       tester
           .getSize(find.byKey(const Key('maker_bottom_navigation_surface')))
           .height,
       65,
+    );
+
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('maker_artwork_discovery_screen')),
+    );
+    expect(scaffold.backgroundColor, const Color(0xFF020101));
+
+    final navMaterial = tester.widget<Material>(
+      find.descendant(
+        of: find.byKey(const Key('maker_bottom_navigation_surface')),
+        matching: find.byType(Material),
+      ).first,
+    );
+    expect(navMaterial.color, const Color(0xFF0F2419));
+
+    expect(
+      tester.getSize(find.byKey(const Key('discovery_controls_grid_gap'))).height,
+      10,
     );
 
     final selected = tester.widget<Text>(
