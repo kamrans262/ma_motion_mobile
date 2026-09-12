@@ -272,7 +272,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
     return Scaffold(
       key: const Key('discovery_filter_screen'),
-      backgroundColor: AppColors.splashBackground,
+      backgroundColor: AppColors.artworkBackground,
       body: SafeArea(
         child: Column(
           children: [
