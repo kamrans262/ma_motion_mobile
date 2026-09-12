@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../application/maker_registration_controller.dart';
@@ -20,7 +21,6 @@ class MakerRegistrationFlowScreen extends ConsumerStatefulWidget {
     super.key,
     required this.onExit,
     this.onCompleted,
-    this.ensureAuthenticated,
     this.initialStep = 0,
   }) : assert(initialStep >= 0 && initialStep < totalSteps);
 
@@ -28,7 +28,6 @@ class MakerRegistrationFlowScreen extends ConsumerStatefulWidget {
 
   final VoidCallback onExit;
   final VoidCallback? onCompleted;
-  final Future<bool> Function()? ensureAuthenticated;
   final int initialStep;
 
   @override
@@ -172,18 +171,18 @@ class _MakerRegistrationFlowScreenState
     });
 
     try {
-      if (widget.ensureAuthenticated != null) {
-        final authenticated = await widget.ensureAuthenticated!.call();
-
-        if (!mounted || !authenticated) {
-          return;
-        }
-      }
-
       final draft = ref.read(makerRegistrationProvider);
-      await ref
-          .read(makerOnboardingRepositoryProvider)
-          .completeMakerProfile(draft);
+      final token = await ref.read(authTokenStoreProvider).read();
+
+      // The supplied Maker flow is intentionally account-screen-free.
+      // Public discovery works without authentication. If a valid Maker
+      // session already exists, preserve the existing backend profile sync;
+      // otherwise complete the visual onboarding and continue to discovery.
+      if (token != null && token.trim().isNotEmpty) {
+        await ref
+            .read(makerOnboardingRepositoryProvider)
+            .completeMakerProfile(draft);
+      }
 
       if (!mounted) {
         return;
