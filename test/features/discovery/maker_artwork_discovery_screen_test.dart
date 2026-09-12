@@ -66,7 +66,15 @@ void main() {
       final firstTile = tester.getRect(
         find.byKey(const Key('artwork_tile_100')),
       );
+      final searchIcon = tester.getRect(
+        find.byKey(const Key('discovery_search_svg')),
+      );
+      final filterIcon = tester.getRect(
+        find.byKey(const Key('discovery_filter_svg')),
+      );
       expect(firstTile.left, closeTo(20, 0.1));
+      expect(firstTile.top - searchIcon.bottom, closeTo(10, 0.1));
+      expect(firstTile.top - filterIcon.bottom, closeTo(10, 0.1));
 
       final grid = tester.widget<GridView>(
         find.byKey(const Key('maker_artwork_discovery_grid')),

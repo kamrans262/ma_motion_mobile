@@ -108,6 +108,7 @@ class _MakerArtworkDiscoveryScreenState
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         _ToolbarSvgButton(
                           buttonKey: const Key('discovery_search_button'),
