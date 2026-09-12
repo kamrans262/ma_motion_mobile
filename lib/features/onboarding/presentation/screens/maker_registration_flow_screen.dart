@@ -313,8 +313,8 @@ class _MakerRegistrationFlowScreenState
             key: const Key('maker_about_field'),
             controller: _aboutController,
             hintText: "I’m an artist exploring……",
-            minLines: 5,
-            maxLines: 7,
+            minLines: 4,
+            maxLines: 6,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.newline,
             onChanged: ref
@@ -425,6 +425,8 @@ class _TypeStyleStep extends ConsumerWidget {
       onNext: onNext,
       onBack: onBack,
       validationMessage: validationMessage,
+      contentTopFraction: 0.215,
+      childGap: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -494,8 +496,8 @@ class _SalonImagePicker extends StatelessWidget {
         key: const Key('maker_salon_image_picker'),
         onTap: onTap,
         child: Container(
-          width: 112,
-          height: 112,
+          width: 88,
+          height: 88,
           decoration: BoxDecoration(
             color: hasImage ? AppColors.inputFill : Colors.transparent,
             border: Border.all(color: AppColors.primary50, width: 1.2),
@@ -506,7 +508,7 @@ class _SalonImagePicker extends StatelessWidget {
                   child: Icon(
                     Icons.add,
                     color: AppColors.primary,
-                    size: 44,
+                    size: 38,
                     weight: 300,
                   ),
                 )
