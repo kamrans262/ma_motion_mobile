@@ -62,10 +62,7 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
   ArtworkDiscoveryRepositoryContract get _repository =>
       ref.read(artworkDiscoveryRepositoryProvider);
 
-  Future<void> loadInitial({
-    DiscoveryQuery? query,
-    int? perPage,
-  }) async {
+  Future<void> loadInitial({DiscoveryQuery? query, int? perPage}) async {
     if (state.isLoadingInitial) {
       return;
     }
@@ -102,10 +99,7 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
   }
 
   Future<void> applyQuery(DiscoveryQuery query) {
-    return loadInitial(
-      query: query.withoutSearch(),
-      perPage: state.perPage,
-    );
+    return loadInitial(query: query.withoutSearch(), perPage: state.perPage);
   }
 
   Future<void> refresh() {

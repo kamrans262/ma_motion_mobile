@@ -14,10 +14,7 @@ final savedArtworksRepositoryProvider =
     });
 
 abstract interface class SavedArtworksRepositoryContract {
-  Future<DiscoveryArtworkPage> fetchPage({
-    required int page,
-    int perPage,
-  });
+  Future<DiscoveryArtworkPage> fetchPage({required int page, int perPage});
 
   Future<bool> isSaved(int artworkId);
 
@@ -38,18 +35,14 @@ class SavedArtworksRepository implements SavedArtworksRepositoryContract {
   }) async {
     final response = await api.get(
       ApiPaths.savedArtworks,
-      queryParameters: <String, dynamic>{
-        'page': page,
-        'per_page': perPage,
-      },
+      queryParameters: <String, dynamic>{'page': page, 'per_page': perPage},
     );
 
     final envelope = ApiEnvelope(raw: response);
     final items = envelope.dataList
         .whereType<Map>()
         .map(
-          (item) =>
-              DiscoveryArtwork.fromMap(Map<String, dynamic>.from(item)),
+          (item) => DiscoveryArtwork.fromMap(Map<String, dynamic>.from(item)),
         )
         .toList(growable: false);
 

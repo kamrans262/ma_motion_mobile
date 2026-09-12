@@ -96,11 +96,7 @@ class _MakerArtworkDiscoveryScreenState
             );
             final perPage = metrics.itemsPerPageFor(gridHeight);
 
-            _ensurePageSize(
-              state: state,
-              query: query,
-              perPage: perPage,
-            );
+            _ensurePageSize(state: state, query: query, perPage: perPage);
 
             return Column(
               children: [

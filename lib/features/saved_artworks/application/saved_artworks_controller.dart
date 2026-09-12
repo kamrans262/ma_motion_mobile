@@ -40,10 +40,7 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
   }
 
   Future<void> refresh() {
-    return _loadPage(
-      state.meta.currentPage ?? 1,
-      perPage: state.perPage,
-    );
+    return _loadPage(state.meta.currentPage ?? 1, perPage: state.perPage);
   }
 
   Future<void> goToPage(int page) async {
@@ -84,16 +81,10 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
   Future<void> _loadPage(int page, {required int perPage}) async {
     if (state.isLoading) return;
 
-    state = SavedArtworksState(
-      perPage: perPage,
-      isLoading: true,
-    );
+    state = SavedArtworksState(perPage: perPage, isLoading: true);
 
     try {
-      final result = await _repository.fetchPage(
-        page: page,
-        perPage: perPage,
-      );
+      final result = await _repository.fetchPage(page: page, perPage: perPage);
 
       state = SavedArtworksState(
         items: result.items,

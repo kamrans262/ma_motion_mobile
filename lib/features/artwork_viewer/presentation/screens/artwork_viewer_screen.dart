@@ -77,9 +77,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   @override
   Widget build(BuildContext context) {
     final asyncDetail = ref.watch(artworkDetailProvider(widget.artworkId));
-    final asyncSaved = ref.watch(
-      artworkSavedStatusProvider(widget.artworkId),
-    );
+    final asyncSaved = ref.watch(artworkSavedStatusProvider(widget.artworkId));
     final isSaved = asyncSaved.when(
       data: (value) => value,
       loading: () => false,
@@ -100,19 +98,13 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
             },
             onClose: widget.onClose,
           ),
-          data: (artwork) => _buildViewer(
-            artwork,
-            isSaved: isSaved,
-          ),
+          data: (artwork) => _buildViewer(artwork, isSaved: isSaved),
         ),
       ),
     );
   }
 
-  Widget _buildViewer(
-    ArtworkDetail artwork, {
-    required bool isSaved,
-  }) {
+  Widget _buildViewer(ArtworkDetail artwork, {required bool isSaved}) {
     final media = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
         : artwork.media.cast<DiscoveryArtworkMedia?>();
@@ -363,9 +355,7 @@ class _MediaSurface extends StatelessWidget {
       children: [
         Image.network(
           url,
-          key: Key(
-            'artwork_viewer_media_' + media!.id.toString(),
-          ),
+          key: Key('artwork_viewer_media_' + media!.id.toString()),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return const ColoredBox(
