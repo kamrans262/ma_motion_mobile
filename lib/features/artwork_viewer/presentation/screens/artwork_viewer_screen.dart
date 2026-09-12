@@ -16,11 +16,7 @@ import '../widgets/artwork_maker_info_page.dart';
 import '../widgets/artwork_viewer_dots.dart';
 
 class ArtworkViewerScreen extends ConsumerStatefulWidget {
-  const ArtworkViewerScreen({
-    super.key,
-    required this.artworkId,
-    this.onClose,
-  });
+  const ArtworkViewerScreen({super.key, required this.artworkId, this.onClose});
 
   final int artworkId;
   final VoidCallback? onClose;
@@ -86,10 +82,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
     ].join('\n');
 
     await SharePlus.instance.share(
-      ShareParams(
-        title: artwork.title,
-        text: text,
-      ),
+      ShareParams(title: artwork.title, text: text),
     );
   }
 
@@ -116,11 +109,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
           },
           onClose: widget.onClose,
         ),
-        data: (artwork) => _buildViewer(
-          context,
-          artwork,
-          isSaved: isSaved,
-        ),
+        data: (artwork) => _buildViewer(context, artwork, isSaved: isSaved),
       ),
     );
   }
@@ -192,8 +181,10 @@ class _ViewerCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final widthScale =
-        (MediaQuery.sizeOf(context).width / 430).clamp(0.78, 1.08);
+    final widthScale = (MediaQuery.sizeOf(context).width / 430).clamp(
+      0.78,
+      1.08,
+    );
     final visibleTop = (50 * widthScale).clamp(40.0, 54.0).toDouble();
     final buttonTop = visibleTop - 16;
 
@@ -278,10 +269,7 @@ class _ArtworkMediaPage extends StatelessWidget {
                 key: Key('artwork_description_dots_gap'),
                 height: 50,
               ),
-              ArtworkViewerDots(
-                count: pageCount,
-                currentIndex: currentIndex,
-              ),
+              ArtworkViewerDots(count: pageCount, currentIndex: currentIndex),
             ],
           ),
         );
@@ -315,11 +303,7 @@ class _MediaSurface extends StatelessWidget {
         key: Key('artwork_viewer_media_fallback'),
         color: AppColors.inputFill,
         child: Center(
-          child: Icon(
-            Icons.image_outlined,
-            size: 48,
-            color: AppColors.primary,
-          ),
+          child: Icon(Icons.image_outlined, size: 48, color: AppColors.primary),
         ),
       );
     }
@@ -362,10 +346,7 @@ class _MediaSurface extends StatelessWidget {
 }
 
 class _ViewerError extends StatelessWidget {
-  const _ViewerError({
-    required this.onRetry,
-    required this.onClose,
-  });
+  const _ViewerError({required this.onRetry, required this.onClose});
 
   final VoidCallback onRetry;
   final VoidCallback? onClose;

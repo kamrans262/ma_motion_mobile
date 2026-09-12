@@ -6,13 +6,16 @@ import '../../../core/network/api_paths.dart';
 import '../../../core/providers/core_providers.dart';
 import '../domain/public_maker_detail.dart';
 
-final publicMakerDetailRepositoryProvider = Provider<PublicMakerDetailRepository>((ref) {
-  return PublicMakerDetailRepository(api: ref.watch(apiGatewayProvider));
-});
+final publicMakerDetailRepositoryProvider =
+    Provider<PublicMakerDetailRepository>((ref) {
+      return PublicMakerDetailRepository(api: ref.watch(apiGatewayProvider));
+    });
 
-final publicMakerDetailProvider = FutureProvider.family<PublicMakerDetail, int>((ref, makerId) {
-  return ref.watch(publicMakerDetailRepositoryProvider).fetch(makerId);
-});
+final publicMakerDetailProvider = FutureProvider.family<PublicMakerDetail, int>(
+  (ref, makerId) {
+    return ref.watch(publicMakerDetailRepositoryProvider).fetch(makerId);
+  },
+);
 
 class PublicMakerDetailRepository {
   const PublicMakerDetailRepository({required this.api});
@@ -20,7 +23,10 @@ class PublicMakerDetailRepository {
   final ApiGateway api;
 
   Future<PublicMakerDetail> fetch(int makerId) async {
-    final response = await api.get(ApiPaths.maker(makerId), requiresAuth: false);
+    final response = await api.get(
+      ApiPaths.maker(makerId),
+      requiresAuth: false,
+    );
     return PublicMakerDetail.fromMap(ApiEnvelope(raw: response).dataMap);
   }
 }

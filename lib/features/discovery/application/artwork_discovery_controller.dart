@@ -122,10 +122,7 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
     final perPage = state.perPage;
 
     final previous = state;
-    state = previous.copyWith(
-      isLoadingMore: true,
-      clearError: true,
-    );
+    state = previous.copyWith(isLoadingMore: true, clearError: true);
 
     try {
       final result = await _repository.fetchPage(

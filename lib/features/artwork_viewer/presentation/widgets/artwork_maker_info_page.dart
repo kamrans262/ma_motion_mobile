@@ -105,9 +105,8 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                           const SizedBox(height: 18),
                           Divider(
                             height: 1,
-                            color: const Color(
-                              0xFFF0F0F0,
-                            ).withValues(alpha: 0.25),
+                            color: const Color(0xFFF0F0F0)
+                                .withValues(alpha: 0.25),
                           ),
                           if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
                             const SizedBox(height: 16),
@@ -191,8 +190,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                           'artwork_maker_current_show',
                                         ),
                                         style: const TextStyle(
-                                          fontFamily:
-                                              'Fraunces',
+                                          fontFamily: 'Fraunces',
                                           fontSize: 16,
                                           height: 1.15,
                                           fontWeight: FontWeight.w400,
@@ -228,8 +226,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                       child: isSaving
                                           ? const SizedBox.square(
                                               dimension: 18,
-                                              child:
-                                                  CircularProgressIndicator(
+                                              child: CircularProgressIndicator(
                                                 strokeWidth: 2,
                                                 color: AppColors.primary,
                                               ),
@@ -268,8 +265,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                 child: const Text(
                                   'Share',
                                   style: TextStyle(
-                                    fontFamily:
-                                        'Instrument Sans',
+                                    fontFamily: 'Instrument Sans',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFF0F0F0),
@@ -286,9 +282,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         child: SizedBox.square(
                           dimension: 44,
                           child: IconButton(
-                            key: const Key(
-                              'artwork_maker_info_close_button',
-                            ),
+                            key: const Key('artwork_maker_info_close_button'),
                             onPressed: onClose,
                             padding: EdgeInsets.zero,
                             iconSize: 12,
@@ -302,10 +296,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 50),
-              ArtworkViewerDots(
-                count: pageCount,
-                currentIndex: currentIndex,
-              ),
+              ArtworkViewerDots(count: pageCount, currentIndex: currentIndex),
             ],
           ),
         );
