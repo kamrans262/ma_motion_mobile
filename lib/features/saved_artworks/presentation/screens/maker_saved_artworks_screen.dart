@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_svg_asset.dart';
@@ -134,7 +135,9 @@ class _MakerSavedArtworksScreenState
                     state: state,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
-                    childAspectRatio: metrics.gridChildAspectRatioFor(gridHeight),
+                    childAspectRatio: metrics.gridChildAspectRatioFor(
+                      gridHeight,
+                    ),
                     onArtworkTap: widget.onArtworkTap,
                     onRemove: (artworkId) {
                       ref
