@@ -37,6 +37,7 @@ class _MaSvgAssetState extends State<MaSvgAsset> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.assetName != widget.assetName) {
+      _primaryBytes = null;
       _refreshPrimaryAsset();
     }
   }

@@ -114,4 +114,5 @@ flutter:
   # MA MOTION ASSETS
   # ============================================================
   assets:
-    - assets/logo.png
+    - assets/
+    - assets/icons/
