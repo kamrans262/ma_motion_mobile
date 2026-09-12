@@ -76,11 +76,19 @@ void main() {
       expect(firstTile.top - searchIcon.bottom, closeTo(10, 0.1));
       expect(firstTile.top - filterIcon.bottom, closeTo(10, 0.1));
 
+      final lastTile = tester.getRect(
+        find.byKey(const Key('artwork_tile_109')),
+      );
+      final gridRect = tester.getRect(
+        find.byKey(const Key('maker_artwork_discovery_grid')),
+      );
+      expect(lastTile.bottom, closeTo(gridRect.bottom, 0.2));
+
       final grid = tester.widget<GridView>(
         find.byKey(const Key('maker_artwork_discovery_grid')),
       );
       expect(grid.physics, isA<NeverScrollableScrollPhysics>());
-      expect(repository.requestedPerPages.first, 8);
+      expect(repository.requestedPerPages.first, 10);
       expect(find.byKey(const Key('active_filter_badge')), findsOneWidget);
       expect(tester.takeException(), isNull);
     },

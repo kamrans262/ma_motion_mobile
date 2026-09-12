@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_svg_asset.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../saved_artworks/application/artwork_saved_status_provider.dart';
 import '../../../saved_artworks/application/saved_artworks_controller.dart';
@@ -226,12 +225,10 @@ class _SavedArtworkButton extends StatelessWidget {
                     )
                   : SizedBox.square(
                       dimension: 20,
-                      child: SvgPicture.asset(
-                        'assets/icons/heart.svg',
-                        colorFilter: ColorFilter.mode(
-                          selected ? AppColors.black : AppColors.primary,
-                          BlendMode.srcIn,
-                        ),
+                      child: MaSvgAsset(
+                        assetName: 'assets/heart.svg',
+                        fallbackAssetName: 'assets/icons/heart.svg',
+                        color: selected ? AppColors.black : AppColors.primary,
                       ),
                     ),
             ),

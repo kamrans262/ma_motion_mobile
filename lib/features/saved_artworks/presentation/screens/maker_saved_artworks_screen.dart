@@ -2,10 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_svg_asset.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../discovery/presentation/widgets/discovery_artwork_tile.dart';
 import '../../../discovery/presentation/widgets/discovery_layout_metrics.dart';
@@ -135,6 +134,7 @@ class _MakerSavedArtworksScreenState
                     state: state,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
+                    childAspectRatio: metrics.gridChildAspectRatioFor(gridHeight),
                     onArtworkTap: widget.onArtworkTap,
                     onRemove: (artworkId) {
                       ref
@@ -167,6 +167,7 @@ class _SavedBody extends ConsumerWidget {
     required this.state,
     required this.horizontalPadding,
     required this.gridSpacing,
+    required this.childAspectRatio,
     required this.onArtworkTap,
     required this.onRemove,
   });
@@ -174,6 +175,7 @@ class _SavedBody extends ConsumerWidget {
   final SavedArtworksState state;
   final double horizontalPadding;
   final double gridSpacing;
+  final double childAspectRatio;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
   final ValueChanged<int> onRemove;
 
@@ -244,7 +246,7 @@ class _SavedBody extends ConsumerWidget {
           crossAxisCount: 2,
           mainAxisSpacing: gridSpacing,
           crossAxisSpacing: gridSpacing,
-          childAspectRatio: 1,
+          childAspectRatio: childAspectRatio,
         ),
         itemBuilder: (context, index) {
           final artwork = state.items[index];
@@ -270,12 +272,10 @@ class _SavedBody extends ConsumerWidget {
                       padding: const EdgeInsets.all(10),
                       child: SizedBox.square(
                         dimension: 16,
-                        child: SvgPicture.asset(
-                          'assets/icons/heart.svg',
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.primary,
-                            BlendMode.srcIn,
-                          ),
+                        child: const MaSvgAsset(
+                          assetName: 'assets/heart.svg',
+                          fallbackAssetName: 'assets/icons/heart.svg',
+                          color: AppColors.primary,
                         ),
                       ),
                     ),

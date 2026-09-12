@@ -2,10 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_svg_asset.dart';
 import '../../application/artwork_discovery_controller.dart';
 import '../../domain/discovery_artwork.dart';
 import '../../domain/discovery_query.dart';
@@ -113,7 +112,8 @@ class _MakerArtworkDiscoveryScreenState
                         _ToolbarSvgButton(
                           buttonKey: const Key('discovery_search_button'),
                           iconKey: const Key('discovery_search_svg'),
-                          assetName: 'assets/icons/search.svg',
+                          assetName: 'assets/search.svg',
+                          fallbackAssetName: 'assets/icons/search.svg',
                           tooltip: 'Search artwork and Makers',
                           size: metrics.toolbarIconSize,
                           alignment: Alignment.bottomLeft,
@@ -125,7 +125,8 @@ class _MakerArtworkDiscoveryScreenState
                             _ToolbarSvgButton(
                               buttonKey: const Key('discovery_filter_button'),
                               iconKey: const Key('discovery_filter_svg'),
-                              assetName: 'assets/icons/filter.svg',
+                              assetName: 'assets/filter.svg',
+                              fallbackAssetName: 'assets/icons/filter.svg',
                               tooltip: 'Filter artwork',
                               size: metrics.toolbarIconSize,
                               alignment: Alignment.bottomRight,
@@ -175,6 +176,7 @@ class _MakerArtworkDiscoveryScreenState
                     state: state,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
+                    childAspectRatio: metrics.gridChildAspectRatioFor(gridHeight),
                     onArtworkTap: widget.onArtworkTap,
                   ),
                 ),
@@ -203,6 +205,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     required this.buttonKey,
     required this.iconKey,
     required this.assetName,
+    required this.fallbackAssetName,
     required this.tooltip,
     required this.size,
     required this.alignment,
@@ -212,6 +215,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final Key buttonKey;
   final Key iconKey;
   final String assetName;
+  final String fallbackAssetName;
   final String tooltip;
   final double size;
   final Alignment alignment;
@@ -237,13 +241,11 @@ class _ToolbarSvgButton extends StatelessWidget {
                 key: iconKey,
                 width: size,
                 height: size,
-                child: SvgPicture.asset(
-                  assetName,
+                child: MaSvgAsset(
+                  assetName: assetName,
+                  fallbackAssetName: fallbackAssetName,
                   fit: BoxFit.contain,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.primary,
-                    BlendMode.srcIn,
-                  ),
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -259,12 +261,14 @@ class _DiscoveryBody extends ConsumerWidget {
     required this.state,
     required this.horizontalPadding,
     required this.gridSpacing,
+    required this.childAspectRatio,
     required this.onArtworkTap,
   });
 
   final ArtworkDiscoveryState state;
   final double horizontalPadding;
   final double gridSpacing;
+  final double childAspectRatio;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
 
   @override
@@ -336,7 +340,7 @@ class _DiscoveryBody extends ConsumerWidget {
           crossAxisCount: 2,
           mainAxisSpacing: gridSpacing,
           crossAxisSpacing: gridSpacing,
-          childAspectRatio: 1,
+          childAspectRatio: childAspectRatio,
         ),
         itemBuilder: (context, index) {
           final artwork = state.items[index];

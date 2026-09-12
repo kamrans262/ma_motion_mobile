@@ -33,15 +33,20 @@ class DiscoveryLayoutMetrics {
   final double controlsToGridGap;
   final double gridSpacing;
 
-  int itemsPerPageFor(double gridHeight) {
-    final contentWidth = math.max(0.0, width - (gridHorizontalPadding * 2));
-    final cellWidth = math.max(1.0, (contentWidth - gridSpacing) / 2);
-    final rowExtent = cellWidth + gridSpacing;
-    final rows = math.max(
-      1,
-      ((math.max(0.0, gridHeight) + gridSpacing) / rowExtent).floor(),
-    );
+  int itemsPerPageFor(double _) => 10;
 
-    return rows * 2;
+  double gridChildAspectRatioFor(double gridHeight) {
+    final contentWidth = math.max(
+      1.0,
+      width - (gridHorizontalPadding * 2),
+    );
+    final cellWidth = math.max(1.0, (contentWidth - gridSpacing) / 2);
+    final usableHeight = math.max(
+      1.0,
+      gridHeight - (gridSpacing * 4),
+    );
+    final cellHeight = math.max(1.0, usableHeight / 5);
+
+    return cellWidth / cellHeight;
   }
 }

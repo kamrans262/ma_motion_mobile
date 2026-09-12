@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_svg_asset.dart';
 
 class MakerBottomNavigation extends StatelessWidget {
   const MakerBottomNavigation({
@@ -49,7 +48,8 @@ class MakerBottomNavigation extends StatelessWidget {
                     child: _SvgNavigationItem(
                       itemKey: const Key('maker_nav_saved'),
                       iconKey: const Key('maker_nav_saved_svg'),
-                      assetName: 'assets/icons/heart.svg',
+                      assetName: 'assets/heart.svg',
+                      fallbackAssetName: 'assets/icons/heart.svg',
                       semanticsLabel: 'Saved artwork',
                       iconSize: iconSize,
                       selected: heartSelected,
@@ -69,7 +69,8 @@ class MakerBottomNavigation extends StatelessWidget {
                     child: _SvgNavigationItem(
                       itemKey: const Key('maker_nav_settings'),
                       iconKey: const Key('maker_nav_settings_svg'),
-                      assetName: 'assets/icons/setting.svg',
+                      assetName: 'assets/setting.svg',
+                      fallbackAssetName: 'assets/icons/setting.svg',
                       semanticsLabel: 'Maker settings',
                       iconSize: iconSize,
                       selected: settingsSelected,
@@ -109,6 +110,7 @@ class _SvgNavigationItem extends StatelessWidget {
     required this.itemKey,
     required this.iconKey,
     required this.assetName,
+    required this.fallbackAssetName,
     required this.semanticsLabel,
     required this.iconSize,
     required this.selected,
@@ -118,6 +120,7 @@ class _SvgNavigationItem extends StatelessWidget {
   final Key itemKey;
   final Key iconKey;
   final String assetName;
+  final String fallbackAssetName;
   final String semanticsLabel;
   final double iconSize;
   final bool selected;
@@ -142,10 +145,11 @@ class _SvgNavigationItem extends StatelessWidget {
             key: iconKey,
             width: iconSize,
             height: iconSize,
-            child: SvgPicture.asset(
-              assetName,
+            child: MaSvgAsset(
+              assetName: assetName,
+              fallbackAssetName: fallbackAssetName,
               fit: BoxFit.contain,
-              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              color: color,
             ),
           ),
         ),
