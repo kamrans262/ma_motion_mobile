@@ -751,10 +751,7 @@ class _VisibilityOnlyRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          _CompactVisibilityToggle(
-            value: value,
-            onChanged: onChanged,
-          ),
+          _CompactVisibilityToggle(value: value, onChanged: onChanged),
         ],
       ),
     );
@@ -808,16 +805,14 @@ class _CompactVisibilityToggle extends StatelessWidget {
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: value ? AppColors.white : AppColors.black,
-                  border: Border.all(
-                    color: AppColors.white,
-                    width: 1,
-                  ),
+                  border: Border.all(color: AppColors.white, width: 1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: AnimatedAlign(
                   duration: const Duration(milliseconds: 150),
-                  alignment:
-                      value ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: value
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     width: 10,
                     height: 10,
