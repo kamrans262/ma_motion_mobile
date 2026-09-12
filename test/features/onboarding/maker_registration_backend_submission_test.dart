@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
+import 'package:ma_motion_mobile/core/providers/core_providers.dart';
+import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
 import 'package:ma_motion_mobile/features/onboarding/application/maker_registration_controller.dart';
 import 'package:ma_motion_mobile/features/onboarding/data/maker_onboarding_repository.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
@@ -18,6 +20,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         makerOnboardingRepositoryProvider.overrideWithValue(repository),
+        authTokenStoreProvider.overrideWithValue(
+          _MemoryTokenStore('maker-test-token'),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -64,6 +69,78 @@ void main() {
     expect(api.profileImageUploadCount, 1);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'signed-out Maker completes onboarding directly into discovery without auth UI',
+    (tester) async {
+      final api = _SubmissionGateway();
+      final repository = MakerOnboardingRepository(api: api);
+      final container = ProviderContainer(
+        overrides: [
+          makerOnboardingRepositoryProvider.overrideWithValue(repository),
+          authTokenStoreProvider.overrideWithValue(_MemoryTokenStore()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final draft = container.read(makerRegistrationProvider.notifier);
+      draft.setName('MA Studio');
+      draft.setLocation('Chicago 60601');
+      draft.setAboutWork('About the work');
+      draft.toggleType('Painting');
+      draft.toggleStyle('Contemporary');
+      draft.setWebsite('www.artist.com');
+      draft.setEmail('artist@example.com');
+      draft.setImage(
+        bytes: base64Decode(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk'
+          'YAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+        ),
+        name: 'salon.png',
+      );
+
+      var completed = false;
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: MakerRegistrationFlowScreen(
+              initialStep: 6,
+              onExit: () {},
+              onCompleted: () => completed = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+
+      expect(completed, isTrue);
+      expect(api.profilePatchCount, 0);
+      expect(api.profileImageUploadCount, 0);
+      expect(find.textContaining('Sign in'), findsNothing);
+      expect(find.textContaining('Create account'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+}
+
+class _MemoryTokenStore implements AuthTokenStore {
+  _MemoryTokenStore([this.value]);
+
+  String? value;
+
+  @override
+  Future<void> clear() async => value = null;
+
+  @override
+  Future<String?> read() async => value;
+
+  @override
+  Future<void> write(String token) async => value = token;
 }
 
 class _SubmissionGateway implements ApiGateway {
