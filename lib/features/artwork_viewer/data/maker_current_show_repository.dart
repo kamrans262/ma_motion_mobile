@@ -20,7 +20,8 @@ class MakerCurrentShowRepository {
   final ApiGateway api;
 
   Future<MakerCurrentShow?> fetch(int makerId) async {
-    final response = await api.get(
+    try {
+      final response = await api.get(
       ApiPaths.makerShows(makerId),
       requiresAuth: false,
       queryParameters: const <String, dynamic>{
@@ -30,11 +31,14 @@ class MakerCurrentShowRepository {
       },
     );
 
-    final data = ApiEnvelope(raw: response).dataList;
-    if (data.isEmpty || data.first is! Map) return null;
+      final data = ApiEnvelope(raw: response).dataList;
+      if (data.isEmpty || data.first is! Map) return null;
 
-    return MakerCurrentShow.fromMap(
-      Map<String, dynamic>.from(data.first as Map),
-    );
+      return MakerCurrentShow.fromMap(
+        Map<String, dynamic>.from(data.first as Map),
+      );
+    } catch (_) {
+      return null;
+    }
   }
 }
