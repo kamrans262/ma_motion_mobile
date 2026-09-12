@@ -1,218 +1,316 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_svg_asset.dart';
+import '../../data/maker_current_show_repository.dart';
 import '../../domain/artwork_detail.dart';
+import 'artwork_viewer_dots.dart';
 
-class ArtworkMakerInfoPage extends StatelessWidget {
-  const ArtworkMakerInfoPage({super.key, required this.artwork});
+class ArtworkMakerInfoPage extends ConsumerWidget {
+  const ArtworkMakerInfoPage({
+    super.key,
+    required this.artwork,
+    required this.currentIndex,
+    required this.pageCount,
+    required this.isSaved,
+    required this.isSaving,
+    required this.onSavedTap,
+    required this.onShare,
+    required this.onClose,
+  });
 
   final ArtworkDetail artwork;
+  final int currentIndex;
+  final int pageCount;
+  final bool isSaved;
+  final bool isSaving;
+  final VoidCallback onSavedTap;
+  final VoidCallback onShare;
+  final VoidCallback? onClose;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final maker = artwork.maker;
-    final year = artwork.createdAt?.year;
+    final currentShow = maker == null
+        ? null
+        : ref.watch(makerCurrentShowProvider(maker.id));
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final horizontal = constraints.maxWidth < 360 ? 18.0 : 28.0;
-        final avatarSize = constraints.maxWidth < 360 ? 68.0 : 82.0;
+        final widthScale = (constraints.maxWidth / 430).clamp(0.78, 1.08);
+        final horizontal = (35 * widthScale).clamp(18.0, 35.0).toDouble();
+        final cardTop = (305 * constraints.maxHeight / 932)
+            .clamp(140.0, 305.0)
+            .toDouble();
 
         return SingleChildScrollView(
           key: const Key('artwork_maker_info_scroll'),
-          padding: EdgeInsets.fromLTRB(horizontal, 76, horizontal, 28),
+          padding: EdgeInsets.fromLTRB(horizontal, cardTop, horizontal, 28),
           child: Column(
             children: [
-              _Avatar(url: maker?.profileImageUrl, size: avatarSize),
-              const SizedBox(height: 46),
               Material(
                 key: const Key('artwork_maker_info_card'),
-                color: AppColors.inputFill,
+                color: const Color(0xFF101A18),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+                  child: Stack(
                     children: [
-                      Text(
-                        artwork.title,
-                        key: const Key('artwork_maker_info_title'),
-                        style: AppTextStyles.onboardingHelper.copyWith(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        [
-                          if ((maker?.name ?? '').isNotEmpty) maker!.name,
-                          if (year != null) '$year',
-                        ].join(' · '),
-                        style: AppTextStyles.onboardingHelper.copyWith(
-                          fontSize: 12,
-                          color: AppColors.mutedText,
-                        ),
-                      ),
-                      if ((maker?.bio ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 18),
-                        Text(
-                          maker!.bio!,
-                          key: const Key('artwork_maker_info_bio'),
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            color: AppColors.white,
-                            height: 1.45,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 18),
-                      Divider(
-                        height: 1,
-                        color: AppColors.mutedText.withValues(alpha: 0.35),
-                      ),
-                      if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        Text(
-                          'Website',
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            fontSize: 11,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          maker!.websiteUrl!,
-                          key: const Key('artwork_maker_info_website'),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ],
-                      if ((maker?.contactEmail ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 14),
-                        Text(
-                          'Email',
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            fontSize: 11,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          maker!.contactEmail!,
-                          key: const Key('artwork_maker_info_email'),
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ],
-                      if ((maker?.location ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 14),
-                        Text(
-                          'Location',
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            fontSize: 11,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          maker!.location!,
-                          key: const Key('artwork_maker_info_location'),
-                          style: AppTextStyles.onboardingHelper.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 18),
-                      Row(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.favorite_border_rounded,
-                            size: 23,
-                            color: AppColors.white,
-                          ),
-                          const SizedBox(width: 7),
-                          Text(
-                            '${maker?.savedCount ?? 0}',
-                            key: const Key('artwork_maker_saved_count'),
-                            style: AppTextStyles.onboardingHelper.copyWith(
-                              color: AppColors.white,
+                          Padding(
+                            padding: const EdgeInsets.only(right: 34),
+                            child: Text(
+                              artwork.title,
+                              key: const Key('artwork_maker_info_title'),
+                              style: const TextStyle(
+                                fontFamily: AppTextStyles.frauncesFamily,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFF0F0F0),
+                              ),
                             ),
                           ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.ios_share_outlined,
-                            size: 21,
-                            color: AppColors.white,
-                          ),
-                          const SizedBox(width: 6),
+                          const SizedBox(height: 4),
                           Text(
-                            'Share',
-                            style: AppTextStyles.onboardingHelper.copyWith(
-                              color: AppColors.white,
+                            [
+                              if ((maker?.name ?? '').isNotEmpty) maker!.name,
+                              if (artwork.createdAt != null)
+                                '${artwork.createdAt!.year}',
+                            ].join(' · '),
+                            key: const Key('artwork_maker_info_meta'),
+                            style: const TextStyle(
+                              fontFamily: AppTextStyles.instrumentSansFamily,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFF0F0F0),
                             ),
+                          ),
+                          if ((maker?.bio ?? '').isNotEmpty) ...[
+                            const SizedBox(height: 18),
+                            Text(
+                              maker!.bio!,
+                              key: const Key('artwork_maker_info_bio'),
+                              style: const TextStyle(
+                                fontFamily: AppTextStyles.instrumentSansFamily,
+                                fontSize: 16,
+                                height: 1.35,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFF0F0F0),
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 18),
+                          Divider(
+                            height: 1,
+                            color: const Color(
+                              0xFFF0F0F0,
+                            ).withValues(alpha: 0.25),
+                          ),
+                          if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Website',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.instrumentSansFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFBDBDBD),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              maker!.websiteUrl!,
+                              key: const Key('artwork_maker_info_website'),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: AppTextStyles.frauncesFamily,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFF0F0F0),
+                              ),
+                            ),
+                          ],
+                          if ((maker?.contactEmail ?? '').isNotEmpty) ...[
+                            const SizedBox(height: 14),
+                            const Text(
+                              'Email',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.instrumentSansFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFBDBDBD),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              maker!.contactEmail!,
+                              key: const Key('artwork_maker_info_email'),
+                              style: const TextStyle(
+                                fontFamily: AppTextStyles.frauncesFamily,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFF0F0F0),
+                              ),
+                            ),
+                          ],
+                          if (currentShow != null)
+                            currentShow.when(
+                              data: (show) {
+                                if (show == null || show.name.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                final through = show.endDate == null
+                                    ? ''
+                                    : ' through ${DateFormat.yMMMM().format(show.endDate!)}';
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 14),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Current Show',
+                                        style: TextStyle(
+                                          fontFamily: AppTextStyles
+                                              .instrumentSansFamily,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFFBDBDBD),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Currently exhibiting at ${show.name}$through.',
+                                        key: const Key(
+                                          'artwork_maker_current_show',
+                                        ),
+                                        style: const TextStyle(
+                                          fontFamily:
+                                              AppTextStyles.frauncesFamily,
+                                          fontSize: 16,
+                                          height: 1.15,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFFF0F0F0),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              loading: () => const SizedBox.shrink(),
+                              error: (error, stackTrace) =>
+                                  const SizedBox.shrink(),
+                            ),
+                          const SizedBox(height: 22),
+                          Row(
+                            children: [
+                              Semantics(
+                                button: true,
+                                selected: isSaved,
+                                label: isSaved
+                                    ? 'Remove saved artwork'
+                                    : 'Save artwork',
+                                child: InkResponse(
+                                  key: const Key(
+                                    'artwork_maker_info_save_button',
+                                  ),
+                                  onTap: isSaving ? null : onSavedTap,
+                                  radius: 24,
+                                  child: SizedBox.square(
+                                    dimension: 44,
+                                    child: Center(
+                                      child: isSaving
+                                          ? const SizedBox.square(
+                                              dimension: 18,
+                                              child:
+                                                  CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: AppColors.primary,
+                                              ),
+                                            )
+                                          : SizedBox.square(
+                                              key: const Key(
+                                                'artwork_maker_info_heart',
+                                              ),
+                                              dimension: 24,
+                                              child: MaSvgAsset(
+                                                assetName: 'assets/heart.svg',
+                                                fallbackAssetName:
+                                                    'assets/icons/heart.svg',
+                                                color: isSaved
+                                                    ? AppColors.primary
+                                                    : const Color(0xFFF0F0F0),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                key: const Key(
+                                  'artwork_maker_info_share_button',
+                                ),
+                                onPressed: onShare,
+                                style: TextButton.styleFrom(
+                                  foregroundColor: const Color(0xFFF0F0F0),
+                                  minimumSize: const Size(44, 44),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Share',
+                                  style: TextStyle(
+                                    fontFamily:
+                                        AppTextStyles.instrumentSansFamily,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFF0F0F0),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
+                      ),
+                      Positioned(
+                        top: -10,
+                        right: -10,
+                        child: SizedBox.square(
+                          dimension: 44,
+                          child: IconButton(
+                            key: const Key(
+                              'artwork_maker_info_close_button',
+                            ),
+                            onPressed: onClose,
+                            padding: EdgeInsets.zero,
+                            iconSize: 12,
+                            color: const Color(0xFFF0F0F0),
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 26),
-              if ((maker?.contactEmail ?? '').isEmpty)
-                Text(
-                  'Contact email is kept private unless the Maker shares it.',
-                  key: const Key('artwork_private_email_notice'),
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.onboardingHelper.copyWith(
-                    fontSize: 11,
-                    color: AppColors.mutedText.withValues(alpha: 0.78),
-                  ),
-                ),
+              const SizedBox(height: 50),
+              ArtworkViewerDots(
+                count: pageCount,
+                currentIndex: currentIndex,
+              ),
             ],
           ),
         );
       },
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  const _Avatar({required this.url, required this.size});
-
-  final String? url;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    final trimmed = url?.trim() ?? '';
-
-    return Container(
-      key: const Key('artwork_maker_avatar'),
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.primary, width: 5),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: trimmed.isEmpty
-          ? const Icon(
-              Icons.person_outline_rounded,
-              color: AppColors.white,
-              size: 34,
-            )
-          : Image.network(
-              trimmed,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.person_outline_rounded,
-                  color: AppColors.white,
-                  size: 34,
-                );
-              },
-            ),
     );
   }
 }
