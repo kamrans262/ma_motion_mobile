@@ -688,25 +688,42 @@ class _VisibilityField extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                label,
-                style: AppTextStyles.onboardingHelper.copyWith(
-                  color: AppColors.primary,
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.onboardingHelper.copyWith(
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
-              const Spacer(),
-              Text(
-                'Show on info page',
-                style: AppTextStyles.onboardingHelper.copyWith(
-                  color: AppColors.primary,
-                  fontSize: 12,
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 166,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Show on info page',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.onboardingHelper.copyWith(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _CompactVisibilityToggle(
+                      key: Key('${keyName}_visibility'),
+                      value: value,
+                      onChanged: onChanged,
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              _CompactVisibilityToggle(
-                key: Key('${keyName}_visibility'),
-                value: value,
-                onChanged: onChanged,
               ),
             ],
           ),
