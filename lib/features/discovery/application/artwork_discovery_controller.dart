@@ -114,10 +114,7 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
 
   Future<void> applyQuery(DiscoveryQuery query) {
     final search = state.query.search;
-    return loadInitial(
-      query: query.withSearch(search),
-      perPage: state.perPage,
-    );
+    return loadInitial(query: query.withSearch(search), perPage: state.perPage);
   }
 
   Future<void> refresh() {
