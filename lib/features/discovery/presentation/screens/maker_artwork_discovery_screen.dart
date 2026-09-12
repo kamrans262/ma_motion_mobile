@@ -192,59 +192,59 @@ class _MakerArtworkDiscoveryScreenState
                                 .clamp(112.0, 150.0)
                                 .toDouble(),
                             height: 40,
-                              child: TextField(
-                                key: const Key('discovery_inline_search'),
-                                controller: _searchController,
-                                focusNode: _searchFocusNode,
-                                onChanged: _onSearchChanged,
-                                textInputAction: TextInputAction.search,
-                                textAlignVertical: TextAlignVertical.center,
-                                style: const TextStyle(
+                            child: TextField(
+                              key: const Key('discovery_inline_search'),
+                              controller: _searchController,
+                              focusNode: _searchFocusNode,
+                              onChanged: _onSearchChanged,
+                              textInputAction: TextInputAction.search,
+                              textAlignVertical: TextAlignVertical.center,
+                              style: const TextStyle(
+                                fontFamily: AppTextStyles.fontFamily,
+                                fontSize: 14,
+                                height: 1,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.primary,
+                              ),
+                              cursorColor: AppColors.primary,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                hintText: 'Artist name...',
+                                hintStyle: TextStyle(
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 14,
                                   height: 1,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.primary,
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.50,
+                                  ),
                                 ),
-                                cursorColor: AppColors.primary,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: 'Artist name...',
-                                  hintStyle: TextStyle(
-                                    fontFamily: AppTextStyles.fontFamily,
-                                    fontSize: 14,
-                                    height: 1,
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.50,
-                                    ),
+                                contentPadding: const EdgeInsets.only(
+                                  left: 0,
+                                  right: 4,
+                                  top: 10,
+                                  bottom: 8,
+                                ),
+                                border: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1,
                                   ),
-                                  contentPadding: const EdgeInsets.only(
-                                    left: 0,
-                                    right: 4,
-                                    top: 10,
-                                    bottom: 8,
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1,
                                   ),
-                                  border: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1.2,
-                                    ),
+                                ),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1.2,
                                   ),
                                 ),
                               ),
                             ),
+                          ),
                           const Spacer(),
                         ] else
                           const Spacer(),
