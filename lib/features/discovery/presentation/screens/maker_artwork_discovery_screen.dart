@@ -152,9 +152,7 @@ class _MakerArtworkDiscoveryScreenState
       bottomNavigationBar: MakerBottomNavigation(
         selectedPage: (state.meta.currentPage ?? 1).clamp(1, 4).toInt(),
         onPageSelected: (page) {
-          ref
-              .read(artworkDiscoveryControllerProvider.notifier)
-              .goToPage(page);
+          ref.read(artworkDiscoveryControllerProvider.notifier).goToPage(page);
 
           if (_scrollController.hasClients) {
             _scrollController.animateTo(
