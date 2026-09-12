@@ -16,13 +16,15 @@ void main() {
     tester,
   ) async {
     final api = _SubmissionGateway();
-    final repository = MakerOnboardingRepository(api: api);
+    final tokenStore = _MemoryTokenStore('maker-test-token');
+    final repository = MakerOnboardingRepository(
+      api: api,
+      tokenStore: tokenStore,
+    );
     final container = ProviderContainer(
       overrides: [
         makerOnboardingRepositoryProvider.overrideWithValue(repository),
-        authTokenStoreProvider.overrideWithValue(
-          _MemoryTokenStore('maker-test-token'),
-        ),
+        authTokenStoreProvider.overrideWithValue(tokenStore),
       ],
     );
     addTearDown(container.dispose);
@@ -74,11 +76,15 @@ void main() {
     'signed-out Maker completes onboarding directly into discovery without auth UI',
     (tester) async {
       final api = _SubmissionGateway();
-      final repository = MakerOnboardingRepository(api: api);
+      final tokenStore = _MemoryTokenStore();
+      final repository = MakerOnboardingRepository(
+        api: api,
+        tokenStore: tokenStore,
+      );
       final container = ProviderContainer(
         overrides: [
           makerOnboardingRepositoryProvider.overrideWithValue(repository),
-          authTokenStoreProvider.overrideWithValue(_MemoryTokenStore()),
+          authTokenStoreProvider.overrideWithValue(tokenStore),
         ],
       );
       addTearDown(container.dispose);
@@ -118,8 +124,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(completed, isTrue);
-      expect(api.profilePatchCount, 0);
-      expect(api.profileImageUploadCount, 0);
+      expect(api.makerOnboardingCount, 1);
+      expect(api.profilePatchCount, 2);
+      expect(api.profileImageUploadCount, 1);
+      expect(tokenStore.value, 'maker-onboarding-token');
       expect(find.textContaining('Sign in'), findsNothing);
       expect(find.textContaining('Create account'), findsNothing);
       expect(tester.takeException(), isNull);
@@ -143,6 +151,7 @@ class _MemoryTokenStore implements AuthTokenStore {
 }
 
 class _SubmissionGateway implements ApiGateway {
+  int makerOnboardingCount = 0;
   int profilePatchCount = 0;
   int profileImageUploadCount = 0;
 
@@ -206,9 +215,18 @@ class _SubmissionGateway implements ApiGateway {
     bool requiresAuth = true,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 10));
+    if (path == ApiPaths.makerOnboarding) {
+      makerOnboardingCount++;
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{'token': 'maker-onboarding-token'},
+      };
+    }
+
     if (path == ApiPaths.profileImage) {
       profileImageUploadCount++;
     }
+
     return <String, dynamic>{'success': true, 'data': <String, dynamic>{}};
   }
 
