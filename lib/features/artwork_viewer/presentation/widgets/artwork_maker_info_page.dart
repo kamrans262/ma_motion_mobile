@@ -67,7 +67,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                               artwork.title,
                               key: const Key('artwork_maker_info_title'),
                               style: const TextStyle(
-                                fontFamily: AppTextStyles.frauncesFamily,
+                                fontFamily: 'Fraunces',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFFF0F0F0),
@@ -83,7 +83,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             ].join(' · '),
                             key: const Key('artwork_maker_info_meta'),
                             style: const TextStyle(
-                              fontFamily: AppTextStyles.instrumentSansFamily,
+                              fontFamily: 'Instrument Sans',
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: Color(0xFFF0F0F0),
@@ -95,7 +95,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                               maker!.bio!,
                               key: const Key('artwork_maker_info_bio'),
                               style: const TextStyle(
-                                fontFamily: AppTextStyles.instrumentSansFamily,
+                                fontFamily: 'Instrument Sans',
                                 fontSize: 16,
                                 height: 1.35,
                                 fontWeight: FontWeight.w400,
@@ -115,7 +115,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             const Text(
                               'Website',
                               style: TextStyle(
-                                fontFamily: AppTextStyles.instrumentSansFamily,
+                                fontFamily: 'Instrument Sans',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFFBDBDBD),
@@ -128,7 +128,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontFamily: AppTextStyles.frauncesFamily,
+                                fontFamily: 'Fraunces',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFFF0F0F0),
@@ -140,7 +140,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             const Text(
                               'Email',
                               style: TextStyle(
-                                fontFamily: AppTextStyles.instrumentSansFamily,
+                                fontFamily: 'Instrument Sans',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFFBDBDBD),
@@ -151,7 +151,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                               maker!.contactEmail!,
                               key: const Key('artwork_maker_info_email'),
                               style: const TextStyle(
-                                fontFamily: AppTextStyles.frauncesFamily,
+                                fontFamily: 'Fraunces',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFFF0F0F0),
@@ -193,7 +193,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                         ),
                                         style: const TextStyle(
                                           fontFamily:
-                                              AppTextStyles.frauncesFamily,
+                                              'Fraunces',
                                           fontSize: 16,
                                           height: 1.15,
                                           fontWeight: FontWeight.w400,
@@ -270,7 +270,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                   'Share',
                                   style: TextStyle(
                                     fontFamily:
-                                        AppTextStyles.instrumentSansFamily,
+                                        'Instrument Sans',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFFF0F0F0),
