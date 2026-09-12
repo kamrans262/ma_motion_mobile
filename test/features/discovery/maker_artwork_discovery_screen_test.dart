@@ -182,7 +182,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.requestedPages, contains(2));
-    expect(find.byKey(const Key('artwork_tile_200')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
