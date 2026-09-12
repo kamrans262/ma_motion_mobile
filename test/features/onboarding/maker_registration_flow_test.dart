@@ -122,7 +122,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-
   testWidgets('Maker reference geometry is preserved on a 390x844 phone', (
     tester,
   ) async {
