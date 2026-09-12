@@ -27,10 +27,10 @@ class MakerBottomNavigation extends StatelessWidget {
       builder: (context, constraints) {
         final scale = (constraints.maxWidth / 430).clamp(0.86, 1.10);
         final barHeight = (65 * scale).clamp(58.0, 72.0).toDouble();
-        final iconSize = (16 * scale).clamp(16.0, 18.0).toDouble();
+        final iconSize = (18 * scale).clamp(18.0, 20.0).toDouble();
 
         return Material(
-          color: const Color(0xFF0C2116),
+          color: AppColors.artworkNavBackground,
           child: SafeArea(
             top: false,
             child: SizedBox(
