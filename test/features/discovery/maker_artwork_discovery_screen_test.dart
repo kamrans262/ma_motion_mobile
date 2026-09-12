@@ -58,6 +58,24 @@ void main() {
         65,
       );
 
+      final selectedPage = tester.widget<Text>(
+        find.byKey(const Key('maker_nav_page_text_1')),
+      );
+      final unselectedPage = tester.widget<Text>(
+        find.byKey(const Key('maker_nav_page_text_2')),
+      );
+      expect(selectedPage.style?.fontFamily, 'Instrument Sans');
+      expect(selectedPage.style?.fontSize, 16);
+      expect(selectedPage.style?.fontWeight, FontWeight.w400);
+      expect(selectedPage.style?.color, const Color(0xFF904AFF));
+      expect(unselectedPage.style?.fontFamily, 'Instrument Sans');
+      expect(unselectedPage.style?.fontSize, 14);
+      expect(unselectedPage.style?.fontWeight, FontWeight.w400);
+      expect(
+        unselectedPage.style?.color,
+        const Color(0xFF904AFF).withValues(alpha: 0.50),
+      );
+
       final gap = tester.widget<SizedBox>(
         find.byKey(const Key('discovery_controls_grid_gap')),
       );
