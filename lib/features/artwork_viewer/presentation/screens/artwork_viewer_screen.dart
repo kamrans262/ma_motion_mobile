@@ -227,9 +227,11 @@ class _ArtworkMediaPage extends StatelessWidget {
         final horizontal = (60 * widthScale).clamp(20.0, 60.0).toDouble();
         final top = (82 * widthScale).clamp(72.0, 88.0).toDouble();
         final imageWidth = constraints.maxWidth - (horizontal * 2);
+        final compact = constraints.maxHeight < 620;
+        final reservedBelowImage = compact ? 210.0 : 160.0;
         final maxImageHeight = math.max(
-          140.0,
-          constraints.maxHeight - top - 160,
+          120.0,
+          constraints.maxHeight - top - reservedBelowImage,
         );
 
         return Padding(
