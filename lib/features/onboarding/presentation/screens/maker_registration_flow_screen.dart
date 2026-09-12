@@ -20,6 +20,7 @@ class MakerRegistrationFlowScreen extends ConsumerStatefulWidget {
     super.key,
     required this.onExit,
     this.onCompleted,
+    this.ensureAuthenticated,
     this.initialStep = 0,
   }) : assert(initialStep >= 0 && initialStep < totalSteps);
 
@@ -27,6 +28,7 @@ class MakerRegistrationFlowScreen extends ConsumerStatefulWidget {
 
   final VoidCallback onExit;
   final VoidCallback? onCompleted;
+  final Future<bool> Function()? ensureAuthenticated;
   final int initialStep;
 
   @override
@@ -170,6 +172,14 @@ class _MakerRegistrationFlowScreenState
     });
 
     try {
+      if (widget.ensureAuthenticated != null) {
+        final authenticated = await widget.ensureAuthenticated!.call();
+
+        if (!mounted || !authenticated) {
+          return;
+        }
+      }
+
       final draft = ref.read(makerRegistrationProvider);
       await ref
           .read(makerOnboardingRepositoryProvider)
