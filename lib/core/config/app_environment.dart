@@ -23,9 +23,9 @@ abstract final class AppEnvironment {
 
     if (raw.isEmpty) {
       if (!kReleaseMode) {
-        // Android USB development uses adb reverse so device localhost:8000
+        // Android USB development uses adb reverse so device localhost:8001
         // reaches the Laravel server running on the development PC.
-        return 'http://127.0.0.1:8000/api/v1';
+        return 'http://127.0.0.1:8001/api/v1';
       }
 
       return 'https://api.invalid.ma-motion.local/api/v1';
