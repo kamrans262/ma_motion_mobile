@@ -187,9 +187,11 @@ class _MakerArtworkDiscoveryScreenState
                         ),
                         if (_searchOpen) ...[
                           const SizedBox(width: 6),
-                          Expanded(
-                            child: SizedBox(
-                              height: 40,
+                          SizedBox(
+                            width: (constraints.maxWidth * 0.34)
+                                .clamp(112.0, 150.0)
+                                .toDouble(),
+                            height: 40,
                               child: TextField(
                                 key: const Key('discovery_inline_search'),
                                 controller: _searchController,
@@ -244,6 +246,7 @@ class _MakerArtworkDiscoveryScreenState
                               ),
                             ),
                           ),
+                          const Spacer(),
                         ] else
                           const Spacer(),
                         Stack(
