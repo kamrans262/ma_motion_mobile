@@ -38,7 +38,9 @@ class _DiscoverySearchScreenState extends ConsumerState<DiscoverySearchScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController();
+    _searchController = TextEditingController(
+      text: ref.read(discoverySearchControllerProvider).term,
+    );
     _scrollController = ScrollController()..addListener(_handleScroll);
   }
 
