@@ -13,6 +13,7 @@ void main() {
     tester,
   ) async {
     final repository = _FakeSearchRepository();
+    DiscoverySearchMaker? openedMaker;
 
     await tester.pumpWidget(
       ProviderScope(
@@ -20,7 +21,11 @@ void main() {
           discoverySearchRepositoryProvider.overrideWithValue(repository),
         ],
         child: MaterialApp(
-          home: DiscoverySearchScreen(onBack: () {}, onFilterTap: () {}),
+          home: DiscoverySearchScreen(
+            onBack: () {},
+            onFilterTap: () {},
+            onMakerTap: (maker) => openedMaker = maker,
+          ),
         ),
       ),
     );
@@ -38,6 +43,11 @@ void main() {
     expect(find.byKey(const Key('search_maker_4')), findsOneWidget);
     expect(find.byKey(const Key('artwork_tile_9')), findsOneWidget);
     expect(repository.lastQuery?.search, 'Orbit');
+
+    await tester.tap(find.byKey(const Key('search_maker_4')));
+    await tester.pump();
+
+    expect(openedMaker?.id, 4);
     expect(tester.takeException(), isNull);
   });
 }
