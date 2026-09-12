@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -105,6 +107,61 @@ void main() {
     },
   );
 
+  testWidgets('seeded discovery artwork opens before detail request finishes', (
+    tester,
+  ) async {
+    final repository = _DelayedArtworkDetailRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDetailRepositoryProvider.overrideWithValue(repository),
+          savedArtworksRepositoryProvider.overrideWithValue(
+            _FakeSavedArtworksRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          home: ArtworkViewerScreen(
+            artworkId: 41,
+            initialArtwork: DiscoveryArtwork(
+              id: 41,
+              title: 'Immediate artwork',
+              description: 'Visible immediately',
+              primaryMedia: const DiscoveryArtworkMedia(
+                id: 91,
+                kind: 'image',
+                url: '',
+                width: 640,
+                height: 1000,
+                isPrimary: true,
+              ),
+              maker: const DiscoveryMakerPreview(
+                id: 7,
+                name: 'Mara Vellan',
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('artwork_viewer_screen')),
+    );
+    expect(scaffold.backgroundColor, const Color(0xFF020101));
+
+    repository.complete();
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Maker detail heart saves the current artwork', (tester) async {
     final savedRepository = _FakeSavedArtworksRepository();
 
@@ -170,6 +227,48 @@ void main() {
     expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _DelayedArtworkDetailRepository
+    implements ArtworkDetailRepositoryContract {
+  final Completer<ArtworkDetail> _completer = Completer<ArtworkDetail>();
+
+  void complete() {
+    if (_completer.isCompleted) return;
+
+    _completer.complete(
+      ArtworkDetail(
+        id: 41,
+        title: 'Loaded artwork',
+        description: 'Loaded detail',
+        media: const <DiscoveryArtworkMedia>[
+          DiscoveryArtworkMedia(
+            id: 91,
+            kind: 'image',
+            url: '',
+            width: 640,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ],
+        primaryMedia: const DiscoveryArtworkMedia(
+          id: 91,
+          kind: 'image',
+          url: '',
+          width: 640,
+          height: 1000,
+          isPrimary: true,
+        ),
+        maker: const ArtworkDetailMaker(
+          id: 7,
+          name: 'Mara Vellan',
+        ),
+      ),
+    );
+  }
+
+  @override
+  Future<ArtworkDetail> fetch(int artworkId) => _completer.future;
 }
 
 class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
