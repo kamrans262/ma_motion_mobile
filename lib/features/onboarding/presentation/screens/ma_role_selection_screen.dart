@@ -46,9 +46,12 @@ class MaRoleSelectionScreen extends StatelessWidget {
                           Text(
                             'Would you like to\njoin as a Maker or\nAppreciator?',
                             textAlign: TextAlign.center,
-                            style: AppTextStyles.onboardingHeading.copyWith(
+                            style: const TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 32,
+                              height: 1.18,
                               fontWeight: FontWeight.w400,
-                              height: 1.2,
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(height: 32),
