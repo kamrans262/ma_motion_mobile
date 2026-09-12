@@ -135,10 +135,7 @@ void main() {
                 height: 1000,
                 isPrimary: true,
               ),
-              maker: const DiscoveryMakerPreview(
-                id: 7,
-                name: 'Mara Vellan',
-              ),
+              maker: const DiscoveryMakerPreview(id: 7, name: 'Mara Vellan'),
             ),
           ),
         ),
@@ -259,10 +256,7 @@ class _DelayedArtworkDetailRepository
           height: 1000,
           isPrimary: true,
         ),
-        maker: const ArtworkDetailMaker(
-          id: 7,
-          name: 'Mara Vellan',
-        ),
+        maker: const ArtworkDetailMaker(id: 7, name: 'Mara Vellan'),
       ),
     );
   }
