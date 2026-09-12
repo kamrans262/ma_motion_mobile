@@ -30,6 +30,7 @@ class MakerBottomNavigation extends StatelessWidget {
         final iconSize = (18 * scale).clamp(18.0, 20.0).toDouble();
 
         return Material(
+          key: const Key('maker_bottom_navigation_material'),
           color: AppColors.artworkNavBackground,
           child: SafeArea(
             top: false,
