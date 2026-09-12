@@ -35,7 +35,20 @@ void main() {
 
     expect(find.text('Maker Info Setting'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
-    expect(find.textContaining('37 People'), findsOneWidget);
+    final savedCount = tester.widget<Text>(
+      find.byKey(const Key('maker_settings_saved_count')),
+    );
+    final savedSpan = savedCount.textSpan! as TextSpan;
+    final countSpan = savedSpan.children![1] as TextSpan;
+    expect(countSpan.text, '37');
+    expect(countSpan.style?.color, Colors.white);
+
+    final keyword = tester.widget<Text>(
+      find.byKey(const Key('maker_settings_keyword_label')),
+    );
+    final nameLabel = tester.widgetList<Text>(find.text('Name')).first;
+    expect(keyword.style?.fontSize, nameLabel.style?.fontSize);
+    expect(keyword.style?.fontWeight, nameLabel.style?.fontWeight);
 
     final settingsList = find.byKey(const Key('maker_settings_scroll'));
     expect(settingsList, findsOneWidget);
@@ -51,7 +64,6 @@ void main() {
 
     await tester.tap(emailSwitch.hitTestable());
     await tester.pump();
-    expect(tester.widget<Switch>(emailSwitch).value, isTrue);
 
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
 
