@@ -10,9 +10,12 @@ import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_pag
 import 'package:ma_motion_mobile/features/saved_artworks/data/saved_artworks_repository.dart';
 
 void main() {
-  testWidgets('viewer renders media description dots and Maker info slide', (
+  testWidgets('430x932 viewer matches supplied Maker artwork display contract', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 932));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -27,27 +30,37 @@ void main() {
       ),
     );
 
-    await tester.pump();
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('artwork_viewer_screen')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_save_button')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_description')), findsOneWidget);
-    expect(
-      find.text('Built in slow layers over eleven months.'),
-      findsOneWidget,
+    final close = tester.widget<IconButton>(
+      find.byKey(const Key('artwork_viewer_close_button')),
     );
+    expect(close.iconSize, 12);
+
+    final imageGap = tester.widget<SizedBox>(
+      find.byKey(const Key('artwork_image_description_gap')),
+    );
+    expect(imageGap.height, 40);
+
+    final description = tester.widget<Text>(
+      find.byKey(const Key('artwork_viewer_description')),
+    );
+    expect(description.style?.fontFamily, 'Arial');
+    expect(description.style?.fontSize, 14);
+    expect(description.style?.fontWeight, FontWeight.w400);
+    expect(description.style?.color, const Color(0xFFF0F0F0));
+
+    final dotsGap = tester.widget<SizedBox>(
+      find.byKey(const Key('artwork_description_dots_gap')),
+    );
+    expect(dotsGap.height, 50);
     expect(find.byKey(const Key('artwork_viewer_dots')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_dot_0')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_dot_1')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_dot_2')), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
       const Offset(-500, 0),
     );
     await tester.pumpAndSettle();
-
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
       const Offset(-500, 0),
@@ -56,24 +69,42 @@ void main() {
 
     expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
     expect(find.text('Mara Vellan · 2024'), findsOneWidget);
-    expect(find.byKey(const Key('artwork_maker_info_website')), findsOneWidget);
-    expect(find.text('https://artist.example'), findsOneWidget);
-    expect(
-      find.byKey(const Key('artwork_maker_info_location')),
-      findsOneWidget,
+
+    final title = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_title')),
     );
-    expect(
-      find.byKey(const Key('artwork_private_email_notice')),
-      findsOneWidget,
+    expect(title.style?.fontFamily, 'Fraunces');
+    expect(title.style?.fontSize, 16);
+
+    final meta = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_meta')),
     );
-    expect(find.textContaining('private'), findsOneWidget);
-    expect(find.byKey(const Key('artwork_maker_saved_count')), findsOneWidget);
+    expect(meta.style?.fontFamily, 'Instrument Sans');
+    expect(meta.style?.fontSize, 12);
+
+    expect(
+      tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
+      const Size(24, 24),
+    );
+
+    final share = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('artwork_maker_info_share_button')),
+        matching: find.text('Share'),
+      ),
+    );
+    expect(share.style?.fontFamily, 'Instrument Sans');
+    expect(share.style?.fontSize, 16);
+    expect(share.style?.fontWeight, FontWeight.w600);
+
+    final makerClose = tester.widget<IconButton>(
+      find.byKey(const Key('artwork_maker_info_close_button')),
+    );
+    expect(makerClose.iconSize, 12);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('viewer save control persists artwork through saved repository', (
-    tester,
-  ) async {
+  testWidgets('Maker detail heart saves the current artwork', (tester) async {
     final savedRepository = _FakeSavedArtworksRepository();
 
     await tester.pumpWidget(
@@ -89,8 +120,19 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+
     await tester.tap(
-      find.byKey(const Key('artwork_viewer_save_button')).hitTestable(),
+      find.byKey(const Key('artwork_maker_info_save_button')).hitTestable(),
     );
     await tester.pumpAndSettle();
 
@@ -118,29 +160,13 @@ void main() {
       ),
     );
 
-    await tester.pump();
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(
       find.byKey(const Key('artwork_viewer_close_button')),
       findsOneWidget,
     );
     expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
-    expect(tester.takeException(), isNull);
-
-    await tester.drag(
-      find.byKey(const Key('artwork_viewer_page_view')),
-      const Offset(-320, 0),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.drag(
-      find.byKey(const Key('artwork_viewer_page_view')),
-      const Offset(-320, 0),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.byKey(const Key('artwork_maker_info_scroll')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
@@ -157,7 +183,7 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
           id: 91,
           kind: 'image',
           url: '',
-          width: 800,
+          width: 640,
           height: 1000,
           isPrimary: true,
         ),
@@ -165,7 +191,7 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
           id: 92,
           kind: 'image',
           url: '',
-          width: 800,
+          width: 640,
           height: 1000,
         ),
       ],
@@ -173,19 +199,15 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
         id: 91,
         kind: 'image',
         url: '',
-        width: 800,
+        width: 640,
         height: 1000,
         isPrimary: true,
       ),
-      locationText: 'Chicago, IL',
       maker: const ArtworkDetailMaker(
         id: 7,
         name: 'Mara Vellan',
         bio: 'A contemporary artist exploring the intersection of form and color.',
-        location: 'Chicago, IL',
-        profileImageUrl: null,
         websiteUrl: 'https://artist.example',
-        savedCount: 12,
       ),
       createdAt: DateTime.utc(2024, 5, 1),
     );
