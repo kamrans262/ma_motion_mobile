@@ -121,10 +121,10 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
     final query = state.query;
     final perPage = state.perPage;
 
-    state = ArtworkDiscoveryState(
-      query: query,
-      perPage: perPage,
-      isLoadingInitial: true,
+    final previous = state;
+    state = previous.copyWith(
+      isLoadingMore: true,
+      clearError: true,
     );
 
     try {
@@ -141,9 +141,8 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
         perPage: perPage,
       );
     } catch (error) {
-      state = ArtworkDiscoveryState(
-        query: query,
-        perPage: perPage,
+      state = previous.copyWith(
+        isLoadingMore: false,
         errorMessage: _messageFor(error),
       );
     }
