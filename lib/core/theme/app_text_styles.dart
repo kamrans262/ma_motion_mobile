@@ -6,7 +6,7 @@ abstract final class AppTextStyles {
   static const String fontFamily = 'Arial';
 
   static const TextStyle onboardingHeading = TextStyle(
-    fontFamily: fontFamily,
+    fontFamily: 'Instrument Sans',
     fontSize: 28,
     height: 1.12,
     fontWeight: FontWeight.w600,
@@ -39,15 +39,15 @@ abstract final class AppTextStyles {
 
   static const TextStyle buttonDark = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
     color: AppColors.black,
   );
 
   static const TextStyle buttonPurple = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
     color: AppColors.primary,
   );
 
