@@ -177,7 +177,7 @@ void main() {
     final grid = find.byKey(const Key('maker_artwork_discovery_grid'));
     expect(grid.hitTestable(), findsOneWidget);
 
-    await tester.drag(grid.hitTestable(), const Offset(0, -900));
+    await tester.drag(grid.hitTestable(), const Offset(0, -5000));
     await tester.pump();
     await tester.pumpAndSettle();
 
