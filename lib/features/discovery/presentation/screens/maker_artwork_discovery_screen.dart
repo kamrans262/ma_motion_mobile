@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +17,6 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
   const MakerArtworkDiscoveryScreen({
     super.key,
     this.onArtworkTap,
-    this.onSearchTap,
     this.onFilterTap,
     this.onSavedTap,
     this.onSettingsTap,
@@ -25,12 +24,11 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
   });
 
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
-  final VoidCallback? onSearchTap;
   final VoidCallback? onFilterTap;
   final VoidCallback? onSavedTap;
   final VoidCallback? onSettingsTap;
 
-  /// Kept for compatibility with the earlier Maker navigation contract.
+  /// Kept for compatibility with the existing Maker navigation contract.
   final ValueChanged<int>? onBottomNavigationTap;
 
   @override
@@ -40,43 +38,120 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
 
 class _MakerArtworkDiscoveryScreenState
     extends ConsumerState<MakerArtworkDiscoveryScreen> {
-  int? _scheduledPerPage;
+  static const int _discoveryPerPage = 24;
 
-  void _ensurePageSize({
-    required ArtworkDiscoveryState state,
-    required DiscoveryQuery query,
-    required int perPage,
-  }) {
-    if (state.isLoadingInitial) return;
+  late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
+  late final ScrollController _scrollController;
 
-    final neverLoaded =
-        state.meta.currentPage == null && state.errorMessage == null;
-    final needsResponsiveReload =
-        state.meta.currentPage != null && state.perPage != perPage;
+  Timer? _searchDebounce;
+  bool _searchOpen = false;
+  bool _initialLoadScheduled = false;
+  int _columnCount = 2;
 
-    if (!neverLoaded && !needsResponsiveReload) return;
-    if (_scheduledPerPage == perPage) return;
+  @override
+  void initState() {
+    super.initState();
 
-    _scheduledPerPage = perPage;
+    final initialSearch = ref
+        .read(artworkDiscoveryControllerProvider)
+        .query
+        .search;
+
+    _searchController = TextEditingController(text: initialSearch);
+    _searchFocusNode = FocusNode();
+    _scrollController = ScrollController()..addListener(_handleScroll);
+    _searchOpen = initialSearch.isNotEmpty;
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _scrollController
+      ..removeListener(_handleScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _handleScroll() {
+    if (!_scrollController.hasClients) return;
+
+    if (_scrollController.position.extentAfter < 520) {
+      unawaited(
+        ref.read(artworkDiscoveryControllerProvider.notifier).loadMore(),
+      );
+    }
+  }
+
+  void _scheduleInitialLoad(
+    ArtworkDiscoveryState state,
+    DiscoveryQuery filters,
+  ) {
+    if (state.meta.currentPage != null ||
+        state.isLoadingInitial ||
+        _initialLoadScheduled) {
+      return;
+    }
+
+    _initialLoadScheduled = true;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
 
       await ref
           .read(artworkDiscoveryControllerProvider.notifier)
-          .loadInitial(query: query, perPage: perPage);
+          .loadInitial(
+            query: filters.withSearch(_searchController.text),
+            perPage: _discoveryPerPage,
+          );
 
-      if (mounted && _scheduledPerPage == perPage) {
-        _scheduledPerPage = null;
+      if (mounted) {
+        _initialLoadScheduled = false;
       }
     });
+  }
+
+  void _openSearch() {
+    if (!_searchOpen) {
+      setState(() {
+        _searchOpen = true;
+      });
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _searchFocusNode.requestFocus();
+      }
+    });
+  }
+
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 300),
+      () => _applySearch(value),
+    );
+  }
+
+  Future<void> _applySearch(String value) {
+    final filters = ref.read(discoveryQueryProvider);
+    return ref
+        .read(artworkDiscoveryControllerProvider.notifier)
+        .loadInitial(
+          query: filters.withSearch(value),
+          perPage: _discoveryPerPage,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(artworkDiscoveryControllerProvider);
-    final query = ref.watch(discoveryQueryProvider);
-    final filterCount = query.activeFilterCount;
+    final filters = ref.watch(discoveryQueryProvider);
+    final filterCount = filters.activeFilterCount;
+
+    _scheduleInitialLoad(state, filters);
 
     return Scaffold(
       key: const Key('maker_artwork_discovery_screen'),
@@ -88,15 +163,6 @@ class _MakerArtworkDiscoveryScreenState
             final metrics = DiscoveryLayoutMetrics.fromWidth(
               constraints.maxWidth,
             );
-            final gridHeight = math.max(
-              0.0,
-              constraints.maxHeight -
-                  metrics.toolbarHeight -
-                  metrics.controlsToGridGap,
-            );
-            final perPage = metrics.itemsPerPageFor(gridHeight);
-
-            _ensurePageSize(state: state, query: query, perPage: perPage);
 
             return Column(
               children: [
@@ -107,7 +173,6 @@ class _MakerArtworkDiscoveryScreenState
                       horizontal: metrics.gridHorizontalPadding,
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         _ToolbarSvgButton(
@@ -115,11 +180,54 @@ class _MakerArtworkDiscoveryScreenState
                           iconKey: const Key('discovery_search_svg'),
                           assetName: 'assets/search.svg',
                           fallbackAssetName: 'assets/icons/search.svg',
-                          tooltip: 'Search artwork and Makers',
+                          tooltip: 'Search artwork',
                           size: metrics.toolbarIconSize,
                           alignment: Alignment.bottomLeft,
-                          onPressed: widget.onSearchTap ?? () {},
+                          onPressed: _openSearch,
                         ),
+                        if (_searchOpen) ...[
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: SizedBox(
+                                height: 40,
+                                child: TextField(
+                                  key: const Key('discovery_inline_search'),
+                                  controller: _searchController,
+                                  focusNode: _searchFocusNode,
+                                  onChanged: _onSearchChanged,
+                                  textInputAction: TextInputAction.search,
+                                  style: const TextStyle(
+                                    fontFamily: AppTextStyles.fontFamily,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.primary,
+                                  ),
+                                  cursorColor: AppColors.primary,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                    hintText: 'Search',
+                                    hintStyle: TextStyle(
+                                      fontFamily: AppTextStyles.fontFamily,
+                                      fontSize: 14,
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.50,
+                                      ),
+                                    ),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ] else
+                          const Spacer(),
                         Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -175,11 +283,10 @@ class _MakerArtworkDiscoveryScreenState
                 Expanded(
                   child: _DiscoveryBody(
                     state: state,
+                    scrollController: _scrollController,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
-                    childAspectRatio: metrics.gridChildAspectRatioFor(
-                      gridHeight,
-                    ),
+                    columnCount: _columnCount,
                     onArtworkTap: widget.onArtworkTap,
                   ),
                 ),
@@ -189,12 +296,15 @@ class _MakerArtworkDiscoveryScreenState
         ),
       ),
       bottomNavigationBar: MakerBottomNavigation(
-        selectedPage: state.meta.currentPage ?? 1,
-        totalPages: state.meta.lastPage ?? 1,
+        selectedColumnCount: _columnCount,
         onSavedTap:
             widget.onSavedTap ?? () => widget.onBottomNavigationTap?.call(0),
-        onPageSelected: (page) {
-          ref.read(artworkDiscoveryControllerProvider.notifier).goToPage(page);
+        onColumnCountSelected: (columnCount) {
+          if (_columnCount == columnCount) return;
+
+          setState(() {
+            _columnCount = columnCount;
+          });
         },
         onSettingsTap:
             widget.onSettingsTap ?? () => widget.onBottomNavigationTap?.call(4),
@@ -262,16 +372,18 @@ class _ToolbarSvgButton extends StatelessWidget {
 class _DiscoveryBody extends ConsumerWidget {
   const _DiscoveryBody({
     required this.state,
+    required this.scrollController,
     required this.horizontalPadding,
     required this.gridSpacing,
-    required this.childAspectRatio,
+    required this.columnCount,
     required this.onArtworkTap,
   });
 
   final ArtworkDiscoveryState state;
+  final ScrollController scrollController;
   final double horizontalPadding;
   final double gridSpacing;
-  final double childAspectRatio;
+  final int columnCount;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
 
   @override
@@ -336,14 +448,14 @@ class _DiscoveryBody extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: GridView.builder(
         key: const Key('maker_artwork_discovery_grid'),
-        physics: const NeverScrollableScrollPhysics(),
+        controller: scrollController,
         padding: EdgeInsets.zero,
         itemCount: state.items.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: columnCount,
           mainAxisSpacing: gridSpacing,
           crossAxisSpacing: gridSpacing,
-          childAspectRatio: childAspectRatio,
+          childAspectRatio: 1,
         ),
         itemBuilder: (context, index) {
           final artwork = state.items[index];
