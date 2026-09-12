@@ -42,24 +42,70 @@ void main() {
     expect(find.byKey(const Key('maker_nav_settings')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('numbered bottom navigation loads the requested discovery page', (
+    tester,
+  ) async {
+    final repository = _FakeDiscoveryRepository();
+    final container = ProviderContainer(
+      overrides: [
+        artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump();
+
+    final pageThree = find.byKey(const Key('maker_nav_3')).hitTestable();
+    expect(pageThree, findsOneWidget);
+
+    await tester.tap(pageThree);
+    await tester.pumpAndSettle();
+
+    expect(repository.requestedPages, contains(3));
+    expect(find.byKey(const Key('artwork_tile_3')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }
 
 class _FakeDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
+  final List<int> requestedPages = <int>[];
+
   @override
   Future<DiscoveryArtworkPage> fetchPage({
     required int page,
     int perPage = 24,
     DiscoveryQuery query = const DiscoveryQuery(),
   }) async {
-    return const DiscoveryArtworkPage(
+    requestedPages.add(page);
+
+    return DiscoveryArtworkPage(
       items: <DiscoveryArtwork>[
         DiscoveryArtwork(
-          id: 1,
-          title: 'Sunset',
-          primaryMedia: DiscoveryArtworkMedia(id: 11, kind: 'image', url: ''),
+          id: page,
+          title: 'Artwork page $page',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: page * 10,
+            kind: 'image',
+            url: '',
+          ),
         ),
       ],
-      meta: PaginationMeta(currentPage: 1, lastPage: 1, perPage: 24, total: 1),
+      meta: PaginationMeta(
+        currentPage: page,
+        lastPage: 4,
+        perPage: 24,
+        total: 96,
+      ),
     );
   }
 }
