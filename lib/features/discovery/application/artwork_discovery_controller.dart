@@ -63,18 +63,27 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
       ref.read(artworkDiscoveryRepositoryProvider);
 
   Future<void> loadInitial({DiscoveryQuery? query, int? perPage}) async {
-    if (state.isLoadingInitial) {
+    if (state.isLoadingInitial || state.isLoadingMore) {
       return;
     }
 
     final effectiveQuery = query ?? state.query;
     final effectivePerPage = perPage ?? state.perPage;
+    final previous = state;
+    final hasExistingArtwork = previous.items.isNotEmpty;
 
-    state = ArtworkDiscoveryState(
-      query: effectiveQuery,
-      perPage: effectivePerPage,
-      isLoadingInitial: true,
-    );
+    state = hasExistingArtwork
+        ? previous.copyWith(
+            query: effectiveQuery,
+            perPage: effectivePerPage,
+            isLoadingMore: true,
+            clearError: true,
+          )
+        : ArtworkDiscoveryState(
+            query: effectiveQuery,
+            perPage: effectivePerPage,
+            isLoadingInitial: true,
+          );
 
     try {
       final page = await _repository.fetchPage(
@@ -90,59 +99,29 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
         perPage: effectivePerPage,
       );
     } catch (error) {
-      state = ArtworkDiscoveryState(
-        query: effectiveQuery,
-        perPage: effectivePerPage,
-        errorMessage: _messageFor(error),
-      );
+      state = hasExistingArtwork
+          ? previous.copyWith(
+              isLoadingMore: false,
+              errorMessage: _messageFor(error),
+            )
+          : ArtworkDiscoveryState(
+              query: effectiveQuery,
+              perPage: effectivePerPage,
+              errorMessage: _messageFor(error),
+            );
     }
   }
 
   Future<void> applyQuery(DiscoveryQuery query) {
-    return loadInitial(query: query.withoutSearch(), perPage: state.perPage);
+    final search = state.query.search;
+    return loadInitial(
+      query: query.withSearch(search),
+      perPage: state.perPage,
+    );
   }
 
   Future<void> refresh() {
     return loadInitial(query: state.query, perPage: state.perPage);
-  }
-
-  Future<void> goToPage(int page) async {
-    final lastPage = state.meta.lastPage;
-    final currentPage = state.meta.currentPage;
-
-    if (page < 1 ||
-        (lastPage != null && page > lastPage) ||
-        page == currentPage ||
-        state.isLoadingInitial ||
-        state.isLoadingMore) {
-      return;
-    }
-
-    final query = state.query;
-    final perPage = state.perPage;
-
-    final previous = state;
-    state = previous.copyWith(isLoadingMore: true, clearError: true);
-
-    try {
-      final result = await _repository.fetchPage(
-        page: page,
-        perPage: perPage,
-        query: query,
-      );
-
-      state = ArtworkDiscoveryState(
-        items: result.items,
-        meta: result.meta,
-        query: query,
-        perPage: perPage,
-      );
-    } catch (error) {
-      state = previous.copyWith(
-        isLoadingMore: false,
-        errorMessage: _messageFor(error),
-      );
-    }
   }
 
   Future<void> loadMore() async {
@@ -153,30 +132,32 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
     }
 
     final currentPage = state.meta.currentPage ?? 1;
-    state = state.copyWith(isLoadingMore: true, clearError: true);
+    final previous = state;
+
+    state = previous.copyWith(isLoadingMore: true, clearError: true);
 
     try {
       final nextPage = await _repository.fetchPage(
         page: currentPage + 1,
-        perPage: state.perPage,
-        query: state.query,
+        perPage: previous.perPage,
+        query: previous.query,
       );
 
-      final existingIds = state.items.map((item) => item.id).toSet();
+      final existingIds = previous.items.map((item) => item.id).toSet();
 
       state = ArtworkDiscoveryState(
         items: <DiscoveryArtwork>[
-          ...state.items,
+          ...previous.items,
           ...nextPage.items.where(
             (candidate) => !existingIds.contains(candidate.id),
           ),
         ],
         meta: nextPage.meta,
-        query: state.query,
-        perPage: state.perPage,
+        query: previous.query,
+        perPage: previous.perPage,
       );
     } catch (error) {
-      state = state.copyWith(
+      state = previous.copyWith(
         isLoadingMore: false,
         errorMessage: _messageFor(error),
       );
