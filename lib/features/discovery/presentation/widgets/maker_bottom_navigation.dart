@@ -62,7 +62,6 @@ class MakerBottomNavigation extends StatelessWidget {
                       child: _PageItem(
                         page: page,
                         selected: page == selectedPage,
-                        scale: scale.toDouble(),
                         onTap: () => onPageSelected?.call(page),
                       ),
                     ),
@@ -163,20 +162,15 @@ class _PageItem extends StatelessWidget {
   const _PageItem({
     required this.page,
     required this.selected,
-    required this.scale,
     required this.onTap,
   });
 
   final int page;
   final bool selected;
-  final double scale;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final normalSize = (20 * scale).clamp(18.0, 21.0).toDouble();
-    final selectedSize = (25 * scale).clamp(22.0, 26.0).toDouble();
-
     return Semantics(
       button: true,
       selected: selected,
@@ -188,13 +182,14 @@ class _PageItem extends StatelessWidget {
         child: Center(
           child: Text(
             '$page',
+            key: Key('maker_nav_page_text_$page'),
             style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: selected ? selectedSize : normalSize,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              fontFamily: AppTextStyles.instrumentSansFamily,
+              fontSize: selected ? 16 : 14,
+              fontWeight: FontWeight.w400,
               color: selected
                   ? AppColors.primary
-                  : AppColors.primary.withValues(alpha: 0.70),
+                  : AppColors.primary.withValues(alpha: 0.50),
             ),
           ),
         ),
