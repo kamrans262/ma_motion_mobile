@@ -163,7 +163,6 @@ GoRouter createAppRouter({
   );
 }
 
-
 class _MakerRegistrationRoute extends ConsumerWidget {
   const _MakerRegistrationRoute();
 
@@ -174,7 +173,9 @@ class _MakerRegistrationRoute extends ConsumerWidget {
       onCompleted: () => context.go('/maker/discovery'),
       ensureAuthenticated: () async {
         try {
-          final session = await ref.read(authRepositoryProvider).restoreSession();
+          final session = await ref
+              .read(authRepositoryProvider)
+              .restoreSession();
 
           if (session != null && session.user.isMaker) {
             return true;
