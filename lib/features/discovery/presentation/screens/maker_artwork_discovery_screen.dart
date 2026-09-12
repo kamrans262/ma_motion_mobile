@@ -245,7 +245,6 @@ class _MakerArtworkDiscoveryScreenState
                                 ),
                               ),
                             ),
-                          ),
                           const Spacer(),
                         ] else
                           const Spacer(),
