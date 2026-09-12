@@ -83,7 +83,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                 final footerHorizontal = (width * 0.1145).clamp(20.0, 50.0);
                 final dotsBottomGap = math.max(
                   media.padding.bottom + 12,
-                  height * 0.0557,
+                  50.0 - media.padding.bottom,
                 );
 
                 // Reference footer geometry at 390x844:
@@ -135,7 +135,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                       Positioned(
                         left: footerHorizontal,
                         right: footerHorizontal,
-                        bottom: dotsBottomGap,
+                        bottom: 0,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -158,7 +158,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                             ),
                             SizedBox(
                               key: const Key('maker_dots_bottom_gap'),
-                              height: 0,
+                              height: dotsBottomGap,
                             ),
                           ],
                         ),
