@@ -152,10 +152,7 @@ void main() {
     final searchField = tester.widget<TextField>(
       find.byKey(const Key('discovery_inline_search')),
     );
-    expect(
-      searchField.decoration?.enabledBorder,
-      isA<UnderlineInputBorder>(),
-    );
+    expect(searchField.decoration?.enabledBorder, isA<UnderlineInputBorder>());
 
     final searchIconCenter = tester.getCenter(
       find.byKey(const Key('discovery_search_svg')),
