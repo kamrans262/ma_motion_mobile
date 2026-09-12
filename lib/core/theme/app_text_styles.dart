@@ -4,8 +4,6 @@ import 'app_colors.dart';
 
 abstract final class AppTextStyles {
   static const String fontFamily = 'Arial';
-  static const String instrumentSansFamily = 'Instrument Sans';
-  static const String frauncesFamily = 'Fraunces';
 
   static const TextStyle onboardingHeading = TextStyle(
     fontFamily: fontFamily,
