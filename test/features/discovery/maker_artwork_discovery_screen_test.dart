@@ -53,9 +53,7 @@ void main() {
       );
       expect(
         tester
-            .getSize(
-              find.byKey(const Key('maker_bottom_navigation_surface')),
-            )
+            .getSize(find.byKey(const Key('maker_bottom_navigation_surface')))
             .height,
         65,
       );
@@ -135,9 +133,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(
-        find.byKey(const Key('maker_nav_saved')).hitTestable(),
-      );
+      await tester.tap(find.byKey(const Key('maker_nav_saved')).hitTestable());
       await tester.tap(
         find.byKey(const Key('maker_nav_settings')).hitTestable(),
       );

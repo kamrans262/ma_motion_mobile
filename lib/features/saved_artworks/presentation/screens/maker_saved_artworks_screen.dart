@@ -205,9 +205,7 @@ class _SavedBody extends ConsumerWidget {
               OutlinedButton(
                 key: const Key('saved_artworks_retry_button'),
                 onPressed: () {
-                  ref
-                      .read(savedArtworksControllerProvider.notifier)
-                      .refresh();
+                  ref.read(savedArtworksControllerProvider.notifier).refresh();
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
@@ -265,9 +263,7 @@ class _SavedBody extends ConsumerWidget {
                   color: AppColors.splashBackground.withValues(alpha: 0.86),
                   shape: const CircleBorder(),
                   child: InkResponse(
-                    key: Key(
-                      'saved_artwork_remove_' + artwork.id.toString(),
-                    ),
+                    key: Key('saved_artwork_remove_' + artwork.id.toString()),
                     onTap: () => onRemove(artwork.id),
                     radius: 22,
                     child: Padding(

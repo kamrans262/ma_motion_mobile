@@ -181,8 +181,7 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
       maker: const ArtworkDetailMaker(
         id: 7,
         name: 'Mara Vellan',
-        bio:
-            'A contemporary artist exploring the intersection of form and color.',
+        bio: 'A contemporary artist exploring the intersection of form and color.',
         location: 'Chicago, IL',
         profileImageUrl: null,
         websiteUrl: 'https://artist.example',

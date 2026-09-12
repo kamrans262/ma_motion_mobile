@@ -42,9 +42,7 @@ void main() {
       );
       expect(
         tester
-            .getSize(
-              find.byKey(const Key('maker_bottom_navigation_surface')),
-            )
+            .getSize(find.byKey(const Key('maker_bottom_navigation_surface')))
             .height,
         65,
       );
