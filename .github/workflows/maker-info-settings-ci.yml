@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - ci/maker-info-settings
+      - feature/maker-onboarding-ui-polish
   workflow_dispatch:
 
 permissions:
