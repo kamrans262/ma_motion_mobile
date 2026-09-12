@@ -28,7 +28,7 @@ class MaOnboardingScaffold extends StatelessWidget {
     required this.onBack,
     this.validationMessage,
     this.isBusy = false,
-    this.contentTopFraction = 0.256,
+    this.contentTopWidthFactor = 0.555,
     this.childGap = 18,
   });
 
@@ -42,11 +42,12 @@ class MaOnboardingScaffold extends StatelessWidget {
   final String? validationMessage;
   final bool isBusy;
 
-  /// Fraction of the full viewport where the title begins.
+  /// Horizontal-reference scale for the title's vertical position.
   ///
-  /// The dense Type / Style reference starts slightly higher than the other
-  /// registration screens, so that screen overrides this value.
-  final double contentTopFraction;
+  /// The supplied registration frames use different exported heights, while
+  /// their content begins at almost the same Y-to-width ratio (~0.555). Using
+  /// width here preserves that composition across phone aspect ratios.
+  final double contentTopWidthFactor;
 
   /// Vertical gap between helper copy and the screen-specific control.
   final double childGap;
@@ -77,10 +78,12 @@ class MaOnboardingScaffold extends StatelessWidget {
 
                 final contentTop = math.max(
                   media.padding.top + 24,
-                  height * contentTopFraction,
+                  width * contentTopWidthFactor,
                 );
 
-                final footerHorizontal = (width * 0.1145).clamp(20.0, 50.0);
+                final footerHorizontal = (width * 0.1145)
+                    .clamp(20.0, 50.0)
+                    .toDouble();
                 final dotsBottomGap = math.max(
                   media.padding.bottom + 12,
                   50.0 - media.padding.bottom,
