@@ -8,18 +8,26 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/network/api_gateway.dart';
 import '../../../core/network/api_paths.dart';
 import '../../../core/providers/core_providers.dart';
+import '../../../core/storage/auth_token_store.dart';
 import '../domain/maker_onboarding_options.dart';
 import '../domain/maker_registration_draft.dart';
 import '../domain/maker_taxonomy_option.dart';
 
 final makerOnboardingRepositoryProvider = Provider<MakerOnboardingRepository>(
-  (ref) => MakerOnboardingRepository(api: ref.watch(apiGatewayProvider)),
+  (ref) => MakerOnboardingRepository(
+    api: ref.watch(apiGatewayProvider),
+    tokenStore: ref.watch(authTokenStoreProvider),
+  ),
 );
 
 class MakerOnboardingRepository {
-  const MakerOnboardingRepository({required this.api});
+  const MakerOnboardingRepository({
+    required this.api,
+    required this.tokenStore,
+  });
 
   final ApiGateway api;
+  final AuthTokenStore tokenStore;
 
   static const Map<String, String> _typeAliases = <String, String>{
     'graphic designer': 'graphic design',
@@ -68,6 +76,8 @@ class MakerOnboardingRepository {
   }
 
   Future<void> completeMakerProfile(MakerRegistrationDraft draft) async {
+    await _ensureMakerSession(draft);
+
     final options = await loadOptions();
     final locationId = await resolveLocationId(draft.location);
 
@@ -114,14 +124,46 @@ class MakerOnboardingRepository {
     } on ApiException catch (error) {
       if (error.isUnauthenticated) {
         throw const ApiException(
-          message: 'Please sign in before saving your Maker profile.',
+          message:
+              'Your Maker session expired before the profile could be saved. '
+              'Please try again.',
           statusCode: 401,
-          code: 'maker_onboarding_auth_required',
+          code: 'maker_onboarding_session_expired',
         );
       }
 
       rethrow;
     }
+  }
+
+  Future<void> _ensureMakerSession(MakerRegistrationDraft draft) async {
+    final existingToken = await tokenStore.read();
+
+    if (existingToken != null && existingToken.trim().isNotEmpty) {
+      return;
+    }
+
+    final response = await api.post(
+      ApiPaths.makerOnboarding,
+      requiresAuth: false,
+      data: <String, dynamic>{
+        'name': draft.name.trim(),
+        'email': draft.email.trim(),
+        'device_name': 'MA Motion Mobile',
+      },
+    );
+
+    final data = ApiEnvelope(raw: response).dataMap;
+    final token = data['token']?.toString().trim() ?? '';
+
+    if (token.isEmpty) {
+      throw const ApiException(
+        message: 'The server did not return a Maker session token.',
+        code: 'maker_onboarding_token_missing',
+      );
+    }
+
+    await tokenStore.write(token);
   }
 
   Future<void> _uploadProfileImage(
