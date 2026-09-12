@@ -1,0 +1,45 @@
+name: One-time Maker Viewer Formatter
+
+on:
+  push:
+    branches:
+      - ci/maker-viewer-format-v2
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter 3.47.4
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Format Dart files
+        run: dart format lib test
+
+      - name: Commit formatter output when needed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- lib test pubspec.lock; then
+            echo "No formatter/dependency changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test pubspec.lock
+          git commit -m "style: format Maker viewer stabilization"
+          git push origin HEAD:ci/maker-viewer-format-v2
