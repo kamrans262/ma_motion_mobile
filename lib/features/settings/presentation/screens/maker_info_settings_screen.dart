@@ -796,13 +796,13 @@ class _CompactVisibilityToggle extends StatelessWidget {
         onTap: enabled ? () => onChanged!(!value) : null,
         borderRadius: BorderRadius.circular(14),
         child: SizedBox(
-          width: 62,
-          height: 26,
+          width: 78,
+          height: 28,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
-                width: 24,
+                width: 26,
                 child: Text(
                   value ? 'ON' : 'OFF',
                   textAlign: TextAlign.right,
@@ -814,28 +814,20 @@ class _CompactVisibilityToggle extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                width: 30,
-                height: 16,
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: value ? AppColors.white : AppColors.black,
-                  border: Border.all(color: AppColors.white, width: 1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: AnimatedAlign(
-                  duration: const Duration(milliseconds: 150),
-                  alignment: value
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: value ? AppColors.black : AppColors.white,
-                      shape: BoxShape.circle,
+              const SizedBox(width: 2),
+              SizedBox(
+                width: 50,
+                height: 28,
+                child: IgnorePointer(
+                  child: Transform.scale(
+                    scale: 0.72,
+                    alignment: Alignment.centerRight,
+                    child: Switch(
+                      value: value,
+                      onChanged: enabled ? (_) {} : null,
+                      activeThumbColor: AppColors.black,
+                      activeTrackColor: AppColors.white,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
                 ),
