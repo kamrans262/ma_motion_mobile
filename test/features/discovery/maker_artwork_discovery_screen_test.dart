@@ -40,6 +40,8 @@ void main() {
     expect(find.byKey(const Key('artwork_tile_1')), findsOneWidget);
     expect(find.byKey(const Key('active_filter_badge')), findsOneWidget);
     expect(find.byKey(const Key('maker_nav_settings')), findsOneWidget);
+    expect(find.byKey(const Key('maker_nav_saved')), findsNothing);
+    expect(find.byIcon(Icons.favorite_border_rounded), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
