@@ -138,12 +138,8 @@ void main() {
       find.byKey(const Key('maker_step_heading')),
     );
     final fieldRect = tester.getRect(find.byKey(const Key('maker_name_field')));
-    final nextSize = tester.getSize(
-      find.byKey(const Key('maker_next_button')),
-    );
-    final backSize = tester.getSize(
-      find.byKey(const Key('maker_back_button')),
-    );
+    final nextSize = tester.getSize(find.byKey(const Key('maker_next_button')));
+    final backSize = tester.getSize(find.byKey(const Key('maker_back_button')));
 
     expect(headingTop.dx, closeTo(20, 0.1));
     expect(headingTop.dy, closeTo(216.45, 1.0));

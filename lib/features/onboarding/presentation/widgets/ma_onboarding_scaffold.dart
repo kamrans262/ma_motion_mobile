@@ -117,10 +117,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                             style: AppTextStyles.onboardingHeading,
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            subtitle,
-                            style: AppTextStyles.onboardingHelper,
-                          ),
+                          Text(subtitle, style: AppTextStyles.onboardingHelper),
                           SizedBox(height: childGap),
                           child,
                           if (validationMessage != null) ...[
