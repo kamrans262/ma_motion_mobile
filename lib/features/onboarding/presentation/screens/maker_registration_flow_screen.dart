@@ -425,7 +425,7 @@ class _TypeStyleStep extends ConsumerWidget {
       onNext: onNext,
       onBack: onBack,
       validationMessage: validationMessage,
-      childGap: 18,
+      childGap: 20,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -435,11 +435,11 @@ class _TypeStyleStep extends ConsumerWidget {
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Wrap(
             key: const Key('maker_type_options'),
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 10,
+            runSpacing: 10,
             children: [
               for (final type in MakerRegistrationOptions.types)
                 MaChoiceChip(
@@ -457,11 +457,11 @@ class _TypeStyleStep extends ConsumerWidget {
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Wrap(
             key: const Key('maker_style_options'),
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 10,
+            runSpacing: 10,
             children: [
               for (final style in MakerRegistrationOptions.styles)
                 MaChoiceChip(
