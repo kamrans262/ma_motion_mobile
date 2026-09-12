@@ -195,7 +195,6 @@ class _FakeApiGateway implements ApiGateway {
   }
 }
 
-
 class _MemoryTokenStore implements AuthTokenStore {
   String? value;
 

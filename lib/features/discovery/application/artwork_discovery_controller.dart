@@ -94,16 +94,12 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
     return loadInitial(query: state.query);
   }
 
-
   Future<void> goToPage(int page) async {
     if (page < 1 || state.isLoadingInitial || state.isLoadingMore) {
       return;
     }
 
-    state = ArtworkDiscoveryState(
-      query: state.query,
-      isLoadingInitial: true,
-    );
+    state = ArtworkDiscoveryState(query: state.query, isLoadingInitial: true);
 
     try {
       final result = await _repository.fetchPage(

@@ -74,7 +74,6 @@ void main() {
     expect(find.byKey(const Key('artwork_tile_3')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
-
 }
 
 class _FakeDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
