@@ -6,21 +6,19 @@ import '../../../../core/widgets/ma_svg_asset.dart';
 class MakerBottomNavigation extends StatelessWidget {
   const MakerBottomNavigation({
     super.key,
-    this.selectedPage = 1,
-    this.totalPages = 1,
+    this.selectedColumnCount = 2,
     this.heartSelected = false,
     this.settingsSelected = false,
     this.onSavedTap,
-    this.onPageSelected,
+    this.onColumnCountSelected,
     this.onSettingsTap,
   });
 
-  final int selectedPage;
-  final int totalPages;
+  final int selectedColumnCount;
   final bool heartSelected;
   final bool settingsSelected;
   final VoidCallback? onSavedTap;
-  final ValueChanged<int>? onPageSelected;
+  final ValueChanged<int>? onColumnCountSelected;
   final VoidCallback? onSettingsTap;
 
   @override
@@ -30,10 +28,6 @@ class MakerBottomNavigation extends StatelessWidget {
         final scale = (constraints.maxWidth / 430).clamp(0.86, 1.10);
         final barHeight = (65 * scale).clamp(58.0, 72.0).toDouble();
         final iconSize = (16 * scale).clamp(16.0, 18.0).toDouble();
-        final visiblePages = _visiblePages(
-          totalPages: totalPages,
-          selectedPage: selectedPage,
-        );
 
         return Material(
           color: const Color(0xFF0C2116),
@@ -56,12 +50,13 @@ class MakerBottomNavigation extends StatelessWidget {
                       onTap: onSavedTap,
                     ),
                   ),
-                  for (final page in visiblePages)
+                  for (var columnCount = 1; columnCount <= 4; columnCount++)
                     Expanded(
-                      child: _PageItem(
-                        page: page,
-                        selected: page == selectedPage,
-                        onTap: () => onPageSelected?.call(page),
+                      child: _ColumnCountItem(
+                        columnCount: columnCount,
+                        selected: columnCount == selectedColumnCount,
+                        onTap: () =>
+                            onColumnCountSelected?.call(columnCount),
                       ),
                     ),
                   Expanded(
@@ -83,24 +78,6 @@ class MakerBottomNavigation extends StatelessWidget {
         );
       },
     );
-  }
-
-  static List<int> _visiblePages({
-    required int totalPages,
-    required int selectedPage,
-  }) {
-    final safeTotal = totalPages < 1 ? 1 : totalPages;
-    final safeSelected = selectedPage.clamp(1, safeTotal);
-
-    if (safeTotal <= 4) {
-      return List<int>.generate(safeTotal, (index) => index + 1);
-    }
-
-    var start = safeSelected - 1;
-    if (start < 1) start = 1;
-    if (start > safeTotal - 3) start = safeTotal - 3;
-
-    return List<int>.generate(4, (index) => start + index);
   }
 }
 
@@ -157,14 +134,14 @@ class _SvgNavigationItem extends StatelessWidget {
   }
 }
 
-class _PageItem extends StatelessWidget {
-  const _PageItem({
-    required this.page,
+class _ColumnCountItem extends StatelessWidget {
+  const _ColumnCountItem({
+    required this.columnCount,
     required this.selected,
     required this.onTap,
   });
 
-  final int page;
+  final int columnCount;
   final bool selected;
   final VoidCallback onTap;
 
@@ -173,15 +150,15 @@ class _PageItem extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label: 'Artwork page $page',
+      label: '$columnCount artwork columns',
       child: InkResponse(
-        key: Key('maker_nav_$page'),
+        key: Key('maker_nav_$columnCount'),
         onTap: onTap,
         radius: 28,
         child: Center(
           child: Text(
-            '$page',
-            key: Key('maker_nav_page_text_$page'),
+            '$columnCount',
+            key: Key('maker_nav_column_text_$columnCount'),
             style: TextStyle(
               fontFamily: 'Instrument Sans',
               fontSize: selected ? 16 : 14,
