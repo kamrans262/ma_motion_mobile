@@ -1,33 +1,33 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
 void main() {
   Widget app({
     bool autoPlay = false,
-    VoidCallback? onFinished,
+    ValueChanged<MakerEntryDestination>? onResolved,
+    Future<MakerEntryDestination> Function()? entryResolver,
     Duration duration = const Duration(milliseconds: 1000),
   }) {
-    return MaterialApp(
-      home: MaSplashSequenceScreen(
-        autoPlay: autoPlay,
-        onFinished: onFinished,
-        duration: duration,
+    return ProviderScope(
+      child: MaterialApp(
+        home: MaSplashSequenceScreen(
+          autoPlay: autoPlay,
+          onResolved: onResolved,
+          entryResolver:
+              entryResolver ??
+              () async => MakerEntryDestination.join,
+          duration: duration,
+        ),
       ),
     );
   }
 
-  Opacity opacityForLine(WidgetTester tester, Key lineKey) {
-    final finder = find.descendant(
-      of: find.byKey(lineKey),
-      matching: find.byType(Opacity),
-    );
-
-    expect(finder, findsOneWidget);
-    return tester.widget<Opacity>(finder);
-  }
-
-  testWidgets('MA splash starts with logo and hidden welcome copy', (
+  testWidgets('splash starts purple with logo and welcome hidden', (
     tester,
   ) async {
     await tester.pumpWidget(app());
@@ -35,53 +35,110 @@ void main() {
     expect(find.byKey(const Key('ma_animated_splash')), findsOneWidget);
     expect(find.byKey(const Key('ma_splash_logo')), findsOneWidget);
 
-    expect(opacityForLine(tester, const Key('ma_splash_line_1')).opacity, 0);
-    expect(opacityForLine(tester, const Key('ma_splash_line_2')).opacity, 0);
-    expect(opacityForLine(tester, const Key('ma_splash_line_3')).opacity, 0);
+    final logoOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_logo_opacity')),
+    );
+    final welcomeOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_welcome_opacity')),
+    );
+    final background = tester.widget<ColoredBox>(
+      find.byKey(const Key('ma_splash_background')),
+    );
 
+    expect(logoOpacity.opacity, 0);
+    expect(welcomeOpacity.opacity, 0);
+    expect(background.color, const Color(0xFF904AFF));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('welcome copy animates after logo', (tester) async {
+  testWidgets('logo appears before welcome copy', (tester) async {
     await tester.pumpWidget(
-      app(autoPlay: true, duration: const Duration(milliseconds: 1000)),
+      app(
+        autoPlay: true,
+        duration: const Duration(milliseconds: 1000),
+      ),
     );
 
-    await tester.pump(const Duration(milliseconds: 650));
+    await tester.pump(const Duration(milliseconds: 420));
 
-    expect(
-      opacityForLine(tester, const Key('ma_splash_line_1')).opacity,
-      greaterThan(0),
+    final logoOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_logo_opacity')),
     );
-    expect(
-      opacityForLine(tester, const Key('ma_splash_line_2')).opacity,
-      greaterThan(0),
+    final welcomeOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_welcome_opacity')),
     );
 
+    expect(logoOpacity.opacity, greaterThan(0));
+    expect(welcomeOpacity.opacity, 0);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
 
-  testWidgets('completion callback fires once', (tester) async {
-    var completed = 0;
+  testWidgets('auth resolved early waits for animation then navigates once', (
+    tester,
+  ) async {
+    final destinations = <MakerEntryDestination>[];
 
     await tester.pumpWidget(
       app(
         autoPlay: true,
         duration: const Duration(milliseconds: 300),
-        onFinished: () => completed++,
+        entryResolver: () async => MakerEntryDestination.discovery,
+        onResolved: destinations.add,
       ),
     );
 
-    await tester.pump(const Duration(milliseconds: 301));
-
-    expect(completed, 1);
-    expect(tester.takeException(), isNull);
-
-    await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
+    expect(destinations, isEmpty);
+
+    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pump();
+
+    expect(destinations, <MakerEntryDestination>[
+      MakerEntryDestination.discovery,
+    ]);
+
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(destinations.length, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('animation completed early holds final frame until auth resolves', (
+    tester,
+  ) async {
+    final completer = Completer<MakerEntryDestination>();
+    final destinations = <MakerEntryDestination>[];
+
+    await tester.pumpWidget(
+      app(
+        autoPlay: true,
+        duration: const Duration(milliseconds: 200),
+        entryResolver: () => completer.future,
+        onResolved: destinations.add,
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 201));
+    await tester.pump();
+
+    expect(destinations, isEmpty);
+    expect(
+      tester.widget<Opacity>(
+        find.byKey(const Key('ma_splash_welcome_opacity')),
+      ).opacity,
+      1,
+    );
+
+    completer.complete(MakerEntryDestination.join);
+    await tester.pump();
+    await tester.pump();
+
+    expect(destinations, <MakerEntryDestination>[
+      MakerEntryDestination.join,
+    ]);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('splash is safe at compact phone size', (tester) async {
@@ -93,7 +150,12 @@ void main() {
 
     await tester.pumpWidget(app());
 
-    expect(find.byKey(const Key('ma_animated_splash')), findsOneWidget);
+    final image = tester.widget<Image>(
+      find.byKey(const Key('ma_splash_logo')),
+    );
+
+    expect(image.fit, BoxFit.contain);
+    expect(find.byKey(const Key('ma_splash_dot_pattern')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
