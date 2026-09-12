@@ -52,6 +52,16 @@ jobs:
       - name: Flutter analyzer
         run: flutter analyze
 
+      - name: Install Android API 37
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdkmanager "platforms;android-37"
+
+      - name: Android dependency metadata gate
+        working-directory: android
+        run: ./gradlew app:checkDebugAarMetadata --no-daemon
+
       - name: Maker Settings repository tests
         run: flutter test test/features/settings/maker_info_settings_repository_test.dart
 
