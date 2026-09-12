@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
+import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
 import 'package:ma_motion_mobile/features/onboarding/data/maker_onboarding_repository.dart';
 import 'package:ma_motion_mobile/features/onboarding/domain/maker_registration_draft.dart';
 
@@ -12,7 +13,11 @@ void main() {
     'completeMakerProfile maps Figma labels to backend IDs and uploads image',
     () async {
       final api = _FakeApiGateway();
-      final repository = MakerOnboardingRepository(api: api);
+      final tokenStore = _MemoryTokenStore();
+      final repository = MakerOnboardingRepository(
+        api: api,
+        tokenStore: tokenStore,
+      );
 
       await repository.completeMakerProfile(
         MakerRegistrationDraft(
@@ -29,6 +34,7 @@ void main() {
       );
 
       expect(api.calls, <String>[
+        'POST ${ApiPaths.makerOnboarding}',
         'GET ${ApiPaths.discoveryFilters}',
         'GET ${ApiPaths.discoveryLocations}',
         'PATCH ${ApiPaths.makerProfile}',
@@ -52,7 +58,11 @@ void main() {
 
   test('missing backend taxonomy fails before profile mutation', () async {
     final api = _FakeApiGateway(includeGraphicDesign: false);
-    final repository = MakerOnboardingRepository(api: api);
+    final tokenStore = _MemoryTokenStore();
+    final repository = MakerOnboardingRepository(
+      api: api,
+      tokenStore: tokenStore,
+    );
 
     await expectLater(
       repository.completeMakerProfile(
@@ -153,6 +163,14 @@ class _FakeApiGateway implements ApiGateway {
   }) async {
     calls.add('POST $path');
     lastPostData = data;
+
+    if (path == ApiPaths.makerOnboarding) {
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{'token': 'maker-onboarding-token'},
+      };
+    }
+
     return <String, dynamic>{'success': true, 'data': <String, dynamic>{}};
   }
 
@@ -175,4 +193,18 @@ class _FakeApiGateway implements ApiGateway {
   }) {
     throw UnimplementedError();
   }
+}
+
+
+class _MemoryTokenStore implements AuthTokenStore {
+  String? value;
+
+  @override
+  Future<void> clear() async => value = null;
+
+  @override
+  Future<String?> read() async => value;
+
+  @override
+  Future<void> write(String token) async => value = token;
 }
