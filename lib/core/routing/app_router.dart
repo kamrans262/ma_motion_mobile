@@ -78,7 +78,7 @@ GoRouter createAppRouter({
             context.push('/maker/discovery/artwork/${artwork.id}');
           },
           onBottomNavigationTap: (index) {
-            if (index == 5) {
+            if (index == 4) {
               context.push('/maker/settings');
             }
           },
