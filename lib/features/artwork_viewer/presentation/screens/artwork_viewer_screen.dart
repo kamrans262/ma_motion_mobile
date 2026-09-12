@@ -78,9 +78,12 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
 
   Future<void> _shareArtwork(ArtworkDetail artwork) async {
     final makerName = artwork.maker?.name.trim() ?? '';
-    final text = makerName.isEmpty
-        ? artwork.title
-        : '${artwork.title} — $makerName';
+    final website = artwork.maker?.websiteUrl?.trim() ?? '';
+    final text = <String>[
+      artwork.title,
+      if (makerName.isNotEmpty) makerName,
+      if (website.isNotEmpty) website,
+    ].join('\n');
 
     await SharePlus.instance.share(
       ShareParams(
