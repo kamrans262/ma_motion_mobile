@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
+import '../../features/discovery/domain/discovery_artwork.dart';
 import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
@@ -65,7 +66,14 @@ GoRouter createAppRouter({
           onSavedTap: () => context.push('/maker/saved-artworks'),
           onSettingsTap: () => context.push('/maker/settings'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/${artwork.id}');
+            final url = artwork.primaryMedia?.url.trim() ?? '';
+            if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
+              precacheImage(NetworkImage(url), context);
+            }
+            context.push(
+              '/maker/discovery/artwork/${artwork.id}',
+              extra: artwork,
+            );
           },
         ),
       ),
@@ -75,7 +83,14 @@ GoRouter createAppRouter({
           onBack: () => context.pop(),
           onSettingsTap: () => context.push('/maker/settings'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/${artwork.id}');
+            final url = artwork.primaryMedia?.url.trim() ?? '';
+            if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
+              precacheImage(NetworkImage(url), context);
+            }
+            context.push(
+              '/maker/discovery/artwork/${artwork.id}',
+              extra: artwork,
+            );
           },
         ),
       ),
@@ -106,6 +121,9 @@ GoRouter createAppRouter({
 
           return ArtworkViewerScreen(
             artworkId: artworkId,
+            initialArtwork: state.extra is DiscoveryArtwork
+                ? state.extra! as DiscoveryArtwork
+                : null,
             onClose: () => context.pop(),
           );
         },
