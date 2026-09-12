@@ -428,17 +428,30 @@ class _MakerInfoSettingsScreenState
               minLines: 3,
               maxLines: 6,
             ),
-            Text(
-              'Your Profile Has Been Saved By ${data.savedCount} People',
+            Text.rich(
               key: const Key('maker_settings_saved_count'),
-              style: AppTextStyles.onboardingHelper.copyWith(
-                color: AppColors.primary,
-                fontSize: 13,
+              TextSpan(
+                style: AppTextStyles.onboardingHelper.copyWith(
+                  color: AppColors.primary,
+                  fontSize: 13,
+                ),
+                children: [
+                  const TextSpan(text: 'Your Profile Has Been Saved By '),
+                  TextSpan(
+                    text: '${data.savedCount}',
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const TextSpan(text: ' People'),
+                ],
               ),
             ),
             const SizedBox(height: 14),
             Text(
               'Keyword',
+              key: const Key('maker_settings_keyword_label'),
               style: AppTextStyles.onboardingHelper.copyWith(
                 color: AppColors.primary,
               ),
@@ -493,18 +506,10 @@ class _MakerInfoSettingsScreenState
                 });
               },
             ),
-            SwitchListTile(
+            _VisibilityOnlyRow(
               key: const Key('maker_settings_show_shows'),
-              contentPadding: EdgeInsets.zero,
-              dense: true,
-              title: Text(
-                'Current & Upcoming Shows',
-                style: AppTextStyles.onboardingHelper.copyWith(
-                  color: AppColors.primary,
-                ),
-              ),
+              label: 'Current & Upcoming Shows',
               value: _showShows,
-              activeThumbColor: AppColors.primary,
               onChanged: _saving
                   ? null
                   : (value) {
@@ -690,27 +695,22 @@ class _VisibilityField extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Flexible(
-                child: Text(
-                  'Show on info page',
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.onboardingHelper.copyWith(
-                    color: AppColors.primary,
-                    fontSize: 12,
-                  ),
+              Text(
+                'Show on info page',
+                style: AppTextStyles.onboardingHelper.copyWith(
+                  color: AppColors.primary,
+                  fontSize: 12,
                 ),
               ),
-              Transform.scale(
-                scale: 0.72,
-                child: Switch(
-                  key: Key('${keyName}_visibility'),
-                  value: value,
-                  activeThumbColor: AppColors.primary,
-                  onChanged: onChanged,
-                ),
+              const SizedBox(width: 10),
+              _CompactVisibilityToggle(
+                key: Key('${keyName}_visibility'),
+                value: value,
+                onChanged: onChanged,
               ),
             ],
           ),
+          const SizedBox(height: 6),
           _LabeledField(
             label: '',
             keyName: keyName,
@@ -719,6 +719,118 @@ class _VisibilityField extends StatelessWidget {
             keyboardType: keyboardType,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _VisibilityOnlyRow extends StatelessWidget {
+  const _VisibilityOnlyRow({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: AppTextStyles.onboardingHelper.copyWith(
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          _CompactVisibilityToggle(
+            value: value,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompactVisibilityToggle extends StatelessWidget {
+  const _CompactVisibilityToggle({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onChanged != null;
+
+    return Semantics(
+      button: true,
+      toggled: value,
+      child: InkWell(
+        onTap: enabled ? () => onChanged!(!value) : null,
+        borderRadius: BorderRadius.circular(14),
+        child: SizedBox(
+          width: 62,
+          height: 26,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                width: 24,
+                child: Text(
+                  value ? 'ON' : 'OFF',
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 30,
+                height: 16,
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: value ? AppColors.white : AppColors.black,
+                  border: Border.all(
+                    color: AppColors.white,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: AnimatedAlign(
+                  duration: const Duration(milliseconds: 150),
+                  alignment:
+                      value ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: value ? AppColors.black : AppColors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
