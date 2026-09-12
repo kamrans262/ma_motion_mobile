@@ -128,6 +128,10 @@ void main() {
     expect(find.byKey(const Key('filter_close_button')), findsOneWidget);
     expect(find.byKey(const Key('filter_clear_button')), findsOneWidget);
     expect(find.text('Filter'), findsOneWidget);
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('discovery_filter_screen')),
+    );
+    expect(scaffold.backgroundColor, const Color(0xFF020101));
     expect(tester.takeException(), isNull);
 
     final filterScrollable = _verticalFilterScrollable();
