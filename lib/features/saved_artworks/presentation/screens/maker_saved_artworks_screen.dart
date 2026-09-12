@@ -263,7 +263,7 @@ class _SavedBody extends ConsumerWidget {
                   color: AppColors.splashBackground.withValues(alpha: 0.86),
                   shape: const CircleBorder(),
                   child: InkResponse(
-                    key: Key('saved_artwork_remove_' + artwork.id.toString()),
+                    key: Key('saved_artwork_remove_${artwork.id}'),
                     onTap: () => onRemove(artwork.id),
                     radius: 22,
                     child: Padding(

@@ -355,7 +355,7 @@ class _MediaSurface extends StatelessWidget {
       children: [
         Image.network(
           url,
-          key: Key('artwork_viewer_media_' + media!.id.toString()),
+          key: Key('artwork_viewer_media_${media!.id}'),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return const ColoredBox(

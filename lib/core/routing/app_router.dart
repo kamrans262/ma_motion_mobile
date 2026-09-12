@@ -78,7 +78,7 @@ GoRouter createAppRouter({
           onSavedTap: () => context.push('/maker/saved-artworks'),
           onSettingsTap: () => context.push('/maker/settings'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/' + artwork.id.toString());
+            context.push('/maker/discovery/artwork/${artwork.id}');
           },
         ),
       ),
@@ -88,7 +88,7 @@ GoRouter createAppRouter({
           onBack: () => context.pop(),
           onSettingsTap: () => context.push('/maker/settings'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/' + artwork.id.toString());
+            context.push('/maker/discovery/artwork/${artwork.id}');
           },
         ),
       ),
@@ -98,7 +98,7 @@ GoRouter createAppRouter({
           onBack: () => context.pop(),
           onFilterTap: () => context.push('/maker/discovery/filter'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/' + artwork.id.toString());
+            context.push('/maker/discovery/artwork/${artwork.id}');
           },
         ),
       ),
