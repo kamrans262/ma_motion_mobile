@@ -67,6 +67,34 @@ class ArtworkDetail {
 
   int get viewerPageCount => (media.isEmpty ? 1 : media.length) + 1;
 
+  factory ArtworkDetail.fromDiscovery(DiscoveryArtwork artwork) {
+    final preview = artwork.maker;
+
+    return ArtworkDetail(
+      id: artwork.id,
+      title: artwork.title,
+      description: artwork.description,
+      media: artwork.primaryMedia == null
+          ? const <DiscoveryArtworkMedia>[]
+          : <DiscoveryArtworkMedia>[artwork.primaryMedia!],
+      primaryMedia: artwork.primaryMedia,
+      type: artwork.type,
+      style: artwork.style,
+      location: artwork.location,
+      locationText: artwork.locationText,
+      maker: preview == null
+          ? null
+          : ArtworkDetailMaker(
+              id: preview.id,
+              name: preview.name,
+              bio: preview.bio,
+              profileImageUrl: preview.profileImageUrl,
+              savedCount: preview.savedCount,
+            ),
+      createdAt: artwork.createdAt,
+    );
+  }
+
   factory ArtworkDetail.fromMap(Map<String, dynamic> map) {
     final primaryMediaMap = _mapOrNull(map['primary_media']);
     final typeMap = _mapOrNull(map['type']);
