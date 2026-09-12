@@ -88,6 +88,29 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Maker footer stays outside the scrollable content area', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app(initialStep: 3));
+    await tester.pump();
+
+    final scrollRect = tester.getRect(
+      find.byKey(const Key('maker_onboarding_scroll')),
+    );
+    final footerRect = tester.getRect(
+      find.byKey(const Key('maker_onboarding_footer')),
+    );
+
+    expect(scrollRect.bottom, lessThanOrEqualTo(footerRect.top));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('type and style step is scroll-safe on compact phone', (
     tester,
   ) async {
