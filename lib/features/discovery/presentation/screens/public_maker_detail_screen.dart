@@ -71,8 +71,7 @@ class PublicMakerDetailScreen extends ConsumerWidget {
                               Text(
                                 '${maker.createdAt!.year}',
                                 style: const TextStyle(
-                                  fontFamily:
-                                      'Instrument Sans',
+                                  fontFamily: 'Instrument Sans',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFF0F0F0),
@@ -85,8 +84,7 @@ class PublicMakerDetailScreen extends ConsumerWidget {
                                 maker.bio!,
                                 key: const Key('public_maker_detail_bio'),
                                 style: const TextStyle(
-                                  fontFamily:
-                                      'Instrument Sans',
+                                  fontFamily: 'Instrument Sans',
                                   fontSize: 16,
                                   height: 1.35,
                                   fontWeight: FontWeight.w400,
@@ -98,16 +96,14 @@ class PublicMakerDetailScreen extends ConsumerWidget {
                               const SizedBox(height: 18),
                               Divider(
                                 height: 1,
-                                color: const Color(
-                                  0xFFF0F0F0,
-                                ).withValues(alpha: 0.25),
+                                color: const Color(0xFFF0F0F0)
+                                    .withValues(alpha: 0.25),
                               ),
                               const SizedBox(height: 16),
                               const Text(
                                 'Location',
                                 style: TextStyle(
-                                  fontFamily:
-                                      'Instrument Sans',
+                                  fontFamily: 'Instrument Sans',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFBDBDBD),
@@ -117,8 +113,7 @@ class PublicMakerDetailScreen extends ConsumerWidget {
                               Text(
                                 maker.location!,
                                 style: const TextStyle(
-                                  fontFamily:
-                                      'Instrument Sans',
+                                  fontFamily: 'Instrument Sans',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFF0F0F0),
