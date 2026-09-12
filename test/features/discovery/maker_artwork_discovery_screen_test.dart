@@ -9,27 +9,21 @@ import 'package:ma_motion_mobile/features/discovery/domain/discovery_query.dart'
 import 'package:ma_motion_mobile/features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 
 void main() {
+  WidgetController.hitTestWarningShouldBeFatal = true;
+
   testWidgets(
-    '430x932 discovery matches reference geometry and uses SVG assets',
+    '430x932 discovery uses reference icons and 2-column default',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(430, 932));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      final repository = _FakeDiscoveryRepository(lastPage: 6);
-      final container = ProviderContainer(
-        overrides: [
-          artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      container
-          .read(discoveryQueryProvider.notifier)
-          .setQuery(const DiscoveryQuery(typeIds: <int>{1}));
+      final repository = _FakeDiscoveryRepository(lastPage: 2);
 
       await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
+        ProviderScope(
+          overrides: [
+            artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
+          ],
           child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
         ),
       );
@@ -58,94 +52,143 @@ void main() {
         65,
       );
 
-      final selectedPage = tester.widget<Text>(
-        find.byKey(const Key('maker_nav_page_text_1')),
+      final selected = tester.widget<Text>(
+        find.byKey(const Key('maker_nav_column_text_2')),
       );
-      final unselectedPage = tester.widget<Text>(
-        find.byKey(const Key('maker_nav_page_text_2')),
+      final unselected = tester.widget<Text>(
+        find.byKey(const Key('maker_nav_column_text_1')),
       );
-      expect(selectedPage.style?.fontFamily, 'Instrument Sans');
-      expect(selectedPage.style?.fontSize, 16);
-      expect(selectedPage.style?.fontWeight, FontWeight.w400);
-      expect(selectedPage.style?.color, const Color(0xFF904AFF));
-      expect(unselectedPage.style?.fontFamily, 'Instrument Sans');
-      expect(unselectedPage.style?.fontSize, 14);
-      expect(unselectedPage.style?.fontWeight, FontWeight.w400);
+
+      expect(selected.style?.fontFamily, 'Instrument Sans');
+      expect(selected.style?.fontSize, 16);
+      expect(selected.style?.fontWeight, FontWeight.w400);
+      expect(selected.style?.color, const Color(0xFF904AFF));
+      expect(unselected.style?.fontFamily, 'Instrument Sans');
+      expect(unselected.style?.fontSize, 14);
+      expect(unselected.style?.fontWeight, FontWeight.w400);
       expect(
-        unselectedPage.style?.color,
+        unselected.style?.color,
         const Color(0xFF904AFF).withValues(alpha: 0.50),
       );
-
-      final gap = tester.widget<SizedBox>(
-        find.byKey(const Key('discovery_controls_grid_gap')),
-      );
-      expect(gap.height, 10);
-
-      final firstTile = tester.getRect(
-        find.byKey(const Key('artwork_tile_100')),
-      );
-      final searchIcon = tester.getRect(
-        find.byKey(const Key('discovery_search_svg')),
-      );
-      final filterIcon = tester.getRect(
-        find.byKey(const Key('discovery_filter_svg')),
-      );
-      expect(firstTile.left, closeTo(20, 0.1));
-      expect(firstTile.top - searchIcon.bottom, closeTo(10, 0.1));
-      expect(firstTile.top - filterIcon.bottom, closeTo(10, 0.1));
-
-      final lastTile = tester.getRect(
-        find.byKey(const Key('artwork_tile_109')),
-      );
-      final gridRect = tester.getRect(
-        find.byKey(const Key('maker_artwork_discovery_grid')),
-      );
-      expect(lastTile.bottom, closeTo(gridRect.bottom, 0.2));
 
       final grid = tester.widget<GridView>(
         find.byKey(const Key('maker_artwork_discovery_grid')),
       );
-      expect(grid.physics, isA<NeverScrollableScrollPhysics>());
-      expect(repository.requestedPerPages.first, 10);
-      expect(find.byKey(const Key('active_filter_badge')), findsOneWidget);
+      final delegate =
+          grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+
+      expect(delegate.crossAxisCount, 2);
+      expect(repository.requestedPages, <int>[1]);
       expect(tester.takeException(), isNull);
     },
   );
 
-  testWidgets(
-    'numbered pagination replaces the grid page without infinite scroll',
-    (tester) async {
-      final repository = _FakeDiscoveryRepository(lastPage: 6);
-      final container = ProviderContainer(
+  testWidgets('1 to 4 controls reflow the same grid without API pagination', (
+    tester,
+  ) async {
+    final repository = _FakeDiscoveryRepository(lastPage: 3);
+
+    await tester.pumpWidget(
+      ProviderScope(
         overrides: [
           artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
         ],
-      );
-      addTearDown(container.dispose);
+        child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
-        ),
-      );
-      await tester.pumpAndSettle();
+    final requestsBefore = repository.requestedPages.length;
 
-      final pageThree = find.byKey(const Key('maker_nav_3')).hitTestable();
-      expect(pageThree, findsOneWidget);
+    await tester.tap(find.byKey(const Key('maker_nav_4')).hitTestable());
+    await tester.pump();
 
-      await tester.tap(pageThree);
-      await tester.pumpAndSettle();
+    final grid = tester.widget<GridView>(
+      find.byKey(const Key('maker_artwork_discovery_grid')),
+    );
+    final delegate =
+        grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
 
-      expect(repository.requestedPages, contains(3));
-      expect(find.byKey(const Key('artwork_tile_300')), findsOneWidget);
-      expect(find.byKey(const Key('artwork_tile_100')), findsNothing);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(delegate.crossAxisCount, 4);
+    expect(repository.requestedPages.length, requestsBefore);
+    expect(find.byKey(const Key('artwork_tile_100')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('search opens inline and filters the existing artwork grid', (
+    tester,
+  ) async {
+    final repository = _FakeDiscoveryRepository(lastPage: 1);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(const Key('discovery_search_button')).hitTestable(),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('discovery_inline_search')), findsOneWidget);
+    expect(
+      find.byKey(const Key('maker_artwork_discovery_screen')),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byKey(const Key('discovery_inline_search')),
+      'Mara',
+    );
+    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pumpAndSettle();
+
+    expect(repository.lastQuery?.search, 'Mara');
+    expect(repository.requestedPages.last, 1);
+    expect(
+      find.byKey(const Key('maker_artwork_discovery_grid')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('scrolling near the end loads the next server page', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final repository = _FakeDiscoveryRepository(lastPage: 2);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final grid = find.byKey(const Key('maker_artwork_discovery_grid'));
+    expect(grid.hitTestable(), findsOneWidget);
+
+    await tester.drag(grid.hitTestable(), const Offset(0, -900));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(repository.requestedPages, contains(2));
+    expect(find.byKey(const Key('artwork_tile_200')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
-    'heart and settings bottom controls emit working navigation callbacks',
+    'heart and settings bottom controls emit Maker navigation callbacks',
     (tester) async {
       var savedTapped = 0;
       var settingsTapped = 0;
@@ -154,7 +197,7 @@ void main() {
         ProviderScope(
           overrides: [
             artworkDiscoveryRepositoryProvider.overrideWithValue(
-              _FakeDiscoveryRepository(lastPage: 4),
+              _FakeDiscoveryRepository(lastPage: 1),
             ),
           ],
           child: MaterialApp(
@@ -189,7 +232,7 @@ void main() {
       ProviderScope(
         overrides: [
           artworkDiscoveryRepositoryProvider.overrideWithValue(
-            _FakeDiscoveryRepository(lastPage: 8),
+            _FakeDiscoveryRepository(lastPage: 1),
           ),
         ],
         child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
@@ -201,6 +244,10 @@ void main() {
       find.byKey(const Key('maker_artwork_discovery_grid')),
       findsOneWidget,
     );
+
+    await tester.tap(find.byKey(const Key('maker_nav_4')).hitTestable());
+    await tester.pump();
+
     expect(tester.takeException(), isNull);
   });
 }
@@ -211,6 +258,7 @@ class _FakeDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
   final int lastPage;
   final List<int> requestedPages = <int>[];
   final List<int> requestedPerPages = <int>[];
+  DiscoveryQuery? lastQuery;
 
   @override
   Future<DiscoveryArtworkPage> fetchPage({
@@ -220,6 +268,7 @@ class _FakeDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
   }) async {
     requestedPages.add(page);
     requestedPerPages.add(perPage);
+    lastQuery = query;
 
     return DiscoveryArtworkPage(
       items: List<DiscoveryArtwork>.generate(
