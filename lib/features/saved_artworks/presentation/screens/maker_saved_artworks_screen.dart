@@ -88,7 +88,7 @@ class _MakerSavedArtworksScreenState
 
     return Scaffold(
       key: const Key('maker_saved_artworks_screen'),
-      backgroundColor: AppColors.splashBackground,
+      backgroundColor: AppColors.artworkBackground,
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
@@ -283,7 +283,7 @@ class _SavedBody extends ConsumerWidget {
                 top: 6,
                 right: 6,
                 child: Material(
-                  color: AppColors.splashBackground.withValues(alpha: 0.86),
+                  color: AppColors.artworkBackground.withValues(alpha: 0.86),
                   shape: const CircleBorder(),
                   child: InkResponse(
                     key: Key('saved_artwork_remove_${artwork.id}'),
