@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -221,46 +219,28 @@ class _WelcomeMessage extends StatelessWidget {
         final fontSize = (constraints.maxWidth * 0.074)
             .clamp(26.0, 34.0)
             .toDouble();
+        final horizontal = (constraints.maxWidth * 0.12)
+            .clamp(24.0, 56.0)
+            .toDouble();
 
         return Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: math.max(24, constraints.maxWidth * 0.12),
-            ),
-            child: const Semantics(
+            padding: EdgeInsets.symmetric(horizontal: horizontal),
+            child: Semantics(
               label: 'Welcome to MA. A place where art & design live.',
-              child: _WelcomeText(),
+              child: Text(
+                'Welcome to MA.\nA place where art &\ndesign live.',
+                key: const Key('ma_splash_welcome_text'),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontFamily: 'Arial',
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w400,
+                  height: 1.14,
+                ),
+              ),
             ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _WelcomeText extends StatelessWidget {
-  const _WelcomeText();
-
-  @override
-  Widget build(BuildContext context) {
-    final constraints = context.findRenderObject();
-
-    return LayoutBuilder(
-      builder: (context, box) {
-        final fontSize = (box.maxWidth * 0.095)
-            .clamp(26.0, 34.0)
-            .toDouble();
-
-        return Text(
-          'Welcome to MA.\nA place where art &\ndesign live.',
-          key: const Key('ma_splash_welcome_text'),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: AppColors.primary,
-            fontFamily: 'Arial',
-            fontSize: fontSize,
-            fontWeight: FontWeight.w400,
-            height: 1.14,
           ),
         );
       },
