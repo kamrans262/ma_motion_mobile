@@ -122,6 +122,51 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+
+  testWidgets('Maker reference geometry is preserved on a 390x844 phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app());
+    await tester.pump();
+
+    final headingTop = tester.getTopLeft(
+      find.byKey(const Key('maker_step_heading')),
+    );
+    final fieldRect = tester.getRect(find.byKey(const Key('maker_name_field')));
+    final nextSize = tester.getSize(
+      find.byKey(const Key('maker_next_button')),
+    );
+    final backSize = tester.getSize(
+      find.byKey(const Key('maker_back_button')),
+    );
+
+    expect(headingTop.dx, closeTo(20, 0.1));
+    expect(headingTop.dy, closeTo(216.45, 1.0));
+    expect(fieldRect.left, closeTo(20, 0.1));
+    expect(fieldRect.right, closeTo(370, 0.1));
+    expect(nextSize.height, 46);
+    expect(backSize.height, 46);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('salon image picker follows the supplied 88px square', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app(initialStep: 6));
+
+    expect(
+      tester.getSize(find.byKey(const Key('maker_salon_image_picker'))),
+      const Size(88, 88),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('salon preview uses platform-neutral memory image', (
     tester,
   ) async {
