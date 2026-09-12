@@ -10,7 +10,7 @@ import 'package:ma_motion_mobile/features/discovery/presentation/screens/maker_a
 void main() {
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets('Maker Settings nav item emits index 5', (
+  testWidgets('Maker Settings nav item emits Maker-only settings index 4', (
     WidgetTester tester,
   ) async {
     var selectedIndex = -1;
@@ -42,7 +42,7 @@ void main() {
     await tester.tap(settings.hitTestable());
     await tester.pump();
 
-    expect(selectedIndex, 5);
+    expect(selectedIndex, 4);
     expect(tester.takeException(), isNull);
   });
 }
