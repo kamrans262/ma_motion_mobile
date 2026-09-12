@@ -55,9 +55,7 @@ class _MakerSavedArtworksScreenState
     if (!_scrollController.hasClients) return;
 
     if (_scrollController.position.extentAfter < 520) {
-      unawaited(
-        ref.read(savedArtworksControllerProvider.notifier).loadMore(),
-      );
+      unawaited(ref.read(savedArtworksControllerProvider.notifier).loadMore());
     }
   }
 

@@ -25,8 +25,7 @@ class MaSplashSequenceScreen extends ConsumerStatefulWidget {
       _MaSplashSequenceScreenState();
 }
 
-class _MaSplashSequenceScreenState
-    extends ConsumerState<MaSplashSequenceScreen>
+class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _backgroundProgress;
@@ -43,10 +42,7 @@ class _MaSplashSequenceScreenState
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _backgroundProgress = CurvedAnimation(
       parent: _controller,
@@ -70,15 +66,13 @@ class _MaSplashSequenceScreenState
       curve: const Interval(0.72, 0.88, curve: Curves.easeOutCubic),
     );
 
-    _welcomeSlide = Tween<Offset>(
-      begin: const Offset(0, 0.16),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.72, 0.90, curve: Curves.easeOutCubic),
-      ),
-    );
+    _welcomeSlide =
+        Tween<Offset>(begin: const Offset(0, 0.16), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.72, 0.90, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _controller.addStatusListener(_handleAnimationStatus);
     _resolveEntry();
@@ -131,8 +125,7 @@ class _MaSplashSequenceScreenState
     }
     if (value < 0.66) return 1;
     if (value < 0.78) {
-      return 1 -
-          Curves.easeInCubic.transform((value - 0.66) / 0.12);
+      return 1 - Curves.easeInCubic.transform((value - 0.66) / 0.12);
     }
     return 0;
   }

@@ -55,8 +55,7 @@ class MakerBottomNavigation extends StatelessWidget {
                       child: _ColumnCountItem(
                         columnCount: columnCount,
                         selected: columnCount == selectedColumnCount,
-                        onTap: () =>
-                            onColumnCountSelected?.call(columnCount),
+                        onTap: () => onColumnCountSelected?.call(columnCount),
                       ),
                     ),
                   Expanded(

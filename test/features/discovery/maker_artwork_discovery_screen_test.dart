@@ -11,77 +11,76 @@ import 'package:ma_motion_mobile/features/discovery/presentation/screens/maker_a
 void main() {
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets(
-    '430x932 discovery uses reference icons and 2-column default',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(430, 932));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets('430x932 discovery uses reference icons and 2-column default', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 932));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      final repository = _FakeDiscoveryRepository(lastPage: 2);
+    final repository = _FakeDiscoveryRepository(lastPage: 2);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
-          ],
-          child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
-        ),
-      );
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDiscoveryRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(home: MakerArtworkDiscoveryScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      expect(
-        tester.getSize(find.byKey(const Key('discovery_search_svg'))),
-        const Size(24, 24),
-      );
-      expect(
-        tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
-        const Size(24, 24),
-      );
-      expect(
-        tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
-        const Size(16, 16),
-      );
-      expect(
-        tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))),
-        const Size(16, 16),
-      );
-      expect(
-        tester
-            .getSize(find.byKey(const Key('maker_bottom_navigation_surface')))
-            .height,
-        65,
-      );
+    expect(
+      tester.getSize(find.byKey(const Key('discovery_search_svg'))),
+      const Size(24, 24),
+    );
+    expect(
+      tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
+      const Size(24, 24),
+    );
+    expect(
+      tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
+      const Size(16, 16),
+    );
+    expect(
+      tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))),
+      const Size(16, 16),
+    );
+    expect(
+      tester
+          .getSize(find.byKey(const Key('maker_bottom_navigation_surface')))
+          .height,
+      65,
+    );
 
-      final selected = tester.widget<Text>(
-        find.byKey(const Key('maker_nav_column_text_2')),
-      );
-      final unselected = tester.widget<Text>(
-        find.byKey(const Key('maker_nav_column_text_1')),
-      );
+    final selected = tester.widget<Text>(
+      find.byKey(const Key('maker_nav_column_text_2')),
+    );
+    final unselected = tester.widget<Text>(
+      find.byKey(const Key('maker_nav_column_text_1')),
+    );
 
-      expect(selected.style?.fontFamily, 'Instrument Sans');
-      expect(selected.style?.fontSize, 16);
-      expect(selected.style?.fontWeight, FontWeight.w400);
-      expect(selected.style?.color, const Color(0xFF904AFF));
-      expect(unselected.style?.fontFamily, 'Instrument Sans');
-      expect(unselected.style?.fontSize, 14);
-      expect(unselected.style?.fontWeight, FontWeight.w400);
-      expect(
-        unselected.style?.color,
-        const Color(0xFF904AFF).withValues(alpha: 0.50),
-      );
+    expect(selected.style?.fontFamily, 'Instrument Sans');
+    expect(selected.style?.fontSize, 16);
+    expect(selected.style?.fontWeight, FontWeight.w400);
+    expect(selected.style?.color, const Color(0xFF904AFF));
+    expect(unselected.style?.fontFamily, 'Instrument Sans');
+    expect(unselected.style?.fontSize, 14);
+    expect(unselected.style?.fontWeight, FontWeight.w400);
+    expect(
+      unselected.style?.color,
+      const Color(0xFF904AFF).withValues(alpha: 0.50),
+    );
 
-      final grid = tester.widget<GridView>(
-        find.byKey(const Key('maker_artwork_discovery_grid')),
-      );
-      final delegate =
-          grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+    final grid = tester.widget<GridView>(
+      find.byKey(const Key('maker_artwork_discovery_grid')),
+    );
+    final delegate =
+        grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
 
-      expect(delegate.crossAxisCount, 2);
-      expect(repository.requestedPages, <int>[1]);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(delegate.crossAxisCount, 2);
+    expect(repository.requestedPages, <int>[1]);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('1 to 4 controls reflow the same grid without API pagination', (
     tester,

@@ -36,11 +36,7 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
       ref.read(savedArtworksRepositoryProvider);
 
   Future<void> loadInitial({int? perPage}) {
-    return _loadPage(
-      1,
-      perPage: perPage ?? state.perPage,
-      append: false,
-    );
+    return _loadPage(1, perPage: perPage ?? state.perPage, append: false);
   }
 
   Future<void> refresh() => loadInitial(perPage: state.perPage);
@@ -49,11 +45,7 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
     if (state.isLoading || !state.meta.hasNextPage) return;
 
     final currentPage = state.meta.currentPage ?? 1;
-    await _loadPage(
-      currentPage + 1,
-      perPage: state.perPage,
-      append: true,
-    );
+    await _loadPage(currentPage + 1, perPage: state.perPage, append: true);
   }
 
   Future<void> remove(int artworkId) async {
