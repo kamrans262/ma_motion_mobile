@@ -135,4 +135,3 @@ GoRouter createAppRouter({
     },
   );
 }
-

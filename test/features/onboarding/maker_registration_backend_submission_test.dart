@@ -125,7 +125,6 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
