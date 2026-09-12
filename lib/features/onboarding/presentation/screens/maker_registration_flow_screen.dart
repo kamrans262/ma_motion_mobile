@@ -425,7 +425,6 @@ class _TypeStyleStep extends ConsumerWidget {
       onNext: onNext,
       onBack: onBack,
       validationMessage: validationMessage,
-      contentTopFraction: 0.215,
       childGap: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
