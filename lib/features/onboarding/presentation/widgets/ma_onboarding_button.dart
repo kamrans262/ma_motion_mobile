@@ -18,7 +18,7 @@ class MaOnboardingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: 46,
       width: double.infinity,
       child: filled
           ? FilledButton(
