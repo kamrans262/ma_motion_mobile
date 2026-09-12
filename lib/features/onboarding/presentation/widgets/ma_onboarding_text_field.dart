@@ -38,13 +38,14 @@ class MaOnboardingTextField extends StatelessWidget {
       cursorColor: AppColors.primary,
       style: AppTextStyles.field,
       decoration: InputDecoration(
+        isDense: true,
         filled: true,
         fillColor: AppColors.inputFill,
         hintText: hintText,
         hintStyle: AppTextStyles.fieldHint,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20,
-          vertical: maxLines > 1 ? 18 : 17,
+          vertical: maxLines > 1 ? 16 : 14,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
