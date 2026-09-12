@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
-
 abstract final class AppEnvironment {
   static const String _rawApiBaseUrl = String.fromEnvironment(
     'MA_API_BASE_URL',
-    defaultValue: '',
+    defaultValue: 'https://slategray-fly-111965.hostingersite.com',
   );
 
   static const String _connectTimeoutSeconds = String.fromEnvironment(
@@ -22,13 +20,7 @@ abstract final class AppEnvironment {
     final raw = _rawApiBaseUrl.trim();
 
     if (raw.isEmpty) {
-      if (!kReleaseMode) {
-        // Android USB development uses adb reverse so device localhost:8001
-        // reaches the Laravel server running on the development PC.
-        return 'http://127.0.0.1:8001/api/v1';
-      }
-
-      return 'https://api.invalid.ma-motion.local/api/v1';
+      return 'https://slategray-fly-111965.hostingersite.com/api/v1';
     }
 
     var normalized = raw;
