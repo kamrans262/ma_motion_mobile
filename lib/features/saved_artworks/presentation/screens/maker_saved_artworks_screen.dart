@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,30 +31,54 @@ class MakerSavedArtworksScreen extends ConsumerStatefulWidget {
 
 class _MakerSavedArtworksScreenState
     extends ConsumerState<MakerSavedArtworksScreen> {
-  int? _scheduledPerPage;
+  static const int _savedPerPage = 24;
 
-  void _ensurePageSize(SavedArtworksState state, int perPage) {
-    if (state.isLoading) return;
+  late final ScrollController _scrollController;
+  bool _initialLoadScheduled = false;
+  int _columnCount = 2;
 
-    final neverLoaded =
-        state.meta.currentPage == null && state.errorMessage == null;
-    final needsResponsiveReload =
-        state.meta.currentPage != null && state.perPage != perPage;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_handleScroll);
+  }
 
-    if (!neverLoaded && !needsResponsiveReload) return;
-    if (_scheduledPerPage == perPage) return;
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_handleScroll)
+      ..dispose();
+    super.dispose();
+  }
 
-    _scheduledPerPage = perPage;
+  void _handleScroll() {
+    if (!_scrollController.hasClients) return;
+
+    if (_scrollController.position.extentAfter < 520) {
+      unawaited(
+        ref.read(savedArtworksControllerProvider.notifier).loadMore(),
+      );
+    }
+  }
+
+  void _scheduleInitialLoad(SavedArtworksState state) {
+    if (state.meta.currentPage != null ||
+        state.isLoading ||
+        _initialLoadScheduled) {
+      return;
+    }
+
+    _initialLoadScheduled = true;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
 
       await ref
           .read(savedArtworksControllerProvider.notifier)
-          .loadInitial(perPage: perPage);
+          .loadInitial(perPage: _savedPerPage);
 
-      if (mounted && _scheduledPerPage == perPage) {
-        _scheduledPerPage = null;
+      if (mounted) {
+        _initialLoadScheduled = false;
       }
     });
   }
@@ -62,6 +86,7 @@ class _MakerSavedArtworksScreenState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(savedArtworksControllerProvider);
+    _scheduleInitialLoad(state);
 
     return Scaffold(
       key: const Key('maker_saved_artworks_screen'),
@@ -73,15 +98,6 @@ class _MakerSavedArtworksScreenState
             final metrics = DiscoveryLayoutMetrics.fromWidth(
               constraints.maxWidth,
             );
-            final gridHeight = math.max(
-              0.0,
-              constraints.maxHeight -
-                  metrics.toolbarHeight -
-                  metrics.controlsToGridGap,
-            );
-            final perPage = metrics.itemsPerPageFor(gridHeight);
-
-            _ensurePageSize(state, perPage);
 
             return Column(
               children: [
@@ -133,11 +149,10 @@ class _MakerSavedArtworksScreenState
                 Expanded(
                   child: _SavedBody(
                     state: state,
+                    scrollController: _scrollController,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
-                    childAspectRatio: metrics.gridChildAspectRatioFor(
-                      gridHeight,
-                    ),
+                    columnCount: _columnCount,
                     onArtworkTap: widget.onArtworkTap,
                     onRemove: (artworkId) {
                       ref
@@ -152,12 +167,15 @@ class _MakerSavedArtworksScreenState
         ),
       ),
       bottomNavigationBar: MakerBottomNavigation(
-        selectedPage: state.meta.currentPage ?? 1,
-        totalPages: state.meta.lastPage ?? 1,
+        selectedColumnCount: _columnCount,
         heartSelected: true,
         onSavedTap: () {},
-        onPageSelected: (page) {
-          ref.read(savedArtworksControllerProvider.notifier).goToPage(page);
+        onColumnCountSelected: (columnCount) {
+          if (_columnCount == columnCount) return;
+
+          setState(() {
+            _columnCount = columnCount;
+          });
         },
         onSettingsTap: widget.onSettingsTap,
       ),
@@ -168,17 +186,19 @@ class _MakerSavedArtworksScreenState
 class _SavedBody extends ConsumerWidget {
   const _SavedBody({
     required this.state,
+    required this.scrollController,
     required this.horizontalPadding,
     required this.gridSpacing,
-    required this.childAspectRatio,
+    required this.columnCount,
     required this.onArtworkTap,
     required this.onRemove,
   });
 
   final SavedArtworksState state;
+  final ScrollController scrollController;
   final double horizontalPadding;
   final double gridSpacing;
-  final double childAspectRatio;
+  final int columnCount;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
   final ValueChanged<int> onRemove;
 
@@ -242,14 +262,14 @@ class _SavedBody extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: GridView.builder(
         key: const Key('maker_saved_artworks_grid'),
-        physics: const NeverScrollableScrollPhysics(),
+        controller: scrollController,
         padding: EdgeInsets.zero,
         itemCount: state.items.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: columnCount,
           mainAxisSpacing: gridSpacing,
           crossAxisSpacing: gridSpacing,
-          childAspectRatio: childAspectRatio,
+          childAspectRatio: 1,
         ),
         itemBuilder: (context, index) {
           final artwork = state.items[index];
