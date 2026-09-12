@@ -184,7 +184,7 @@ class _PageItem extends StatelessWidget {
             '$page',
             key: Key('maker_nav_page_text_$page'),
             style: TextStyle(
-              fontFamily: AppTextStyles.instrumentSansFamily,
+              fontFamily: 'Instrument Sans',
               fontSize: selected ? 16 : 14,
               fontWeight: FontWeight.w400,
               color: selected
