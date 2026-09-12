@@ -150,25 +150,21 @@ class _MakerArtworkDiscoveryScreenState
         ),
       ),
       bottomNavigationBar: MakerBottomNavigation(
-        selectedIndex: (state.meta.currentPage ?? 1).clamp(1, 4).toInt(),
-        onItemSelected: (index) {
-          if (index >= 1 && index <= 4) {
-            ref
-                .read(artworkDiscoveryControllerProvider.notifier)
-                .goToPage(index);
+        selectedPage: (state.meta.currentPage ?? 1).clamp(1, 4).toInt(),
+        onPageSelected: (page) {
+          ref
+              .read(artworkDiscoveryControllerProvider.notifier)
+              .goToPage(page);
 
-            if (_scrollController.hasClients) {
-              _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOut,
-              );
-            }
-            return;
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              0,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+            );
           }
-
-          widget.onBottomNavigationTap?.call(index);
         },
+        onSettingsTap: () => widget.onBottomNavigationTap?.call(4),
       ),
     );
   }
