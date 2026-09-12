@@ -2,6 +2,7 @@ abstract final class ApiPaths {
   static const String health = '/health';
 
   static const String register = '/auth/register';
+  static const String makerOnboarding = '/auth/maker-onboarding';
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
   static const String forgotPassword = '/auth/forgot-password';
