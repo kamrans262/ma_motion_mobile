@@ -155,7 +155,7 @@ class _MakerArtworkDiscoveryScreenState
 
     return Scaffold(
       key: const Key('maker_artwork_discovery_screen'),
-      backgroundColor: AppColors.splashBackground,
+      backgroundColor: AppColors.artworkBackground,
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
