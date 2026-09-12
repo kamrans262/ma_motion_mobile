@@ -73,7 +73,6 @@ class MaOnboardingScaffold extends StatelessWidget {
               builder: (context, constraints) {
                 final media = MediaQuery.of(context);
                 final width = constraints.maxWidth;
-                final height = constraints.maxHeight;
                 final keyboardOpen = media.viewInsets.bottom > 0;
 
                 final contentTop = math.max(
