@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 abstract final class AppEnvironment {
   static const String _rawApiBaseUrl = String.fromEnvironment(
     'MA_API_BASE_URL',
@@ -20,9 +22,12 @@ abstract final class AppEnvironment {
     final raw = _rawApiBaseUrl.trim();
 
     if (raw.isEmpty) {
-      // Deliberately invalid. Current UI can still run, but any accidental
-      // network request fails clearly until a real Hostinger/local API URL
-      // is supplied through --dart-define.
+      if (!kReleaseMode) {
+        // Android USB development uses adb reverse so device localhost:8000
+        // reaches the Laravel server running on the development PC.
+        return 'http://127.0.0.1:8000/api/v1';
+      }
+
       return 'https://api.invalid.ma-motion.local/api/v1';
     }
 
