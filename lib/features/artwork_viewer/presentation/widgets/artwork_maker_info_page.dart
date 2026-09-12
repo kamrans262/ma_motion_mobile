@@ -106,9 +106,8 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                           const SizedBox(height: 18),
                           Divider(
                             height: 1,
-                            color: const Color(
-                              0xFFF0F0F0,
-                            ).withValues(alpha: 0.25),
+                            color: const Color(0xFFF0F0F0)
+                                .withValues(alpha: 0.25),
                           ),
                           if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
                             const SizedBox(height: 16),
@@ -229,8 +228,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                       child: isSaving
                                           ? const SizedBox.square(
                                               dimension: 18,
-                                              child:
-                                                  CircularProgressIndicator(
+                                              child: CircularProgressIndicator(
                                                 strokeWidth: 2,
                                                 color: AppColors.primary,
                                               ),
@@ -287,9 +285,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         child: SizedBox.square(
                           dimension: 44,
                           child: IconButton(
-                            key: const Key(
-                              'artwork_maker_info_close_button',
-                            ),
+                            key: const Key('artwork_maker_info_close_button'),
                             onPressed: onClose,
                             padding: EdgeInsets.zero,
                             iconSize: 12,
@@ -303,10 +299,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 50),
-              ArtworkViewerDots(
-                count: pageCount,
-                currentIndex: currentIndex,
-              ),
+              ArtworkViewerDots(count: pageCount, currentIndex: currentIndex),
             ],
           ),
         );

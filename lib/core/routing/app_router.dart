@@ -109,9 +109,7 @@ GoRouter createAppRouter({
       GoRoute(
         path: '/maker/discovery/maker/:makerId',
         builder: (context, state) {
-          final makerId = int.tryParse(
-            state.pathParameters['makerId'] ?? '',
-          );
+          final makerId = int.tryParse(state.pathParameters['makerId'] ?? '');
 
           if (makerId == null) {
             return const Scaffold(body: Center(child: Text('Invalid Maker')));

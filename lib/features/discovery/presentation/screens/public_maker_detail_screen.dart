@@ -99,9 +99,8 @@ class PublicMakerDetailScreen extends ConsumerWidget {
                               const SizedBox(height: 18),
                               Divider(
                                 height: 1,
-                                color: const Color(
-                                  0xFFF0F0F0,
-                                ).withValues(alpha: 0.25),
+                                color: const Color(0xFFF0F0F0)
+                                    .withValues(alpha: 0.25),
                               ),
                               const SizedBox(height: 16),
                               const Text(
