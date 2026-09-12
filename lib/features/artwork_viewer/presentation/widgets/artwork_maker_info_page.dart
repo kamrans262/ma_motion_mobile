@@ -176,8 +176,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                       const Text(
                                         'Current Show',
                                         style: TextStyle(
-                                          fontFamily: AppTextStyles
-                                              .instrumentSansFamily,
+                                          fontFamily: 'Instrument Sans',
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFFBDBDBD),
