@@ -38,7 +38,7 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
 
 class _MakerArtworkDiscoveryScreenState
     extends ConsumerState<MakerArtworkDiscoveryScreen> {
-  static const int _discoveryPerPage = 24;
+  static const int _discoveryPerPage = 48;
 
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
