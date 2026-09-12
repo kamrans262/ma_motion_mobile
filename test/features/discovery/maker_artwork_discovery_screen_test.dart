@@ -58,12 +58,7 @@ void main() {
     expect(scaffold.backgroundColor, const Color(0xFF020101));
 
     final navMaterial = tester.widget<Material>(
-      find
-          .descendant(
-            of: find.byKey(const Key('maker_bottom_navigation_surface')),
-            matching: find.byType(Material),
-          )
-          .first,
+      find.byKey(const Key('maker_bottom_navigation_material')),
     );
     expect(navMaterial.color, const Color(0xFF0F2419));
 
