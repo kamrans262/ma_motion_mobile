@@ -3,11 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
-import '../../features/auth/presentation/screens/maker_session_gate_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
-import '../../features/discovery/presentation/screens/discovery_search_screen.dart';
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
-import '../../features/discovery/presentation/screens/public_maker_detail_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
@@ -40,16 +37,6 @@ GoRouter createAppRouter({
         builder: (context, state) => MaSplashSequenceScreen(
           autoPlay: splashAutoPlay,
           duration: splashDuration,
-          onFinished: () {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (context.mounted) context.go('/session-gate');
-            });
-          },
-        ),
-      ),
-      GoRoute(
-        path: '/session-gate',
-        builder: (context, state) => MakerSessionGateScreen(
           onResolved: (destination) {
             if (context.mounted) {
               goForMakerEntry(context, destination);
@@ -74,7 +61,6 @@ GoRouter createAppRouter({
       GoRoute(
         path: '/maker/discovery',
         builder: (context, state) => MakerArtworkDiscoveryScreen(
-          onSearchTap: () => context.push('/maker/discovery/search'),
           onFilterTap: () => context.push('/maker/discovery/filter'),
           onSavedTap: () => context.push('/maker/saved-artworks'),
           onSettingsTap: () => context.push('/maker/settings'),
@@ -92,34 +78,6 @@ GoRouter createAppRouter({
             context.push('/maker/discovery/artwork/${artwork.id}');
           },
         ),
-      ),
-      GoRoute(
-        path: '/maker/discovery/search',
-        builder: (context, state) => DiscoverySearchScreen(
-          onBack: () => context.pop(),
-          onFilterTap: () => context.push('/maker/discovery/filter'),
-          onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/${artwork.id}');
-          },
-          onMakerTap: (maker) {
-            context.push('/maker/discovery/maker/${maker.id}');
-          },
-        ),
-      ),
-      GoRoute(
-        path: '/maker/discovery/maker/:makerId',
-        builder: (context, state) {
-          final makerId = int.tryParse(state.pathParameters['makerId'] ?? '');
-
-          if (makerId == null) {
-            return const Scaffold(body: Center(child: Text('Invalid Maker')));
-          }
-
-          return PublicMakerDetailScreen(
-            makerId: makerId,
-            onClose: () => context.pop(),
-          );
-        },
       ),
       GoRoute(
         path: '/maker/discovery/filter',
