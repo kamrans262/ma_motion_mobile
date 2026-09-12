@@ -9,6 +9,7 @@ import '../../features/discovery/presentation/screens/discovery_search_screen.da
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
 import '../../features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
@@ -74,13 +75,24 @@ GoRouter createAppRouter({
         builder: (context, state) => MakerArtworkDiscoveryScreen(
           onSearchTap: () => context.push('/maker/discovery/search'),
           onFilterTap: () => context.push('/maker/discovery/filter'),
+          onSavedTap: () => context.push('/maker/saved-artworks'),
+          onSettingsTap: () => context.push('/maker/settings'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/${artwork.id}');
+            context.push(
+              '/maker/discovery/artwork/' + artwork.id.toString(),
+            );
           },
-          onBottomNavigationTap: (index) {
-            if (index == 4) {
-              context.push('/maker/settings');
-            }
+        ),
+      ),
+      GoRoute(
+        path: '/maker/saved-artworks',
+        builder: (context, state) => MakerSavedArtworksScreen(
+          onBack: () => context.pop(),
+          onSettingsTap: () => context.push('/maker/settings'),
+          onArtworkTap: (artwork) {
+            context.push(
+              '/maker/discovery/artwork/' + artwork.id.toString(),
+            );
           },
         ),
       ),
@@ -90,7 +102,9 @@ GoRouter createAppRouter({
           onBack: () => context.pop(),
           onFilterTap: () => context.push('/maker/discovery/filter'),
           onArtworkTap: (artwork) {
-            context.push('/maker/discovery/artwork/${artwork.id}');
+            context.push(
+              '/maker/discovery/artwork/' + artwork.id.toString(),
+            );
           },
         ),
       ),

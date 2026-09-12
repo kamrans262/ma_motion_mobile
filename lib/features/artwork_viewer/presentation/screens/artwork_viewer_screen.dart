@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
+import '../../../saved_artworks/application/artwork_saved_status_provider.dart';
+import '../../../saved_artworks/application/saved_artworks_controller.dart';
+import '../../../saved_artworks/data/saved_artworks_repository.dart';
 import '../../application/artwork_detail_provider.dart';
 import '../../domain/artwork_detail.dart';
 import '../widgets/artwork_maker_info_page.dart';
@@ -23,6 +27,7 @@ class ArtworkViewerScreen extends ConsumerStatefulWidget {
 class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   late final PageController _pageController;
   int _currentPage = 0;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -36,9 +41,50 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
     super.dispose();
   }
 
+  Future<void> _toggleSaved(bool isSaved) async {
+    if (_isSaving) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final repository = ref.read(savedArtworksRepositoryProvider);
+
+      if (isSaved) {
+        await repository.unsave(widget.artworkId);
+      } else {
+        await repository.save(widget.artworkId);
+      }
+
+      ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
+      ref.invalidate(savedArtworksControllerProvider);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not update saved artwork.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final asyncDetail = ref.watch(artworkDetailProvider(widget.artworkId));
+    final asyncSaved = ref.watch(
+      artworkSavedStatusProvider(widget.artworkId),
+    );
+    final isSaved = asyncSaved.when(
+      data: (value) => value,
+      loading: () => false,
+      error: (error, stackTrace) => false,
+    );
 
     return Scaffold(
       key: const Key('artwork_viewer_screen'),
@@ -54,13 +100,19 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
             },
             onClose: widget.onClose,
           ),
-          data: (artwork) => _buildViewer(artwork),
+          data: (artwork) => _buildViewer(
+            artwork,
+            isSaved: isSaved,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildViewer(ArtworkDetail artwork) {
+  Widget _buildViewer(
+    ArtworkDetail artwork, {
+    required bool isSaved,
+  }) {
     final media = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
         : artwork.media.cast<DiscoveryArtworkMedia?>();
@@ -107,6 +159,15 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
         ),
         Positioned(
           top: 8,
+          left: 12,
+          child: _SavedArtworkButton(
+            selected: isSaved,
+            busy: _isSaving,
+            onTap: () => _toggleSaved(isSaved),
+          ),
+        ),
+        Positioned(
+          top: 8,
           right: 12,
           child: IconButton(
             key: const Key('artwork_viewer_close_button'),
@@ -130,6 +191,61 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _SavedArtworkButton extends StatelessWidget {
+  const _SavedArtworkButton({
+    required this.selected,
+    required this.busy,
+    required this.onTap,
+  });
+
+  final bool selected;
+  final bool busy;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: selected ? 'Remove saved artwork' : 'Save artwork',
+      child: Material(
+        color: selected
+            ? AppColors.primary
+            : AppColors.splashBackground.withValues(alpha: 0.78),
+        shape: const CircleBorder(),
+        child: InkResponse(
+          key: const Key('artwork_viewer_save_button'),
+          onTap: busy ? null : onTap,
+          radius: 24,
+          child: SizedBox.square(
+            dimension: 44,
+            child: Center(
+              child: busy
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.white,
+                      ),
+                    )
+                  : SizedBox.square(
+                      dimension: 20,
+                      child: SvgPicture.asset(
+                        'assets/icons/heart.svg',
+                        colorFilter: ColorFilter.mode(
+                          selected ? AppColors.black : AppColors.primary,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -247,7 +363,9 @@ class _MediaSurface extends StatelessWidget {
       children: [
         Image.network(
           url,
-          key: Key('artwork_viewer_media_${media!.id}'),
+          key: Key(
+            'artwork_viewer_media_' + media!.id.toString(),
+          ),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return const ColoredBox(

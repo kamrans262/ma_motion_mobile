@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -7,6 +10,7 @@ import '../../application/artwork_discovery_controller.dart';
 import '../../domain/discovery_artwork.dart';
 import '../../domain/discovery_query.dart';
 import '../widgets/discovery_artwork_tile.dart';
+import '../widgets/discovery_layout_metrics.dart';
 import '../widgets/maker_bottom_navigation.dart';
 
 class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
@@ -15,12 +19,18 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
     this.onArtworkTap,
     this.onSearchTap,
     this.onFilterTap,
+    this.onSavedTap,
+    this.onSettingsTap,
     this.onBottomNavigationTap,
   });
 
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
   final VoidCallback? onSearchTap;
   final VoidCallback? onFilterTap;
+  final VoidCallback? onSavedTap;
+  final VoidCallback? onSettingsTap;
+
+  /// Kept for compatibility with the earlier Maker navigation contract.
   final ValueChanged<int>? onBottomNavigationTap;
 
   @override
@@ -30,139 +40,218 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
 
 class _MakerArtworkDiscoveryScreenState
     extends ConsumerState<MakerArtworkDiscoveryScreen> {
-  late final ScrollController _scrollController;
+  int? _scheduledPerPage;
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController()..addListener(_handleScroll);
+  void _ensurePageSize({
+    required ArtworkDiscoveryState state,
+    required DiscoveryQuery query,
+    required int perPage,
+  }) {
+    if (state.isLoadingInitial) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    final neverLoaded =
+        state.meta.currentPage == null && state.errorMessage == null;
+    final needsResponsiveReload =
+        state.meta.currentPage != null && state.perPage != perPage;
+
+    if (!neverLoaded && !needsResponsiveReload) return;
+    if (_scheduledPerPage == perPage) return;
+
+    _scheduledPerPage = perPage;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      final state = ref.read(artworkDiscoveryControllerProvider);
-      final query = ref.read(discoveryQueryProvider);
-      if (state.items.isEmpty && !state.isLoadingInitial) {
-        ref
-            .read(artworkDiscoveryControllerProvider.notifier)
-            .loadInitial(query: query);
+
+      await ref
+          .read(artworkDiscoveryControllerProvider.notifier)
+          .loadInitial(query: query, perPage: perPage);
+
+      if (mounted && _scheduledPerPage == perPage) {
+        _scheduledPerPage = null;
       }
     });
   }
 
   @override
-  void dispose() {
-    _scrollController
-      ..removeListener(_handleScroll)
-      ..dispose();
-    super.dispose();
-  }
-
-  void _handleScroll() {
-    if (!_scrollController.hasClients) return;
-    if (_scrollController.position.extentAfter < 520) {
-      ref.read(artworkDiscoveryControllerProvider.notifier).loadMore();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final state = ref.watch(artworkDiscoveryControllerProvider);
-    final filterCount = ref.watch(
-      discoveryQueryProvider.select((query) => query.activeFilterCount),
-    );
+    final query = ref.watch(discoveryQueryProvider);
+    final filterCount = query.activeFilterCount;
 
     return Scaffold(
       key: const Key('maker_artwork_discovery_screen'),
       backgroundColor: AppColors.splashBackground,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 72,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      key: const Key('discovery_search_button'),
-                      tooltip: 'Search artwork and Makers',
-                      onPressed: widget.onSearchTap ?? () {},
-                      iconSize: 30,
-                      color: AppColors.primary,
-                      icon: const Icon(Icons.search_rounded),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final metrics = DiscoveryLayoutMetrics.fromWidth(
+              constraints.maxWidth,
+            );
+            final gridHeight = math.max(
+              0.0,
+              constraints.maxHeight -
+                  metrics.toolbarHeight -
+                  metrics.controlsToGridGap,
+            );
+            final perPage = metrics.itemsPerPageFor(gridHeight);
+
+            _ensurePageSize(
+              state: state,
+              query: query,
+              perPage: perPage,
+            );
+
+            return Column(
+              children: [
+                SizedBox(
+                  height: metrics.toolbarHeight,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: metrics.gridHorizontalPadding,
                     ),
-                    Stack(
-                      clipBehavior: Clip.none,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          key: const Key('discovery_filter_button'),
-                          tooltip: 'Filter artwork',
-                          onPressed: widget.onFilterTap ?? () {},
-                          iconSize: 30,
-                          color: AppColors.primary,
-                          icon: const Icon(Icons.tune_rounded),
+                        _ToolbarSvgButton(
+                          buttonKey: const Key('discovery_search_button'),
+                          iconKey: const Key('discovery_search_svg'),
+                          assetName: 'assets/icons/search.svg',
+                          tooltip: 'Search artwork and Makers',
+                          size: metrics.toolbarIconSize,
+                          alignment: Alignment.bottomLeft,
+                          onPressed: widget.onSearchTap ?? () {},
                         ),
-                        if (filterCount > 0)
-                          Positioned(
-                            right: 0,
-                            top: 2,
-                            child: Container(
-                              key: const Key('active_filter_badge'),
-                              constraints: const BoxConstraints(
-                                minWidth: 18,
-                                minHeight: 18,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '$filterCount',
-                                style: const TextStyle(
-                                  fontFamily: AppTextStyles.fontFamily,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.black,
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            _ToolbarSvgButton(
+                              buttonKey: const Key('discovery_filter_button'),
+                              iconKey: const Key('discovery_filter_svg'),
+                              assetName: 'assets/icons/filter.svg',
+                              tooltip: 'Filter artwork',
+                              size: metrics.toolbarIconSize,
+                              alignment: Alignment.bottomRight,
+                              onPressed: widget.onFilterTap ?? () {},
+                            ),
+                            if (filterCount > 0)
+                              Positioned(
+                                right: -5,
+                                bottom: metrics.toolbarIconSize - 2,
+                                child: Container(
+                                  key: const Key('active_filter_badge'),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 18,
+                                    minHeight: 18,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '$filterCount',
+                                    style: const TextStyle(
+                                      fontFamily: AppTextStyles.fontFamily,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: _DiscoveryBody(
-                state: state,
-                scrollController: _scrollController,
-                onArtworkTap: widget.onArtworkTap,
-              ),
-            ),
-          ],
+                SizedBox(
+                  key: const Key('discovery_controls_grid_gap'),
+                  height: metrics.controlsToGridGap,
+                ),
+                Expanded(
+                  child: _DiscoveryBody(
+                    state: state,
+                    horizontalPadding: metrics.gridHorizontalPadding,
+                    gridSpacing: metrics.gridSpacing,
+                    onArtworkTap: widget.onArtworkTap,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
       bottomNavigationBar: MakerBottomNavigation(
-        selectedPage: (state.meta.currentPage ?? 1).clamp(1, 4).toInt(),
+        selectedPage: state.meta.currentPage ?? 1,
+        totalPages: state.meta.lastPage ?? 1,
+        onSavedTap:
+            widget.onSavedTap ?? () => widget.onBottomNavigationTap?.call(0),
         onPageSelected: (page) {
           ref.read(artworkDiscoveryControllerProvider.notifier).goToPage(page);
-
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              0,
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOut,
-            );
-          }
         },
-        onSettingsTap: () => widget.onBottomNavigationTap?.call(4),
+        onSettingsTap:
+            widget.onSettingsTap ?? () => widget.onBottomNavigationTap?.call(4),
+      ),
+    );
+  }
+}
+
+class _ToolbarSvgButton extends StatelessWidget {
+  const _ToolbarSvgButton({
+    required this.buttonKey,
+    required this.iconKey,
+    required this.assetName,
+    required this.tooltip,
+    required this.size,
+    required this.alignment,
+    required this.onPressed,
+  });
+
+  final Key buttonKey;
+  final Key iconKey;
+  final String assetName;
+  final String tooltip;
+  final double size;
+  final Alignment alignment;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: tooltip,
+      child: Tooltip(
+        message: tooltip,
+        child: InkResponse(
+          key: buttonKey,
+          onTap: onPressed,
+          radius: 28,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Align(
+              alignment: alignment,
+              child: SizedBox(
+                key: iconKey,
+                width: size,
+                height: size,
+                child: SvgPicture.asset(
+                  assetName,
+                  fit: BoxFit.contain,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.primary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -171,12 +260,14 @@ class _MakerArtworkDiscoveryScreenState
 class _DiscoveryBody extends ConsumerWidget {
   const _DiscoveryBody({
     required this.state,
-    required this.scrollController,
+    required this.horizontalPadding,
+    required this.gridSpacing,
     required this.onArtworkTap,
   });
 
   final ArtworkDiscoveryState state;
-  final ScrollController scrollController;
+  final double horizontalPadding;
+  final double gridSpacing;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
 
   @override
@@ -236,63 +327,26 @@ class _DiscoveryBody extends ConsumerWidget {
       );
     }
 
-    return RefreshIndicator(
-      color: AppColors.primary,
-      backgroundColor: AppColors.inputFill,
-      onRefresh: () {
-        return ref.read(artworkDiscoveryControllerProvider.notifier).refresh();
-      },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final horizontalPadding = (constraints.maxWidth * 0.047).clamp(
-            16.0,
-            24.0,
-          );
+    return Padding(
+      key: const Key('discovery_grid_padding'),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: GridView.builder(
+        key: const Key('maker_artwork_discovery_grid'),
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        itemCount: state.items.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: gridSpacing,
+          crossAxisSpacing: gridSpacing,
+          childAspectRatio: 1,
+        ),
+        itemBuilder: (context, index) {
+          final artwork = state.items[index];
 
-          return CustomScrollView(
-            key: const Key('maker_artwork_discovery_scroll'),
-            controller: scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  horizontalPadding,
-                  0,
-                  horizontalPadding,
-                  8,
-                ),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final artwork = state.items[index];
-                    return DiscoveryArtworkTile(
-                      artwork: artwork,
-                      onTap: () => onArtworkTap?.call(artwork),
-                    );
-                  }, childCount: state.items.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 2,
-                    crossAxisSpacing: 2,
-                    childAspectRatio: 1,
-                  ),
-                ),
-              ),
-              if (state.isLoadingMore)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Center(
-                      child: SizedBox.square(
-                        dimension: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.4,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+          return DiscoveryArtworkTile(
+            artwork: artwork,
+            onTap: () => onArtworkTap?.call(artwork),
           );
         },
       ),

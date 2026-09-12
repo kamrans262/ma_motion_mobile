@@ -16,6 +16,7 @@ class ArtworkDiscoveryState {
     this.items = const <DiscoveryArtwork>[],
     this.meta = const PaginationMeta(),
     this.query = const DiscoveryQuery(),
+    this.perPage = 24,
     this.isLoadingInitial = false,
     this.isLoadingMore = false,
     this.errorMessage,
@@ -24,6 +25,7 @@ class ArtworkDiscoveryState {
   final List<DiscoveryArtwork> items;
   final PaginationMeta meta;
   final DiscoveryQuery query;
+  final int perPage;
   final bool isLoadingInitial;
   final bool isLoadingMore;
   final String? errorMessage;
@@ -35,6 +37,7 @@ class ArtworkDiscoveryState {
     List<DiscoveryArtwork>? items,
     PaginationMeta? meta,
     DiscoveryQuery? query,
+    int? perPage,
     bool? isLoadingInitial,
     bool? isLoadingMore,
     String? errorMessage,
@@ -44,6 +47,7 @@ class ArtworkDiscoveryState {
       items: items ?? this.items,
       meta: meta ?? this.meta,
       query: query ?? this.query,
+      perPage: perPage ?? this.perPage,
       isLoadingInitial: isLoadingInitial ?? this.isLoadingInitial,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
@@ -58,63 +62,94 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
   ArtworkDiscoveryRepositoryContract get _repository =>
       ref.read(artworkDiscoveryRepositoryProvider);
 
-  Future<void> loadInitial({DiscoveryQuery? query}) async {
+  Future<void> loadInitial({
+    DiscoveryQuery? query,
+    int? perPage,
+  }) async {
     if (state.isLoadingInitial) {
       return;
     }
 
     final effectiveQuery = query ?? state.query;
+    final effectivePerPage = perPage ?? state.perPage;
 
     state = ArtworkDiscoveryState(
       query: effectiveQuery,
+      perPage: effectivePerPage,
       isLoadingInitial: true,
     );
 
     try {
-      final page = await _repository.fetchPage(page: 1, query: effectiveQuery);
+      final page = await _repository.fetchPage(
+        page: 1,
+        perPage: effectivePerPage,
+        query: effectiveQuery,
+      );
 
       state = ArtworkDiscoveryState(
         items: page.items,
         meta: page.meta,
         query: effectiveQuery,
+        perPage: effectivePerPage,
       );
     } catch (error) {
       state = ArtworkDiscoveryState(
         query: effectiveQuery,
+        perPage: effectivePerPage,
         errorMessage: _messageFor(error),
       );
     }
   }
 
   Future<void> applyQuery(DiscoveryQuery query) {
-    return loadInitial(query: query.withoutSearch());
+    return loadInitial(
+      query: query.withoutSearch(),
+      perPage: state.perPage,
+    );
   }
 
   Future<void> refresh() {
-    return loadInitial(query: state.query);
+    return loadInitial(query: state.query, perPage: state.perPage);
   }
 
   Future<void> goToPage(int page) async {
-    if (page < 1 || state.isLoadingInitial || state.isLoadingMore) {
+    final lastPage = state.meta.lastPage;
+    final currentPage = state.meta.currentPage;
+
+    if (page < 1 ||
+        (lastPage != null && page > lastPage) ||
+        page == currentPage ||
+        state.isLoadingInitial ||
+        state.isLoadingMore) {
       return;
     }
 
-    state = ArtworkDiscoveryState(query: state.query, isLoadingInitial: true);
+    final query = state.query;
+    final perPage = state.perPage;
+
+    state = ArtworkDiscoveryState(
+      query: query,
+      perPage: perPage,
+      isLoadingInitial: true,
+    );
 
     try {
       final result = await _repository.fetchPage(
         page: page,
-        query: state.query,
+        perPage: perPage,
+        query: query,
       );
 
       state = ArtworkDiscoveryState(
         items: result.items,
         meta: result.meta,
-        query: state.query,
+        query: query,
+        perPage: perPage,
       );
     } catch (error) {
       state = ArtworkDiscoveryState(
-        query: state.query,
+        query: query,
+        perPage: perPage,
         errorMessage: _messageFor(error),
       );
     }
@@ -133,6 +168,7 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
     try {
       final nextPage = await _repository.fetchPage(
         page: currentPage + 1,
+        perPage: state.perPage,
         query: state.query,
       );
 
@@ -147,6 +183,7 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
         ],
         meta: nextPage.meta,
         query: state.query,
+        perPage: state.perPage,
       );
     } catch (error) {
       state = state.copyWith(

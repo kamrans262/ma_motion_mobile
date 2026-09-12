@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/data/artwork_detail_repository.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/domain/artwork_detail.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
+import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
+import 'package:ma_motion_mobile/features/saved_artworks/data/saved_artworks_repository.dart';
 
 void main() {
-  testWidgets('viewer renders media, description, dots and Maker info slide', (
+  testWidgets('viewer renders media description dots and Maker info slide', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -15,6 +18,9 @@ void main() {
         overrides: [
           artworkDetailRepositoryProvider.overrideWithValue(
             _FakeArtworkDetailRepository(),
+          ),
+          savedArtworksRepositoryProvider.overrideWithValue(
+            _FakeSavedArtworksRepository(),
           ),
         ],
         child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 41)),
@@ -25,6 +31,7 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(const Key('artwork_viewer_screen')), findsOneWidget);
+    expect(find.byKey(const Key('artwork_viewer_save_button')), findsOneWidget);
     expect(find.byKey(const Key('artwork_viewer_description')), findsOneWidget);
     expect(
       find.text('Built in slow layers over eleven months.'),
@@ -64,6 +71,33 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('viewer save control persists artwork through saved repository', (
+    tester,
+  ) async {
+    final savedRepository = _FakeSavedArtworksRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDetailRepositoryProvider.overrideWithValue(
+            _FakeArtworkDetailRepository(),
+          ),
+          savedArtworksRepositoryProvider.overrideWithValue(savedRepository),
+        ],
+        child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 41)),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(const Key('artwork_viewer_save_button')).hitTestable(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(savedRepository.savedIds, <int>[41]);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('viewer has no overflow on 320x520 compact viewport', (
     tester,
   ) async {
@@ -75,6 +109,9 @@ void main() {
         overrides: [
           artworkDetailRepositoryProvider.overrideWithValue(
             _FakeArtworkDetailRepository(),
+          ),
+          savedArtworksRepositoryProvider.overrideWithValue(
+            _FakeSavedArtworksRepository(),
           ),
         ],
         child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 41)),
@@ -144,7 +181,8 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
       maker: const ArtworkDetailMaker(
         id: 7,
         name: 'Mara Vellan',
-        bio: 'A contemporary artist exploring the intersection of form and color.',
+        bio:
+            'A contemporary artist exploring the intersection of form and color.',
         location: 'Chicago, IL',
         profileImageUrl: null,
         websiteUrl: 'https://artist.example',
@@ -152,5 +190,40 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
       ),
       createdAt: DateTime.utc(2024, 5, 1),
     );
+  }
+}
+
+class _FakeSavedArtworksRepository implements SavedArtworksRepositoryContract {
+  bool saved = false;
+  final List<int> savedIds = <int>[];
+
+  @override
+  Future<DiscoveryArtworkPage> fetchPage({
+    required int page,
+    int perPage = 24,
+  }) async {
+    return DiscoveryArtworkPage(
+      items: const <DiscoveryArtwork>[],
+      meta: PaginationMeta(
+        currentPage: page,
+        lastPage: 1,
+        perPage: perPage,
+        total: 0,
+      ),
+    );
+  }
+
+  @override
+  Future<bool> isSaved(int artworkId) async => saved;
+
+  @override
+  Future<void> save(int artworkId) async {
+    saved = true;
+    savedIds.add(artworkId);
+  }
+
+  @override
+  Future<void> unsave(int artworkId) async {
+    saved = false;
   }
 }

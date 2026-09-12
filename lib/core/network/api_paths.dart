@@ -16,6 +16,7 @@ abstract final class ApiPaths {
   static const String account = '/me/account';
   static const String makerStatistics = '/me/maker-statistics';
   static const String myArtworks = '/me/artworks';
+  static const String savedArtworks = '/me/saved-artworks';
 
   static const String discovery = '/discovery';
   static const String discoveryArtworks = '/discovery/artworks';
@@ -28,4 +29,5 @@ abstract final class ApiPaths {
 
   static String maker(int makerId) => '/makers/$makerId';
   static String makerShows(int makerId) => '/makers/$makerId/shows';
+  static String savedArtwork(int artworkId) => '/me/saved-artworks/$artworkId';
 }
