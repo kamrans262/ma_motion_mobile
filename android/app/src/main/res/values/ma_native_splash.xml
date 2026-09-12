@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ma_native_splash_background">#0F2419</color>
+    <color name="ma_native_splash_background">#904AFF</color>
 
     <style name="MaLaunchTheme" parent="@style/LaunchTheme">
         <item name="android:windowBackground">@drawable/ma_launch_background</item>
