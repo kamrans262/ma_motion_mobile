@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../application/maker_registration_controller.dart';
@@ -172,17 +171,9 @@ class _MakerRegistrationFlowScreenState
 
     try {
       final draft = ref.read(makerRegistrationProvider);
-      final token = await ref.read(authTokenStoreProvider).read();
-
-      // The supplied Maker flow is intentionally account-screen-free.
-      // Public discovery works without authentication. If a valid Maker
-      // session already exists, preserve the existing backend profile sync;
-      // otherwise complete the visual onboarding and continue to discovery.
-      if (token != null && token.trim().isNotEmpty) {
-        await ref
-            .read(makerOnboardingRepositoryProvider)
-            .completeMakerProfile(draft);
-      }
+      await ref
+          .read(makerOnboardingRepositoryProvider)
+          .completeMakerProfile(draft);
 
       if (!mounted) {
         return;
