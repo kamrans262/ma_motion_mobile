@@ -1,9 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/ma_svg_asset.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../saved_artworks/application/artwork_saved_status_provider.dart';
 import '../../../saved_artworks/application/saved_artworks_controller.dart';
@@ -14,7 +16,11 @@ import '../widgets/artwork_maker_info_page.dart';
 import '../widgets/artwork_viewer_dots.dart';
 
 class ArtworkViewerScreen extends ConsumerStatefulWidget {
-  const ArtworkViewerScreen({super.key, required this.artworkId, this.onClose});
+  const ArtworkViewerScreen({
+    super.key,
+    required this.artworkId,
+    this.onClose,
+  });
 
   final int artworkId;
   final VoidCallback? onClose;
@@ -59,12 +65,6 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
 
       ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
       ref.invalidate(savedArtworksControllerProvider);
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not update saved artwork.')),
-        );
-      }
     } finally {
       if (mounted) {
         setState(() {
@@ -74,37 +74,53 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
     }
   }
 
+  Future<void> _shareArtwork(ArtworkDetail artwork) async {
+    final makerName = artwork.maker?.name.trim() ?? '';
+    final text = makerName.isEmpty
+        ? artwork.title
+        : '${artwork.title} — $makerName';
+
+    await SharePlus.instance.share(
+      ShareParams(
+        title: artwork.title,
+        text: text,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final asyncDetail = ref.watch(artworkDetailProvider(widget.artworkId));
     final asyncSaved = ref.watch(artworkSavedStatusProvider(widget.artworkId));
-    final isSaved = asyncSaved.when(
-      data: (value) => value,
-      loading: () => false,
-      error: (error, stackTrace) => false,
-    );
+    final isSaved = asyncSaved.value ?? false;
 
     return Scaffold(
       key: const Key('artwork_viewer_screen'),
-      backgroundColor: AppColors.splashBackground,
-      body: SafeArea(
-        child: asyncDetail.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          ),
-          error: (error, stackTrace) => _ViewerError(
-            onRetry: () {
-              ref.invalidate(artworkDetailProvider(widget.artworkId));
-            },
-            onClose: widget.onClose,
-          ),
-          data: (artwork) => _buildViewer(artwork, isSaved: isSaved),
+      backgroundColor: AppColors.black,
+      body: asyncDetail.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+        error: (error, stackTrace) => _ViewerError(
+          onRetry: () {
+            ref.invalidate(artworkDetailProvider(widget.artworkId));
+          },
+          onClose: widget.onClose,
+        ),
+        data: (artwork) => _buildViewer(
+          context,
+          artwork,
+          isSaved: isSaved,
         ),
       ),
     );
   }
 
-  Widget _buildViewer(ArtworkDetail artwork, {required bool isSaved}) {
+  Widget _buildViewer(
+    BuildContext context,
+    ArtworkDetail artwork, {
+    required bool isSaved,
+  }) {
     final media = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
         : artwork.media.cast<DiscoveryArtworkMedia?>();
@@ -132,108 +148,58 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
             },
             itemBuilder: (context, index) {
               if (index == visualPageCount) {
-                return ArtworkMakerInfoPage(artwork: artwork);
+                return ArtworkMakerInfoPage(
+                  artwork: artwork,
+                  currentIndex: _currentPage,
+                  pageCount: totalPageCount,
+                  isSaved: isSaved,
+                  isSaving: _isSaving,
+                  onSavedTap: () => _toggleSaved(isSaved),
+                  onShare: () => _shareArtwork(artwork),
+                  onClose: widget.onClose,
+                );
               }
 
               return _ArtworkMediaPage(
                 artwork: artwork,
                 media: media[index],
-                onMakerAvatarTap: () {
-                  _pageController.animateToPage(
-                    visualPageCount,
-                    duration: const Duration(milliseconds: 260),
-                    curve: Curves.easeOut,
-                  );
-                },
+                currentIndex: _currentPage,
+                pageCount: totalPageCount,
               );
             },
           ),
         ),
-        Positioned(
-          top: 8,
-          left: 12,
-          child: _SavedArtworkButton(
-            selected: isSaved,
-            busy: _isSaving,
-            onTap: () => _toggleSaved(isSaved),
-          ),
-        ),
-        Positioned(
-          top: 8,
-          right: 12,
-          child: IconButton(
-            key: const Key('artwork_viewer_close_button'),
-            onPressed: widget.onClose,
-            color: AppColors.white,
-            iconSize: 27,
-            icon: const Icon(Icons.close_rounded),
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 34,
-          child: IgnorePointer(
-            child: Center(
-              child: ArtworkViewerDots(
-                count: totalPageCount,
-                currentIndex: _currentPage,
-              ),
-            ),
-          ),
-        ),
+        if (_currentPage < visualPageCount)
+          _ViewerCloseButton(onPressed: widget.onClose),
       ],
     );
   }
 }
 
-class _SavedArtworkButton extends StatelessWidget {
-  const _SavedArtworkButton({
-    required this.selected,
-    required this.busy,
-    required this.onTap,
-  });
+class _ViewerCloseButton extends StatelessWidget {
+  const _ViewerCloseButton({required this.onPressed});
 
-  final bool selected;
-  final bool busy;
-  final VoidCallback onTap;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: selected ? 'Remove saved artwork' : 'Save artwork',
-      child: Material(
-        color: selected
-            ? AppColors.primary
-            : AppColors.splashBackground.withValues(alpha: 0.78),
-        shape: const CircleBorder(),
-        child: InkResponse(
-          key: const Key('artwork_viewer_save_button'),
-          onTap: busy ? null : onTap,
-          radius: 24,
-          child: SizedBox.square(
-            dimension: 44,
-            child: Center(
-              child: busy
-                  ? const SizedBox.square(
-                      dimension: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.white,
-                      ),
-                    )
-                  : SizedBox.square(
-                      dimension: 20,
-                      child: MaSvgAsset(
-                        assetName: 'assets/heart.svg',
-                        fallbackAssetName: 'assets/icons/heart.svg',
-                        color: selected ? AppColors.black : AppColors.primary,
-                      ),
-                    ),
-            ),
-          ),
+    final widthScale =
+        (MediaQuery.sizeOf(context).width / 430).clamp(0.78, 1.08);
+    final visibleTop = (50 * widthScale).clamp(40.0, 54.0).toDouble();
+    final buttonTop = visibleTop - 16;
+
+    return Positioned(
+      top: buttonTop,
+      right: 18,
+      child: SizedBox.square(
+        dimension: 44,
+        child: IconButton(
+          key: const Key('artwork_viewer_close_button'),
+          onPressed: onPressed,
+          padding: EdgeInsets.zero,
+          iconSize: 12,
+          color: const Color(0xFFF0F0F0),
+          icon: const Icon(Icons.close_rounded),
         ),
       ),
     );
@@ -244,72 +210,69 @@ class _ArtworkMediaPage extends StatelessWidget {
   const _ArtworkMediaPage({
     required this.artwork,
     required this.media,
-    required this.onMakerAvatarTap,
+    required this.currentIndex,
+    required this.pageCount,
   });
 
   final ArtworkDetail artwork;
   final DiscoveryArtworkMedia? media;
-  final VoidCallback onMakerAvatarTap;
+  final int currentIndex;
+  final int pageCount;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compact = constraints.maxWidth < 360;
-        final horizontal = compact ? 18.0 : 28.0;
-        final maxImageHeight = constraints.maxHeight * (compact ? 0.56 : 0.60);
+        final widthScale = (constraints.maxWidth / 430).clamp(0.78, 1.08);
+        final horizontal = (60 * widthScale).clamp(20.0, 60.0).toDouble();
+        final top = (82 * widthScale).clamp(72.0, 88.0).toDouble();
+        final imageWidth = constraints.maxWidth - (horizontal * 2);
+        final maxImageHeight = math.max(
+          140.0,
+          constraints.maxHeight - top - 160,
+        );
 
-        return SingleChildScrollView(
+        return Padding(
           key: const Key('artwork_media_page_scroll'),
-          padding: EdgeInsets.fromLTRB(
-            horizontal,
-            compact ? 74 : 94,
-            horizontal,
-            110,
-          ),
+          padding: EdgeInsets.fromLTRB(horizontal, top, horizontal, 24),
           child: Column(
             children: [
               ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxImageHeight),
+                key: const Key('artwork_viewer_media_box'),
+                constraints: BoxConstraints(
+                  maxWidth: imageWidth,
+                  maxHeight: maxImageHeight,
+                ),
                 child: AspectRatio(
                   aspectRatio: _aspectRatioFor(media),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    clipBehavior: Clip.none,
-                    children: [
-                      _MediaSurface(media: media),
-                      if ((artwork.maker?.profileImageUrl ?? '').isNotEmpty)
-                        Positioned(
-                          right: compact ? 12 : 18,
-                          bottom: compact ? -22 : -26,
-                          child: GestureDetector(
-                            key: const Key('artwork_maker_avatar_button'),
-                            onTap: onMakerAvatarTap,
-                            child: _SmallAvatar(
-                              url: artwork.maker!.profileImageUrl!,
-                              size: compact ? 50 : 58,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
+                  child: _MediaSurface(media: media),
                 ),
               ),
-              SizedBox(height: compact ? 44 : 56),
-              if ((artwork.description ?? '').isNotEmpty)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    artwork.description!,
-                    key: const Key('artwork_viewer_description'),
-                    style: AppTextStyles.onboardingHelper.copyWith(
-                      fontSize: compact ? 15 : 17,
-                      fontStyle: FontStyle.italic,
-                      color: AppColors.white,
-                      height: 1.35,
-                    ),
+              if ((artwork.description ?? '').isNotEmpty) ...[
+                const SizedBox(
+                  key: Key('artwork_image_description_gap'),
+                  height: 40,
+                ),
+                Text(
+                  artwork.description!,
+                  key: const Key('artwork_viewer_description'),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFFF0F0F0),
                   ),
                 ),
+              ],
+              const SizedBox(
+                key: Key('artwork_description_dots_gap'),
+                height: 50,
+              ),
+              ArtworkViewerDots(
+                count: pageCount,
+                currentIndex: currentIndex,
+              ),
             ],
           ),
         );
@@ -325,7 +288,7 @@ class _ArtworkMediaPage extends StatelessWidget {
       return width / height;
     }
 
-    return 0.86;
+    return 0.64;
   }
 }
 
@@ -343,7 +306,11 @@ class _MediaSurface extends StatelessWidget {
         key: Key('artwork_viewer_media_fallback'),
         color: AppColors.inputFill,
         child: Center(
-          child: Icon(Icons.image_outlined, size: 48, color: AppColors.primary),
+          child: Icon(
+            Icons.image_outlined,
+            size: 48,
+            color: AppColors.primary,
+          ),
         ),
       );
     }
@@ -354,7 +321,7 @@ class _MediaSurface extends StatelessWidget {
         Image.network(
           url,
           key: Key('artwork_viewer_media_${media!.id}'),
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
             return const ColoredBox(
               color: AppColors.inputFill,
@@ -385,39 +352,11 @@ class _MediaSurface extends StatelessWidget {
   }
 }
 
-class _SmallAvatar extends StatelessWidget {
-  const _SmallAvatar({required this.url, required this.size});
-
-  final String url;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.primary, width: 4),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Image.network(
-        url,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return const Icon(
-            Icons.person_outline_rounded,
-            color: AppColors.white,
-          );
-        },
-      ),
-    );
-  }
-}
-
 class _ViewerError extends StatelessWidget {
-  const _ViewerError({required this.onRetry, required this.onClose});
+  const _ViewerError({
+    required this.onRetry,
+    required this.onClose,
+  });
 
   final VoidCallback onRetry;
   final VoidCallback? onClose;
@@ -427,39 +366,17 @@ class _ViewerError extends StatelessWidget {
     return Stack(
       children: [
         Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'We could not load this artwork.',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.onboardingHelper,
-                ),
-                const SizedBox(height: 16),
-                OutlinedButton(
-                  key: const Key('artwork_viewer_retry_button'),
-                  onPressed: onRetry,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
-                  ),
-                  child: const Text('Try again'),
-                ),
-              ],
+          child: OutlinedButton(
+            key: const Key('artwork_viewer_retry_button'),
+            onPressed: onRetry,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              side: const BorderSide(color: AppColors.primary),
             ),
+            child: const Text('Try again'),
           ),
         ),
-        Positioned(
-          top: 8,
-          right: 12,
-          child: IconButton(
-            onPressed: onClose,
-            color: AppColors.white,
-            icon: const Icon(Icons.close_rounded),
-          ),
-        ),
+        _ViewerCloseButton(onPressed: onClose),
       ],
     );
   }
