@@ -36,24 +36,24 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
       ref.read(savedArtworksRepositoryProvider);
 
   Future<void> loadInitial({int? perPage}) {
-    return _loadPage(1, perPage: perPage ?? state.perPage);
+    return _loadPage(
+      1,
+      perPage: perPage ?? state.perPage,
+      append: false,
+    );
   }
 
-  Future<void> refresh() {
-    return _loadPage(state.meta.currentPage ?? 1, perPage: state.perPage);
-  }
+  Future<void> refresh() => loadInitial(perPage: state.perPage);
 
-  Future<void> goToPage(int page) async {
-    final lastPage = state.meta.lastPage;
+  Future<void> loadMore() async {
+    if (state.isLoading || !state.meta.hasNextPage) return;
 
-    if (page < 1 ||
-        (lastPage != null && page > lastPage) ||
-        page == state.meta.currentPage ||
-        state.isLoading) {
-      return;
-    }
-
-    await _loadPage(page, perPage: state.perPage);
+    final currentPage = state.meta.currentPage ?? 1;
+    await _loadPage(
+      currentPage + 1,
+      perPage: state.perPage,
+      append: true,
+    );
   }
 
   Future<void> remove(int artworkId) async {
@@ -61,13 +61,7 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
 
     try {
       await _repository.unsave(artworkId);
-
-      final currentPage = state.meta.currentPage ?? 1;
-      final targetPage = state.items.length == 1 && currentPage > 1
-          ? currentPage - 1
-          : currentPage;
-
-      await _loadPage(targetPage, perPage: state.perPage);
+      await loadInitial(perPage: state.perPage);
     } catch (error) {
       state = SavedArtworksState(
         items: state.items,
@@ -78,7 +72,11 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
     }
   }
 
-  Future<void> _loadPage(int page, {required int perPage}) async {
+  Future<void> _loadPage(
+    int page, {
+    required int perPage,
+    required bool append,
+  }) async {
     if (state.isLoading) return;
 
     final previous = state;
@@ -92,8 +90,24 @@ class SavedArtworksController extends Notifier<SavedArtworksState> {
     try {
       final result = await _repository.fetchPage(page: page, perPage: perPage);
 
+      if (!append) {
+        state = SavedArtworksState(
+          items: result.items,
+          meta: result.meta,
+          perPage: perPage,
+        );
+        return;
+      }
+
+      final existingIds = previous.items.map((item) => item.id).toSet();
+
       state = SavedArtworksState(
-        items: result.items,
+        items: <DiscoveryArtwork>[
+          ...previous.items,
+          ...result.items.where(
+            (candidate) => !existingIds.contains(candidate.id),
+          ),
+        ],
         meta: result.meta,
         perPage: perPage,
       );
