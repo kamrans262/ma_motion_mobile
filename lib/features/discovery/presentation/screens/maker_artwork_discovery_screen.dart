@@ -173,7 +173,7 @@ class _MakerArtworkDiscoveryScreenState
                       horizontal: metrics.gridHorizontalPadding,
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         _ToolbarSvgButton(
                           buttonKey: const Key('discovery_search_button'),
@@ -182,45 +182,63 @@ class _MakerArtworkDiscoveryScreenState
                           fallbackAssetName: 'assets/icons/search.svg',
                           tooltip: 'Search artwork',
                           size: metrics.toolbarIconSize,
-                          alignment: Alignment.bottomLeft,
+                          alignment: Alignment.centerLeft,
                           onPressed: _openSearch,
                         ),
                         if (_searchOpen) ...[
                           const SizedBox(width: 6),
                           Expanded(
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: SizedBox(
-                                height: 40,
-                                child: TextField(
-                                  key: const Key('discovery_inline_search'),
-                                  controller: _searchController,
-                                  focusNode: _searchFocusNode,
-                                  onChanged: _onSearchChanged,
-                                  textInputAction: TextInputAction.search,
-                                  style: const TextStyle(
+                            child: SizedBox(
+                              height: 40,
+                              child: TextField(
+                                key: const Key('discovery_inline_search'),
+                                controller: _searchController,
+                                focusNode: _searchFocusNode,
+                                onChanged: _onSearchChanged,
+                                textInputAction: TextInputAction.search,
+                                textAlignVertical: TextAlignVertical.center,
+                                style: const TextStyle(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 14,
+                                  height: 1,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.primary,
+                                ),
+                                cursorColor: AppColors.primary,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: 'Artist name...',
+                                  hintStyle: TextStyle(
                                     fontFamily: AppTextStyles.fontFamily,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.primary,
+                                    height: 1,
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.50,
+                                    ),
                                   ),
-                                  cursorColor: AppColors.primary,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10,
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 0,
+                                    right: 4,
+                                    top: 10,
+                                    bottom: 8,
+                                  ),
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppColors.primary,
+                                      width: 1,
                                     ),
-                                    hintText: 'Search',
-                                    hintStyle: TextStyle(
-                                      fontFamily: AppTextStyles.fontFamily,
-                                      fontSize: 14,
-                                      color: AppColors.primary.withValues(
-                                        alpha: 0.50,
-                                      ),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppColors.primary,
+                                      width: 1,
                                     ),
-                                    border: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppColors.primary,
+                                      width: 1.2,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -238,7 +256,7 @@ class _MakerArtworkDiscoveryScreenState
                               fallbackAssetName: 'assets/icons/filter.svg',
                               tooltip: 'Filter artwork',
                               size: metrics.toolbarIconSize,
-                              alignment: Alignment.bottomRight,
+                              alignment: Alignment.centerRight,
                               onPressed: widget.onFilterTap ?? () {},
                             ),
                             if (filterCount > 0)
