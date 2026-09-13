@@ -263,11 +263,15 @@ class _AnimatedDotGridPainter extends CustomPainter {
       color = AppColors.splashBackground.withValues(alpha: 0.30);
     } else if (progress < 0.62) {
       final t = (progress - 0.30) / 0.32;
-      radius = baseRadius + ((largeRadius - baseRadius) * Curves.easeInOut.transform(t));
+      radius =
+          baseRadius +
+          ((largeRadius - baseRadius) * Curves.easeInOut.transform(t));
       color = AppColors.splashBackground.withValues(alpha: 0.78);
     } else {
       final t = (progress - 0.62) / 0.38;
-      radius = largeRadius + ((baseRadius - largeRadius) * Curves.easeInOut.transform(t));
+      radius =
+          largeRadius +
+          ((baseRadius - largeRadius) * Curves.easeInOut.transform(t));
       color = Color.lerp(
         AppColors.primary,
         AppColors.splashDot.withValues(alpha: 0.80),
