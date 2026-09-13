@@ -67,8 +67,6 @@ void main() {
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
-  _MemoryTokenStore([this.value]);
-
   String? value;
 
   @override
