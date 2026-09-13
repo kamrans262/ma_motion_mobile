@@ -278,8 +278,7 @@ class _AnimatedDotGridPainter extends CustomPainter {
       final t = (progress - 0.72) / 0.28;
       radius =
           (largeRadius * 0.55) +
-          ((baseRadius - (largeRadius * 0.55)) *
-              Curves.easeInOut.transform(t));
+          ((baseRadius - (largeRadius * 0.55)) * Curves.easeInOut.transform(t));
       color = Color.lerp(
         AppColors.primary,
         AppColors.splashDot.withValues(alpha: 0.80),
