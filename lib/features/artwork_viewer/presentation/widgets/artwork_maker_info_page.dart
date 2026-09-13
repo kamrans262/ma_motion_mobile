@@ -32,66 +32,62 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final horizontal = (constraints.maxWidth * 0.104)
+        final horizontal = (constraints.maxWidth * 0.0816)
             .clamp(24.0, 40.0)
             .toDouble();
-        final top = (constraints.maxHeight * 0.22)
-            .clamp(128.0, 180.0)
+        final top = (constraints.maxHeight * 0.327)
+            .clamp(160.0, 335.0)
+            .toDouble();
+        final bottom = (constraints.maxHeight * 0.24)
+            .clamp(120.0, 246.0)
             .toDouble();
 
         return SingleChildScrollView(
           key: const Key('artwork_maker_info_scroll'),
-          padding: EdgeInsets.fromLTRB(horizontal, top, horizontal, 92),
+          physics: const ClampingScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(horizontal, top, horizontal, bottom),
           child: Align(
             alignment: Alignment.topCenter,
             child: Container(
               key: const Key('artwork_maker_info_card'),
               width: double.infinity,
-              constraints: const BoxConstraints(maxWidth: 340),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF3D413E),
-                    Color(0xFF332F28),
-                    Color(0xFF2A2118),
-                  ],
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+              constraints: const BoxConstraints(maxWidth: 396),
+              decoration: const BoxDecoration(color: Color(0xFF101717)),
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    maker?.name.isNotEmpty == true
-                        ? maker!.name
-                        : artwork.title,
-                    key: const Key('artwork_maker_info_title'),
-                    style: const TextStyle(
-                      fontFamily: 'Instrument Sans',
-                      fontSize: 24,
-                      height: 1.05,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFFF0F0F0),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 42),
+                    child: Text(
+                      artwork.title,
+                      key: const Key('artwork_maker_info_title'),
+                      style: const TextStyle(
+                        fontFamily: 'Instrument Sans',
+                        fontSize: 24,
+                        height: 1.08,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFF0F0F0),
+                      ),
                     ),
                   ),
-                  if ((maker?.location ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                  if (_makerMeta(artwork).isNotEmpty) ...[
+                    const SizedBox(height: 6),
                     Text(
-                      maker!.location!,
+                      _makerMeta(artwork),
                       key: const Key('artwork_maker_info_meta'),
                       style: const TextStyle(
                         fontFamily: 'Instrument Sans',
-                        fontSize: 12,
+                        fontSize: 15,
+                        height: 1.2,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFFBDBDBD),
+                        color: Color(0xFFF0F0F0),
                       ),
                     ),
                   ],
                   if ((maker?.bio ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 26),
+                    const SizedBox(height: 20),
                     Text(
                       maker!.bio!,
                       key: const Key('artwork_maker_info_bio'),
@@ -104,11 +100,11 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 22),
-                  Divider(height: 1, color: Color(0x45F0F0F0)),
+                  const SizedBox(height: 18),
+                  const Divider(height: 1, color: Color(0x53535656)),
                   if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    const _InfoLabel('WEBSITE'),
+                    const SizedBox(height: 16),
+                    const _InfoLabel('Website'),
                     const SizedBox(height: 5),
                     Text(
                       maker!.websiteUrl!,
@@ -119,8 +115,8 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                     ),
                   ],
                   if ((maker?.contactEmail ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 14),
-                    const _InfoLabel('EMAIL'),
+                    const SizedBox(height: 12),
+                    const _InfoLabel('Email'),
                     const SizedBox(height: 5),
                     Text(
                       maker!.contactEmail!,
@@ -140,11 +136,11 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             : ' through ${DateFormat.yMMMM().format(show.endDate!)}';
 
                         return Padding(
-                          padding: const EdgeInsets.only(top: 14),
+                          padding: const EdgeInsets.only(top: 12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const _InfoLabel('CURRENT SHOW'),
+                              const _InfoLabel('Current Show'),
                               const SizedBox(height: 5),
                               Text(
                                 'Currently exhibiting at ${show.name}$through.',
@@ -158,7 +154,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                       loading: () => const SizedBox.shrink(),
                       error: (error, stackTrace) => const SizedBox.shrink(),
                     ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 18),
                   Row(
                     children: [
                       Semantics(
@@ -210,12 +206,13 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                         ),
                         child: const Text(
-                          'SHARE',
+                          'Share',
                           style: TextStyle(
                             fontFamily: 'Instrument Sans',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFBDBDBD),
+                            fontSize: 18,
+                            height: 1,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFFF0F0F0),
                           ),
                         ),
                       ),
@@ -228,6 +225,17 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
         );
       },
     );
+  }
+
+  static String _makerMeta(ArtworkDetail artwork) {
+    final makerName = artwork.maker?.name.trim() ?? '';
+    final year = artwork.createdAt?.year;
+
+    if (makerName.isEmpty) {
+      return year == null ? '' : '$year';
+    }
+
+    return year == null ? makerName : '$makerName · $year';
   }
 }
 
@@ -242,8 +250,9 @@ class _InfoLabel extends StatelessWidget {
       text,
       style: const TextStyle(
         fontFamily: 'Instrument Sans',
-        fontSize: 10,
-        fontWeight: FontWeight.w500,
+        fontSize: 13,
+        height: 1.2,
+        fontWeight: FontWeight.w400,
         color: Color(0xFFBDBDBD),
       ),
     );
@@ -254,8 +263,8 @@ class _InfoValueStyle extends TextStyle {
   const _InfoValueStyle()
     : super(
         fontFamily: 'Instrument Sans',
-        fontSize: 12,
-        height: 1.35,
+        fontSize: 17,
+        height: 1.25,
         fontWeight: FontWeight.w500,
         color: const Color(0xFFF0F0F0),
       );

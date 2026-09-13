@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -169,44 +170,102 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       _currentPage = 0;
     }
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        PageView.builder(
-          key: const Key('artwork_viewer_page_view'),
-          controller: _pageController,
-          itemCount: totalPageCount,
-          onPageChanged: (index) {
-            if (!mounted) return;
-            setState(() => _currentPage = index);
-          },
-          itemBuilder: (context, index) {
-            if (index == visualPageCount) {
-              return ArtworkMakerInfoPage(
-                artwork: artwork,
-                isSaved: isSaved,
-                isSaving: _isSaving,
-                onSavedTap: () => _toggleSaved(isSaved),
-                onShare: () => _shareArtwork(artwork),
-              );
-            }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final layout = _ViewerOverlayLayout.fromConstraints(constraints);
+        final isMakerPage = _currentPage == visualPageCount;
 
-            return _ArtworkMediaPage(artwork: artwork, media: media[index]);
-          },
-        ),
-        _ViewerCloseButton(onPressed: widget.onClose),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 24,
-          child: Center(
-            child: ArtworkViewerDots(
-              count: totalPageCount,
-              currentIndex: _currentPage,
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            PageView.builder(
+              key: const Key('artwork_viewer_page_view'),
+              controller: _pageController,
+              itemCount: totalPageCount,
+              onPageChanged: (index) {
+                if (!mounted) return;
+                setState(() => _currentPage = index);
+              },
+              itemBuilder: (context, index) {
+                if (index == visualPageCount) {
+                  return ArtworkMakerInfoPage(
+                    artwork: artwork,
+                    isSaved: isSaved,
+                    isSaving: _isSaving,
+                    onSavedTap: () => _toggleSaved(isSaved),
+                    onShare: () => _shareArtwork(artwork),
+                  );
+                }
+
+                return _ArtworkMediaPage(
+                  artwork: artwork,
+                  media: media[index],
+                );
+              },
             ),
-          ),
-        ),
-      ],
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              top: isMakerPage ? layout.makerCloseTop : layout.mediaCloseTop,
+              right: isMakerPage
+                  ? layout.makerCloseRight
+                  : layout.mediaCloseRight,
+              child: _ViewerCloseButton(onPressed: widget.onClose),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              left: 0,
+              right: 0,
+              bottom: isMakerPage
+                  ? layout.makerDotsBottom
+                  : layout.mediaDotsBottom,
+              child: Center(
+                child: ArtworkViewerDots(
+                  count: totalPageCount,
+                  currentIndex: _currentPage,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ViewerOverlayLayout {
+  const _ViewerOverlayLayout({
+    required this.mediaCloseTop,
+    required this.mediaCloseRight,
+    required this.makerCloseTop,
+    required this.makerCloseRight,
+    required this.mediaDotsBottom,
+    required this.makerDotsBottom,
+  });
+
+  final double mediaCloseTop;
+  final double mediaCloseRight;
+  final double makerCloseTop;
+  final double makerCloseRight;
+  final double mediaDotsBottom;
+  final double makerDotsBottom;
+
+  factory _ViewerOverlayLayout.fromConstraints(BoxConstraints constraints) {
+    final width = constraints.maxWidth;
+    final height = constraints.maxHeight;
+    final makerCardTop = (height * 0.327).clamp(160.0, 335.0).toDouble();
+    final makerCardHorizontal = (width * 0.0816)
+        .clamp(24.0, 40.0)
+        .toDouble();
+
+    return _ViewerOverlayLayout(
+      mediaCloseTop: (height * 0.049).clamp(28.0, 52.0).toDouble(),
+      mediaCloseRight: (width * 0.107).clamp(28.0, 52.0).toDouble(),
+      makerCloseTop: makerCardTop + 2,
+      makerCloseRight: makerCardHorizontal + 2,
+      mediaDotsBottom: (height * 0.25).clamp(80.0, 256.0).toDouble(),
+      makerDotsBottom: (height * 0.207).clamp(64.0, 212.0).toDouble(),
     );
   }
 }
@@ -218,22 +277,15 @@ class _ViewerCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scale = (MediaQuery.sizeOf(context).width / 430).clamp(0.78, 1.08);
-    final visibleTop = (50 * scale).clamp(40.0, 54.0).toDouble();
-
-    return Positioned(
-      top: visibleTop - 16,
-      right: 12,
-      child: SizedBox.square(
-        dimension: 44,
-        child: IconButton(
-          key: const Key('artwork_viewer_close_button'),
-          onPressed: onPressed,
-          padding: EdgeInsets.zero,
-          iconSize: 12,
-          color: const Color(0xFFF0F0F0),
-          icon: const Icon(Icons.close_rounded),
-        ),
+    return SizedBox.square(
+      dimension: 44,
+      child: IconButton(
+        key: const Key('artwork_viewer_close_button'),
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+        iconSize: 12,
+        color: const Color(0xFFF0F0F0),
+        icon: const Icon(Icons.close_rounded),
       ),
     );
   }
@@ -249,51 +301,60 @@ class _ArtworkMediaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final scale = (constraints.maxWidth / 341).clamp(0.88, 1.18);
-        final compact = constraints.maxHeight < 620;
-        final horizontal = (24 * scale).clamp(20.0, 30.0).toDouble();
-        final imageTop = compact
-            ? 76.0
-            : (112 * scale).clamp(96.0, 128.0).toDouble();
+        final widthScale = (constraints.maxWidth / 472)
+            .clamp(0.68, 1.18)
+            .toDouble();
+        final horizontal = (constraints.maxWidth * 0.1398)
+            .clamp(44.0, 72.0)
+            .toDouble();
+        final imageTop = (constraints.maxHeight * 0.1094)
+            .clamp(56.0, 118.0)
+            .toDouble();
         final imageWidth = constraints.maxWidth - (horizontal * 2);
-        final maxImageHeight = constraints.maxHeight * (compact ? 0.46 : 0.57);
+        final aspectRatio = _aspectRatioFor(media);
+        final naturalImageHeight = imageWidth / aspectRatio;
+        final maxImageHeight =
+            constraints.maxHeight *
+            (constraints.maxHeight < 620 ? 0.50 : 0.52);
+        final imageHeight = math.min(naturalImageHeight, maxImageHeight);
+        final captionGap = (42 * widthScale).clamp(20.0, 44.0).toDouble();
 
-        return Padding(
+        return SingleChildScrollView(
           key: const Key('artwork_media_page_scroll'),
-          padding: EdgeInsets.fromLTRB(horizontal, imageTop, horizontal, 72),
-          child: Column(
-            children: [
-              ConstrainedBox(
-                key: const Key('artwork_viewer_media_box'),
-                constraints: BoxConstraints(
-                  maxWidth: imageWidth,
-                  maxHeight: maxImageHeight,
-                ),
-                child: AspectRatio(
-                  aspectRatio: _aspectRatioFor(media),
+          physics: const ClampingScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontal),
+            child: Column(
+              children: [
+                SizedBox(height: imageTop),
+                SizedBox(
+                  key: const Key('artwork_viewer_media_box'),
+                  width: imageWidth,
+                  height: imageHeight,
                   child: _MediaSurface(media: media),
                 ),
-              ),
-              const Spacer(),
-              if ((artwork.description ?? '').isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
-                  child: Text(
-                    artwork.description!,
-                    key: const Key('artwork_viewer_description'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 14,
-                      height: 1.22,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xFFF0F0F0),
+                if ((artwork.description ?? '').isNotEmpty) ...[
+                  SizedBox(height: captionGap),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8 * widthScale),
+                    child: Text(
+                      artwork.description!,
+                      key: const Key('artwork_viewer_description'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 14,
+                        height: 1.22,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.italic,
+                        color: Color(0xFFF0F0F0),
+                      ),
                     ),
                   ),
-                ),
-              const SizedBox(height: 18),
-            ],
+                ],
+                SizedBox(height: (132 * widthScale).clamp(84.0, 140.0)),
+              ],
+            ),
           ),
         );
       },
@@ -308,7 +369,7 @@ class _ArtworkMediaPage extends StatelessWidget {
       return width / height;
     }
 
-    return 0.74;
+    return 0.64;
   }
 }
 
@@ -377,21 +438,31 @@ class _ViewerError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: OutlinedButton(
-            key: const Key('artwork_viewer_retry_button'),
-            onPressed: onRetry,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              side: const BorderSide(color: AppColors.primary),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final layout = _ViewerOverlayLayout.fromConstraints(constraints);
+
+        return Stack(
+          children: [
+            Center(
+              child: OutlinedButton(
+                key: const Key('artwork_viewer_retry_button'),
+                onPressed: onRetry,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                ),
+                child: const Text('Try again'),
+              ),
             ),
-            child: const Text('Try again'),
-          ),
-        ),
-        _ViewerCloseButton(onPressed: onClose),
-      ],
+            Positioned(
+              top: layout.mediaCloseTop,
+              right: layout.mediaCloseRight,
+              child: _ViewerCloseButton(onPressed: onClose),
+            ),
+          ],
+        );
+      },
     );
   }
 }

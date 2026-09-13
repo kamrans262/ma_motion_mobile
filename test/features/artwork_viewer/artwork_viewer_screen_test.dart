@@ -67,8 +67,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
-      expect(find.text('Mara Vellan'), findsOneWidget);
-      expect(find.text('New York, NY'), findsOneWidget);
+      expect(find.text('Tide Register No. 4'), findsOneWidget);
+      expect(find.text('Mara Vellan · 2024'), findsOneWidget);
 
       final title = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_title')),
@@ -81,7 +81,7 @@ void main() {
         find.byKey(const Key('artwork_maker_info_meta')),
       );
       expect(meta.style?.fontFamily, 'Instrument Sans');
-      expect(meta.style?.fontSize, 12);
+      expect(meta.style?.fontSize, 15);
 
       expect(
         tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
@@ -91,12 +91,12 @@ void main() {
       final share = tester.widget<Text>(
         find.descendant(
           of: find.byKey(const Key('artwork_maker_info_share_button')),
-          matching: find.text('SHARE'),
+          matching: find.text('Share'),
         ),
       );
       expect(share.style?.fontFamily, 'Instrument Sans');
-      expect(share.style?.fontSize, 12);
-      expect(share.style?.fontWeight, FontWeight.w600);
+      expect(share.style?.fontSize, 18);
+      expect(share.style?.fontWeight, FontWeight.w700);
 
       expect(
         find.byKey(const Key('artwork_viewer_close_button')),
