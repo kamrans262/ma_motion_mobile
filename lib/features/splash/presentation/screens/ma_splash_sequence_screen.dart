@@ -12,7 +12,7 @@ class MaSplashSequenceScreen extends ConsumerStatefulWidget {
     this.onResolved,
     this.entryResolver,
     this.autoPlay = true,
-    this.duration = const Duration(milliseconds: 6600),
+    this.duration = const Duration(milliseconds: 11800),
   });
 
   final ValueChanged<MakerEntryDestination>? onResolved;
@@ -46,31 +46,26 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
 
     _backgroundProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.05, 0.48, curve: Curves.easeInOutSine),
+      curve: const Interval(0.05, 0.17, curve: Curves.easeInOutCubic),
     );
 
     _dotProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.08, 0.62, curve: Curves.easeInOutSine),
+      curve: const Interval(0.03, 0.20, curve: Curves.easeInOutCubic),
     );
 
-    _logoScale = Tween<double>(begin: 0.72, end: 1).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.24, 0.50, curve: Curves.easeOutCubic),
-      ),
-    );
+    _logoScale = const AlwaysStoppedAnimation<double>(1);
 
     _welcomeOpacity = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.70, 0.90, curve: Curves.easeInOutCubic),
+      curve: const Interval(0.64, 0.70, curve: Curves.easeInOutCubic),
     );
 
     _welcomeSlide =
-        Tween<Offset>(begin: const Offset(0, 0.16), end: Offset.zero).animate(
+        Tween<Offset>(begin: const Offset(0, 0.025), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _controller,
-            curve: const Interval(0.70, 0.92, curve: Curves.easeInOutCubic),
+            curve: const Interval(0.64, 0.71, curve: Curves.easeOutCubic),
           ),
         );
 
@@ -119,13 +114,13 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
   }
 
   double _logoOpacity(double value) {
-    if (value < 0.20) return 0;
-    if (value < 0.38) {
-      return Curves.easeInOutCubic.transform((value - 0.20) / 0.18);
+    if (value < 0.11) return 0;
+    if (value < 0.16) {
+      return Curves.easeInOutCubic.transform((value - 0.11) / 0.05);
     }
-    if (value < 0.64) return 1;
-    if (value < 0.80) {
-      return 1 - Curves.easeInOutCubic.transform((value - 0.64) / 0.16);
+    if (value < 0.59) return 1;
+    if (value < 0.65) {
+      return 1 - Curves.easeInOutCubic.transform((value - 0.59) / 0.06);
     }
     return 0;
   }
@@ -262,24 +257,20 @@ class _AnimatedDotGridPainter extends CustomPainter {
     double radius;
     Color color;
 
-    if (progress < 0.36) {
-      final t = progress / 0.36;
+    if (progress < 0.30) {
+      final t = progress / 0.30;
       radius = baseRadius * Curves.easeOut.transform(t);
-      color = AppColors.splashBackground.withValues(alpha: 0.24);
+      color = AppColors.splashBackground.withValues(alpha: 0.30);
     } else if (progress < 0.62) {
-      final t = (progress - 0.36) / 0.26;
-      radius = baseRadius + ((largeRadius - baseRadius) * t);
-      color = Color.lerp(
-        AppColors.splashBackground.withValues(alpha: 0.32),
-        AppColors.primary,
-        t,
-      )!;
+      final t = (progress - 0.30) / 0.32;
+      radius = baseRadius + ((largeRadius - baseRadius) * Curves.easeInOut.transform(t));
+      color = AppColors.splashBackground.withValues(alpha: 0.78);
     } else {
       final t = (progress - 0.62) / 0.38;
-      radius = largeRadius + ((baseRadius - largeRadius) * t);
+      radius = largeRadius + ((baseRadius - largeRadius) * Curves.easeInOut.transform(t));
       color = Color.lerp(
         AppColors.primary,
-        AppColors.splashDot.withValues(alpha: 0.68),
+        AppColors.splashDot.withValues(alpha: 0.80),
         t,
       )!;
     }
