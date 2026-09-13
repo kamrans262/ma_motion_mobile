@@ -1,1 +1,6 @@
-enum MakerEntryDestination { join, profileSetup, discovery }
+enum MakerEntryDestination {
+  join,
+  profileSetup,
+  discovery,
+  appreciatorDiscovery,
+}

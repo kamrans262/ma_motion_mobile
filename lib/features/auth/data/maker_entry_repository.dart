@@ -43,7 +43,15 @@ class MakerEntryRepository implements MakerEntryRepositoryContract {
   Future<MakerEntryDestination> restoreAppEntry() async {
     final session = await auth.restoreSession();
 
-    if (session == null || !session.user.isMaker) {
+    if (session == null) {
+      return MakerEntryDestination.join;
+    }
+
+    if (session.user.isAppreciator) {
+      return MakerEntryDestination.appreciatorDiscovery;
+    }
+
+    if (!session.user.isMaker) {
       return MakerEntryDestination.join;
     }
 
