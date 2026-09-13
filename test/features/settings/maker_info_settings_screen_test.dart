@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
+import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 import 'package:ma_motion_mobile/features/settings/presentation/screens/maker_info_settings_screen.dart';
@@ -25,7 +27,7 @@ void main() {
             onClose: () {
               repository.closeCalls++;
             },
-            onSwitchedToAppreciator: _noop,
+            onSwitchedToAppreciator: _noopDestination,
           ),
         ),
       ),
@@ -94,7 +96,7 @@ void main() {
         child: const MaterialApp(
           home: MakerInfoSettingsScreen(
             onClose: _noop,
-            onSwitchedToAppreciator: _noop,
+            onSwitchedToAppreciator: _noopDestination,
           ),
         ),
       ),
@@ -120,21 +122,27 @@ void main() {
   });
 
   testWidgets(
-    'Switch to Appreciator logs out and invokes role-selection navigation',
+    'Switch to Appreciator preserves session and emits resolved destination',
     (WidgetTester tester) async {
       final repository = _FakeSettingsRepository();
-      var switched = 0;
+      final switchRepository = _FakeExperienceSwitchRepository(
+        MakerEntryDestination.appreciatorDiscovery,
+      );
+      MakerEntryDestination? switchedTo;
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+            experienceSwitchRepositoryProvider.overrideWithValue(
+              switchRepository,
+            ),
           ],
           child: MaterialApp(
             home: MakerInfoSettingsScreen(
               onClose: _noop,
-              onSwitchedToAppreciator: () {
-                switched++;
+              onSwitchedToAppreciator: (destination) {
+                switchedTo = destination;
               },
             ),
           ),
@@ -158,8 +166,9 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      expect(repository.logoutCalls, 1);
-      expect(switched, 1);
+      expect(repository.logoutCalls, 0);
+      expect(switchRepository.appreciatorCalls, 1);
+      expect(switchedTo, MakerEntryDestination.appreciatorDiscovery);
       expect(tester.takeException(), isNull);
     },
   );
@@ -179,7 +188,7 @@ void main() {
               onClose: () {
                 repository.closeCalls++;
               },
-              onSwitchedToAppreciator: _noop,
+              onSwitchedToAppreciator: _noopDestination,
             ),
           ),
         ),
@@ -238,6 +247,8 @@ Future<void> _finishInitialLoad(WidgetTester tester) async {
 }
 
 void _noop() {}
+
+void _noopDestination(MakerEntryDestination destination) {}
 
 class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int saveCalls = 0;
@@ -304,4 +315,22 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   Future<void> logout() async {
     logoutCalls++;
   }
+}
+
+class _FakeExperienceSwitchRepository
+    implements ExperienceSwitchRepositoryContract {
+  _FakeExperienceSwitchRepository(this.destination);
+
+  final MakerEntryDestination destination;
+  int appreciatorCalls = 0;
+
+  @override
+  Future<MakerEntryDestination> switchToAppreciator() async {
+    appreciatorCalls++;
+    return destination;
+  }
+
+  @override
+  Future<MakerEntryDestination> switchToMaker() async =>
+      MakerEntryDestination.discovery;
 }
