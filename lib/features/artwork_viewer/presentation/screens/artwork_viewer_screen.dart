@@ -203,7 +203,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
         Positioned(
           left: 0,
           right: 0,
-          bottom: math.max(24, MediaQuery.paddingOf(context).bottom + 10),
+          bottom: 24,
           child: Center(
             child: ArtworkViewerDots(
               count: totalPageCount,
