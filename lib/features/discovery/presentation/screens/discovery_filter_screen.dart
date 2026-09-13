@@ -431,10 +431,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           key: const Key('filter_location_search'),
           controller: _locationSearchController,
           onChanged: _searchLocations,
-          style: AppTextStyles.field.copyWith(
-            fontSize: 14,
-            height: 1.15,
-          ),
+          style: AppTextStyles.field.copyWith(fontSize: 14, height: 1.15),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
             hintText: 'Enter city or zip code',
@@ -499,28 +496,28 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               child: SizedBox(
                 height: 30,
                 child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackHeight: 1,
-                  activeTrackColor: AppColors.darkGray,
-                  inactiveTrackColor: AppColors.darkGray,
-                  thumbColor: AppColors.white,
-                  overlayColor: AppColors.primary50,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 5,
-                    elevation: 0,
-                    pressedElevation: 0,
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 1,
+                    activeTrackColor: AppColors.darkGray,
+                    inactiveTrackColor: AppColors.darkGray,
+                    thumbColor: AppColors.white,
+                    overlayColor: AppColors.primary50,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 5,
+                      elevation: 0,
+                      pressedElevation: 0,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 10,
+                    ),
+                    showValueIndicator: ShowValueIndicator.never,
                   ),
-                  overlayShape: const RoundSliderOverlayShape(
-                    overlayRadius: 10,
-                  ),
-                  showValueIndicator: ShowValueIndicator.never,
-                ),
                   child: Slider(
                     key: const Key('filter_radius_slider'),
-                  value: radiusValue,
-                  min: minMiles,
-                  max: maxMiles,
-                  divisions: _radiusDivisions(minMiles, maxMiles),
+                    value: radiusValue,
+                    min: minMiles,
+                    max: maxMiles,
+                    divisions: _radiusDivisions(minMiles, maxMiles),
                     onChanged: (value) {
                       setState(() {
                         _radiusMiles = value;
