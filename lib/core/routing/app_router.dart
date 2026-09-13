@@ -12,6 +12,75 @@ import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
 import '../../features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
+const _premiumTransitionDuration = Duration(milliseconds: 300);
+const _premiumReverseTransitionDuration = Duration(milliseconds: 240);
+
+CustomTransitionPage<void> _premiumPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: _premiumTransitionDuration,
+    reverseTransitionDuration: _premiumReverseTransitionDuration,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final disableAnimations =
+          MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+
+      if (disableAnimations) {
+        return child;
+      }
+
+      final primary = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+      final secondary = CurvedAnimation(
+        parent: secondaryAnimation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+
+      final incomingOffset = Tween<Offset>(
+        begin: const Offset(0.018, 0),
+        end: Offset.zero,
+      ).animate(primary);
+      final incomingScale = Tween<double>(
+        begin: 0.992,
+        end: 1,
+      ).animate(primary);
+      final outgoingScale = Tween<double>(
+        begin: 1,
+        end: 0.996,
+      ).animate(secondary);
+      final outgoingOpacity = Tween<double>(
+        begin: 1,
+        end: 0.985,
+      ).animate(secondary);
+
+      return FadeTransition(
+        opacity: outgoingOpacity,
+        child: ScaleTransition(
+          scale: outgoingScale,
+          child: FadeTransition(
+            opacity: primary,
+            child: SlideTransition(
+              position: incomingOffset,
+              child: ScaleTransition(
+                scale: incomingScale,
+                alignment: Alignment.center,
+                child: child,
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+    child: child,
+  );
+}
+
 GoRouter createAppRouter({
   required bool splashAutoPlay,
   required Duration splashDuration,
@@ -47,19 +116,8 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/join',
-        pageBuilder: (context, state) => CustomTransitionPage<void>(
-          key: state.pageKey,
-          transitionDuration: const Duration(milliseconds: 350),
-          reverseTransitionDuration: const Duration(milliseconds: 180),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOutCubic,
-              ),
-              child: child,
-            );
-          },
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
           child: MaRoleSelectionScreen(
             onMaker: () => context.go('/maker-registration'),
             onAppreciator: () {},
@@ -68,14 +126,19 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/maker-registration',
-        builder: (context, state) => MakerRegistrationFlowScreen(
-          onExit: () => context.go('/join'),
-          onCompleted: () => context.go('/maker/discovery'),
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MakerRegistrationFlowScreen(
+            onExit: () => context.go('/join'),
+            onCompleted: () => context.go('/maker/discovery'),
+          ),
         ),
       ),
       GoRoute(
         path: '/maker/discovery',
-        builder: (context, state) => MakerArtworkDiscoveryScreen(
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MakerArtworkDiscoveryScreen(
           onFilterTap: () => context.push('/maker/discovery/filter'),
           onSavedTap: () => context.push('/maker/saved-artworks'),
           onSettingsTap: () => context.push('/maker/settings'),
@@ -89,11 +152,14 @@ GoRouter createAppRouter({
               extra: artwork,
             );
           },
+          ),
         ),
       ),
       GoRoute(
         path: '/maker/saved-artworks',
-        builder: (context, state) => MakerSavedArtworksScreen(
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MakerSavedArtworksScreen(
           onBack: () => context.pop(),
           onSettingsTap: () => context.push('/maker/settings'),
           onArtworkTap: (artwork) {
@@ -106,39 +172,54 @@ GoRouter createAppRouter({
               extra: artwork,
             );
           },
+          ),
         ),
       ),
       GoRoute(
         path: '/maker/discovery/filter',
-        builder: (context, state) => DiscoveryFilterScreen(
-          onClose: () => context.pop(),
-          onApplied: () => context.pop(),
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: DiscoveryFilterScreen(
+            onClose: () => context.pop(),
+            onApplied: () => context.pop(),
+          ),
         ),
       ),
       GoRoute(
         path: '/maker/settings',
-        builder: (context, state) => MakerInfoSettingsScreen(
-          onClose: () => context.pop(),
-          onSwitchedToAppreciator: () => context.go('/join'),
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MakerInfoSettingsScreen(
+            onClose: () => context.pop(),
+            onSwitchedToAppreciator: () => context.go('/join'),
+          ),
         ),
       ),
       GoRoute(
         path: '/maker/discovery/artwork/:artworkId',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final artworkId = int.tryParse(
             state.pathParameters['artworkId'] ?? '',
           );
 
           if (artworkId == null) {
-            return const Scaffold(body: Center(child: Text('Invalid artwork')));
+            return _premiumPage(
+              state: state,
+              child: const Scaffold(
+                body: Center(child: Text('Invalid artwork')),
+              ),
+            );
           }
 
-          return ArtworkViewerScreen(
-            artworkId: artworkId,
-            initialArtwork: state.extra is DiscoveryArtwork
-                ? state.extra! as DiscoveryArtwork
-                : null,
-            onClose: () => context.pop(),
+          return _premiumPage(
+            state: state,
+            child: ArtworkViewerScreen(
+              artworkId: artworkId,
+              initialArtwork: state.extra is DiscoveryArtwork
+                  ? state.extra! as DiscoveryArtwork
+                  : null,
+              onClose: () => context.pop(),
+            ),
           );
         },
       ),
