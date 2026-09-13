@@ -84,6 +84,9 @@ jobs:
       - name: Prior Discovery regression
         run: flutter test test/features/discovery/maker_artwork_discovery_screen_test.dart
 
+      - name: Experience switching repository tests
+        run: flutter test test/features/auth/experience_switch_repository_test.dart
+
       - name: Prior Auth regression
         run: flutter test test/features/auth/maker_entry_repository_test.dart
 
@@ -92,6 +95,9 @@ jobs:
 
       - name: Appreciator onboarding regression
         run: flutter test test/features/onboarding/appreciator_registration_flow_test.dart test/features/onboarding/appreciator_registration_backend_submission_test.dart
+
+      - name: Maker onboarding switching regression
+        run: flutter test test/features/onboarding/maker_onboarding_repository_test.dart
 
       - name: Startup regression
         run: flutter test test/widget_test.dart
