@@ -140,6 +140,7 @@ class MakerOnboardingRepository {
     final existingToken = await tokenStore.read();
 
     if (existingToken != null && existingToken.trim().isNotEmpty) {
+      await api.post(ApiPaths.makerExperienceOnboarding);
       return;
     }
 
