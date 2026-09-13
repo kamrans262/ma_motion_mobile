@@ -35,18 +35,7 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting is stable
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          if ! git diff --quiet -- lib test; then
-            echo "=== DART_FORMAT_DIFF_BEGIN ==="
-            git diff -- lib test
-            echo "=== FORMATTED_VIEWER_FILE_BEGIN ==="
-            cat lib/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart
-            echo "=== FORMATTED_VIEWER_FILE_END ==="
-            exit 1
-          fi
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Flutter analyzer
         run: flutter analyze

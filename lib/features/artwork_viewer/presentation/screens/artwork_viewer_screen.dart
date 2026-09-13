@@ -197,10 +197,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                   );
                 }
 
-                return _ArtworkMediaPage(
-                  artwork: artwork,
-                  media: media[index],
-                );
+                return _ArtworkMediaPage(artwork: artwork, media: media[index]);
               },
             ),
             AnimatedPositioned(
@@ -255,9 +252,7 @@ class _ViewerOverlayLayout {
     final width = constraints.maxWidth;
     final height = constraints.maxHeight;
     final makerCardTop = (height * 0.327).clamp(160.0, 335.0).toDouble();
-    final makerCardHorizontal = (width * 0.0816)
-        .clamp(24.0, 40.0)
-        .toDouble();
+    final makerCardHorizontal = (width * 0.0816).clamp(24.0, 40.0).toDouble();
 
     return _ViewerOverlayLayout(
       mediaCloseTop: (height * 0.049).clamp(28.0, 52.0).toDouble(),
@@ -314,8 +309,7 @@ class _ArtworkMediaPage extends StatelessWidget {
         final aspectRatio = _aspectRatioFor(media);
         final naturalImageHeight = imageWidth / aspectRatio;
         final maxImageHeight =
-            constraints.maxHeight *
-            (constraints.maxHeight < 620 ? 0.50 : 0.52);
+            constraints.maxHeight * (constraints.maxHeight < 620 ? 0.50 : 0.52);
         final imageHeight = math.min(naturalImageHeight, maxImageHeight);
         final captionGap = (42 * widthScale).clamp(20.0, 44.0).toDouble();
 
