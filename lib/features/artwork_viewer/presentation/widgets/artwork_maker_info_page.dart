@@ -65,7 +65,9 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    maker?.name.isNotEmpty == true ? maker!.name : artwork.title,
+                    maker?.name.isNotEmpty == true
+                        ? maker!.name
+                        : artwork.title,
                     key: const Key('artwork_maker_info_title'),
                     style: const TextStyle(
                       fontFamily: 'Instrument Sans',
@@ -103,10 +105,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                     ),
                   ],
                   const SizedBox(height: 22),
-                  Divider(
-                    height: 1,
-                    color: Color(0x45F0F0F0),
-                  ),
+                  Divider(height: 1, color: Color(0x45F0F0F0)),
                   if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
                     const SizedBox(height: 20),
                     const _InfoLabel('WEBSITE'),
@@ -253,11 +252,11 @@ class _InfoLabel extends StatelessWidget {
 
 class _InfoValueStyle extends TextStyle {
   const _InfoValueStyle()
-      : super(
-          fontFamily: 'Instrument Sans',
-          fontSize: 12,
-          height: 1.35,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFFF0F0F0),
-        );
+    : super(
+        fontFamily: 'Instrument Sans',
+        fontSize: 12,
+        height: 1.35,
+        fontWeight: FontWeight.w500,
+        color: const Color(0xFFF0F0F0),
+      );
 }
