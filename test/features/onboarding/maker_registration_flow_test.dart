@@ -145,10 +145,7 @@ void main() {
 
     for (final textStep in textSteps) {
       await tester.pumpWidget(
-        app(
-          initialStep: textStep.step,
-          keyboardInset: keyboardInset,
-        ),
+        app(initialStep: textStep.step, keyboardInset: keyboardInset),
       );
       await tester.pump();
 
