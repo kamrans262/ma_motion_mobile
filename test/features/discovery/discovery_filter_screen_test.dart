@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/data/discovery_filter_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
@@ -159,6 +160,45 @@ void main() {
 
     final locationField = tester.widget<TextField>(locationSearch);
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
+
+    expect(find.text('Show Status'), findsOneWidget);
+    expect(find.text('Currently Showing Work'), findsOneWidget);
+
+    final applyButton = tester.widget<OutlinedButton>(
+      find.byKey(const Key('filter_apply_button')),
+    );
+    expect(
+      applyButton.style?.backgroundColor?.resolve(<WidgetState>{}),
+      Colors.transparent,
+    );
+    expect(
+      applyButton.style?.backgroundColor?.resolve(<WidgetState>{
+        WidgetState.pressed,
+      }),
+      AppColors.primary,
+    );
+    expect(
+      applyButton.style?.foregroundColor?.resolve(<WidgetState>{}),
+      AppColors.primary,
+    );
+    expect(
+      applyButton.style?.foregroundColor?.resolve(<WidgetState>{
+        WidgetState.pressed,
+      }),
+      AppColors.white,
+    );
+
+    final sliderThemeFinder = find.ancestor(
+      of: radiusSlider,
+      matching: find.byType(SliderTheme),
+    );
+    final sliderTheme = tester.widget<SliderTheme>(sliderThemeFinder.first);
+    expect(sliderTheme.data.trackHeight, 1);
+    expect(sliderTheme.data.activeTrackColor, AppColors.darkGray);
+    expect(sliderTheme.data.inactiveTrackColor, AppColors.darkGray);
+    expect(sliderTheme.data.thumbColor, AppColors.white);
+
+    expect(find.byKey(const Key('filter_radius_control_row')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

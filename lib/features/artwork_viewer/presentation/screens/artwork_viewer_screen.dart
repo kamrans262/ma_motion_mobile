@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../saved_artworks/application/artwork_saved_status_provider.dart';
@@ -363,10 +364,7 @@ class _ViewerError extends StatelessWidget {
               child: OutlinedButton(
                 key: const Key('artwork_viewer_retry_button'),
                 onPressed: onRetry,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                ),
+                style: AppButtonStyles.outlineAction(),
                 child: const Text('Try again'),
               ),
             ),

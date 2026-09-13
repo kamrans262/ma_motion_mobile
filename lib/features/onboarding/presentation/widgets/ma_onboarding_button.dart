@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
@@ -35,9 +36,10 @@ class MaOnboardingButton extends StatelessWidget {
             )
           : OutlinedButton(
               onPressed: onPressed,
-              style: OutlinedButton.styleFrom(
-                shape: const RoundedRectangleBorder(),
-                padding: EdgeInsets.zero,
+              style: AppButtonStyles.outlineAction().copyWith(
+                padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+                  EdgeInsets.zero,
+                ),
               ),
               child: Text(
                 label,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../application/artwork_discovery_controller.dart';
@@ -337,17 +338,17 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 44,
+                    height: 48,
                     child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
-                      style: _applyButtonStyle(_applying),
+                      style: AppButtonStyles.outlineAction(borderWidth: 1),
                       child: _applying
                           ? const SizedBox.square(
                               dimension: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.white,
+                                color: AppColors.darkGray,
                               ),
                             )
                           : const Text(
@@ -477,55 +478,64 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             ),
           ),
         const SizedBox(height: 14),
+        Text(
+          'Radius (miles)',
+          style: AppTextStyles.onboardingHelper.copyWith(
+            color: AppColors.primary,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 2),
         Row(
+          key: const Key('filter_radius_control_row'),
           children: [
-            Text(
-              'Radius (miles)',
-              style: AppTextStyles.onboardingHelper.copyWith(
-                color: AppColors.primary,
-                fontSize: 11,
+            Expanded(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 1,
+                  activeTrackColor: AppColors.darkGray,
+                  inactiveTrackColor: AppColors.darkGray,
+                  thumbColor: AppColors.white,
+                  overlayColor: AppColors.primary50,
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 5,
+                    elevation: 0,
+                    pressedElevation: 0,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 10,
+                  ),
+                  showValueIndicator: ShowValueIndicator.never,
+                ),
+                child: Slider(
+                  key: const Key('filter_radius_slider'),
+                  value: radiusValue,
+                  min: minMiles,
+                  max: maxMiles,
+                  divisions: _radiusDivisions(minMiles, maxMiles),
+                  onChanged: (value) {
+                    setState(() {
+                      _radiusMiles = value;
+                    });
+                  },
+                ),
               ),
             ),
-            const Spacer(),
-            Text(
-              '${radiusValue.round()}',
-              key: const Key('filter_radius_value'),
-              style: AppTextStyles.onboardingHelper.copyWith(
-                color: AppColors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
+            const SizedBox(width: 10),
+            SizedBox(
+              width: 28,
+              child: Text(
+                '${radiusValue.round()}',
+                key: const Key('filter_radius_value'),
+                textAlign: TextAlign.right,
+                style: AppTextStyles.onboardingHelper.copyWith(
+                  color: AppColors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 2),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            trackHeight: 1,
-            activeTrackColor: AppColors.darkGray,
-            inactiveTrackColor: AppColors.darkGray,
-            thumbColor: AppColors.white,
-            overlayColor: AppColors.primary50,
-            thumbShape: const RoundSliderThumbShape(
-              enabledThumbRadius: 5,
-              elevation: 0,
-              pressedElevation: 0,
-            ),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
-            showValueIndicator: ShowValueIndicator.never,
-          ),
-          child: Slider(
-            key: const Key('filter_radius_slider'),
-            value: radiusValue,
-            min: minMiles,
-            max: maxMiles,
-            divisions: _radiusDivisions(minMiles, maxMiles),
-            onChanged: (value) {
-              setState(() {
-                _radiusMiles = value;
-              });
-            },
-          ),
         ),
       ],
     );
@@ -541,44 +551,6 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           fontSize: 11,
           fontWeight: FontWeight.w400,
         ),
-      ),
-    );
-  }
-
-  static ButtonStyle _applyButtonStyle(bool applying) {
-    return ButtonStyle(
-      backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
-        if (applying || states.contains(WidgetState.pressed)) {
-          return AppColors.primary;
-        }
-        return Colors.transparent;
-      }),
-      foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
-        if (applying || states.contains(WidgetState.pressed)) {
-          return AppColors.white;
-        }
-        if (states.contains(WidgetState.disabled)) {
-          return AppColors.darkGray;
-        }
-        return AppColors.primary;
-      }),
-      side: WidgetStateProperty.resolveWith<BorderSide>((states) {
-        if (applying) {
-          return const BorderSide(color: AppColors.primary, width: 1);
-        }
-        return BorderSide(
-          color: states.contains(WidgetState.disabled)
-              ? AppColors.darkGray
-              : AppColors.primary,
-          width: 1,
-        );
-      }),
-      overlayColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
-      shape: const WidgetStatePropertyAll<OutlinedBorder>(
-        RoundedRectangleBorder(),
-      ),
-      padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
-        EdgeInsets.zero,
       ),
     );
   }
@@ -688,7 +660,11 @@ class _LoadError extends StatelessWidget {
               style: AppTextStyles.onboardingHelper,
             ),
             const SizedBox(height: 16),
-            OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
+            OutlinedButton(
+              onPressed: onRetry,
+              style: AppButtonStyles.outlineAction(),
+              child: const Text('Try again'),
+            ),
           ],
         ),
       ),

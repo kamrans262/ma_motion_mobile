@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
@@ -360,20 +361,13 @@ class _MakerInfoSettingsScreenState
                   child: OutlinedButton(
                     key: const Key('maker_settings_save_close'),
                     onPressed: _saving ? null : _saveAndClose,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.4,
-                      ),
-                      shape: const RoundedRectangleBorder(),
-                    ),
+                    style: AppButtonStyles.outlineAction(),
                     child: _saving
                         ? const SizedBox.square(
                             dimension: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: AppColors.primary,
+                              color: AppColors.darkGray,
                             ),
                           )
                         : const Text(
@@ -1111,10 +1105,7 @@ class _LoadError extends StatelessWidget {
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onRetry,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary),
-              ),
+              style: AppButtonStyles.outlineAction(),
               child: const Text('Try again'),
             ),
           ],
