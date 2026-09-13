@@ -47,9 +47,7 @@ abstract final class AppTheme {
               width: 1.2,
             );
           }),
-          overlayColor: const WidgetStatePropertyAll<Color>(
-            Colors.transparent,
-          ),
+          overlayColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
           shape: const WidgetStatePropertyAll<OutlinedBorder>(
             RoundedRectangleBorder(),
           ),

@@ -239,7 +239,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           : location != null && location.id > 0
           ? location.id
           : null,
-      locationLabel: location?.label ?? (rawLocation.isEmpty ? null : rawLocation),
+      locationLabel:
+          location?.label ?? (rawLocation.isEmpty ? null : rawLocation),
       city: location == null && rawLocation.isNotEmpty && !looksPostal
           ? rawLocation
           : '',
@@ -687,10 +688,7 @@ class _LoadError extends StatelessWidget {
               style: AppTextStyles.onboardingHelper,
             ),
             const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: onRetry,
-              child: const Text('Try again'),
-            ),
+            OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
           ],
         ),
       ),

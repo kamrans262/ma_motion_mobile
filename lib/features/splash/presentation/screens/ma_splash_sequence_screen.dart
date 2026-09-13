@@ -46,11 +46,7 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     // those same circles shrink until they become the final dot grid.
     _openingProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(
-        0.081967,
-        0.327869,
-        curve: Curves.linear,
-      ),
+      curve: const Interval(0.081967, 0.327869, curve: Curves.linear),
     );
 
     _controller.addStatusListener(_handleAnimationStatus);
