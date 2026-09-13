@@ -7,13 +7,28 @@ import 'package:ma_motion_mobile/features/onboarding/application/maker_registrat
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
 void main() {
-  Widget app({int initialStep = 0, VoidCallback? onExit}) {
+  Widget app({
+    int initialStep = 0,
+    VoidCallback? onExit,
+    double keyboardInset = 0,
+  }) {
+    final flow = MakerRegistrationFlowScreen(
+      key: ValueKey<int>(initialStep),
+      initialStep: initialStep,
+      onExit: onExit ?? () {},
+    );
+
     return ProviderScope(
       child: MaterialApp(
-        home: MakerRegistrationFlowScreen(
-          initialStep: initialStep,
-          onExit: onExit ?? () {},
-        ),
+        home: keyboardInset > 0
+            ? MediaQuery(
+                data: MediaQueryData(
+                  size: const Size(390, 844),
+                  viewInsets: EdgeInsets.only(bottom: keyboardInset),
+                ),
+                child: flow,
+              )
+            : flow,
       ),
     );
   }
@@ -143,6 +158,76 @@ void main() {
     expect(find.text('What kind of work do\nyou make?'), findsOneWidget);
     expect(find.byKey(const Key('maker_type_options')), findsOneWidget);
     expect(find.byKey(const Key('maker_style_options')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('about-work field stays fully visible above the keyboard', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    const keyboardInset = 320.0;
+
+    await tester.pumpWidget(
+      app(initialStep: 2, keyboardInset: keyboardInset),
+    );
+    await tester.pump();
+
+    expect(find.text('Tell us about your work'), findsOneWidget);
+    expect(find.byKey(const Key('maker_onboarding_footer')), findsNothing);
+
+    final field = find.byKey(const Key('maker_about_field'));
+    expect(field, findsOneWidget);
+
+    final fieldRect = tester.getRect(field);
+    expect(fieldRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('type and style content starts higher and clears the footer', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app(initialStep: 3));
+    await tester.pump();
+
+    final headingTop = tester.getTopLeft(
+      find.byKey(const Key('maker_step_heading')),
+    );
+    expect(headingTop.dy, lessThan(120));
+
+    final scrollable = find.descendant(
+      of: find.byKey(const Key('maker_onboarding_scroll')),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is Scrollable && widget.axisDirection == AxisDirection.down,
+      ),
+    );
+    expect(scrollable, findsOneWidget);
+
+    final lastStyle = find.byKey(const Key('maker_style_Experimental'));
+    await tester.scrollUntilVisible(
+      lastStyle,
+      180,
+      scrollable: scrollable,
+    );
+    await tester.pump();
+
+    final footerTop = tester.getTopLeft(
+      find.byKey(const Key('maker_onboarding_footer')),
+    ).dy;
+    final lastStyleBottom = tester.getBottomLeft(lastStyle).dy;
+
+    expect(lastStyleBottom, lessThanOrEqualTo(footerTop));
     expect(tester.takeException(), isNull);
   });
 

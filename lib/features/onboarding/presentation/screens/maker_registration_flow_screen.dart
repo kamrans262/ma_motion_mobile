@@ -309,6 +309,7 @@ class _MakerRegistrationFlowScreenState
           onNext: _next,
           onBack: _back,
           validationMessage: _validationMessage,
+          keyboardContentTop: 18,
           child: MaOnboardingTextField(
             key: const Key('maker_about_field'),
             controller: _aboutController,
@@ -425,7 +426,8 @@ class _TypeStyleStep extends ConsumerWidget {
       onNext: onNext,
       onBack: onBack,
       validationMessage: validationMessage,
-      childGap: 20,
+      contentTopWidthFactor: 0.22,
+      childGap: 12,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
