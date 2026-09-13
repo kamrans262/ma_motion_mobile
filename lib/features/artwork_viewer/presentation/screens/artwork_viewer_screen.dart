@@ -193,10 +193,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
               );
             }
 
-            return _ArtworkMediaPage(
-              artwork: artwork,
-              media: media[index],
-            );
+            return _ArtworkMediaPage(artwork: artwork, media: media[index]);
           },
         ),
         _ViewerCloseButton(onPressed: widget.onClose),
@@ -245,10 +242,7 @@ class _ViewerCloseButton extends StatelessWidget {
 }
 
 class _ArtworkMediaPage extends StatelessWidget {
-  const _ArtworkMediaPage({
-    required this.artwork,
-    required this.media,
-  });
+  const _ArtworkMediaPage({required this.artwork, required this.media});
 
   final ArtworkDetail artwork;
   final DiscoveryArtworkMedia? media;
