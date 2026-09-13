@@ -41,12 +41,12 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
 
     _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    // Reference video:
-    // - first visible holes begin at ~0.18 s;
-    // - the opening mask reaches its final dotted state by ~2.75 s.
+    // The supplied reference is one continuous purple circle field:
+    // initially the circles overlap enough to look like a solid screen, then
+    // those same circles shrink until they become the final dot grid.
     _openingProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.015, 0.225, curve: Curves.linear),
+      curve: const Interval(0, 0.262, curve: Curves.linear),
     );
 
     _controller.addStatusListener(_handleAnimationStatus);
@@ -156,7 +156,7 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
                 RepaintBoundary(
                   child: CustomPaint(
                     key: const Key('ma_splash_dot_pattern'),
-                    painter: _OpeningDotMaskPainter(
+                    painter: _ShrinkingDotFieldPainter(
                       progress: _openingProgress.value,
                     ),
                   ),
@@ -218,48 +218,50 @@ class _WelcomeMessage extends StatelessWidget {
   }
 }
 
-class _OpeningDotMaskPainter extends CustomPainter {
-  const _OpeningDotMaskPainter({required this.progress});
+class _ShrinkingDotFieldPainter extends CustomPainter {
+  const _ShrinkingDotFieldPainter({required this.progress});
 
   final double progress;
 
+  // Radius measurements are derived from the supplied animation. Values are
+  // fractions of grid spacing. >= sqrt(0.5) fully covers the square lattice,
+  // so the first frames read as one solid purple surface.
   static const List<double> _progressStops = <double>[
     0,
-    0.046,
-    0.124,
-    0.202,
-    0.280,
-    0.358,
-    0.436,
-    0.514,
-    0.592,
-    0.670,
-    0.748,
-    0.826,
-    0.904,
-    0.967,
+    0.09375,
+    0.15625,
+    0.21875,
+    0.28125,
+    0.34375,
+    0.40625,
+    0.46875,
+    0.53125,
+    0.59375,
+    0.65625,
+    0.71875,
+    0.78125,
+    0.84375,
+    0.90625,
     1,
   ];
 
-  // Hole radius as a fraction of grid spacing, measured from the supplied
-  // animation. The final value intentionally remains below sqrt(0.5):
-  // the untouched purple islands become the persistent final dot grid.
   static const List<double> _radiusStops = <double>[
-    0,
-    0,
-    0.058,
-    0.109,
-    0.177,
-    0.273,
-    0.376,
-    0.452,
-    0.499,
-    0.542,
-    0.582,
-    0.617,
-    0.645,
-    0.659,
-    0.664,
+    0.76,
+    0.707,
+    0.658,
+    0.614,
+    0.559,
+    0.493,
+    0.420,
+    0.335,
+    0.260,
+    0.197,
+    0.144,
+    0.102,
+    0.071,
+    0.053,
+    0.047,
+    0.038,
   ];
 
   @override
@@ -271,38 +273,24 @@ class _OpeningDotMaskPainter extends CustomPainter {
       return;
     }
 
-    final rect = Offset.zero & size;
     final spacing = MaDotGridMetrics.spacingForWidth(size.width);
     final radius = spacing * _radiusFraction(progress);
+    final paint = Paint()
+      ..color = AppColors.primary
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
-    canvas.saveLayer(rect, Paint());
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..color = AppColors.primary
-        ..style = PaintingStyle.fill,
-    );
+    final rows = (size.height / spacing).ceil() + 4;
+    final columns = (size.width / spacing).ceil() + 4;
 
-    if (radius > 0) {
-      final clearPaint = Paint()
-        ..blendMode = BlendMode.clear
-        ..style = PaintingStyle.fill
-        ..isAntiAlias = true;
+    for (var row = -2; row < rows; row++) {
+      final y = row * spacing;
 
-      final rows = (size.height / spacing).ceil() + 3;
-      final columns = (size.width / spacing).ceil() + 3;
-
-      for (var row = -1; row < rows; row++) {
-        final y = row * spacing;
-
-        for (var column = -1; column < columns; column++) {
-          final x = column * spacing;
-          canvas.drawCircle(Offset(x, y), radius, clearPaint);
-        }
+      for (var column = -2; column < columns; column++) {
+        final x = column * spacing;
+        canvas.drawCircle(Offset(x, y), radius, paint);
       }
     }
-
-    canvas.restore();
   }
 
   double _radiusFraction(double value) {
@@ -324,7 +312,7 @@ class _OpeningDotMaskPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _OpeningDotMaskPainter oldDelegate) {
+  bool shouldRepaint(covariant _ShrinkingDotFieldPainter oldDelegate) {
     return oldDelegate.progress != progress;
   }
 }

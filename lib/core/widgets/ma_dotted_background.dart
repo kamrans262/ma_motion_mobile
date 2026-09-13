@@ -12,9 +12,9 @@ abstract final class MaDotGridMetrics {
   }
 
   static double radiusForWidth(double width) {
-    if (!width.isFinite || width <= 0) return 1.2;
+    if (!width.isFinite || width <= 0) return 0.8;
 
-    return (width * 0.0042).clamp(1.2, 2.1).toDouble();
+    return (spacingForWidth(width) * 0.038).clamp(0.7, 1.2).toDouble();
   }
 }
 
@@ -52,20 +52,20 @@ class _MaDotGridPainter extends CustomPainter {
     }
 
     final paint = Paint()
-      ..color = AppColors.splashDot
+      ..color = AppColors.primary
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
     final rowCount = math.max(1, (size.height / spacing).ceil() + 2);
     final columnCount = math.max(1, (size.width / spacing).ceil() + 2);
 
-    // The supplied animation uses a regular square grid, not staggered rows.
-    // Half-cell offset matches the purple islands left by the opening mask.
+    // Keep the static screen on exactly the same grid phase as the final
+    // frame of the shrinking-circle splash so there is no dot-grid jump.
     for (var row = -1; row < rowCount; row++) {
-      final y = (row + 0.5) * spacing;
+      final y = row * spacing;
 
       for (var column = -1; column < columnCount; column++) {
-        final x = (column + 0.5) * spacing;
+        final x = column * spacing;
         canvas.drawCircle(Offset(x, y), radius, paint);
       }
     }

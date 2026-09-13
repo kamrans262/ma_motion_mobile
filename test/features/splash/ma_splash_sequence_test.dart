@@ -26,7 +26,7 @@ void main() {
     );
   }
 
-  testWidgets('splash starts with purple opening mask over hidden content', (
+  testWidgets('splash starts as overlapping purple circles over hidden content', (
     tester,
   ) async {
     await tester.pumpWidget(app());
@@ -45,8 +45,8 @@ void main() {
       find.byKey(const Key('ma_splash_background')),
     );
 
-    // The logo is present underneath the solid purple opening mask. The mask
-    // reveals it through its expanding holes rather than fading it in.
+    // The logo is already underneath the purple circle field. The circles
+    // begin overlapped as a solid surface and shrink to reveal it.
     expect(logoOpacity.opacity, 1);
     expect(welcomeOpacity.opacity, 0);
     expect(background.color, const Color(0xFF0F2419));
