@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,6 +32,8 @@ class ArtworkViewerScreen extends ConsumerStatefulWidget {
 }
 
 class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
+  static const double _screenPadding = 20;
+
   late final PageController _pageController;
   int _currentPage = 0;
   bool _isSaving = false;
@@ -112,7 +113,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       key: const Key('artwork_viewer_screen'),
       backgroundColor: AppColors.artworkBackground,
       body: artwork != null
-          ? _buildViewer(context, artwork, isSaved: isSaved)
+          ? _buildViewer(artwork, isSaved: isSaved)
           : asyncDetail.when(
               loading: () => const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
@@ -155,14 +156,12 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   }
 
   Widget _buildViewer(
-    BuildContext context,
     ArtworkDetail artwork, {
     required bool isSaved,
   }) {
     final media = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
         : artwork.media.cast<DiscoveryArtworkMedia?>();
-
     final visualPageCount = media.length;
     final totalPageCount = visualPageCount + 1;
 
@@ -170,12 +169,11 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       _currentPage = 0;
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final layout = _ViewerOverlayLayout.fromConstraints(constraints);
-        final isMakerPage = _currentPage == visualPageCount;
-
-        return Stack(
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(_screenPadding),
+        child: Stack(
+          key: const Key('artwork_viewer_frame'),
           fit: StackFit.expand,
           children: [
             PageView.builder(
@@ -200,23 +198,15 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                 return _ArtworkMediaPage(artwork: artwork, media: media[index]);
               },
             ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOut,
-              top: isMakerPage ? layout.makerCloseTop : layout.mediaCloseTop,
-              right: isMakerPage
-                  ? layout.makerCloseRight
-                  : layout.mediaCloseRight,
+            Positioned(
+              top: 0,
+              right: 0,
               child: _ViewerCloseButton(onPressed: widget.onClose),
             ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOut,
+            Positioned(
               left: 0,
               right: 0,
-              bottom: isMakerPage
-                  ? layout.makerDotsBottom
-                  : layout.mediaDotsBottom,
+              bottom: 0,
               child: Center(
                 child: ArtworkViewerDots(
                   count: totalPageCount,
@@ -225,42 +215,8 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
               ),
             ),
           ],
-        );
-      },
-    );
-  }
-}
-
-class _ViewerOverlayLayout {
-  const _ViewerOverlayLayout({
-    required this.mediaCloseTop,
-    required this.mediaCloseRight,
-    required this.makerCloseTop,
-    required this.makerCloseRight,
-    required this.mediaDotsBottom,
-    required this.makerDotsBottom,
-  });
-
-  final double mediaCloseTop;
-  final double mediaCloseRight;
-  final double makerCloseTop;
-  final double makerCloseRight;
-  final double mediaDotsBottom;
-  final double makerDotsBottom;
-
-  factory _ViewerOverlayLayout.fromConstraints(BoxConstraints constraints) {
-    final width = constraints.maxWidth;
-    final height = constraints.maxHeight;
-    final makerCardTop = (height * 0.327).clamp(160.0, 335.0).toDouble();
-    final makerCardHorizontal = (width * 0.0816).clamp(24.0, 40.0).toDouble();
-
-    return _ViewerOverlayLayout(
-      mediaCloseTop: (height * 0.049).clamp(28.0, 52.0).toDouble(),
-      mediaCloseRight: (width * 0.107).clamp(28.0, 52.0).toDouble(),
-      makerCloseTop: makerCardTop + 2,
-      makerCloseRight: makerCardHorizontal + 2,
-      mediaDotsBottom: (height * 0.25).clamp(80.0, 256.0).toDouble(),
-      makerDotsBottom: (height * 0.207).clamp(64.0, 212.0).toDouble(),
+        ),
+      ),
     );
   }
 }
@@ -294,76 +250,50 @@ class _ArtworkMediaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final description = artwork.description?.trim() ?? '';
+    final hasDescription = description.isNotEmpty;
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final widthScale = (constraints.maxWidth / 472)
-            .clamp(0.68, 1.18)
-            .toDouble();
-        final horizontal = (constraints.maxWidth * 0.1398)
-            .clamp(44.0, 72.0)
-            .toDouble();
-        final imageTop = (constraints.maxHeight * 0.1094)
-            .clamp(56.0, 118.0)
-            .toDouble();
-        final imageWidth = constraints.maxWidth - (horizontal * 2);
-        final aspectRatio = _aspectRatioFor(media);
-        final naturalImageHeight = imageWidth / aspectRatio;
-        final maxImageHeight =
-            constraints.maxHeight * (constraints.maxHeight < 620 ? 0.50 : 0.52);
-        final imageHeight = math.min(naturalImageHeight, maxImageHeight);
-        final captionGap = (42 * widthScale).clamp(20.0, 44.0).toDouble();
+        final bottomReserve = hasDescription ? 76.0 : 28.0;
 
-        return SingleChildScrollView(
-          key: const Key('artwork_media_page_scroll'),
-          physics: const ClampingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontal),
-            child: Column(
-              children: [
-                SizedBox(height: imageTop),
-                SizedBox(
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(
+              bottom: bottomReserve,
+              child: Center(
+                child: SizedBox.expand(
                   key: const Key('artwork_viewer_media_box'),
-                  width: imageWidth,
-                  height: imageHeight,
                   child: _MediaSurface(media: media),
                 ),
-                if ((artwork.description ?? '').isNotEmpty) ...[
-                  SizedBox(height: captionGap),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8 * widthScale),
-                    child: Text(
-                      artwork.description!,
-                      key: const Key('artwork_viewer_description'),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: 14,
-                        height: 1.22,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.italic,
-                        color: Color(0xFFF0F0F0),
-                      ),
-                    ),
-                  ),
-                ],
-                SizedBox(height: (132 * widthScale).clamp(84.0, 140.0)),
-              ],
+              ),
             ),
-          ),
+            if (hasDescription)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 30,
+                child: Text(
+                  description,
+                  key: const Key('artwork_viewer_description'),
+                  textAlign: TextAlign.center,
+                  maxLines: constraints.maxHeight < 620 ? 2 : 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 14,
+                    height: 1.22,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.italic,
+                    color: Color(0xFFF0F0F0),
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );
-  }
-
-  static double _aspectRatioFor(DiscoveryArtworkMedia? media) {
-    final width = media?.width;
-    final height = media?.height;
-
-    if (width != null && width > 0 && height != null && height > 0) {
-      return width / height;
-    }
-
-    return 0.64;
   }
 }
 
@@ -377,11 +307,11 @@ class _MediaSurface extends StatelessWidget {
     final url = media?.url.trim() ?? '';
 
     if (url.isEmpty) {
-      return const ColoredBox(
-        key: Key('artwork_viewer_media_fallback'),
-        color: AppColors.inputFill,
-        child: Center(
-          child: Icon(Icons.image_outlined, size: 48, color: AppColors.primary),
+      return const Center(
+        child: Icon(
+          Icons.image_outlined,
+          size: 48,
+          color: AppColors.primary,
         ),
       );
     }
@@ -392,17 +322,16 @@ class _MediaSurface extends StatelessWidget {
         Image.network(
           url,
           key: Key('artwork_viewer_media_${media!.id}'),
+          width: double.infinity,
+          height: double.infinity,
           fit: BoxFit.contain,
           gaplessPlayback: true,
           errorBuilder: (context, error, stackTrace) {
-            return const ColoredBox(
-              color: AppColors.inputFill,
-              child: Center(
-                child: Icon(
-                  Icons.image_not_supported_outlined,
-                  size: 42,
-                  color: AppColors.primary,
-                ),
+            return const Center(
+              child: Icon(
+                Icons.image_not_supported_outlined,
+                size: 42,
+                color: AppColors.primary,
               ),
             );
           },
@@ -432,11 +361,10 @@ class _ViewerError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final layout = _ViewerOverlayLayout.fromConstraints(constraints);
-
-        return Stack(
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Stack(
           children: [
             Center(
               child: OutlinedButton(
@@ -450,13 +378,13 @@ class _ViewerError extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: layout.mediaCloseTop,
-              right: layout.mediaCloseRight,
+              top: 0,
+              right: 0,
               child: _ViewerCloseButton(onPressed: onClose),
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }

@@ -55,6 +55,27 @@ void main() {
 
       expect(find.byKey(const Key('artwork_viewer_dots')), findsOneWidget);
 
+      final frameRect = tester.getRect(
+        find.byKey(const Key('artwork_viewer_frame')),
+      );
+      expect(frameRect.left, 20);
+      expect(frameRect.top, 20);
+      expect(frameRect.right, 410);
+      expect(frameRect.bottom, 912);
+
+      final mediaRect = tester.getRect(
+        find.byKey(const Key('artwork_viewer_media_box')),
+      );
+      expect(mediaRect.left, frameRect.left);
+      expect(mediaRect.right, frameRect.right);
+
+      final closeBefore = tester.getTopLeft(
+        find.byKey(const Key('artwork_viewer_close_button')),
+      );
+      final dotsBefore = tester.getCenter(
+        find.byKey(const Key('artwork_viewer_dots')),
+      );
+
       await tester.drag(
         find.byKey(const Key('artwork_viewer_page_view')),
         const Offset(-500, 0),
@@ -67,6 +88,23 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+
+      final closeAfter = tester.getTopLeft(
+        find.byKey(const Key('artwork_viewer_close_button')),
+      );
+      final dotsAfter = tester.getCenter(
+        find.byKey(const Key('artwork_viewer_dots')),
+      );
+      expect(closeAfter, closeBefore);
+      expect(dotsAfter, dotsBefore);
+
+      final makerCardRect = tester.getRect(
+        find.byKey(const Key('artwork_maker_info_card')),
+      );
+      expect(makerCardRect.center.dx, frameRect.center.dx);
+      expect(makerCardRect.left, frameRect.left);
+      expect(makerCardRect.right, frameRect.right);
+
       expect(find.text('Tide Register No. 4'), findsOneWidget);
       expect(find.text('Mara Vellan · 2024'), findsOneWidget);
 

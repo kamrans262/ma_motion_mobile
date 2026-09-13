@@ -32,193 +32,184 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final horizontal = (constraints.maxWidth * 0.0816)
-            .clamp(24.0, 40.0)
-            .toDouble();
-        final top = (constraints.maxHeight * 0.327)
-            .clamp(160.0, 335.0)
-            .toDouble();
-        final bottom = (constraints.maxHeight * 0.24)
-            .clamp(120.0, 246.0)
-            .toDouble();
-
         return SingleChildScrollView(
           key: const Key('artwork_maker_info_scroll'),
           physics: const ClampingScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(horizontal, top, horizontal, bottom),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              key: const Key('artwork_maker_info_card'),
-              width: double.infinity,
-              constraints: const BoxConstraints(maxWidth: 396),
-              decoration: const BoxDecoration(color: Color(0xFF101717)),
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 42),
-                    child: Text(
-                      artwork.title,
-                      key: const Key('artwork_maker_info_title'),
-                      style: const TextStyle(
-                        fontFamily: 'Instrument Sans',
-                        fontSize: 24,
-                        height: 1.08,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFF0F0F0),
-                      ),
-                    ),
-                  ),
-                  if (_makerMeta(artwork).isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      _makerMeta(artwork),
-                      key: const Key('artwork_maker_info_meta'),
-                      style: const TextStyle(
-                        fontFamily: 'Instrument Sans',
-                        fontSize: 15,
-                        height: 1.2,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFFF0F0F0),
-                      ),
-                    ),
-                  ],
-                  if ((maker?.bio ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      maker!.bio!,
-                      key: const Key('artwork_maker_info_bio'),
-                      style: const TextStyle(
-                        fontFamily: 'Instrument Sans',
-                        fontSize: 14,
-                        height: 1.45,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFFF0F0F0),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 18),
-                  const Divider(height: 1, color: Color(0x53535656)),
-                  if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    const _InfoLabel('Website'),
-                    const SizedBox(height: 5),
-                    Text(
-                      maker!.websiteUrl!,
-                      key: const Key('artwork_maker_info_website'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const _InfoValueStyle(),
-                    ),
-                  ],
-                  if ((maker?.contactEmail ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    const _InfoLabel('Email'),
-                    const SizedBox(height: 5),
-                    Text(
-                      maker!.contactEmail!,
-                      key: const Key('artwork_maker_info_email'),
-                      style: const _InfoValueStyle(),
-                    ),
-                  ],
-                  if (currentShow != null)
-                    currentShow.when(
-                      data: (show) {
-                        if (show == null || show.name.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-
-                        final through = show.endDate == null
-                            ? ''
-                            : ' through ${DateFormat.yMMMM().format(show.endDate!)}';
-
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const _InfoLabel('Current Show'),
-                              const SizedBox(height: 5),
-                              Text(
-                                'Currently exhibiting at ${show.name}$through.',
-                                key: const Key('artwork_maker_current_show'),
-                                style: const _InfoValueStyle(),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      loading: () => const SizedBox.shrink(),
-                      error: (error, stackTrace) => const SizedBox.shrink(),
-                    ),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Semantics(
-                        button: true,
-                        selected: isSaved,
-                        label: isSaved
-                            ? 'Remove saved artwork'
-                            : 'Save artwork',
-                        child: InkResponse(
-                          key: const Key('artwork_maker_info_save_button'),
-                          onTap: isSaving ? null : onSavedTap,
-                          radius: 24,
-                          child: SizedBox.square(
-                            dimension: 44,
-                            child: Center(
-                              child: isSaving
-                                  ? const SizedBox.square(
-                                      dimension: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: AppColors.primary,
-                                      ),
-                                    )
-                                  : SizedBox.square(
-                                      key: const Key(
-                                        'artwork_maker_info_heart',
-                                      ),
-                                      dimension: 24,
-                                      child: MaSvgAsset(
-                                        assetName: 'assets/heart.svg',
-                                        fallbackAssetName:
-                                            'assets/icons/heart.svg',
-                                        color: isSaved
-                                            ? AppColors.primary
-                                            : const Color(0xFFF0F0F0),
-                                      ),
-                                    ),
-                            ),
-                          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Container(
+                key: const Key('artwork_maker_info_card'),
+                width: double.infinity,
+                constraints: const BoxConstraints(maxWidth: 396),
+                decoration: const BoxDecoration(color: Color(0xFF101717)),
+                padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 42),
+                      child: Text(
+                        artwork.title,
+                        key: const Key('artwork_maker_info_title'),
+                        style: const TextStyle(
+                          fontFamily: 'Instrument Sans',
+                          fontSize: 24,
+                          height: 1.08,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFF0F0F0),
                         ),
                       ),
-                      const Spacer(),
-                      TextButton(
-                        key: const Key('artwork_maker_info_share_button'),
-                        onPressed: onShare,
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFFF0F0F0),
-                          minimumSize: const Size(44, 44),
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                        ),
-                        child: const Text(
-                          'Share',
-                          style: TextStyle(
-                            fontFamily: 'Instrument Sans',
-                            fontSize: 18,
-                            height: 1,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFFF0F0F0),
-                          ),
+                    ),
+                    if (_makerMeta(artwork).isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        _makerMeta(artwork),
+                        key: const Key('artwork_maker_info_meta'),
+                        style: const TextStyle(
+                          fontFamily: 'Instrument Sans',
+                          fontSize: 15,
+                          height: 1.2,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFFF0F0F0),
                         ),
                       ),
                     ],
-                  ),
-                ],
+                    if ((maker?.bio ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      Text(
+                        maker!.bio!,
+                        key: const Key('artwork_maker_info_bio'),
+                        style: const TextStyle(
+                          fontFamily: 'Instrument Sans',
+                          fontSize: 14,
+                          height: 1.45,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFFF0F0F0),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 18),
+                    const Divider(height: 1, color: Color(0x53535656)),
+                    if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      const _InfoLabel('Website'),
+                      const SizedBox(height: 5),
+                      Text(
+                        maker!.websiteUrl!,
+                        key: const Key('artwork_maker_info_website'),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const _InfoValueStyle(),
+                      ),
+                    ],
+                    if ((maker?.contactEmail ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      const _InfoLabel('Email'),
+                      const SizedBox(height: 5),
+                      Text(
+                        maker!.contactEmail!,
+                        key: const Key('artwork_maker_info_email'),
+                        style: const _InfoValueStyle(),
+                      ),
+                    ],
+                    if (currentShow != null)
+                      currentShow.when(
+                        data: (show) {
+                          if (show == null || show.name.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final through = show.endDate == null
+                              ? ''
+                              : ' through ${DateFormat.yMMMM().format(show.endDate!)}';
+
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const _InfoLabel('Current Show'),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Currently exhibiting at ${show.name}$through.',
+                                  key: const Key('artwork_maker_current_show'),
+                                  style: const _InfoValueStyle(),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        loading: () => const SizedBox.shrink(),
+                        error: (error, stackTrace) => const SizedBox.shrink(),
+                      ),
+                    const SizedBox(height: 18),
+                    Row(
+                      children: [
+                        Semantics(
+                          button: true,
+                          selected: isSaved,
+                          label: isSaved
+                              ? 'Remove saved artwork'
+                              : 'Save artwork',
+                          child: InkResponse(
+                            key: const Key('artwork_maker_info_save_button'),
+                            onTap: isSaving ? null : onSavedTap,
+                            radius: 24,
+                            child: SizedBox.square(
+                              dimension: 44,
+                              child: Center(
+                                child: isSaving
+                                    ? const SizedBox.square(
+                                        dimension: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: AppColors.primary,
+                                        ),
+                                      )
+                                    : SizedBox.square(
+                                        key: const Key(
+                                          'artwork_maker_info_heart',
+                                        ),
+                                        dimension: 24,
+                                        child: MaSvgAsset(
+                                          assetName: 'assets/heart.svg',
+                                          fallbackAssetName:
+                                              'assets/icons/heart.svg',
+                                          color: isSaved
+                                              ? AppColors.primary
+                                              : const Color(0xFFF0F0F0),
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          key: const Key('artwork_maker_info_share_button'),
+                          onPressed: onShare,
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFFF0F0F0),
+                            minimumSize: const Size(44, 44),
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                          ),
+                          child: const Text(
+                            'Share',
+                            style: TextStyle(
+                              fontFamily: 'Instrument Sans',
+                              fontSize: 18,
+                              height: 1,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFF0F0F0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
