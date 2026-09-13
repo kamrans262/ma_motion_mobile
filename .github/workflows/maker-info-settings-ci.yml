@@ -35,16 +35,7 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting is stable
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          if ! git diff --quiet -- lib test; then
-            echo "=== FORMATTED_ROLE_BEGIN ==="
-            cat lib/features/onboarding/presentation/screens/ma_role_selection_screen.dart
-            echo "=== FORMATTED_ROLE_END ==="
-            exit 1
-          fi
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Flutter analyzer
         run: flutter analyze

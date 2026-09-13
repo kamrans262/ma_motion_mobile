@@ -85,8 +85,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                   child: OutlinedButton(
                                     key: const Key('select_appreciator_button'),
                                     onPressed: onAppreciator,
-                                    style:
-                                        AppButtonStyles.outlineAction(),
+                                    style: AppButtonStyles.outlineAction(),
                                     child: const Text(
                                       'Appreciator',
                                       maxLines: 1,
