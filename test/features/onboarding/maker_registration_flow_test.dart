@@ -33,6 +33,23 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Next uses the same outline treatment as Back', (tester) async {
+    await tester.pumpWidget(app());
+
+    final nextButton = find.byKey(const Key('maker_next_button'));
+    final backButton = find.byKey(const Key('maker_back_button'));
+
+    expect(
+      find.descendant(of: nextButton, matching: find.byType(OutlinedButton)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: backButton, matching: find.byType(OutlinedButton)),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('name Next validates and then moves to location', (tester) async {
     await tester.pumpWidget(app());
 

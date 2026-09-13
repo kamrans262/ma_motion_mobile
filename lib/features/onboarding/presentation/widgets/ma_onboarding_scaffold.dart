@@ -129,6 +129,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                                 key: const Key('maker_next_button'),
                                 label: isBusy ? 'Saving...' : 'Next',
                                 onPressed: isBusy ? null : onNext,
+                                filled: false,
                               ),
                               const SizedBox(height: 13),
                               MaOnboardingButton(
