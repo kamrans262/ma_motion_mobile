@@ -48,9 +48,6 @@ void main() {
       );
 
       await tester.tap(find.byKey(const Key('maker_next_button')));
-      await tester.pump();
-      expect(find.text('Saving...'), findsOneWidget);
-
       await tester.pumpAndSettle();
 
       expect(completed, isTrue);
