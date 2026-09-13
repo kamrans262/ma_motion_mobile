@@ -39,7 +39,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
             .clamp(128.0, 180.0)
             .toDouble();
 
-        return Padding(
+        return SingleChildScrollView(
           key: const Key('artwork_maker_info_scroll'),
           padding: EdgeInsets.fromLTRB(horizontal, top, horizontal, 92),
           child: Align(
