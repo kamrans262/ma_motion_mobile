@@ -23,6 +23,7 @@ class MaOnboardingScaffold extends StatelessWidget {
     this.isBusy = false,
     this.contentTopWidthFactor = 0.555,
     this.keyboardContentTop,
+    this.centerContentWhenKeyboardOpen = false,
     this.childGap = 20,
   });
 
@@ -37,6 +38,7 @@ class MaOnboardingScaffold extends StatelessWidget {
   final bool isBusy;
   final double contentTopWidthFactor;
   final double? keyboardContentTop;
+  final bool centerContentWhenKeyboardOpen;
   final double childGap;
 
   @override
@@ -65,12 +67,23 @@ class MaOnboardingScaffold extends StatelessWidget {
                   final media = MediaQuery.of(context);
                   final width = constraints.maxWidth;
 
-                  final contentTop = keyboardOpen && keyboardContentTop != null
+                  final centerKeyboardContent =
+                      keyboardOpen && centerContentWhenKeyboardOpen;
+                  final contentTop = centerKeyboardContent
+                      ? 18.0
+                      : keyboardOpen && keyboardContentTop != null
                       ? math.max(18.0, keyboardContentTop!)
                       : math.max(
                           18.0,
                           (width * contentTopWidthFactor) - media.padding.top,
                         );
+                  final contentBottom = keyboardOpen ? 28.0 : 36.0;
+                  final minimumContentHeight = centerKeyboardContent
+                      ? math.max(
+                          0.0,
+                          constraints.maxHeight - contentTop - contentBottom,
+                        )
+                      : 0.0;
 
                   final footerHorizontal = (width * 0.116)
                       .clamp(24.0, 50.0)
@@ -91,11 +104,18 @@ class MaOnboardingScaffold extends StatelessWidget {
                             20,
                             contentTop,
                             20,
-                            keyboardOpen ? 28 : 36,
+                            contentBottom,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: minimumContentHeight,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: centerKeyboardContent
+                                  ? MainAxisAlignment.center
+                                  : MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                               Text(
                                 heading,
                                 key: const Key('maker_step_heading'),
@@ -109,15 +129,16 @@ class MaOnboardingScaffold extends StatelessWidget {
                               ),
                               SizedBox(height: childGap),
                               child,
-                              if (validationMessage != null) ...[
-                                const SizedBox(height: 10),
-                                Text(
-                                  validationMessage!,
-                                  key: const Key('maker_validation_message'),
-                                  style: AppTextStyles.error,
-                                ),
+                                if (validationMessage != null) ...[
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    validationMessage!,
+                                    key: const Key('maker_validation_message'),
+                                    style: AppTextStyles.error,
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),

@@ -181,7 +181,12 @@ void main() {
     final field = find.byKey(const Key('maker_about_field'));
     expect(field, findsOneWidget);
 
+    final headingTop = tester.getTopLeft(
+      find.byKey(const Key('maker_step_heading')),
+    ).dy;
     final fieldRect = tester.getRect(field);
+
+    expect(headingTop, greaterThan(100));
     expect(fieldRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
     expect(tester.takeException(), isNull);
   });
@@ -201,7 +206,7 @@ void main() {
     final headingTop = tester.getTopLeft(
       find.byKey(const Key('maker_step_heading')),
     );
-    expect(headingTop.dy, lessThan(120));
+    expect(headingTop.dy, lessThan(80));
 
     final scrollable = find.descendant(
       of: find.byKey(const Key('maker_onboarding_scroll')),
