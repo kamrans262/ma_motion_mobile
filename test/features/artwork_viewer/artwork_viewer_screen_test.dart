@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/data/artwork_detail_repository.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/domain/artwork_detail.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
@@ -229,6 +230,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(savedRepository.savedIds, <int>[41]);
+
+    final filledHeart = tester.widget<Icon>(
+      find.byKey(const Key('artwork_maker_info_heart_filled')),
+    );
+    expect(filledHeart.icon, Icons.favorite_rounded);
+    expect(filledHeart.color, AppColors.primary);
     expect(tester.takeException(), isNull);
   });
 
