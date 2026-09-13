@@ -388,6 +388,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 key: Key('filter_type_${type.id}'),
                 label: type.name,
                 selected: _selectedTypeIds.contains(type.id),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
                 onTap: () => _toggleType(type.id),
               ),
           ],
@@ -403,6 +405,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 key: Key('filter_style_${style.id}'),
                 label: style.name,
                 selected: _selectedStyleIds.contains(style.id),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
                 onTap: () => _toggleStyle(style.id),
               ),
           ],
@@ -482,7 +486,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           'Radius (miles)',
           style: AppTextStyles.onboardingHelper.copyWith(
             color: AppColors.primary,
-            fontSize: 11,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(height: 2),
@@ -548,7 +553,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         title,
         style: AppTextStyles.onboardingHelper.copyWith(
           color: AppColors.primary,
-          fontSize: 11,
+          fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
       ),
@@ -604,11 +609,15 @@ class _ChoicePill extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.fontSize = 11,
+    this.fontWeight,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final double fontSize;
+  final FontWeight? fontWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -628,9 +637,11 @@ class _ChoicePill extends StatelessWidget {
             label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 11,
+              fontSize: fontSize,
               height: 1.1,
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+              fontWeight:
+                  fontWeight ??
+                  (selected ? FontWeight.w700 : FontWeight.w600),
               color: selected ? AppColors.black : AppColors.white,
             ),
           ),

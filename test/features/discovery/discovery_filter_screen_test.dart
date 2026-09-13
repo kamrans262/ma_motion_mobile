@@ -117,6 +117,37 @@ void main() {
     expect(find.byKey(const Key('filter_clear_button')), findsOneWidget);
     expect(find.text('Clear filters'), findsOneWidget);
     expect(find.text('Filter'), findsOneWidget);
+
+    for (final label in <String>[
+      'Type',
+      'Style',
+      'Show Status',
+      'Location',
+      'Radius (miles)',
+    ]) {
+      final text = tester.widget<Text>(find.text(label));
+      expect(text.style?.fontSize, 14);
+      expect(text.style?.fontWeight, FontWeight.w400);
+    }
+
+    final typeText = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('filter_type_1')),
+        matching: find.text('Painting'),
+      ),
+    );
+    expect(typeText.style?.fontSize, 14);
+    expect(typeText.style?.fontWeight, FontWeight.w600);
+
+    final styleText = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('filter_style_2')),
+        matching: find.text('Minimal'),
+      ),
+    );
+    expect(styleText.style?.fontSize, 14);
+    expect(styleText.style?.fontWeight, FontWeight.w600);
+
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('discovery_filter_screen')),
     );
