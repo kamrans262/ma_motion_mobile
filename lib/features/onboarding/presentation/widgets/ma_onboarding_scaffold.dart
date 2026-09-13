@@ -48,7 +48,10 @@ class MaOnboardingScaffold extends StatelessWidget {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
+        // Keep the full onboarding canvas stable while the keyboard opens.
+        // The body handles the keyboard inset itself, so the footer never gets
+        // pushed upward over a focused field during Android's resize phase.
+        resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.splashBackground,
         body: Stack(
           fit: StackFit.expand,
@@ -60,12 +63,15 @@ class MaOnboardingScaffold extends StatelessWidget {
                 builder: (context, constraints) {
                   final media = MediaQuery.of(context);
                   final width = constraints.maxWidth;
-                  final keyboardOpen = media.viewInsets.bottom > 0;
+                  final keyboardInset = media.viewInsets.bottom;
+                  final keyboardOpen = keyboardInset > 0;
 
-                  final contentTop = math.max(
-                    18.0,
-                    (width * contentTopWidthFactor) - media.padding.top,
-                  );
+                  final contentTop = keyboardOpen
+                      ? 20.0
+                      : math.max(
+                          18.0,
+                          (width * contentTopWidthFactor) - media.padding.top,
+                        );
 
                   final footerHorizontal = (width * 0.116)
                       .clamp(24.0, 50.0)
@@ -86,7 +92,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                             20,
                             contentTop,
                             20,
-                            keyboardOpen ? 28 : 36,
+                            keyboardOpen ? keyboardInset + 28 : 36,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
