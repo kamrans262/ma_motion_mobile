@@ -35,19 +35,7 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting is stable
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          if ! git diff --quiet -- lib test; then
-            echo "=== FORMATTED_ONBOARDING_SCAFFOLD_BEGIN ==="
-            cat lib/features/onboarding/presentation/widgets/ma_onboarding_scaffold.dart
-            echo "=== FORMATTED_ONBOARDING_SCAFFOLD_END ==="
-            echo "=== FORMATTED_ONBOARDING_TEST_BEGIN ==="
-            cat test/features/onboarding/maker_registration_flow_test.dart
-            echo "=== FORMATTED_ONBOARDING_TEST_END ==="
-            exit 1
-          fi
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Flutter analyzer
         run: flutter analyze

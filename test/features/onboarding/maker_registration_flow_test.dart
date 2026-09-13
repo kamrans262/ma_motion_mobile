@@ -172,9 +172,7 @@ void main() {
 
     const keyboardInset = 320.0;
 
-    await tester.pumpWidget(
-      app(initialStep: 2, keyboardInset: keyboardInset),
-    );
+    await tester.pumpWidget(app(initialStep: 2, keyboardInset: keyboardInset));
     await tester.pump();
 
     expect(find.text('Tell us about your work'), findsOneWidget);
@@ -215,16 +213,12 @@ void main() {
     expect(scrollable, findsOneWidget);
 
     final lastStyle = find.byKey(const Key('maker_style_Experimental'));
-    await tester.scrollUntilVisible(
-      lastStyle,
-      180,
-      scrollable: scrollable,
-    );
+    await tester.scrollUntilVisible(lastStyle, 180, scrollable: scrollable);
     await tester.pump();
 
-    final footerTop = tester.getTopLeft(
-      find.byKey(const Key('maker_onboarding_footer')),
-    ).dy;
+    final footerTop = tester
+        .getTopLeft(find.byKey(const Key('maker_onboarding_footer')))
+        .dy;
     final lastStyleBottom = tester.getBottomLeft(lastStyle).dy;
 
     expect(lastStyleBottom, lessThanOrEqualTo(footerTop));
