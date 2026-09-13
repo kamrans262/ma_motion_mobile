@@ -10,6 +10,11 @@ abstract final class ApiPaths {
   static const String resetPassword = '/auth/reset-password';
 
   static const String me = '/me';
+  static const String experience = '/me/experience';
+  static const String makerExperienceOnboarding =
+      '/me/experience/maker/onboarding';
+  static const String appreciatorExperienceOnboarding =
+      '/me/experience/appreciator/onboarding';
   static const String makerProfile = '/me/maker-profile';
   static const String profile = '/me/profile';
   static const String profileImage = '/me/profile-image';
