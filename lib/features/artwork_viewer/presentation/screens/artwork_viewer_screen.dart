@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../saved_artworks/application/artwork_saved_status_provider.dart';
 import '../../../saved_artworks/application/saved_artworks_controller.dart';
