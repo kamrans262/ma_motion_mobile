@@ -61,8 +61,6 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-}
-
 
   testWidgets(
     'authenticated Maker completes Appreciator onboarding on same token',
@@ -111,6 +109,7 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+}
 
 class _MemoryTokenStore implements AuthTokenStore {
   String? value;
