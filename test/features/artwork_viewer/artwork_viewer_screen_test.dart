@@ -13,7 +13,7 @@ import 'package:ma_motion_mobile/features/saved_artworks/data/saved_artworks_rep
 
 void main() {
   testWidgets(
-    '430x932 viewer matches supplied Maker artwork display contract',
+    '430x932 viewer matches supplied single-carousel artwork reference',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(430, 932));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -34,15 +34,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      final scaffold = tester.widget<Scaffold>(
+        find.byKey(const Key('artwork_viewer_screen')),
+      );
+      expect(scaffold.backgroundColor, const Color(0xFF020101));
+
       final close = tester.widget<IconButton>(
         find.byKey(const Key('artwork_viewer_close_button')),
       );
       expect(close.iconSize, 12);
-
-      final imageGap = tester.widget<SizedBox>(
-        find.byKey(const Key('artwork_image_description_gap')),
-      );
-      expect(imageGap.height, 40);
 
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
@@ -50,12 +50,9 @@ void main() {
       expect(description.style?.fontFamily, 'Arial');
       expect(description.style?.fontSize, 14);
       expect(description.style?.fontWeight, FontWeight.w400);
+      expect(description.style?.fontStyle, FontStyle.italic);
       expect(description.style?.color, const Color(0xFFF0F0F0));
 
-      final dotsGap = tester.widget<SizedBox>(
-        find.byKey(const Key('artwork_description_dots_gap')),
-      );
-      expect(dotsGap.height, 50);
       expect(find.byKey(const Key('artwork_viewer_dots')), findsOneWidget);
 
       await tester.drag(
@@ -70,13 +67,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
-      expect(find.text('Mara Vellan · 2024'), findsOneWidget);
+      expect(find.text('Mara Vellan'), findsOneWidget);
+      expect(find.text('New York, NY'), findsOneWidget);
 
       final title = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_title')),
       );
-      expect(title.style?.fontFamily, 'Fraunces');
-      expect(title.style?.fontSize, 16);
+      expect(title.style?.fontFamily, 'Instrument Sans');
+      expect(title.style?.fontSize, 24);
+      expect(title.style?.fontWeight, FontWeight.w700);
 
       final meta = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_meta')),
@@ -92,17 +91,17 @@ void main() {
       final share = tester.widget<Text>(
         find.descendant(
           of: find.byKey(const Key('artwork_maker_info_share_button')),
-          matching: find.text('Share'),
+          matching: find.text('SHARE'),
         ),
       );
       expect(share.style?.fontFamily, 'Instrument Sans');
-      expect(share.style?.fontSize, 16);
+      expect(share.style?.fontSize, 12);
       expect(share.style?.fontWeight, FontWeight.w600);
 
-      final makerClose = tester.widget<IconButton>(
-        find.byKey(const Key('artwork_maker_info_close_button')),
+      expect(
+        find.byKey(const Key('artwork_viewer_close_button')),
+        findsOneWidget,
       );
-      expect(makerClose.iconSize, 12);
       expect(tester.takeException(), isNull);
     },
   );
@@ -301,6 +300,7 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
         id: 7,
         name: 'Mara Vellan',
         bio: 'A contemporary artist exploring the intersection of form and color.',
+        location: 'New York, NY',
         websiteUrl: 'https://artist.example',
       ),
       createdAt: DateTime.utc(2024, 5, 1),
