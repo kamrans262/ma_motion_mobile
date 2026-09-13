@@ -63,6 +63,55 @@ void main() {
   );
 }
 
+
+  testWidgets(
+    'authenticated Maker completes Appreciator onboarding on same token',
+    (tester) async {
+      final api = _AppreciatorGateway();
+      final tokenStore = _MemoryTokenStore()..value = 'existing-token';
+      final repository = AppreciatorOnboardingRepository(
+        api: api,
+        tokenStore: tokenStore,
+      );
+      final container = ProviderContainer(
+        overrides: [
+          appreciatorOnboardingRepositoryProvider.overrideWithValue(repository),
+          authTokenStoreProvider.overrideWithValue(tokenStore),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final draft = container.read(appreciatorRegistrationProvider.notifier);
+      draft.setName('Existing Maker');
+      draft.setLocation('Chicago 60601');
+      draft.setEmail('maker@example.com');
+
+      var completed = false;
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: AppreciatorRegistrationFlowScreen(
+              initialStep: 2,
+              onExit: () {},
+              onCompleted: () => completed = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+
+      expect(completed, isTrue);
+      expect(api.lastPostedPath, ApiPaths.appreciatorExperienceOnboarding);
+      expect(api.lastPostRequiresAuth, isTrue);
+      expect(tokenStore.value, 'existing-token');
+      expect(tester.takeException(), isNull);
+    },
+  );
+
 class _MemoryTokenStore implements AuthTokenStore {
   String? value;
 
@@ -125,6 +174,23 @@ class _AppreciatorGateway implements ApiGateway {
             'role': 'appreciator',
             'is_active': true,
           },
+        },
+      };
+    }
+
+    if (path == ApiPaths.appreciatorExperienceOnboarding) {
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{
+          'id': 9,
+          'name': 'Existing Maker',
+          'email': 'maker@example.com',
+          'role': 'appreciator',
+          'is_active': true,
+          'maker_registered': true,
+          'maker_onboarding_completed': true,
+          'appreciator_registered': true,
+          'appreciator_onboarding_completed': true,
         },
       };
     }
