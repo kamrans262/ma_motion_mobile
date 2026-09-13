@@ -13,6 +13,7 @@ void main() {
     double keyboardInset = 0,
   }) {
     final flow = MakerRegistrationFlowScreen(
+      key: ValueKey<int>(initialStep),
       initialStep: initialStep,
       onExit: onExit ?? () {},
     );
