@@ -1,0 +1,32 @@
+name: One-time Reference Splash Formatter V3
+
+on:
+  push:
+    branches:
+      - ci/reference-splash-format-v3
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format lib test
+      - shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- lib test pubspec.lock; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test pubspec.lock
+          git commit -m "style: format reference splash v3"
+          git push origin HEAD:ci/reference-splash-format-v3
