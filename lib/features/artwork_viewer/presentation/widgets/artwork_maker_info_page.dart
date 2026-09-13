@@ -173,14 +173,22 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                           'artwork_maker_info_heart',
                                         ),
                                         dimension: 24,
-                                        child: MaSvgAsset(
-                                          assetName: 'assets/heart.svg',
-                                          fallbackAssetName:
-                                              'assets/icons/heart.svg',
-                                          color: isSaved
-                                              ? AppColors.primary
-                                              : const Color(0xFFF0F0F0),
-                                        ),
+                                        child: isSaved
+                                            ? const Icon(
+                                                Icons.favorite_rounded,
+                                                key: Key(
+                                                  'artwork_maker_info_heart_filled',
+                                                ),
+                                                size: 24,
+                                                color: AppColors.primary,
+                                              )
+                                            : const MaSvgAsset(
+                                                assetName:
+                                                    'assets/icons/heart.svg',
+                                                fallbackAssetName:
+                                                    'assets/heart.svg',
+                                                color: Color(0xFFF0F0F0),
+                                              ),
                                       ),
                               ),
                             ),
