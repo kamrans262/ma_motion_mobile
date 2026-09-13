@@ -55,6 +55,19 @@ void main() {
     expect(api.makerProfileReads, 1);
   });
 
+  test('session restore routes Appreciator to Appreciator discovery', () async {
+    final api = _FakeApiGateway(role: 'appreciator');
+    final tokenStore = _MemoryTokenStore('saved-appreciator-token');
+    final auth = AuthRepository(api: api, tokenStore: tokenStore);
+    final repository = MakerEntryRepository(auth: auth, api: api);
+
+    final destination = await repository.restoreAppEntry();
+
+    expect(destination, MakerEntryDestination.appreciatorDiscovery);
+    expect(api.meReads, 1);
+    expect(api.makerProfileReads, 0);
+  });
+
   test('session restore without token routes to join', () async {
     final api = _FakeApiGateway();
     final tokenStore = _MemoryTokenStore();
@@ -101,9 +114,13 @@ class _MemoryTokenStore implements AuthTokenStore {
 }
 
 class _FakeApiGateway implements ApiGateway {
-  _FakeApiGateway({this.onboardingCompleted = false});
+  _FakeApiGateway({
+    this.onboardingCompleted = false,
+    this.role = 'maker',
+  });
 
   final bool onboardingCompleted;
+  final String role;
 
   String? lastPostedPath;
   Map<String, dynamic>? lastPostedData;
@@ -123,9 +140,11 @@ class _FakeApiGateway implements ApiGateway {
         'success': true,
         'data': <String, dynamic>{
           'id': 1,
-          'name': 'MA Studio',
-          'email': 'maker@example.com',
-          'role': 'maker',
+          'name': role == 'appreciator' ? 'Art Lover' : 'MA Studio',
+          'email': role == 'appreciator'
+              ? 'lover@example.com'
+              : 'maker@example.com',
+          'role': role,
           'is_active': true,
         },
       };

@@ -1,0 +1,169 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/api_gateway.dart';
+import 'package:ma_motion_mobile/core/network/api_paths.dart';
+import 'package:ma_motion_mobile/core/providers/core_providers.dart';
+import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
+import 'package:ma_motion_mobile/features/onboarding/application/appreciator_registration_controller.dart';
+import 'package:ma_motion_mobile/features/onboarding/data/appreciator_onboarding_repository.dart';
+import 'package:ma_motion_mobile/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
+
+void main() {
+  testWidgets(
+    'final Appreciator step creates backend session and completes flow',
+    (tester) async {
+      final api = _AppreciatorGateway();
+      final tokenStore = _MemoryTokenStore();
+      final repository = AppreciatorOnboardingRepository(
+        api: api,
+        tokenStore: tokenStore,
+      );
+      final container = ProviderContainer(
+        overrides: [
+          appreciatorOnboardingRepositoryProvider.overrideWithValue(repository),
+          authTokenStoreProvider.overrideWithValue(tokenStore),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final draft = container.read(appreciatorRegistrationProvider.notifier);
+      draft.setName('Art Lover');
+      draft.setLocation('Chicago 60601');
+      draft.setEmail('lover@example.com');
+
+      var completed = false;
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: AppreciatorRegistrationFlowScreen(
+              initialStep: 2,
+              onExit: () {},
+              onCompleted: () => completed = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pump();
+      expect(find.text('Saving...'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(completed, isTrue);
+      expect(api.lastPostedPath, ApiPaths.appreciatorOnboarding);
+      expect(api.lastPostRequiresAuth, isFalse);
+      expect(api.lastPostedData?['name'], 'Art Lover');
+      expect(api.lastPostedData?['location_text'], 'Chicago 60601');
+      expect(api.lastPostedData?['location_id'], 7);
+      expect(api.lastPostedData?['email'], 'lover@example.com');
+      expect(tokenStore.value, 'appreciator-token');
+      expect(tester.takeException(), isNull);
+    },
+  );
+}
+
+class _MemoryTokenStore implements AuthTokenStore {
+  _MemoryTokenStore([this.value]);
+
+  String? value;
+
+  @override
+  Future<void> clear() async => value = null;
+
+  @override
+  Future<String?> read() async => value;
+
+  @override
+  Future<void> write(String token) async => value = token;
+}
+
+class _AppreciatorGateway implements ApiGateway {
+  String? lastPostedPath;
+  Map<String, dynamic>? lastPostedData;
+  bool? lastPostRequiresAuth;
+
+  @override
+  Future<Map<String, dynamic>> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    bool requiresAuth = true,
+  }) async {
+    if (path == ApiPaths.discoveryLocations) {
+      return <String, dynamic>{
+        'success': true,
+        'data': <Map<String, dynamic>>[
+          <String, dynamic>{'id': 7, 'label': 'Chicago 60601'},
+        ],
+      };
+    }
+
+    throw StateError('Unexpected GET $path');
+  }
+
+  @override
+  Future<Map<String, dynamic>> post(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    bool requiresAuth = true,
+  }) async {
+    lastPostedPath = path;
+    lastPostRequiresAuth = requiresAuth;
+
+    if (data is Map) {
+      lastPostedData = Map<String, dynamic>.from(data);
+    }
+
+    if (path == ApiPaths.appreciatorOnboarding) {
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{
+          'token': 'appreciator-token',
+          'user': <String, dynamic>{
+            'id': 9,
+            'name': 'Art Lover',
+            'email': 'lover@example.com',
+            'role': 'appreciator',
+            'is_active': true,
+          },
+        },
+      };
+    }
+
+    throw StateError('Unexpected POST $path');
+  }
+
+  @override
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    bool requiresAuth = true,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, dynamic>> put(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    bool requiresAuth = true,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, dynamic>> delete(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    bool requiresAuth = true,
+  }) {
+    throw UnimplementedError();
+  }
+}

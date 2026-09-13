@@ -87,6 +87,37 @@ void main() {
   });
 
   testWidgets(
+    'Appreciator selection opens the three-step Appreciator onboarding flow',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authTokenStoreProvider.overrideWithValue(_MemoryTokenStore()),
+          ],
+          child: const MaMotionApp(splashDuration: Duration(milliseconds: 1)),
+        ),
+      );
+
+      await tester.pump(const Duration(milliseconds: 2));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('select_appreciator_button')));
+      await tester.pumpAndSettle();
+
+      expect(find.text("What's your name?"), findsOneWidget);
+      expect(
+        find.byKey(const Key('appreciator_name_field')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
+      expect(find.byKey(const Key('maker_step_dot_2')), findsOneWidget);
+      expect(find.byKey(const Key('maker_step_dot_3')), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Maker selection opens the supplied name onboarding screen first',
     (tester) async {
       await tester.pumpWidget(

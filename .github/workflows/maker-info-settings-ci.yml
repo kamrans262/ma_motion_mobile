@@ -90,6 +90,9 @@ jobs:
       - name: Prior Onboarding regression
         run: flutter test test/features/onboarding/maker_registration_backend_submission_test.dart
 
+      - name: Appreciator onboarding regression
+        run: flutter test test/features/onboarding/appreciator_registration_flow_test.dart test/features/onboarding/appreciator_registration_backend_submission_test.dart
+
       - name: Startup regression
         run: flutter test test/widget_test.dart
 

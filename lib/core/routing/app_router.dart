@@ -6,6 +6,7 @@ import '../../features/auth/domain/maker_entry_destination.dart';
 import '../../features/discovery/domain/discovery_artwork.dart';
 import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
+import '../../features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
@@ -96,6 +97,8 @@ GoRouter createAppRouter({
         context.go('/maker-registration');
       case MakerEntryDestination.discovery:
         context.go('/maker/discovery');
+      case MakerEntryDestination.appreciatorDiscovery:
+        context.go('/appreciator/discovery');
     }
   }
 
@@ -120,7 +123,7 @@ GoRouter createAppRouter({
           state: state,
           child: MaRoleSelectionScreen(
             onMaker: () => context.go('/maker-registration'),
-            onAppreciator: () {},
+            onAppreciator: () => context.go('/appreciator-registration'),
           ),
         ),
       ),
@@ -133,6 +136,95 @@ GoRouter createAppRouter({
             onCompleted: () => context.go('/maker/discovery'),
           ),
         ),
+      ),
+      GoRoute(
+        path: '/appreciator-registration',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: AppreciatorRegistrationFlowScreen(
+            onExit: () => context.go('/join'),
+            onCompleted: () => context.go('/appreciator/discovery'),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/appreciator/discovery',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MakerArtworkDiscoveryScreen(
+            onFilterTap: () => context.push('/appreciator/discovery/filter'),
+            onSavedTap: () => context.push('/appreciator/saved-artworks'),
+            onSettingsTap: () {},
+            onArtworkTap: (artwork) {
+              final url = artwork.primaryMedia?.url.trim() ?? '';
+              if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
+                precacheImage(NetworkImage(url), context);
+              }
+              context.push(
+                '/appreciator/discovery/artwork/${artwork.id}',
+                extra: artwork,
+              );
+            },
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/appreciator/saved-artworks',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MakerSavedArtworksScreen(
+            onBack: () => context.pop(),
+            onSettingsTap: () {},
+            onArtworkTap: (artwork) {
+              final url = artwork.primaryMedia?.url.trim() ?? '';
+              if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
+                precacheImage(NetworkImage(url), context);
+              }
+              context.push(
+                '/appreciator/discovery/artwork/${artwork.id}',
+                extra: artwork,
+              );
+            },
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/appreciator/discovery/filter',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: DiscoveryFilterScreen(
+            onClose: () => context.pop(),
+            onApplied: () => context.pop(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/appreciator/discovery/artwork/:artworkId',
+        pageBuilder: (context, state) {
+          final artworkId = int.tryParse(
+            state.pathParameters['artworkId'] ?? '',
+          );
+
+          if (artworkId == null) {
+            return _premiumPage(
+              state: state,
+              child: const Scaffold(
+                body: Center(child: Text('Invalid artwork')),
+              ),
+            );
+          }
+
+          return _premiumPage(
+            state: state,
+            child: ArtworkViewerScreen(
+              artworkId: artworkId,
+              initialArtwork: state.extra is DiscoveryArtwork
+                  ? state.extra! as DiscoveryArtwork
+                  : null,
+              onClose: () => context.pop(),
+            ),
+          );
+        },
       ),
       GoRoute(
         path: '/maker/discovery',
