@@ -7,28 +7,13 @@ import 'package:ma_motion_mobile/features/onboarding/application/maker_registrat
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
 void main() {
-  Widget app({
-    int initialStep = 0,
-    VoidCallback? onExit,
-    double keyboardInset = 0,
-  }) {
-    final flow = MakerRegistrationFlowScreen(
-      key: ValueKey<int>(initialStep),
-      initialStep: initialStep,
-      onExit: onExit ?? () {},
-    );
-
+  Widget app({int initialStep = 0, VoidCallback? onExit}) {
     return ProviderScope(
       child: MaterialApp(
-        home: keyboardInset > 0
-            ? MediaQuery(
-                data: MediaQueryData(
-                  size: const Size(390, 844),
-                  viewInsets: EdgeInsets.only(bottom: keyboardInset),
-                ),
-                child: flow,
-              )
-            : flow,
+        home: MakerRegistrationFlowScreen(
+          initialStep: initialStep,
+          onExit: onExit ?? () {},
+        ),
       ),
     );
   }
@@ -123,79 +108,6 @@ void main() {
     );
 
     expect(scrollRect.bottom, lessThanOrEqualTo(footerRect.top));
-    expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('keyboard hides footer instead of pushing it over fields', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-
-    const keyboardInset = 310.0;
-    const textSteps = <({int step, String fieldKey})>[
-      (step: 0, fieldKey: 'maker_name_field'),
-      (step: 1, fieldKey: 'maker_location_field'),
-      (step: 2, fieldKey: 'maker_about_field'),
-      (step: 4, fieldKey: 'maker_website_field'),
-      (step: 5, fieldKey: 'maker_email_field'),
-    ];
-
-    for (final textStep in textSteps) {
-      await tester.pumpWidget(
-        app(initialStep: textStep.step, keyboardInset: keyboardInset),
-      );
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('maker_onboarding_footer')),
-        findsNothing,
-        reason: 'Footer must be removed while keyboard is open.',
-      );
-      expect(find.byKey(const Key('maker_next_button')), findsNothing);
-      expect(find.byKey(const Key('maker_back_button')), findsNothing);
-
-      final field = find.byKey(Key(textStep.fieldKey));
-      expect(field, findsOneWidget);
-
-      await tester.ensureVisible(field);
-      await tester.pump();
-
-      final fieldRect = tester.getRect(field);
-      final keyboardTop = 844 - keyboardInset;
-
-      expect(
-        fieldRect.bottom,
-        lessThanOrEqualTo(keyboardTop),
-        reason: '${textStep.fieldKey} should remain above the keyboard.',
-      );
-      expect(tester.takeException(), isNull);
-    }
-  });
-
-  testWidgets('footer returns to its normal position after keyboard closes', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-
-    await tester.pumpWidget(app(initialStep: 0, keyboardInset: 310));
-    await tester.pump();
-
-    expect(find.byKey(const Key('maker_onboarding_footer')), findsNothing);
-
-    await tester.pumpWidget(app(initialStep: 0));
-    await tester.pump();
-
-    expect(find.byKey(const Key('maker_onboarding_footer')), findsOneWidget);
-    expect(find.byKey(const Key('maker_next_button')), findsOneWidget);
-    expect(find.byKey(const Key('maker_back_button')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

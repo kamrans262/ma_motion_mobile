@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
@@ -85,15 +84,18 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                   child: OutlinedButton(
                                     key: const Key('select_appreciator_button'),
                                     onPressed: onAppreciator,
-                                    style: AppButtonStyles.outlineAction(),
-                                    child: const Text(
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: AppColors.primary,
+                                      side: const BorderSide(
+                                        color: AppColors.primary,
+                                        width: 1.2,
+                                      ),
+                                      shape: const RoundedRectangleBorder(),
+                                    ),
+                                    child: Text(
                                       'Appreciator',
                                       maxLines: 1,
-                                      style: TextStyle(
-                                        fontFamily: AppTextStyles.fontFamily,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                                      style: AppTextStyles.buttonPurple,
                                     ),
                                   ),
                                 ),
