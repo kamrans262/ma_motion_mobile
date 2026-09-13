@@ -97,6 +97,8 @@ GoRouter createAppRouter({
         context.go('/maker-registration');
       case MakerEntryDestination.discovery:
         context.go('/maker/discovery');
+      case MakerEntryDestination.appreciatorProfileSetup:
+        context.go('/appreciator-registration');
       case MakerEntryDestination.appreciatorDiscovery:
         context.go('/appreciator/discovery');
     }
@@ -144,6 +146,9 @@ GoRouter createAppRouter({
           child: AppreciatorRegistrationFlowScreen(
             onExit: () => context.go('/join'),
             onCompleted: () => context.go('/appreciator/discovery'),
+            onSwitchToMaker: (destination) {
+              goForMakerEntry(context, destination);
+            },
           ),
         ),
       ),
@@ -283,7 +288,9 @@ GoRouter createAppRouter({
           state: state,
           child: MakerInfoSettingsScreen(
             onClose: () => context.pop(),
-            onSwitchedToAppreciator: () => context.go('/join'),
+            onSwitchedToAppreciator: (destination) {
+              goForMakerEntry(context, destination);
+            },
           ),
         ),
       ),
