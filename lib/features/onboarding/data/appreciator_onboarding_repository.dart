@@ -31,28 +31,25 @@ class AppreciatorOnboardingRepository {
   ) async {
     final locationId = await resolveLocationId(draft.location);
 
+    final existingToken = await tokenStore.read();
+    final hasSession = existingToken != null && existingToken.trim().isNotEmpty;
+
     final response = await api.post(
-      ApiPaths.appreciatorOnboarding,
-      requiresAuth: false,
+      hasSession
+          ? ApiPaths.appreciatorExperienceOnboarding
+          : ApiPaths.appreciatorOnboarding,
+      requiresAuth: hasSession,
       data: <String, dynamic>{
         'name': draft.name.trim(),
         'location_text': draft.location.trim(),
         'location_id': locationId,
         'email': draft.email.trim(),
-        'device_name': 'MA Motion Mobile',
+        if (!hasSession) 'device_name': 'MA Motion Mobile',
       },
     );
 
     final data = ApiEnvelope(raw: response).dataMap;
-    final token = data['token']?.toString().trim() ?? '';
-    final userData = data['user'];
-
-    if (token.isEmpty) {
-      throw const ApiException(
-        message: 'The server did not return an Appreciator session token.',
-        code: 'appreciator_onboarding_token_missing',
-      );
-    }
+    final userData = hasSession ? data : data['user'];
 
     if (userData is! Map) {
       throw const ApiException(
@@ -68,6 +65,18 @@ class AppreciatorOnboardingRepository {
         message: 'The created account is not an Appreciator account.',
         statusCode: 403,
         code: 'appreciator_role_required',
+      );
+    }
+
+    if (hasSession) {
+      return;
+    }
+
+    final token = data['token']?.toString().trim() ?? '';
+    if (token.isEmpty) {
+      throw const ApiException(
+        message: 'The server did not return an Appreciator session token.',
+        code: 'appreciator_onboarding_token_missing',
       );
     }
 
