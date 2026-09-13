@@ -155,10 +155,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
     });
   }
 
-  Widget _buildViewer(
-    ArtworkDetail artwork, {
-    required bool isSaved,
-  }) {
+  Widget _buildViewer(ArtworkDetail artwork, {required bool isSaved}) {
     final media = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
         : artwork.media.cast<DiscoveryArtworkMedia?>();
@@ -308,11 +305,7 @@ class _MediaSurface extends StatelessWidget {
 
     if (url.isEmpty) {
       return const Center(
-        child: Icon(
-          Icons.image_outlined,
-          size: 48,
-          color: AppColors.primary,
-        ),
+        child: Icon(Icons.image_outlined, size: 48, color: AppColors.primary),
       );
     }
 
