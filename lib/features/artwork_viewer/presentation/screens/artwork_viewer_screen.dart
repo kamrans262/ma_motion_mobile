@@ -54,9 +54,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   Future<void> _toggleSaved(bool isSaved) async {
     if (_isSaving) return;
 
-    setState(() {
-      _isSaving = true;
-    });
+    setState(() => _isSaving = true);
 
     try {
       final repository = ref.read(savedArtworksRepositoryProvider);
@@ -70,12 +68,10 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
       ref.invalidate(savedArtworksControllerProvider);
     } catch (_) {
-      // Keep the current viewer state intact if persistence is unavailable.
+      // Keep the viewer intact if persistence is temporarily unavailable.
     } finally {
       if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -176,44 +172,45 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
     }
 
     return Stack(
+      fit: StackFit.expand,
       children: [
-        Positioned.fill(
-          child: PageView.builder(
-            key: const Key('artwork_viewer_page_view'),
-            controller: _pageController,
-            itemCount: totalPageCount,
-            onPageChanged: (index) {
-              if (mounted) {
-                setState(() {
-                  _currentPage = index;
-                });
-              }
-            },
-            itemBuilder: (context, index) {
-              if (index == visualPageCount) {
-                return ArtworkMakerInfoPage(
-                  artwork: artwork,
-                  currentIndex: _currentPage,
-                  pageCount: totalPageCount,
-                  isSaved: isSaved,
-                  isSaving: _isSaving,
-                  onSavedTap: () => _toggleSaved(isSaved),
-                  onShare: () => _shareArtwork(artwork),
-                  onClose: widget.onClose,
-                );
-              }
-
-              return _ArtworkMediaPage(
+        PageView.builder(
+          key: const Key('artwork_viewer_page_view'),
+          controller: _pageController,
+          itemCount: totalPageCount,
+          onPageChanged: (index) {
+            if (!mounted) return;
+            setState(() => _currentPage = index);
+          },
+          itemBuilder: (context, index) {
+            if (index == visualPageCount) {
+              return ArtworkMakerInfoPage(
                 artwork: artwork,
-                media: media[index],
-                currentIndex: _currentPage,
-                pageCount: totalPageCount,
+                isSaved: isSaved,
+                isSaving: _isSaving,
+                onSavedTap: () => _toggleSaved(isSaved),
+                onShare: () => _shareArtwork(artwork),
               );
-            },
+            }
+
+            return _ArtworkMediaPage(
+              artwork: artwork,
+              media: media[index],
+            );
+          },
+        ),
+        _ViewerCloseButton(onPressed: widget.onClose),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: math.max(24, MediaQuery.paddingOf(context).bottom + 10),
+          child: Center(
+            child: ArtworkViewerDots(
+              count: totalPageCount,
+              currentIndex: _currentPage,
+            ),
           ),
         ),
-        if (_currentPage < visualPageCount)
-          _ViewerCloseButton(onPressed: widget.onClose),
       ],
     );
   }
@@ -226,16 +223,12 @@ class _ViewerCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final widthScale = (MediaQuery.sizeOf(context).width / 430).clamp(
-      0.78,
-      1.08,
-    );
-    final visibleTop = (50 * widthScale).clamp(40.0, 54.0).toDouble();
-    final buttonTop = visibleTop - 16;
+    final scale = (MediaQuery.sizeOf(context).width / 430).clamp(0.78, 1.08);
+    final visibleTop = (50 * scale).clamp(40.0, 54.0).toDouble();
 
     return Positioned(
-      top: buttonTop,
-      right: 18,
+      top: visibleTop - 16,
+      right: 12,
       child: SizedBox.square(
         dimension: 44,
         child: IconButton(
@@ -255,33 +248,24 @@ class _ArtworkMediaPage extends StatelessWidget {
   const _ArtworkMediaPage({
     required this.artwork,
     required this.media,
-    required this.currentIndex,
-    required this.pageCount,
   });
 
   final ArtworkDetail artwork;
   final DiscoveryArtworkMedia? media;
-  final int currentIndex;
-  final int pageCount;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final widthScale = (constraints.maxWidth / 430).clamp(0.78, 1.08);
-        final horizontal = (60 * widthScale).clamp(20.0, 60.0).toDouble();
-        final top = (82 * widthScale).clamp(72.0, 88.0).toDouble();
+        final scale = (constraints.maxWidth / 341).clamp(0.88, 1.18);
+        final horizontal = (24 * scale).clamp(20.0, 30.0).toDouble();
+        final imageTop = (112 * scale).clamp(96.0, 128.0).toDouble();
         final imageWidth = constraints.maxWidth - (horizontal * 2);
-        final compact = constraints.maxHeight < 620;
-        final reservedBelowImage = compact ? 210.0 : 160.0;
-        final maxImageHeight = math.max(
-          120.0,
-          constraints.maxHeight - top - reservedBelowImage,
-        );
+        final maxImageHeight = constraints.maxHeight * 0.57;
 
         return Padding(
           key: const Key('artwork_media_page_scroll'),
-          padding: EdgeInsets.fromLTRB(horizontal, top, horizontal, 24),
+          padding: EdgeInsets.fromLTRB(horizontal, imageTop, horizontal, 72),
           child: Column(
             children: [
               ConstrainedBox(
@@ -295,28 +279,25 @@ class _ArtworkMediaPage extends StatelessWidget {
                   child: _MediaSurface(media: media),
                 ),
               ),
-              if ((artwork.description ?? '').isNotEmpty) ...[
-                const SizedBox(
-                  key: Key('artwork_image_description_gap'),
-                  height: 40,
-                ),
-                Text(
-                  artwork.description!,
-                  key: const Key('artwork_viewer_description'),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFFF0F0F0),
+              const Spacer(),
+              if ((artwork.description ?? '').isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Text(
+                    artwork.description!,
+                    key: const Key('artwork_viewer_description'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 14,
+                      height: 1.22,
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.italic,
+                      color: Color(0xFFF0F0F0),
+                    ),
                   ),
                 ),
-              ],
-              const SizedBox(
-                key: Key('artwork_description_dots_gap'),
-                height: 50,
-              ),
-              ArtworkViewerDots(count: pageCount, currentIndex: currentIndex),
+              const SizedBox(height: 18),
             ],
           ),
         );
@@ -332,7 +313,7 @@ class _ArtworkMediaPage extends StatelessWidget {
       return width / height;
     }
 
-    return 0.64;
+    return 0.74;
   }
 }
 
@@ -362,6 +343,7 @@ class _MediaSurface extends StatelessWidget {
           url,
           key: Key('artwork_viewer_media_${media!.id}'),
           fit: BoxFit.contain,
+          gaplessPlayback: true,
           errorBuilder: (context, error, stackTrace) {
             return const ColoredBox(
               color: AppColors.inputFill,
