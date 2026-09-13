@@ -6,6 +6,10 @@ class CurrentUser {
     required this.role,
     this.isActive,
     this.profileImageUrl,
+    this.makerRegistered = false,
+    this.makerOnboardingCompleted = false,
+    this.appreciatorRegistered = false,
+    this.appreciatorOnboardingCompleted = false,
   });
 
   final int? id;
@@ -14,6 +18,10 @@ class CurrentUser {
   final String role;
   final bool? isActive;
   final String? profileImageUrl;
+  final bool makerRegistered;
+  final bool makerOnboardingCompleted;
+  final bool appreciatorRegistered;
+  final bool appreciatorOnboardingCompleted;
 
   bool get isMaker => role.toLowerCase() == 'maker';
   bool get isAppreciator => role.toLowerCase() == 'appreciator';
@@ -48,6 +56,12 @@ class CurrentUser {
       profileImageUrl:
           map['profile_image_url']?.toString() ??
           map['profile_image']?.toString(),
+      makerRegistered: asBool(map['maker_registered']) ?? false,
+      makerOnboardingCompleted:
+          asBool(map['maker_onboarding_completed']) ?? false,
+      appreciatorRegistered: asBool(map['appreciator_registered']) ?? false,
+      appreciatorOnboardingCompleted:
+          asBool(map['appreciator_onboarding_completed']) ?? false,
     );
   }
 }
