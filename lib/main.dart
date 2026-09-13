@@ -15,7 +15,7 @@ class MaMotionApp extends StatefulWidget {
   const MaMotionApp({
     super.key,
     this.splashAutoPlay = true,
-    this.splashDuration = const Duration(milliseconds: 11800),
+    this.splashDuration = const Duration(milliseconds: 12200),
   });
 
   final bool splashAutoPlay;
