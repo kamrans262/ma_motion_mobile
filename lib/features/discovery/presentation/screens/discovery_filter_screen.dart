@@ -283,7 +283,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 6),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Row(
                 children: [
                   Expanded(
@@ -292,9 +292,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
-                        fontSize: 22,
-                        height: 1.05,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 26,
                       ),
                     ),
                   ),
@@ -310,8 +308,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                         'Clear filters',
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.darkGray,
-                          fontSize: 10,
-                          height: 1,
+                          fontSize: 11,
                         ),
                       ),
                     ),
@@ -338,10 +335,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               SafeArea(
                 top: false,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 18),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 40,
+                    height: 48,
                     child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
@@ -358,7 +355,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                               'Apply Filters',
                               style: TextStyle(
                                 fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 14,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -379,12 +376,12 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
     return ListView(
       key: const Key('filter_scroll'),
-      padding: const EdgeInsets.fromLTRB(20, 6, 20, 18),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 26),
       children: [
         _sectionTitle('Type'),
         Wrap(
-          spacing: 7,
-          runSpacing: 6,
+          spacing: 8,
+          runSpacing: 7,
           children: [
             for (final type in options.types)
               _ChoicePill(
@@ -395,11 +392,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 22),
         _sectionTitle('Style'),
         Wrap(
-          spacing: 7,
-          runSpacing: 6,
+          spacing: 8,
+          runSpacing: 7,
           children: [
             for (final style in options.styles)
               _ChoicePill(
@@ -410,11 +407,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 22),
         _sectionTitle('Show Status'),
         Wrap(
-          spacing: 7,
-          runSpacing: 6,
+          spacing: 8,
+          runSpacing: 7,
           children: [
             for (final status in options.showStatuses)
               _ChoicePill(
@@ -425,13 +422,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 22),
         _sectionTitle('Location'),
         TextField(
           key: const Key('filter_location_search'),
           controller: _locationSearchController,
           onChanged: _searchLocations,
-          style: AppTextStyles.field.copyWith(fontSize: 14, height: 1.15),
+          style: AppTextStyles.field.copyWith(fontSize: 16),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
             hintText: 'Enter city or zip code',
@@ -480,7 +477,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
             ),
           ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
         Text(
           'Radius (miles)',
           style: AppTextStyles.onboardingHelper.copyWith(
@@ -493,41 +490,38 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           key: const Key('filter_radius_control_row'),
           children: [
             Expanded(
-              child: SizedBox(
-                height: 30,
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 1,
-                    activeTrackColor: AppColors.darkGray,
-                    inactiveTrackColor: AppColors.darkGray,
-                    thumbColor: AppColors.white,
-                    overlayColor: AppColors.primary50,
-                    thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 5,
-                      elevation: 0,
-                      pressedElevation: 0,
-                    ),
-                    overlayShape: const RoundSliderOverlayShape(
-                      overlayRadius: 10,
-                    ),
-                    showValueIndicator: ShowValueIndicator.never,
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 1,
+                  activeTrackColor: AppColors.darkGray,
+                  inactiveTrackColor: AppColors.darkGray,
+                  thumbColor: AppColors.white,
+                  overlayColor: AppColors.primary50,
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 5,
+                    elevation: 0,
+                    pressedElevation: 0,
                   ),
-                  child: Slider(
-                    key: const Key('filter_radius_slider'),
-                    value: radiusValue,
-                    min: minMiles,
-                    max: maxMiles,
-                    divisions: _radiusDivisions(minMiles, maxMiles),
-                    onChanged: (value) {
-                      setState(() {
-                        _radiusMiles = value;
-                      });
-                    },
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 10,
                   ),
+                  showValueIndicator: ShowValueIndicator.never,
+                ),
+                child: Slider(
+                  key: const Key('filter_radius_slider'),
+                  value: radiusValue,
+                  min: minMiles,
+                  max: maxMiles,
+                  divisions: _radiusDivisions(minMiles, maxMiles),
+                  onChanged: (value) {
+                    setState(() {
+                      _radiusMiles = value;
+                    });
+                  },
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             SizedBox(
               width: 28,
               child: Text(
@@ -549,7 +543,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
   Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 7),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         title,
         style: AppTextStyles.onboardingHelper.copyWith(
@@ -569,14 +563,12 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       hintText: hintText,
       hintStyle: AppTextStyles.fieldHint.copyWith(
         color: AppColors.darkGray,
-        fontSize: 14,
-        height: 1.15,
+        fontSize: 16,
       ),
       suffixIcon: suffixIcon,
-      isDense: true,
       filled: true,
       fillColor: AppColors.filterInputFill,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.zero,
         borderSide: BorderSide(color: AppColors.primary, width: 1),
@@ -625,8 +617,7 @@ class _ChoicePill extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          constraints: const BoxConstraints(minHeight: 22),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
           decoration: BoxDecoration(
             border: Border.all(
               color: selected ? AppColors.white : AppColors.darkGray,
@@ -637,8 +628,8 @@ class _ChoicePill extends StatelessWidget {
             label,
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 10,
-              height: 1.05,
+              fontSize: 11,
+              height: 1.1,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
               color: selected ? AppColors.black : AppColors.white,
             ),
