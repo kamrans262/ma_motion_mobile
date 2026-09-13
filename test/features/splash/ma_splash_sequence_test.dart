@@ -26,13 +26,14 @@ void main() {
     );
   }
 
-  testWidgets('splash starts purple with logo and welcome hidden', (
+  testWidgets('splash starts with purple opening mask over hidden content', (
     tester,
   ) async {
     await tester.pumpWidget(app());
 
     expect(find.byKey(const Key('ma_animated_splash')), findsOneWidget);
     expect(find.byKey(const Key('ma_splash_logo')), findsOneWidget);
+    expect(find.byKey(const Key('ma_splash_dot_pattern')), findsOneWidget);
 
     final logoOpacity = tester.widget<Opacity>(
       find.byKey(const Key('ma_splash_logo_opacity')),
@@ -44,13 +45,15 @@ void main() {
       find.byKey(const Key('ma_splash_background')),
     );
 
-    expect(logoOpacity.opacity, 0);
+    // The logo is present underneath the solid purple opening mask. The mask
+    // reveals it through its expanding holes rather than fading it in.
+    expect(logoOpacity.opacity, 1);
     expect(welcomeOpacity.opacity, 0);
-    expect(background.color, const Color(0xFF904AFF));
+    expect(background.color, const Color(0xFF0F2419));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('logo appears before welcome copy', (tester) async {
+  testWidgets('opening reveals static logo before welcome copy', (tester) async {
     await tester.pumpWidget(
       app(autoPlay: true, duration: const Duration(milliseconds: 1000)),
     );
@@ -64,12 +67,47 @@ void main() {
       find.byKey(const Key('ma_splash_welcome_opacity')),
     );
 
-    expect(logoOpacity.opacity, greaterThan(0));
+    expect(logoOpacity.opacity, 1);
     expect(welcomeOpacity.opacity, 0);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
+  });
+
+  testWidgets('welcome fades in, holds, then fades out before navigation', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        autoPlay: true,
+        duration: const Duration(milliseconds: 1000),
+        onResolved: (_) {},
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 700));
+
+    var welcomeOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_welcome_opacity')),
+    );
+    expect(welcomeOpacity.opacity, 1);
+
+    await tester.pump(const Duration(milliseconds: 270));
+
+    welcomeOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_welcome_opacity')),
+    );
+    expect(welcomeOpacity.opacity, greaterThan(0));
+    expect(welcomeOpacity.opacity, lessThan(1));
+
+    await tester.pump(const Duration(milliseconds: 25));
+
+    welcomeOpacity = tester.widget<Opacity>(
+      find.byKey(const Key('ma_splash_welcome_opacity')),
+    );
+    expect(welcomeOpacity.opacity, 0);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('auth resolved early waits for animation then navigates once', (
@@ -102,7 +140,7 @@ void main() {
   });
 
   testWidgets(
-    'animation completed early holds final frame until auth resolves',
+    'animation completed early holds welcome if auth is still unresolved',
     (tester) async {
       final completer = Completer<MakerEntryDestination>();
       final destinations = <MakerEntryDestination>[];

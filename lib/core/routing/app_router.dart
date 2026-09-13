@@ -47,9 +47,23 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/join',
-        builder: (context, state) => MaRoleSelectionScreen(
-          onMaker: () => context.go('/maker-registration'),
-          onAppreciator: () {},
+        pageBuilder: (context, state) => CustomTransitionPage<void>(
+          key: state.pageKey,
+          transitionDuration: const Duration(milliseconds: 350),
+          reverseTransitionDuration: const Duration(milliseconds: 180),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              ),
+              child: child,
+            );
+          },
+          child: MaRoleSelectionScreen(
+            onMaker: () => context.go('/maker-registration'),
+            onAppreciator: () {},
+          ),
         ),
       ),
       GoRoute(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/ma_dotted_background.dart';
 import '../../../auth/data/maker_entry_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../widgets/ma_full_logo.dart';
@@ -28,11 +29,7 @@ class MaSplashSequenceScreen extends ConsumerStatefulWidget {
 class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _backgroundProgress;
-  late final Animation<double> _dotProgress;
-  late final Animation<double> _logoScale;
-  late final Animation<double> _welcomeOpacity;
-  late final Animation<Offset> _welcomeSlide;
+  late final Animation<double> _openingProgress;
 
   MakerEntryDestination? _resolvedDestination;
   bool _animationCompleted = false;
@@ -44,30 +41,13 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
 
     _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    _backgroundProgress = CurvedAnimation(
+    // Reference video:
+    // - first visible holes begin at ~0.18 s;
+    // - the opening mask reaches its final dotted state by ~2.75 s.
+    _openingProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.10, 0.15, curve: Curves.easeInOutCubic),
+      curve: const Interval(0.015, 0.225, curve: Curves.linear),
     );
-
-    _dotProgress = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.03, 0.20, curve: Curves.easeInOutCubic),
-    );
-
-    _logoScale = const AlwaysStoppedAnimation<double>(1);
-
-    _welcomeOpacity = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.64, 0.70, curve: Curves.easeInOutCubic),
-    );
-
-    _welcomeSlide =
-        Tween<Offset>(begin: const Offset(0, 0.025), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: const Interval(0.64, 0.71, curve: Curves.easeOutCubic),
-          ),
-        );
 
     _controller.addStatusListener(_handleAnimationStatus);
     _resolveEntry();
@@ -89,8 +69,7 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
       _resolvedDestination = destination;
       _navigateIfReady();
     } catch (_) {
-      // Keep the final intro frame visible if session restoration cannot
-      // complete. No secondary loading screen is introduced.
+      // Keep the final intro state visible if restoration cannot complete.
     }
   }
 
@@ -114,14 +93,32 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
   }
 
   double _logoOpacity(double value) {
-    if (value < 0.11) return 0;
-    if (value < 0.16) {
-      return Curves.easeInOutCubic.transform((value - 0.11) / 0.05);
+    if (value < 0.588) return 1;
+    if (value < 0.625) {
+      final t = (value - 0.588) / (0.625 - 0.588);
+      return 1 - Curves.easeInOutCubic.transform(t);
     }
-    if (value < 0.59) return 1;
-    if (value < 0.65) {
-      return 1 - Curves.easeInOutCubic.transform((value - 0.59) / 0.06);
+
+    return 0;
+  }
+
+  double _welcomeOpacity(double value) {
+    if (value < 0.618) return 0;
+
+    if (value < 0.668) {
+      final t = (value - 0.618) / (0.668 - 0.618);
+      return Curves.easeOutCubic.transform(t);
     }
+
+    if (value < 0.949 || _resolvedDestination == null) {
+      return 1;
+    }
+
+    if (value < 0.988) {
+      final t = (value - 0.949) / (0.988 - 0.949);
+      return 1 - Curves.easeInCubic.transform(t);
+    }
+
     return 0;
   }
 
@@ -137,55 +134,40 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       key: const Key('ma_animated_splash'),
+      backgroundColor: AppColors.splashBackground,
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          final backgroundColor = Color.lerp(
-            AppColors.primary,
-            AppColors.splashBackground,
-            _backgroundProgress.value,
-          )!;
-
           return ColoredBox(
             key: const Key('ma_splash_background'),
-            color: backgroundColor,
+            color: AppColors.splashBackground,
             child: Stack(
               fit: StackFit.expand,
               children: [
+                SafeArea(
+                  child: IgnorePointer(
+                    child: Opacity(
+                      key: const Key('ma_splash_logo_opacity'),
+                      opacity: _logoOpacity(_controller.value),
+                      child: const MaFullLogo(),
+                    ),
+                  ),
+                ),
                 RepaintBoundary(
                   child: CustomPaint(
                     key: const Key('ma_splash_dot_pattern'),
-                    painter: _AnimatedDotGridPainter(
-                      progress: _dotProgress.value,
+                    painter: _OpeningDotMaskPainter(
+                      progress: _openingProgress.value,
                     ),
                   ),
                 ),
                 SafeArea(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    alignment: Alignment.center,
-                    children: [
-                      IgnorePointer(
-                        child: Opacity(
-                          key: const Key('ma_splash_logo_opacity'),
-                          opacity: _logoOpacity(_controller.value),
-                          child: Transform.scale(
-                            scale: _logoScale.value,
-                            child: const MaFullLogo(),
-                          ),
-                        ),
-                      ),
-                      IgnorePointer(
-                        child: FractionalTranslation(
-                          translation: _welcomeSlide.value,
-                          child: Opacity(
-                            key: const Key('ma_splash_welcome_opacity'),
-                            opacity: _welcomeOpacity.value,
-                            child: const _WelcomeMessage(),
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: IgnorePointer(
+                    child: Opacity(
+                      key: const Key('ma_splash_welcome_opacity'),
+                      opacity: _welcomeOpacity(_controller.value),
+                      child: const _WelcomeMessage(),
+                    ),
                   ),
                 ),
               ],
@@ -236,76 +218,113 @@ class _WelcomeMessage extends StatelessWidget {
   }
 }
 
-class _AnimatedDotGridPainter extends CustomPainter {
-  const _AnimatedDotGridPainter({required this.progress});
+class _OpeningDotMaskPainter extends CustomPainter {
+  const _OpeningDotMaskPainter({required this.progress});
 
   final double progress;
 
+  static const List<double> _progressStops = <double>[
+    0,
+    0.046,
+    0.124,
+    0.202,
+    0.280,
+    0.358,
+    0.436,
+    0.514,
+    0.592,
+    0.670,
+    0.748,
+    0.826,
+    0.904,
+    0.967,
+    1,
+  ];
+
+  // Hole radius as a fraction of grid spacing, measured from the supplied
+  // animation. The final value intentionally remains below sqrt(0.5):
+  // the untouched purple islands become the persistent final dot grid.
+  static const List<double> _radiusStops = <double>[
+    0,
+    0,
+    0.058,
+    0.109,
+    0.177,
+    0.273,
+    0.376,
+    0.452,
+    0.499,
+    0.542,
+    0.582,
+    0.617,
+    0.645,
+    0.659,
+    0.664,
+  ];
+
   @override
   void paint(Canvas canvas, Size size) {
-    if (progress <= 0 ||
-        !size.width.isFinite ||
+    if (!size.width.isFinite ||
         !size.height.isFinite ||
-        size.isEmpty) {
+        size.width <= 0 ||
+        size.height <= 0) {
       return;
     }
 
-    final spacing = (size.width * 0.045).clamp(17.0, 24.0).toDouble();
-    final baseRadius = (size.width * 0.0042).clamp(1.2, 2.1).toDouble();
-    final largeRadius = spacing * 0.44;
+    final rect = Offset.zero & size;
+    final spacing = MaDotGridMetrics.spacingForWidth(size.width);
+    final radius = spacing * _radiusFraction(progress);
 
-    double radius;
-    Color color;
+    canvas.saveLayer(rect, Paint());
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..color = AppColors.primary
+        ..style = PaintingStyle.fill,
+    );
 
-    if (progress < 0.45) {
-      final t = progress / 0.45;
-      radius =
-          baseRadius +
-          ((largeRadius - baseRadius) * Curves.easeInOut.transform(t));
-      color = AppColors.splashBackground.withValues(alpha: 0.82);
-    } else if (progress < 0.72) {
-      final t = (progress - 0.45) / 0.27;
-      radius =
-          largeRadius +
-          (((largeRadius * 0.55) - largeRadius) *
-              Curves.easeInOut.transform(t));
-      color = Color.lerp(
-        AppColors.splashBackground.withValues(alpha: 0.82),
-        AppColors.primary,
-        Curves.easeInOut.transform(t),
-      )!;
-    } else {
-      final t = (progress - 0.72) / 0.28;
-      radius =
-          (largeRadius * 0.55) +
-          ((baseRadius - (largeRadius * 0.55)) * Curves.easeInOut.transform(t));
-      color = Color.lerp(
-        AppColors.primary,
-        AppColors.splashDot.withValues(alpha: 0.80),
-        t,
-      )!;
-    }
+    if (radius > 0) {
+      final clearPaint = Paint()
+        ..blendMode = BlendMode.clear
+        ..style = PaintingStyle.fill
+        ..isAntiAlias = true;
 
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
+      final rows = (size.height / spacing).ceil() + 3;
+      final columns = (size.width / spacing).ceil() + 3;
 
-    final rows = (size.height / spacing).ceil() + 2;
-    final columns = (size.width / spacing).ceil() + 2;
+      for (var row = -1; row < rows; row++) {
+        final y = row * spacing;
 
-    for (var row = -1; row < rows; row++) {
-      final y = row * spacing;
-
-      for (var column = -1; column < columns; column++) {
-        final x = column * spacing;
-        canvas.drawCircle(Offset(x, y), radius, paint);
+        for (var column = -1; column < columns; column++) {
+          final x = column * spacing;
+          canvas.drawCircle(Offset(x, y), radius, clearPaint);
+        }
       }
     }
+
+    canvas.restore();
+  }
+
+  double _radiusFraction(double value) {
+    final clamped = value.clamp(0.0, 1.0).toDouble();
+
+    for (var index = 0; index < _progressStops.length - 1; index++) {
+      final start = _progressStops[index];
+      final end = _progressStops[index + 1];
+
+      if (clamped > end) continue;
+
+      final local = end == start ? 1.0 : (clamped - start) / (end - start);
+      final from = _radiusStops[index];
+      final to = _radiusStops[index + 1];
+      return from + ((to - from) * local.clamp(0.0, 1.0));
+    }
+
+    return _radiusStops.last;
   }
 
   @override
-  bool shouldRepaint(covariant _AnimatedDotGridPainter oldDelegate) {
+  bool shouldRepaint(covariant _OpeningDotMaskPainter oldDelegate) {
     return oldDelegate.progress != progress;
   }
 }
