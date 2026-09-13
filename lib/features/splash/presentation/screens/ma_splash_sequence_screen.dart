@@ -12,7 +12,7 @@ class MaSplashSequenceScreen extends ConsumerStatefulWidget {
     this.onResolved,
     this.entryResolver,
     this.autoPlay = true,
-    this.duration = const Duration(milliseconds: 11800),
+    this.duration = const Duration(milliseconds: 12200),
   });
 
   final ValueChanged<MakerEntryDestination>? onResolved;
