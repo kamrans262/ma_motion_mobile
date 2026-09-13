@@ -23,9 +23,10 @@ class DiscoveryFilterScreen extends ConsumerStatefulWidget {
 }
 
 class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
+  static const double _kmPerMile = 1.609344;
+  static const double _defaultRadiusMiles = 25;
+
   late final TextEditingController _locationSearchController;
-  late final TextEditingController _cityController;
-  late final TextEditingController _postalController;
 
   DiscoveryFilterOptions? _options;
   DiscoveryLocation? _selectedLocation;
@@ -38,8 +39,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   bool _loadingOptions = true;
   bool _loadingLocations = false;
   bool _applying = false;
-  bool _useRadius = false;
-  double _radiusKm = 25;
+  double _radiusMiles = _defaultRadiusMiles;
   String? _errorMessage;
   Timer? _locationDebounce;
 
@@ -53,27 +53,33 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     _selectedStyleIds = Set<int>.from(query.styleIds);
     _selectedStatuses = Set<String>.from(query.showStatuses);
 
-    if (query.locationId != null && query.locationLabel != null) {
+    final locationLabel = query.locationLabel?.trim() ?? '';
+    if (locationLabel.isNotEmpty &&
+        (query.locationId != null ||
+            query.latitude != null ||
+            query.longitude != null)) {
       _selectedLocation = DiscoveryLocation(
-        id: query.locationId!,
-        label: query.locationLabel!,
+        id: query.locationId ?? 0,
+        label: locationLabel,
         countryCode: query.countryCode,
         latitude: query.latitude,
         longitude: query.longitude,
       );
     }
 
-    _useRadius =
-        query.latitude != null &&
-        query.longitude != null &&
-        query.radiusKm != null;
-    _radiusKm = query.radiusKm ?? 25;
+    _radiusMiles = query.radiusKm == null
+        ? _defaultRadiusMiles
+        : _kmToMiles(query.radiusKm!);
+
+    final initialLocationText = locationLabel.isNotEmpty
+        ? locationLabel
+        : query.postalCode.trim().isNotEmpty
+        ? query.postalCode
+        : query.city;
 
     _locationSearchController = TextEditingController(
-      text: query.locationLabel ?? '',
+      text: initialLocationText,
     );
-    _cityController = TextEditingController(text: query.city);
-    _postalController = TextEditingController(text: query.postalCode);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadOptions();
@@ -84,8 +90,6 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   void dispose() {
     _locationDebounce?.cancel();
     _locationSearchController.dispose();
-    _cityController.dispose();
-    _postalController.dispose();
     super.dispose();
   }
 
@@ -97,12 +101,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
       if (!mounted) return;
 
+      final minMiles = _kmToMiles(options.radiusMinKm);
+      final maxMiles = _kmToMiles(options.radiusMaxKm);
+
       setState(() {
         _options = options;
         _loadingOptions = false;
-        _radiusKm = _radiusKm
-            .clamp(options.radiusMinKm, options.radiusMaxKm)
-            .toDouble();
+        _radiusMiles = _radiusMiles.clamp(minMiles, maxMiles).toDouble();
       });
     } catch (_) {
       if (!mounted) return;
@@ -176,12 +181,6 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       _selectedLocation = location;
       _locationSearchController.text = location.label;
       _locationSuggestions = const <DiscoveryLocation>[];
-      _cityController.clear();
-      _postalController.clear();
-
-      if (location.latitude == null || location.longitude == null) {
-        _useRadius = false;
-      }
     });
   }
 
@@ -217,10 +216,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       _selectedLocation = null;
       _locationSuggestions = const <DiscoveryLocation>[];
       _locationSearchController.clear();
-      _cityController.clear();
-      _postalController.clear();
-      _useRadius = false;
-      _radiusKm = 25;
+      _radiusMiles = _defaultRadiusMiles;
       _errorMessage = null;
     });
   }
@@ -229,21 +225,29 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     if (_applying) return;
 
     final location = _selectedLocation;
+    final rawLocation = _locationSearchController.text.trim();
     final canUseRadius =
-        _useRadius && location?.latitude != null && location?.longitude != null;
+        location?.latitude != null && location?.longitude != null;
+    final looksPostal = _looksLikePostal(rawLocation);
 
     final query = DiscoveryQuery(
       typeIds: Set<int>.from(_selectedTypeIds),
       styleIds: Set<int>.from(_selectedStyleIds),
       showStatuses: Set<String>.from(_selectedStatuses),
-      locationId: canUseRadius ? null : location?.id,
-      locationLabel: location?.label,
-      city: _cityController.text.trim(),
-      postalCode: _postalController.text.trim(),
+      locationId: canUseRadius
+          ? null
+          : location != null && location.id > 0
+          ? location.id
+          : null,
+      locationLabel: location?.label ?? (rawLocation.isEmpty ? null : rawLocation),
+      city: location == null && rawLocation.isNotEmpty && !looksPostal
+          ? rawLocation
+          : '',
+      postalCode: location == null && looksPostal ? rawLocation : '',
       countryCode: location?.countryCode,
       latitude: canUseRadius ? location!.latitude : null,
       longitude: canUseRadius ? location!.longitude : null,
-      radiusKm: canUseRadius ? _radiusKm : null,
+      radiusKm: canUseRadius ? _milesToKm(_radiusMiles) : null,
     );
 
     setState(() {
@@ -277,22 +281,9 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Row(
                 children: [
-                  IconButton(
-                    key: const Key('filter_close_button'),
-                    onPressed: widget.onClose,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints.tightFor(
-                      width: 40,
-                      height: 40,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                    color: AppColors.primary,
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Filter',
@@ -303,24 +294,20 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  TextButton(
+                  InkWell(
                     key: const Key('filter_clear_button'),
-                    onPressed: _clearAll,
-                    style: TextButton.styleFrom(
-                      minimumSize: Size.zero,
+                    onTap: _clearAll,
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
+                        horizontal: 2,
                         vertical: 8,
                       ),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    child: Text(
-                      'Clear all',
-                      maxLines: 1,
-                      style: AppTextStyles.onboardingHelper.copyWith(
-                        color: AppColors.primary,
+                      child: Text(
+                        'Clear filters',
+                        style: AppTextStyles.onboardingHelper.copyWith(
+                          color: AppColors.darkGray,
+                          fontSize: 11,
+                        ),
                       ),
                     ),
                   ),
@@ -346,29 +333,29 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               SafeArea(
                 top: false,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 52,
-                    child: FilledButton(
+                    height: 44,
+                    child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.black,
-                        shape: const RoundedRectangleBorder(),
-                      ),
+                      style: _applyButtonStyle(_applying),
                       child: _applying
                           ? const SizedBox.square(
-                              dimension: 22,
+                              dimension: 18,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2.2,
-                                color: AppColors.black,
+                                strokeWidth: 2,
+                                color: AppColors.white,
                               ),
                             )
                           : const Text(
                               'Apply Filters',
-                              style: AppTextStyles.buttonDark,
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.fontFamily,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                     ),
                   ),
@@ -381,18 +368,18 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   }
 
   Widget _buildForm(DiscoveryFilterOptions options) {
-    final location = _selectedLocation;
-    final canUseRadius =
-        location?.latitude != null && location?.longitude != null;
+    final minMiles = _kmToMiles(options.radiusMinKm);
+    final maxMiles = _kmToMiles(options.radiusMaxKm);
+    final radiusValue = _radiusMiles.clamp(minMiles, maxMiles).toDouble();
 
     return ListView(
       key: const Key('filter_scroll'),
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 26),
       children: [
         _sectionTitle('Type'),
         Wrap(
           spacing: 8,
-          runSpacing: 8,
+          runSpacing: 7,
           children: [
             for (final type in options.types)
               _ChoicePill(
@@ -403,11 +390,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 22),
         _sectionTitle('Style'),
         Wrap(
           spacing: 8,
-          runSpacing: 8,
+          runSpacing: 7,
           children: [
             for (final style in options.styles)
               _ChoicePill(
@@ -418,11 +405,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 22),
         _sectionTitle('Show Status'),
         Wrap(
           spacing: 8,
-          runSpacing: 8,
+          runSpacing: 7,
           children: [
             for (final status in options.showStatuses)
               _ChoicePill(
@@ -433,7 +420,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 22),
         _sectionTitle('Location'),
         TextField(
           key: const Key('filter_location_search'),
@@ -442,18 +429,14 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           style: AppTextStyles.field.copyWith(fontSize: 16),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
-            hintText: 'Search city, region or ZIP / postal code',
-            prefixIcon: const Icon(
-              Icons.location_on_outlined,
-              color: AppColors.primary,
-            ),
+            hintText: 'Enter city or zip code',
             suffixIcon: _loadingLocations
                 ? const Padding(
-                    padding: EdgeInsets.all(14),
+                    padding: EdgeInsets.all(13),
                     child: SizedBox.square(
-                      dimension: 18,
+                      dimension: 16,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                        strokeWidth: 1.8,
                         color: AppColors.primary,
                       ),
                     ),
@@ -466,10 +449,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             padding: const EdgeInsets.only(top: 6),
             child: Material(
               key: const Key('filter_location_suggestions'),
-              color: AppColors.inputFill,
-              shape: RoundedRectangleBorder(
+              color: AppColors.filterInputFill,
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
-                side: BorderSide(color: AppColors.primary50),
+                side: BorderSide(color: AppColors.primary),
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
@@ -483,6 +466,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                         suggestion.label,
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.white,
+                          fontSize: 12,
                         ),
                       ),
                       onTap: () => _selectLocation(suggestion),
@@ -491,139 +475,154 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
             ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(
-              child: TextField(
-                key: const Key('filter_city_field'),
-                controller: _cityController,
-                style: AppTextStyles.field.copyWith(fontSize: 16),
-                cursorColor: AppColors.primary,
-                decoration: _inputDecoration(hintText: 'City'),
+            Text(
+              'Radius (miles)',
+              style: AppTextStyles.onboardingHelper.copyWith(
+                color: AppColors.primary,
+                fontSize: 11,
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextField(
-                key: const Key('filter_postal_field'),
-                controller: _postalController,
-                style: AppTextStyles.field.copyWith(fontSize: 16),
-                cursorColor: AppColors.primary,
-                decoration: _inputDecoration(hintText: 'ZIP / Postal'),
+            const Spacer(),
+            Text(
+              '${radiusValue.round()}',
+              key: const Key('filter_radius_value'),
+              style: AppTextStyles.onboardingHelper.copyWith(
+                color: AppColors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 18),
-        SwitchListTile(
-          key: const Key('filter_radius_switch'),
-          contentPadding: EdgeInsets.zero,
-          value: _useRadius && canUseRadius,
-          onChanged: canUseRadius
-              ? (value) {
-                  setState(() {
-                    _useRadius = value;
-                  });
-                }
-              : null,
-          activeThumbColor: AppColors.primary,
-          title: Text(
-            'Use radius around selected location',
-            style: AppTextStyles.onboardingHelper.copyWith(
-              color: canUseRadius ? AppColors.white : AppColors.mutedText,
+        const SizedBox(height: 2),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 1,
+            activeTrackColor: AppColors.darkGray,
+            inactiveTrackColor: AppColors.darkGray,
+            thumbColor: AppColors.white,
+            overlayColor: AppColors.primary50,
+            thumbShape: const RoundSliderThumbShape(
+              enabledThumbRadius: 5,
+              elevation: 0,
+              pressedElevation: 0,
             ),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
+            showValueIndicator: ShowValueIndicator.never,
           ),
-          subtitle: !canUseRadius
-              ? const Text(
-                  'Select a location with coordinates to use distance.',
-                  style: AppTextStyles.onboardingHelper,
-                )
-              : null,
-        ),
-        if (_useRadius && canUseRadius) ...[
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                'Radius',
-                style: AppTextStyles.onboardingHelper.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '${_radiusKm.round()} km',
-                key: const Key('filter_radius_value'),
-                style: AppTextStyles.onboardingHelper.copyWith(
-                  color: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          child: Slider(
             key: const Key('filter_radius_slider'),
-            value: _radiusKm
-                .clamp(options.radiusMinKm, options.radiusMaxKm)
-                .toDouble(),
-            min: options.radiusMinKm,
-            max: options.radiusMaxKm,
-            divisions: _radiusDivisions(options),
-            activeColor: AppColors.primary,
-            inactiveColor: AppColors.primary50,
+            value: radiusValue,
+            min: minMiles,
+            max: maxMiles,
+            divisions: _radiusDivisions(minMiles, maxMiles),
             onChanged: (value) {
               setState(() {
-                _radiusKm = value;
+                _radiusMiles = value;
               });
             },
           ),
-        ],
+        ),
       ],
     );
   }
 
   Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         title,
         style: AppTextStyles.onboardingHelper.copyWith(
           color: AppColors.primary,
-          fontWeight: FontWeight.w600,
+          fontSize: 11,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
   }
 
-  static int? _radiusDivisions(DiscoveryFilterOptions options) {
-    final span = (options.radiusMaxKm - options.radiusMinKm).round();
-    if (span <= 0) return null;
-    return span > 100 ? 100 : span;
+  static ButtonStyle _applyButtonStyle(bool applying) {
+    return ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (applying || states.contains(WidgetState.pressed)) {
+          return AppColors.primary;
+        }
+        return Colors.transparent;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (applying || states.contains(WidgetState.pressed)) {
+          return AppColors.white;
+        }
+        if (states.contains(WidgetState.disabled)) {
+          return AppColors.darkGray;
+        }
+        return AppColors.primary;
+      }),
+      side: WidgetStateProperty.resolveWith<BorderSide>((states) {
+        if (applying) {
+          return const BorderSide(color: AppColors.primary, width: 1);
+        }
+        return BorderSide(
+          color: states.contains(WidgetState.disabled)
+              ? AppColors.darkGray
+              : AppColors.primary,
+          width: 1,
+        );
+      }),
+      overlayColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
+      shape: const WidgetStatePropertyAll<OutlinedBorder>(
+        RoundedRectangleBorder(),
+      ),
+      padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+        EdgeInsets.zero,
+      ),
+    );
   }
 
   static InputDecoration _inputDecoration({
     required String hintText,
-    Widget? prefixIcon,
     Widget? suffixIcon,
   }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: AppTextStyles.fieldHint.copyWith(fontSize: 16),
-      prefixIcon: prefixIcon,
+      hintStyle: AppTextStyles.fieldHint.copyWith(
+        color: AppColors.darkGray,
+        fontSize: 16,
+      ),
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: AppColors.inputFill,
-      enabledBorder: OutlineInputBorder(
+      fillColor: AppColors.filterInputFill,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+      enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.primary50),
+        borderSide: BorderSide(color: AppColors.primary, width: 1),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.primary, width: 1.2),
+        borderSide: BorderSide(color: AppColors.primary, width: 1),
       ),
     );
   }
+
+  static int? _radiusDivisions(double minMiles, double maxMiles) {
+    final span = (maxMiles - minMiles).round();
+    if (span <= 0) return null;
+    return span > 100 ? 100 : span;
+  }
+
+  static bool _looksLikePostal(String value) {
+    final text = value.trim();
+    if (text.isEmpty) return false;
+
+    return RegExp(r'\d').hasMatch(text);
+  }
+
+  static double _kmToMiles(double kilometers) => kilometers / _kmPerMile;
+
+  static double _milesToKm(double miles) => miles * _kmPerMile;
 }
 
 class _ChoicePill extends StatelessWidget {
@@ -641,17 +640,26 @@ class _ChoicePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? AppColors.primary : Colors.transparent,
+      color: selected ? AppColors.white : Colors.transparent,
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.primary),
+            border: Border.all(
+              color: selected ? AppColors.white : AppColors.darkGray,
+              width: 0.8,
+            ),
           ),
           child: Text(
             label,
-            style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 11,
+              height: 1.1,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+              color: selected ? AppColors.black : AppColors.white,
+            ),
           ),
         ),
       ),
@@ -681,10 +689,6 @@ class _LoadError extends StatelessWidget {
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onRetry,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary),
-              ),
               child: const Text('Try again'),
             ),
           ],

@@ -62,18 +62,6 @@ void main() {
     await tester.tap(suggestion);
     await tester.pump();
 
-    final radiusSwitch = find.byKey(const Key('filter_radius_switch'));
-    await tester.scrollUntilVisible(
-      radiusSwitch,
-      220,
-      scrollable: filterScrollable,
-    );
-    expect(radiusSwitch, findsOneWidget);
-    expect(tester.widget<SwitchListTile>(radiusSwitch).onChanged, isNotNull);
-
-    await tester.tap(radiusSwitch);
-    await tester.pump();
-
     final radiusValue = find.byKey(const Key('filter_radius_value'));
     await tester.scrollUntilVisible(
       radiusValue,
@@ -125,8 +113,8 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.byKey(const Key('filter_close_button')), findsOneWidget);
     expect(find.byKey(const Key('filter_clear_button')), findsOneWidget);
+    expect(find.text('Clear filters'), findsOneWidget);
     expect(find.text('Filter'), findsOneWidget);
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('discovery_filter_screen')),
@@ -159,15 +147,18 @@ void main() {
     await tester.tap(suggestion);
     await tester.pump();
 
-    final radiusSwitch = find.byKey(const Key('filter_radius_switch'));
+    final radiusSlider = find.byKey(const Key('filter_radius_slider'));
     await tester.scrollUntilVisible(
-      radiusSwitch,
+      radiusSlider,
       180,
       scrollable: filterScrollable,
     );
 
-    expect(radiusSwitch, findsOneWidget);
-    expect(tester.widget<SwitchListTile>(radiusSwitch).onChanged, isNotNull);
+    expect(radiusSlider, findsOneWidget);
+    expect(find.text('Radius (miles)'), findsOneWidget);
+
+    final locationField = tester.widget<TextField>(locationSearch);
+    expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
     expect(tester.takeException(), isNull);
   });
 
@@ -235,7 +226,10 @@ class _FakeFilterRepository implements DiscoveryFilterRepositoryContract {
         DiscoveryTaxonomy(id: 2, name: 'Minimal', slug: 'minimal'),
       ],
       showStatuses: <DiscoveryShowStatusOption>[
-        DiscoveryShowStatusOption(value: 'current', label: 'Current'),
+        DiscoveryShowStatusOption(
+          value: 'current',
+          label: 'Currently Showing Work',
+        ),
       ],
       radiusMinKm: 1,
       radiusMaxKm: 500,

@@ -36,12 +36,17 @@ class MaOnboardingButton extends StatelessWidget {
           : OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary, width: 1.2),
                 shape: const RoundedRectangleBorder(),
                 padding: EdgeInsets.zero,
               ),
-              child: Text(label, style: AppTextStyles.buttonPurple),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
     );
   }

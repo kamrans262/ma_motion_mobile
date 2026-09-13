@@ -46,7 +46,11 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     // those same circles shrink until they become the final dot grid.
     _openingProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0, 0.262, curve: Curves.linear),
+      curve: const Interval(
+        0.081967,
+        0.327869,
+        curve: Curves.linear,
+      ),
     );
 
     _controller.addStatusListener(_handleAnimationStatus);
@@ -223,46 +227,8 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
 
   final double progress;
 
-  // Radius measurements are derived from the supplied animation. Values are
-  // fractions of grid spacing. >= sqrt(0.5) fully covers the square lattice,
-  // so the first frames read as one solid purple surface.
-  static const List<double> _progressStops = <double>[
-    0,
-    0.09375,
-    0.15625,
-    0.21875,
-    0.28125,
-    0.34375,
-    0.40625,
-    0.46875,
-    0.53125,
-    0.59375,
-    0.65625,
-    0.71875,
-    0.78125,
-    0.84375,
-    0.90625,
-    1,
-  ];
-
-  static const List<double> _radiusStops = <double>[
-    0.76,
-    0.707,
-    0.658,
-    0.614,
-    0.559,
-    0.493,
-    0.420,
-    0.335,
-    0.260,
-    0.197,
-    0.144,
-    0.102,
-    0.071,
-    0.053,
-    0.047,
-    0.038,
-  ];
+  static const double _solidRadius = 0.70710678;
+  static const double _finalDotRadius = 0.038;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -274,11 +240,21 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
     }
 
     final spacing = MaDotGridMetrics.spacingForWidth(size.width);
-    final radius = spacing * _radiusFraction(progress);
     final paint = Paint()
       ..color = AppColors.primary
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
+
+    if (progress <= 0) {
+      canvas.drawRect(Offset.zero & size, paint);
+      return;
+    }
+
+    final clamped = progress.clamp(0.0, 1.0).toDouble();
+    final smoothProgress = Curves.easeInOutSine.transform(clamped);
+    final radiusFraction =
+        _solidRadius + ((_finalDotRadius - _solidRadius) * smoothProgress);
+    final radius = spacing * radiusFraction;
 
     final rows = (size.height / spacing).ceil() + 4;
     final columns = (size.width / spacing).ceil() + 4;
@@ -291,24 +267,6 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
         canvas.drawCircle(Offset(x, y), radius, paint);
       }
     }
-  }
-
-  double _radiusFraction(double value) {
-    final clamped = value.clamp(0.0, 1.0).toDouble();
-
-    for (var index = 0; index < _progressStops.length - 1; index++) {
-      final start = _progressStops[index];
-      final end = _progressStops[index + 1];
-
-      if (clamped > end) continue;
-
-      final local = end == start ? 1.0 : (clamped - start) / (end - start);
-      final from = _radiusStops[index];
-      final to = _radiusStops[index + 1];
-      return from + ((to - from) * local.clamp(0.0, 1.0));
-    }
-
-    return _radiusStops.last;
   }
 
   @override

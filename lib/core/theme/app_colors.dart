@@ -8,7 +8,9 @@ abstract final class AppColors {
   static const Color artworkNavBackground = Color(0xFF0F2419);
 
   static const Color inputFill = Color(0xFF1C2830);
+  static const Color filterInputFill = Color(0xFF0E071A);
   static const Color mutedText = Color(0xFFA3A3A3);
+  static const Color darkGray = Color(0xFF686868);
   static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
   static const Color error = Color(0xFFFF6B6B);

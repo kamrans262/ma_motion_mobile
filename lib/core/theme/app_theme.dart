@@ -24,6 +24,37 @@ abstract final class AppTheme {
         selectionColor: Color(0x66904AFF),
         selectionHandleColor: AppColors.primary,
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            return states.contains(WidgetState.pressed)
+                ? AppColors.primary
+                : Colors.transparent;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return AppColors.darkGray;
+            }
+            return states.contains(WidgetState.pressed)
+                ? AppColors.white
+                : AppColors.primary;
+          }),
+          side: WidgetStateProperty.resolveWith<BorderSide>((states) {
+            return BorderSide(
+              color: states.contains(WidgetState.disabled)
+                  ? AppColors.darkGray
+                  : AppColors.primary,
+              width: 1.2,
+            );
+          }),
+          overlayColor: const WidgetStatePropertyAll<Color>(
+            Colors.transparent,
+          ),
+          shape: const WidgetStatePropertyAll<OutlinedBorder>(
+            RoundedRectangleBorder(),
+          ),
+        ),
+      ),
     );
   }
 }
