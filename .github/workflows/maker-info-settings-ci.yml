@@ -35,7 +35,22 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting is stable
-        run: dart format --output=none --set-exit-if-changed lib test
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format lib test
+          if ! git diff --quiet -- lib test; then
+            echo "=== FORMAT_THEME_BEGIN ==="
+            cat lib/core/theme/app_theme.dart
+            echo "=== FORMAT_THEME_END ==="
+            echo "=== FORMAT_FILTER_BEGIN ==="
+            cat lib/features/discovery/presentation/screens/discovery_filter_screen.dart
+            echo "=== FORMAT_FILTER_END ==="
+            echo "=== FORMAT_SPLASH_BEGIN ==="
+            cat lib/features/splash/presentation/screens/ma_splash_sequence_screen.dart
+            echo "=== FORMAT_SPLASH_END ==="
+            exit 1
+          fi
 
       - name: Flutter analyzer
         run: flutter analyze
