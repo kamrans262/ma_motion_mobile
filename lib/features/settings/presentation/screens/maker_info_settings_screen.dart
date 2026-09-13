@@ -8,6 +8,8 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/experience_switch_repository.dart';
+import '../../../auth/domain/maker_entry_destination.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
 import '../../data/maker_info_settings_repository.dart';
 import '../../domain/maker_info_settings_models.dart';
@@ -20,7 +22,7 @@ class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
   });
 
   final VoidCallback onClose;
-  final VoidCallback onSwitchedToAppreciator;
+  final ValueChanged<MakerEntryDestination> onSwitchedToAppreciator;
 
   @override
   ConsumerState<MakerInfoSettingsScreen> createState() =>
@@ -317,7 +319,9 @@ class _MakerInfoSettingsScreenState
     });
 
     try {
-      await ref.read(makerInfoSettingsRepositoryProvider).logout();
+      final destination = await ref
+          .read(experienceSwitchRepositoryProvider)
+          .switchToAppreciator();
 
       if (!mounted) return;
 
@@ -325,13 +329,13 @@ class _MakerInfoSettingsScreenState
         _saving = false;
       });
 
-      widget.onSwitchedToAppreciator();
+      widget.onSwitchedToAppreciator(destination);
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _saving = false;
         _errorMessage =
-            'We could not switch roles right now. Please try again.';
+            'We could not switch experiences right now. Please try again.';
       });
     }
   }
