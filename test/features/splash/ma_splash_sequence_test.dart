@@ -26,9 +26,9 @@ void main() {
     );
   }
 
-  testWidgets(
-    'splash starts as overlapping purple circles over hidden content',
-    (tester) async {
+  testWidgets('splash starts as overlapping purple circles', (
+    tester,
+  ) async {
     await tester.pumpWidget(app());
 
     expect(find.byKey(const Key('ma_animated_splash')), findsOneWidget);
