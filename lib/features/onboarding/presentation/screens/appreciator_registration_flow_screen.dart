@@ -209,8 +209,9 @@ class _AppreciatorRegistrationFlowScreenState
             hintText: 'Your name',
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.name],
-            onChanged:
-                ref.read(appreciatorRegistrationProvider.notifier).setName,
+            onChanged: ref
+                .read(appreciatorRegistrationProvider.notifier)
+                .setName,
           ),
         );
 
@@ -228,8 +229,9 @@ class _AppreciatorRegistrationFlowScreenState
             controller: _locationController,
             hintText: 'City/Zip Code',
             textInputAction: TextInputAction.next,
-            onChanged:
-                ref.read(appreciatorRegistrationProvider.notifier).setLocation,
+            onChanged: ref
+                .read(appreciatorRegistrationProvider.notifier)
+                .setLocation,
           ),
         );
 
@@ -250,8 +252,9 @@ class _AppreciatorRegistrationFlowScreenState
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.email],
-            onChanged:
-                ref.read(appreciatorRegistrationProvider.notifier).setEmail,
+            onChanged: ref
+                .read(appreciatorRegistrationProvider.notifier)
+                .setEmail,
           ),
         );
 

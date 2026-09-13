@@ -84,10 +84,7 @@ class AppreciatorOnboardingRepository {
     final response = await api.get(
       ApiPaths.discoveryLocations,
       requiresAuth: false,
-      queryParameters: <String, dynamic>{
-        'search': value,
-        'per_page': 1,
-      },
+      queryParameters: <String, dynamic>{'search': value, 'per_page': 1},
     );
 
     final locations = ApiEnvelope(raw: response).dataList;

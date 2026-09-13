@@ -114,10 +114,7 @@ class _MemoryTokenStore implements AuthTokenStore {
 }
 
 class _FakeApiGateway implements ApiGateway {
-  _FakeApiGateway({
-    this.onboardingCompleted = false,
-    this.role = 'maker',
-  });
+  _FakeApiGateway({this.onboardingCompleted = false, this.role = 'maker'});
 
   final bool onboardingCompleted;
   final String role;

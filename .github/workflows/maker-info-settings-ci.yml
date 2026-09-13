@@ -35,25 +35,7 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting is stable
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          if ! git diff --quiet -- lib test; then
-            echo "=== APPRECIATOR_REPO_BEGIN ==="
-            cat lib/features/onboarding/data/appreciator_onboarding_repository.dart
-            echo "=== APPRECIATOR_REPO_END ==="
-            echo "=== APPRECIATOR_SCREEN_BEGIN ==="
-            cat lib/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart
-            echo "=== APPRECIATOR_SCREEN_END ==="
-            echo "=== ENTRY_TEST_BEGIN ==="
-            cat test/features/auth/maker_entry_repository_test.dart
-            echo "=== ENTRY_TEST_END ==="
-            echo "=== WIDGET_TEST_BEGIN ==="
-            cat test/widget_test.dart
-            echo "=== WIDGET_TEST_END ==="
-            exit 1
-          fi
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Flutter analyzer
         run: flutter analyze

@@ -106,10 +106,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text("What's your name?"), findsOneWidget);
-      expect(
-        find.byKey(const Key('appreciator_name_field')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('appreciator_name_field')), findsOneWidget);
       expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
       expect(find.byKey(const Key('maker_step_dot_2')), findsOneWidget);
       expect(find.byKey(const Key('maker_step_dot_3')), findsNothing);
