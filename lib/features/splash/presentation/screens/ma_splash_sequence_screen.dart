@@ -46,7 +46,7 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
 
     _backgroundProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.05, 0.17, curve: Curves.easeInOutCubic),
+      curve: const Interval(0.10, 0.15, curve: Curves.easeInOutCubic),
     );
 
     _dotProgress = CurvedAnimation(
@@ -257,21 +257,29 @@ class _AnimatedDotGridPainter extends CustomPainter {
     double radius;
     Color color;
 
-    if (progress < 0.30) {
-      final t = progress / 0.30;
-      radius = baseRadius * Curves.easeOut.transform(t);
-      color = AppColors.splashBackground.withValues(alpha: 0.30);
-    } else if (progress < 0.62) {
-      final t = (progress - 0.30) / 0.32;
+    if (progress < 0.45) {
+      final t = progress / 0.45;
       radius =
           baseRadius +
           ((largeRadius - baseRadius) * Curves.easeInOut.transform(t));
-      color = AppColors.splashBackground.withValues(alpha: 0.78);
-    } else {
-      final t = (progress - 0.62) / 0.38;
+      color = AppColors.splashBackground.withValues(alpha: 0.82);
+    } else if (progress < 0.72) {
+      final t = (progress - 0.45) / 0.27;
       radius =
           largeRadius +
-          ((baseRadius - largeRadius) * Curves.easeInOut.transform(t));
+          (((largeRadius * 0.55) - largeRadius) *
+              Curves.easeInOut.transform(t));
+      color = Color.lerp(
+        AppColors.splashBackground.withValues(alpha: 0.82),
+        AppColors.primary,
+        Curves.easeInOut.transform(t),
+      )!;
+    } else {
+      final t = (progress - 0.72) / 0.28;
+      radius =
+          (largeRadius * 0.55) +
+          ((baseRadius - (largeRadius * 0.55)) *
+              Curves.easeInOut.transform(t));
       color = Color.lerp(
         AppColors.primary,
         AppColors.splashDot.withValues(alpha: 0.80),
