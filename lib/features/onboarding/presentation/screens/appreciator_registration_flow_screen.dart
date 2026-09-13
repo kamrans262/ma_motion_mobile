@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/experience_switch_repository.dart';
+import '../../../auth/domain/maker_entry_destination.dart';
 import '../../application/appreciator_registration_controller.dart';
 import '../../data/appreciator_onboarding_repository.dart';
 import '../widgets/ma_onboarding_scaffold.dart';
@@ -14,6 +18,7 @@ class AppreciatorRegistrationFlowScreen extends ConsumerStatefulWidget {
     super.key,
     required this.onExit,
     this.onCompleted,
+    this.onSwitchToMaker,
     this.initialStep = 0,
   }) : assert(initialStep >= 0 && initialStep < totalSteps);
 
@@ -21,6 +26,7 @@ class AppreciatorRegistrationFlowScreen extends ConsumerStatefulWidget {
 
   final VoidCallback onExit;
   final VoidCallback? onCompleted;
+  final ValueChanged<MakerEntryDestination>? onSwitchToMaker;
   final int initialStep;
 
   @override
@@ -37,6 +43,7 @@ class _AppreciatorRegistrationFlowScreenState
   late int _step;
   String? _validationMessage;
   bool _isSubmitting = false;
+  bool _isSwitchingExperience = false;
   bool _submissionCompleted = false;
 
   @override
@@ -116,6 +123,52 @@ class _AppreciatorRegistrationFlowScreenState
 
   void _next() {
     unawaited(_handleNext());
+  }
+
+  Future<void> _switchToMaker() async {
+    if (_isSubmitting || _isSwitchingExperience) {
+      return;
+    }
+
+    setState(() {
+      _isSwitchingExperience = true;
+      _validationMessage = null;
+    });
+
+    try {
+      final destination = await ref
+          .read(experienceSwitchRepositoryProvider)
+          .switchToMaker();
+
+      if (!mounted) {
+        return;
+      }
+
+      widget.onSwitchToMaker?.call(destination);
+    } on ApiException catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _validationMessage = error.message;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _validationMessage =
+            'We could not switch experiences right now. Please try again.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSwitchingExperience = false;
+        });
+      }
+    }
   }
 
   Future<void> _handleNext() async {
@@ -245,16 +298,46 @@ class _AppreciatorRegistrationFlowScreenState
           onBack: _back,
           validationMessage: _validationMessage,
           isBusy: _isSubmitting,
-          child: MaOnboardingTextField(
-            key: const Key('appreciator_email_field'),
-            controller: _emailController,
-            hintText: 'your@gmail.com',
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.done,
-            autofillHints: const [AutofillHints.email],
-            onChanged: ref
-                .read(appreciatorRegistrationProvider.notifier)
-                .setEmail,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              MaOnboardingTextField(
+                key: const Key('appreciator_email_field'),
+                controller: _emailController,
+                hintText: 'your@gmail.com',
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.done,
+                autofillHints: const [AutofillHints.email],
+                onChanged: ref
+                    .read(appreciatorRegistrationProvider.notifier)
+                    .setEmail,
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                key: const Key('appreciator_switch_maker'),
+                onPressed: _isSubmitting || _isSwitchingExperience
+                    ? null
+                    : _switchToMaker,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.darkGray,
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  alignment: Alignment.centerLeft,
+                ),
+                child: const Text(
+                  'Switch to Maker',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.darkGray,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.darkGray,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
 
