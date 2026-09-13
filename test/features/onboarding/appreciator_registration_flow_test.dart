@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
+import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 
 void main() {
-  Widget app({int initialStep = 0, VoidCallback? onExit}) {
+  Widget app({
+    int initialStep = 0,
+    VoidCallback? onExit,
+    ValueChanged<MakerEntryDestination>? onSwitchToMaker,
+    ExperienceSwitchRepositoryContract? switchRepository,
+  }) {
     return ProviderScope(
+      overrides: [
+        if (switchRepository != null)
+          experienceSwitchRepositoryProvider.overrideWithValue(
+            switchRepository,
+          ),
+      ],
       child: MaterialApp(
         home: AppreciatorRegistrationFlowScreen(
           key: ValueKey<int>(initialStep),
           initialStep: initialStep,
           onExit: onExit ?? () {},
+          onSwitchToMaker: onSwitchToMaker,
         ),
       ),
     );
@@ -74,4 +89,62 @@ void main() {
     expect(exited, isTrue);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Email step shows small dark-grey underlined Switch to Maker action',
+    (tester) async {
+      final repository = _FakeExperienceSwitchRepository(
+        MakerEntryDestination.discovery,
+      );
+      MakerEntryDestination? destination;
+
+      await tester.pumpWidget(
+        app(
+          initialStep: 2,
+          switchRepository: repository,
+          onSwitchToMaker: (value) {
+            destination = value;
+          },
+        ),
+      );
+
+      final switchFinder = find.byKey(const Key('appreciator_switch_maker'));
+      expect(switchFinder, findsOneWidget);
+
+      final text = tester.widget<Text>(
+        find.descendant(
+          of: switchFinder,
+          matching: find.text('Switch to Maker'),
+        ),
+      );
+      expect(text.style?.fontSize, 12);
+      expect(text.style?.color, AppColors.darkGray);
+      expect(text.style?.decoration, TextDecoration.underline);
+
+      await tester.tap(switchFinder);
+      await tester.pumpAndSettle();
+
+      expect(repository.makerCalls, 1);
+      expect(destination, MakerEntryDestination.discovery);
+      expect(tester.takeException(), isNull);
+    },
+  );
+}
+
+class _FakeExperienceSwitchRepository
+    implements ExperienceSwitchRepositoryContract {
+  _FakeExperienceSwitchRepository(this.destination);
+
+  final MakerEntryDestination destination;
+  int makerCalls = 0;
+
+  @override
+  Future<MakerEntryDestination> switchToAppreciator() async =>
+      MakerEntryDestination.appreciatorDiscovery;
+
+  @override
+  Future<MakerEntryDestination> switchToMaker() async {
+    makerCalls++;
+    return destination;
+  }
 }
