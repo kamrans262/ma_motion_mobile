@@ -47,10 +47,7 @@ class _MaDotGridPainter extends CustomPainter {
     final spacing = MaDotGridMetrics.spacingForWidth(size.width);
     final radius = MaDotGridMetrics.radiusForWidth(size.width);
 
-    if (!spacing.isFinite ||
-        spacing <= 0 ||
-        !radius.isFinite ||
-        radius <= 0) {
+    if (!spacing.isFinite || spacing <= 0 || !radius.isFinite || radius <= 0) {
       return;
     }
 

@@ -53,7 +53,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('opening reveals static logo before welcome copy', (tester) async {
+  testWidgets('opening reveals static logo before welcome copy', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       app(autoPlay: true, duration: const Duration(milliseconds: 1000)),
     );

@@ -35,19 +35,7 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting is stable
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          if ! git diff --quiet -- lib test; then
-            echo "=== FORMATTED_DOTTED_BEGIN ==="
-            cat lib/core/widgets/ma_dotted_background.dart
-            echo "=== FORMATTED_DOTTED_END ==="
-            echo "=== FORMATTED_SPLASH_TEST_BEGIN ==="
-            cat test/features/splash/ma_splash_sequence_test.dart
-            echo "=== FORMATTED_SPLASH_TEST_END ==="
-            exit 1
-          fi
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Flutter analyzer
         run: flutter analyze
