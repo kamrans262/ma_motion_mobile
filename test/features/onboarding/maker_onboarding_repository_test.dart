@@ -90,6 +90,34 @@ void main() {
   });
 }
 
+
+  test('authenticated Appreciator starts Maker onboarding on same token', () async {
+    final api = _FakeApiGateway();
+    final tokenStore = _MemoryTokenStore()..value = 'existing-token';
+    final repository = MakerOnboardingRepository(
+      api: api,
+      tokenStore: tokenStore,
+    );
+
+    await repository.completeMakerProfile(
+      MakerRegistrationDraft(
+        name: 'Dual User',
+        location: 'Chicago 60601',
+        aboutWork: 'Contemporary work.',
+        types: const <String>{'Painting'},
+        styles: const <String>{'Contemporary'},
+        website: 'www.artist.com',
+        email: 'dual@example.com',
+        imageBytes: Uint8List.fromList(<int>[1, 2, 3]),
+        imageName: 'salon.jpg',
+      ),
+    );
+
+    expect(api.calls.first, 'POST ${ApiPaths.makerExperienceOnboarding}');
+    expect(api.calls, isNot(contains('POST ${ApiPaths.makerOnboarding}')));
+    expect(tokenStore.value, 'existing-token');
+  });
+
 class _FakeApiGateway implements ApiGateway {
   _FakeApiGateway({this.includeGraphicDesign = true});
 
