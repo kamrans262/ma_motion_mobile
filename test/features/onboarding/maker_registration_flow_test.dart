@@ -181,9 +181,9 @@ void main() {
     final field = find.byKey(const Key('maker_about_field'));
     expect(field, findsOneWidget);
 
-    final headingTop = tester.getTopLeft(
-      find.byKey(const Key('maker_step_heading')),
-    ).dy;
+    final headingTop = tester
+        .getTopLeft(find.byKey(const Key('maker_step_heading')))
+        .dy;
     final fieldRect = tester.getRect(field);
 
     expect(headingTop, greaterThan(100));

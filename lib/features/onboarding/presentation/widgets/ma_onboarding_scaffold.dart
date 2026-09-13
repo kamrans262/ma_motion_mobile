@@ -116,19 +116,19 @@ class MaOnboardingScaffold extends StatelessWidget {
                                   : MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                              Text(
-                                heading,
-                                key: const Key('maker_step_heading'),
-                                style: AppTextStyles.onboardingHeading,
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                subtitle,
-                                key: const Key('maker_step_subtitle'),
-                                style: AppTextStyles.onboardingHelper,
-                              ),
-                              SizedBox(height: childGap),
-                              child,
+                                Text(
+                                  heading,
+                                  key: const Key('maker_step_heading'),
+                                  style: AppTextStyles.onboardingHeading,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  subtitle,
+                                  key: const Key('maker_step_subtitle'),
+                                  style: AppTextStyles.onboardingHelper,
+                                ),
+                                SizedBox(height: childGap),
+                                child,
                                 if (validationMessage != null) ...[
                                   const SizedBox(height: 10),
                                   Text(
