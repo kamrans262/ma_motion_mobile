@@ -250,10 +250,14 @@ class _ArtworkMediaPage extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final scale = (constraints.maxWidth / 341).clamp(0.88, 1.18);
+        final compact = constraints.maxHeight < 620;
         final horizontal = (24 * scale).clamp(20.0, 30.0).toDouble();
-        final imageTop = (112 * scale).clamp(96.0, 128.0).toDouble();
+        final imageTop = compact
+            ? 76.0
+            : (112 * scale).clamp(96.0, 128.0).toDouble();
         final imageWidth = constraints.maxWidth - (horizontal * 2);
-        final maxImageHeight = constraints.maxHeight * 0.57;
+        final maxImageHeight =
+            constraints.maxHeight * (compact ? 0.46 : 0.57);
 
         return Padding(
           key: const Key('artwork_media_page_scroll'),
