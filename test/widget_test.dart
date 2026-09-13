@@ -54,6 +54,40 @@ void main() {
   );
 
   testWidgets(
+    'tapping outside a focused field dismisses the keyboard',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authTokenStoreProvider.overrideWithValue(_MemoryTokenStore()),
+          ],
+          child: const MaMotionApp(splashDuration: Duration(milliseconds: 1)),
+        ),
+      );
+
+      await tester.pump(const Duration(milliseconds: 2));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('select_maker_button')));
+      await tester.pumpAndSettle();
+
+      final field = find.byKey(const Key('maker_name_field'));
+      await tester.tap(field);
+      await tester.showKeyboard(field);
+      await tester.pump();
+
+      expect(tester.testTextInput.isVisible, isTrue);
+
+      await tester.tap(find.text("This is how you'll appear to others"));
+      await tester.pump();
+
+      expect(tester.testTextInput.isVisible, isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Maker selection opens the supplied name onboarding screen first',
     (tester) async {
       await tester.pumpWidget(
