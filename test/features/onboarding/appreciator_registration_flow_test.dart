@@ -145,10 +145,7 @@ void main() {
           lessThanOrEqualTo(footerRect.top - 20),
           reason: 'Step ${entry.key} must clear the footer by at least 20px.',
         );
-        expect(
-          footerRect.bottom,
-          lessThanOrEqualTo(844 - keyboardInset),
-        );
+        expect(footerRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
         expect(tester.takeException(), isNull);
       }
     },
