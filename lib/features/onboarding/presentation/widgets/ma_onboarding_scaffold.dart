@@ -22,7 +22,6 @@ class MaOnboardingScaffold extends StatelessWidget {
     this.validationMessage,
     this.isBusy = false,
     this.contentTopWidthFactor = 0.555,
-    this.keyboardContentTop,
     this.childGap = 20,
     this.contentBottom = 36,
   });
@@ -37,7 +36,6 @@ class MaOnboardingScaffold extends StatelessWidget {
   final String? validationMessage;
   final bool isBusy;
   final double contentTopWidthFactor;
-  final double? keyboardContentTop;
   final double childGap;
   final double contentBottom;
 
@@ -66,9 +64,8 @@ class MaOnboardingScaffold extends StatelessWidget {
                   final width = constraints.maxWidth;
                   final keyboardOpen = media.viewInsets.bottom > 0;
 
-                  final contentTop =
-                      keyboardOpen && keyboardContentTop != null
-                      ? math.max(18.0, keyboardContentTop!)
+                  final contentTop = keyboardOpen
+                      ? 18.0
                       : math.max(
                           18.0,
                           (width * contentTopWidthFactor) - media.padding.top,
