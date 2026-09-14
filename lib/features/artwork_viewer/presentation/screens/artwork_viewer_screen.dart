@@ -201,12 +201,10 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                 if (configuredDisplay) {
                   final item = displayItems[index];
 
-                  return KeyedSubtree(
-                    key: Key('artwork_display_artwork_${item.id}'),
-                    child: _ArtworkMediaPage(
-                      description: item.description,
-                      media: item.primaryMedia,
-                    ),
+                  return _ArtworkMediaPage(
+                    pageKey: Key('artwork_display_artwork_${item.id}'),
+                    description: item.description,
+                    media: item.primaryMedia,
                   );
                 }
 
@@ -261,10 +259,15 @@ class _ViewerCloseButton extends StatelessWidget {
 }
 
 class _ArtworkMediaPage extends StatelessWidget {
-  const _ArtworkMediaPage({required this.description, required this.media});
+  const _ArtworkMediaPage({
+    required this.description,
+    required this.media,
+    this.pageKey,
+  });
 
   final String? description;
   final DiscoveryArtworkMedia? media;
+  final Key? pageKey;
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +279,7 @@ class _ArtworkMediaPage extends StatelessWidget {
         final bottomReserve = hasDescription ? 76.0 : 28.0;
 
         return Stack(
+          key: pageKey,
           fit: StackFit.expand,
           children: [
             Positioned.fill(
