@@ -161,9 +161,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'about-work keeps Next and Back visible above the keyboard',
-    (tester) async {
+  testWidgets('about-work keeps Next and Back visible above the keyboard', (
+    tester,
+  ) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
 
