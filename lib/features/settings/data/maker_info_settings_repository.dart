@@ -342,13 +342,69 @@ class MakerInfoSettingsRepository
 
     final originalBase = fileName
         .trim()
-        .replaceFirst(RegExp(r'\.[^.]+    if (slot < 2 || slot > 4) {
+        .replaceFirst(RegExp(r'\.[^.]+$'), '')
+        .replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '_');
+    final safeBase = originalBase.isEmpty ? 'artwork' : originalBase;
+
+    formData.files.add(
+      MapEntry<String, MultipartFile>(
+        'media[]',
+        MultipartFile.fromBytes(
+          bytes,
+          filename: '$safeBase.${detected.extension}',
+          contentType: DioMediaType('image', detected.subtype),
+        ),
+      ),
+    );
+
+    return formData;
+  }
+
+  static ({String extension, String subtype})? _detectArtworkImage(
+    Uint8List bytes,
+  ) {
+    if (bytes.length >= 3 &&
+        bytes[0] == 0xFF &&
+        bytes[1] == 0xD8 &&
+        bytes[2] == 0xFF) {
+      return (extension: 'jpg', subtype: 'jpeg');
+    }
+
+    if (bytes.length >= 8 &&
+        bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47 &&
+        bytes[4] == 0x0D &&
+        bytes[5] == 0x0A &&
+        bytes[6] == 0x1A &&
+        bytes[7] == 0x0A) {
+      return (extension: 'png', subtype: 'png');
+    }
+
+    if (bytes.length >= 12 &&
+        bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46 &&
+        bytes[8] == 0x57 &&
+        bytes[9] == 0x45 &&
+        bytes[10] == 0x42 &&
+        bytes[11] == 0x50) {
+      return (extension: 'webp', subtype: 'webp');
+    }
+
+    return null;
+  }
+
+  @override
+  Future<void> deleteArtworkSlot(int slot) async {
+    if (slot < 2 || slot > 4) {
       throw ArgumentError.value(slot, 'slot', 'Artwork slots are Content 2-4.');
     }
 
     await api.delete('${ApiPaths.makerProfile}/artwork-slots/$slot');
   }
-
   @override
   Future<void> logout() => auth.logout();
 
