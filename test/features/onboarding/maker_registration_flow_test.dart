@@ -162,7 +162,7 @@ void main() {
   });
 
   testWidgets(
-    'Maker text-entry steps keep the default footer and 20px clearance',
+    'Maker keyboard overlays the fixed footer without moving onboarding layout',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
@@ -170,46 +170,37 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
+      await tester.pumpWidget(app(initialStep: 0));
+      await tester.pump();
+
+      final footer = find.byKey(const Key('maker_onboarding_footer'));
+      final scroll = find.byKey(const Key('maker_onboarding_scroll'));
+      final heading = find.byKey(const Key('maker_step_heading'));
+
+      final closedFooterRect = tester.getRect(footer);
+      final closedHeadingTop = tester.getTopLeft(heading).dy;
+
       const keyboardInset = 320.0;
-      const fieldKeys = <int, String>{
-        0: 'maker_name_field',
-        1: 'maker_location_field',
-        2: 'maker_about_field',
-        4: 'maker_website_field',
-        5: 'maker_email_field',
-      };
+      await tester.pumpWidget(
+        app(initialStep: 0, keyboardInset: keyboardInset),
+      );
+      await tester.pump();
 
-      for (final entry in fieldKeys.entries) {
-        await tester.pumpWidget(
-          app(initialStep: entry.key, keyboardInset: keyboardInset),
-        );
-        await tester.pump();
+      final openFooterRect = tester.getRect(footer);
+      final openHeadingTop = tester.getTopLeft(heading).dy;
+      final scrollView = tester.widget<SingleChildScrollView>(scroll);
+      final scrollPadding = scrollView.padding! as EdgeInsets;
+      final keyboardTop = 844 - keyboardInset;
 
-        final footer = find.byKey(const Key('maker_onboarding_footer'));
-        final field = find.byKey(Key(entry.value));
-
-        expect(footer, findsOneWidget);
-        expect(
-          find.byKey(const Key('maker_next_button')).hitTestable(),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const Key('maker_back_button')).hitTestable(),
-          findsOneWidget,
-        );
-        expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
-
-        final fieldRect = tester.getRect(field);
-        final footerRect = tester.getRect(footer);
-
-        expect(
-          fieldRect.bottom,
-          lessThanOrEqualTo(footerRect.top - 20),
-          reason: 'Step ${entry.key} must clear the footer by at least 20px.',
-        );
-        expect(footerRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
-        expect(tester.takeException(), isNull);
-      }
+      expect(openFooterRect.top, closeTo(closedFooterRect.top, 0.1));
+      expect(openFooterRect.bottom, closeTo(closedFooterRect.bottom, 0.1));
+      expect(openHeadingTop, closeTo(closedHeadingTop, 0.1));
+      expect(openFooterRect.top, greaterThan(keyboardTop));
+      expect(scrollPadding.bottom, keyboardInset + 20);
+      expect(find.byKey(const Key('maker_next_button')), findsOneWidget);
+      expect(find.byKey(const Key('maker_back_button')), findsOneWidget);
+      expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
+      expect(tester.takeException(), isNull);
     },
   );
 
@@ -228,7 +219,7 @@ void main() {
     final headingTop = tester.getTopLeft(
       find.byKey(const Key('maker_step_heading')),
     );
-    expect(headingTop.dy, lessThan(70));
+    expect(headingTop.dy, lessThan(60));
 
     final scrollView = tester.widget<SingleChildScrollView>(
       find.byKey(const Key('maker_onboarding_scroll')),
@@ -236,28 +227,26 @@ void main() {
     final scrollPadding = scrollView.padding! as EdgeInsets;
     expect(scrollPadding.left, 20);
     expect(scrollPadding.right, 20);
-    expect(scrollPadding.top, lessThan(66.3));
-    expect(scrollPadding.bottom, greaterThanOrEqualTo(20));
-
-    final scrollable = find.descendant(
-      of: find.byKey(const Key('maker_onboarding_scroll')),
-      matching: find.byWidgetPredicate(
-        (widget) =>
-            widget is Scrollable && widget.axisDirection == AxisDirection.down,
-      ),
-    );
-    expect(scrollable, findsOneWidget);
+    expect(scrollPadding.top, lessThan(60));
+    expect(scrollPadding.bottom, 30);
 
     final lastStyle = find.byKey(const Key('maker_style_Experimental'));
-    await tester.scrollUntilVisible(lastStyle, 180, scrollable: scrollable);
-    await tester.pump();
-
     final footerTop = tester
         .getTopLeft(find.byKey(const Key('maker_onboarding_footer')))
         .dy;
     final lastStyleBottom = tester.getBottomLeft(lastStyle).dy;
+    final styleToButtonsGap = footerTop - lastStyleBottom;
 
-    expect(lastStyleBottom, lessThanOrEqualTo(footerTop));
+    final backBottom = tester
+        .getBottomLeft(find.byKey(const Key('maker_back_button')))
+        .dy;
+    final firstDotTop = tester
+        .getTopLeft(find.byKey(const Key('maker_step_dot_0')))
+        .dy;
+    final backToDotsGap = firstDotTop - backBottom;
+
+    expect(backToDotsGap, closeTo(30, 0.1));
+    expect(styleToButtonsGap, closeTo(backToDotsGap, 2));
     expect(tester.takeException(), isNull);
   });
 
