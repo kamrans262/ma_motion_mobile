@@ -214,7 +214,15 @@ void main() {
     final headingTop = tester.getTopLeft(
       find.byKey(const Key('maker_step_heading')),
     );
-    expect(headingTop.dy, lessThan(80));
+    expect(headingTop.dy, lessThan(70));
+
+    final scrollView = tester.widget<SingleChildScrollView>(
+      find.byKey(const Key('maker_onboarding_scroll')),
+    );
+    expect(
+      scrollView.padding,
+      const EdgeInsets.fromLTRB(20, 32.55, 20, 30),
+    );
 
     final scrollable = find.descendant(
       of: find.byKey(const Key('maker_onboarding_scroll')),

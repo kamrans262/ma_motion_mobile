@@ -38,6 +38,40 @@ class ArtworkDetailMaker {
   }
 }
 
+class ArtworkDisplayItem {
+  const ArtworkDisplayItem({
+    required this.slot,
+    required this.id,
+    required this.title,
+    this.description,
+    this.primaryMedia,
+    this.createdAt,
+  });
+
+  final int? slot;
+  final int id;
+  final String title;
+  final String? description;
+  final DiscoveryArtworkMedia? primaryMedia;
+  final DateTime? createdAt;
+
+  factory ArtworkDisplayItem.fromPlacementMap(Map<String, dynamic> map) {
+    final artwork = _mapOrNull(map['artwork']) ?? const <String, dynamic>{};
+    final primaryMediaMap = _mapOrNull(artwork['primary_media']);
+
+    return ArtworkDisplayItem(
+      slot: _asInt(map['slot']),
+      id: _asInt(artwork['id']) ?? 0,
+      title: artwork['title']?.toString() ?? '',
+      description: _nullableString(artwork['description']),
+      primaryMedia: primaryMediaMap == null
+          ? null
+          : DiscoveryArtworkMedia.fromMap(primaryMediaMap),
+      createdAt: DateTime.tryParse(artwork['created_at']?.toString() ?? ''),
+    );
+  }
+}
+
 class ArtworkDetail {
   const ArtworkDetail({
     required this.id,
@@ -51,6 +85,7 @@ class ArtworkDetail {
     this.locationText,
     this.maker,
     this.createdAt,
+    this.artDisplayArtworks = const <ArtworkDisplayItem>[],
   });
 
   final int id;
@@ -64,8 +99,42 @@ class ArtworkDetail {
   final String? locationText;
   final ArtworkDetailMaker? maker;
   final DateTime? createdAt;
+  final List<ArtworkDisplayItem> artDisplayArtworks;
 
-  int get viewerPageCount => (media.isEmpty ? 1 : media.length) + 1;
+  int get viewerPageCount {
+    if (artDisplayArtworks.isNotEmpty) {
+      final uniqueIds = <int>{id, ...artDisplayArtworks.map((item) => item.id)};
+      return uniqueIds.length + 1;
+    }
+
+    return (media.isEmpty ? 1 : media.length) + 1;
+  }
+
+  List<ArtworkDisplayItem> get orderedArtDisplayItems {
+    final selected = ArtworkDisplayItem(
+      slot: artDisplayArtworks
+          .where((item) => item.id == id)
+          .map((item) => item.slot)
+          .firstOrNull,
+      id: id,
+      title: title,
+      description: description,
+      primaryMedia: primaryMedia ?? (media.isEmpty ? null : media.first),
+      createdAt: createdAt,
+    );
+
+    if (artDisplayArtworks.isEmpty) {
+      return <ArtworkDisplayItem>[selected];
+    }
+
+    final orderedSlots = [...artDisplayArtworks]
+      ..sort((a, b) => (a.slot ?? 999).compareTo(b.slot ?? 999));
+
+    return <ArtworkDisplayItem>[
+      selected,
+      ...orderedSlots.where((item) => item.id != id),
+    ];
+  }
 
   factory ArtworkDetail.fromDiscovery(DiscoveryArtwork artwork) {
     final preview = artwork.maker;
@@ -101,6 +170,15 @@ class ArtworkDetail {
     final styleMap = _mapOrNull(map['style']);
     final locationMap = _mapOrNull(map['location']);
     final makerMap = _mapOrNull(map['maker']);
+    final parsedArtDisplayArtworks = _listOrEmpty(map['art_display_artworks'])
+        .whereType<Map>()
+        .map(
+          (item) => ArtworkDisplayItem.fromPlacementMap(
+            Map<String, dynamic>.from(item),
+          ),
+        )
+        .where((item) => item.id > 0)
+        .toList(growable: false);
 
     final parsedMedia = _listOrEmpty(map['media'])
         .whereType<Map>()
@@ -126,6 +204,7 @@ class ArtworkDetail {
       locationText: _nullableString(map['location_text']),
       maker: makerMap == null ? null : ArtworkDetailMaker.fromMap(makerMap),
       createdAt: DateTime.tryParse(map['created_at']?.toString() ?? ''),
+      artDisplayArtworks: parsedArtDisplayArtworks,
     );
   }
 }

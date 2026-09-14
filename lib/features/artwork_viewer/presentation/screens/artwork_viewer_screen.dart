@@ -137,6 +137,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       final candidates = <DiscoveryArtworkMedia?>[
         artwork.primaryMedia,
         ...artwork.media,
+        ...artwork.artDisplayArtworks.map((item) => item.primaryMedia),
       ];
 
       for (final media in candidates) {
@@ -157,10 +158,14 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   }
 
   Widget _buildViewer(ArtworkDetail artwork, {required bool isSaved}) {
-    final media = artwork.media.isEmpty
+    final configuredDisplay = artwork.artDisplayArtworks.isNotEmpty;
+    final displayItems = artwork.orderedArtDisplayItems;
+    final legacyMedia = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
         : artwork.media.cast<DiscoveryArtworkMedia?>();
-    final visualPageCount = media.length;
+    final visualPageCount = configuredDisplay
+        ? displayItems.length
+        : legacyMedia.length;
     final totalPageCount = visualPageCount + 1;
 
     if (_currentPage >= totalPageCount) {
@@ -193,7 +198,22 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                   );
                 }
 
-                return _ArtworkMediaPage(artwork: artwork, media: media[index]);
+                if (configuredDisplay) {
+                  final item = displayItems[index];
+
+                  return KeyedSubtree(
+                    key: Key('artwork_display_artwork_${item.id}'),
+                    child: _ArtworkMediaPage(
+                      description: item.description,
+                      media: item.primaryMedia,
+                    ),
+                  );
+                }
+
+                return _ArtworkMediaPage(
+                  description: artwork.description,
+                  media: legacyMedia[index],
+                );
               },
             ),
             Positioned(
@@ -241,14 +261,14 @@ class _ViewerCloseButton extends StatelessWidget {
 }
 
 class _ArtworkMediaPage extends StatelessWidget {
-  const _ArtworkMediaPage({required this.artwork, required this.media});
+  const _ArtworkMediaPage({required this.description, required this.media});
 
-  final ArtworkDetail artwork;
+  final String? description;
   final DiscoveryArtworkMedia? media;
 
   @override
   Widget build(BuildContext context) {
-    final description = artwork.description?.trim() ?? '';
+    final description = this.description?.trim() ?? '';
     final hasDescription = description.isNotEmpty;
 
     return LayoutBuilder(

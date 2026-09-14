@@ -25,6 +25,7 @@ class MaOnboardingScaffold extends StatelessWidget {
     this.keyboardContentTop,
     this.centerContentWhenKeyboardOpen = false,
     this.childGap = 20,
+    this.contentBottom = 36,
   });
 
   final String heading;
@@ -40,6 +41,7 @@ class MaOnboardingScaffold extends StatelessWidget {
   final double? keyboardContentTop;
   final bool centerContentWhenKeyboardOpen;
   final double childGap;
+  final double contentBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +79,13 @@ class MaOnboardingScaffold extends StatelessWidget {
                           18.0,
                           (width * contentTopWidthFactor) - media.padding.top,
                         );
-                  final contentBottom = keyboardOpen ? 28.0 : 36.0;
+                  final resolvedContentBottom = keyboardOpen
+                      ? 28.0
+                      : contentBottom;
                   final minimumContentHeight = centerKeyboardContent
                       ? math.max(
                           0.0,
-                          constraints.maxHeight - contentTop - contentBottom,
+                          constraints.maxHeight - contentTop - resolvedContentBottom,
                         )
                       : 0.0;
 
@@ -104,7 +108,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                             20,
                             contentTop,
                             20,
-                            contentBottom,
+                            resolvedContentBottom,
                           ),
                           child: ConstrainedBox(
                             constraints: BoxConstraints(

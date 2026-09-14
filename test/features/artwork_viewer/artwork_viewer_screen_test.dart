@@ -145,6 +145,62 @@ void main() {
     },
   );
 
+  testWidgets(
+    'configured Content 2 3 4 form one viewer with Maker Info last',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            artworkDetailRepositoryProvider.overrideWithValue(
+              _ConfiguredArtDisplayRepository(),
+            ),
+            savedArtworksRepositoryProvider.overrideWithValue(
+              _FakeSavedArtworksRepository(),
+            ),
+          ],
+          child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 42)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('artwork_display_artwork_42')).hitTestable(),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('artwork_viewer_dot_0')), findsOneWidget);
+      expect(find.byKey(const Key('artwork_viewer_dot_3')), findsOneWidget);
+      expect(find.byKey(const Key('artwork_viewer_dot_4')), findsNothing);
+
+      await tester.drag(
+        find.byKey(const Key('artwork_viewer_page_view')),
+        const Offset(-500, 0),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('artwork_display_artwork_41')).hitTestable(),
+        findsOneWidget,
+      );
+
+      await tester.drag(
+        find.byKey(const Key('artwork_viewer_page_view')),
+        const Offset(-500, 0),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('artwork_display_artwork_43')).hitTestable(),
+        findsOneWidget,
+      );
+
+      await tester.drag(
+        find.byKey(const Key('artwork_viewer_page_view')),
+        const Offset(-500, 0),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('seeded discovery artwork opens before detail request finishes', (
     tester,
   ) async {
@@ -268,6 +324,81 @@ void main() {
     expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _ConfiguredArtDisplayRepository
+    implements ArtworkDetailRepositoryContract {
+  @override
+  Future<ArtworkDetail> fetch(int artworkId) async {
+    return ArtworkDetail(
+      id: 42,
+      title: 'Tapped Content 3',
+      description: 'Tapped artwork description',
+      media: const <DiscoveryArtworkMedia>[
+        DiscoveryArtworkMedia(
+          id: 102,
+          kind: 'image',
+          url: '',
+          width: 800,
+          height: 1000,
+          isPrimary: true,
+        ),
+      ],
+      primaryMedia: const DiscoveryArtworkMedia(
+        id: 102,
+        kind: 'image',
+        url: '',
+        width: 800,
+        height: 1000,
+        isPrimary: true,
+      ),
+      maker: const ArtworkDetailMaker(id: 7, name: 'Mara Vellan'),
+      artDisplayArtworks: const <ArtworkDisplayItem>[
+        ArtworkDisplayItem(
+          slot: 2,
+          id: 41,
+          title: 'Content 2',
+          description: 'Second slot',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: 101,
+            kind: 'image',
+            url: '',
+            width: 800,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ),
+        ArtworkDisplayItem(
+          slot: 3,
+          id: 42,
+          title: 'Content 3',
+          description: 'Third slot',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: 102,
+            kind: 'image',
+            url: '',
+            width: 800,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ),
+        ArtworkDisplayItem(
+          slot: 4,
+          id: 43,
+          title: 'Content 4',
+          description: 'Fourth slot',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: 103,
+            kind: 'image',
+            url: '',
+            width: 800,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _DelayedArtworkDetailRepository
