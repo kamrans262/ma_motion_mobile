@@ -21,12 +21,14 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
     this.onSavedTap,
     this.onSettingsTap,
     this.onBottomNavigationTap,
+    this.settingsSemanticsLabel = 'Maker settings',
   });
 
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
   final VoidCallback? onFilterTap;
   final VoidCallback? onSavedTap;
   final VoidCallback? onSettingsTap;
+  final String settingsSemanticsLabel;
 
   /// Kept for compatibility with the existing Maker navigation contract.
   final ValueChanged<int>? onBottomNavigationTap;
@@ -351,6 +353,7 @@ class _MakerArtworkDiscoveryScreenState
         },
         onSettingsTap:
             widget.onSettingsTap ?? () => widget.onBottomNavigationTap?.call(4),
+        settingsSemanticsLabel: widget.settingsSemanticsLabel,
       ),
     );
   }

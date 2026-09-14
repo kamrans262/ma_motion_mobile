@@ -63,6 +63,12 @@ jobs:
       - name: Maker Settings navigation test
         run: flutter test test/features/settings/maker_settings_navigation_test.dart
 
+      - name: Appreciator Settings repository tests
+        run: flutter test test/features/settings/appreciator_settings_repository_test.dart
+
+      - name: Appreciator Settings modal tests
+        run: flutter test test/features/settings/appreciator_settings_modal_test.dart
+
       - name: Artwork viewer visibility contract test
         run: flutter test test/features/settings/artwork_viewer_visibility_contract_test.dart
 

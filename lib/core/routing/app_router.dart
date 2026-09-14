@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +13,7 @@ import '../../features/onboarding/presentation/screens/ma_role_selection_screen.
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
+import '../../features/settings/presentation/widgets/appreciator_settings_modal.dart';
 import '../../features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
 const _premiumTransitionDuration = Duration(milliseconds: 300);
@@ -104,6 +107,16 @@ GoRouter createAppRouter({
     }
   }
 
+  Future<void> openAppreciatorSettings(BuildContext context) async {
+    final destination = await showAppreciatorSettingsModal(context);
+
+    if (!context.mounted || destination == null) {
+      return;
+    }
+
+    goForMakerEntry(context, destination);
+  }
+
   return GoRouter(
     initialLocation: '/splash',
     routes: [
@@ -159,7 +172,9 @@ GoRouter createAppRouter({
           child: MakerArtworkDiscoveryScreen(
             onFilterTap: () => context.push('/appreciator/discovery/filter'),
             onSavedTap: () => context.push('/appreciator/saved-artworks'),
-            onSettingsTap: () {},
+            onSettingsTap: () =>
+                unawaited(openAppreciatorSettings(context)),
+            settingsSemanticsLabel: 'Appreciator settings',
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
@@ -179,7 +194,8 @@ GoRouter createAppRouter({
           state: state,
           child: MakerSavedArtworksScreen(
             onBack: () => context.pop(),
-            onSettingsTap: () {},
+            onSettingsTap: () =>
+                unawaited(openAppreciatorSettings(context)),
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {

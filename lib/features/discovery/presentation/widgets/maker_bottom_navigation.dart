@@ -12,6 +12,7 @@ class MakerBottomNavigation extends StatelessWidget {
     this.onSavedTap,
     this.onColumnCountSelected,
     this.onSettingsTap,
+    this.settingsSemanticsLabel = 'Maker settings',
   });
 
   final int selectedColumnCount;
@@ -20,6 +21,7 @@ class MakerBottomNavigation extends StatelessWidget {
   final VoidCallback? onSavedTap;
   final ValueChanged<int>? onColumnCountSelected;
   final VoidCallback? onSettingsTap;
+  final String settingsSemanticsLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,7 @@ class MakerBottomNavigation extends StatelessWidget {
                       iconKey: const Key('maker_nav_settings_svg'),
                       assetName: 'assets/setting.svg',
                       fallbackAssetName: 'assets/icons/setting.svg',
-                      semanticsLabel: 'Maker settings',
+                      semanticsLabel: settingsSemanticsLabel,
                       iconSize: iconSize,
                       selected: settingsSelected,
                       onTap: onSettingsTap,
