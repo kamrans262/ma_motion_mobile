@@ -159,20 +159,6 @@ class _MakerInfoSettingsScreenState
   Future<void> _saveAndClose() async {
     if (_saving) return;
 
-    if (_nameController.text.trim().isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter your Maker name.';
-      });
-      return;
-    }
-
-    if (_selectedTypes.isEmpty || _selectedStyles.isEmpty) {
-      setState(() {
-        _errorMessage = 'Select at least one Type and one Style.';
-      });
-      return;
-    }
-
     for (var slot = 2; slot <= 4; slot++) {
       final existing = _existingArtworkSlot(_data, slot)?.artwork;
       final pending = _pendingMedia[slot];
@@ -193,8 +179,116 @@ class _MakerInfoSettingsScreenState
     });
 
     final repository = ref.read(makerInfoSettingsRepositoryProvider);
+    final touchedArtworkSlots = <int>{};
+    int? activeArtworkSlot;
 
     try {
+      for (var slot = 2; slot <= 4; slot++) {
+        final existing = _existingArtworkSlot(_data, slot)?.artwork;
+        final pending = _pendingMedia[slot];
+        final title = _artworkTitleControllers[slot]!.text.trim();
+        final description = _captionControllers[slot]!.text.trim();
+        final metadataChanged =
+            existing != null &&
+            (title != existing.title || description != existing.description);
+        final shouldDelete = _deletedSlots.contains(slot);
+
+        if (!shouldDelete && pending == null && !metadataChanged) {
+          continue;
+        }
+
+        activeArtworkSlot = slot;
+        touchedArtworkSlots.add(slot);
+
+        if (shouldDelete) {
+          await repository.deleteArtworkSlot(slot);
+          continue;
+        }
+
+        final typeId =
+            existing?.typeId ??
+            (_selectedTypes.isEmpty ? null : _selectedTypes.first);
+        final styleId =
+            existing?.styleId ??
+            (_selectedStyles.isEmpty ? null : _selectedStyles.first);
+        final currentLocationId =
+            _locationController.text.trim() == _initialLocationText
+            ? _managedLocationId
+            : null;
+
+        await repository.saveArtworkSlot(
+          slot: slot,
+          existingArtwork: existing,
+          title: title,
+          description: description,
+          typeId: typeId,
+          styleId: styleId,
+          locationId: existing?.locationId ?? currentLocationId,
+          locationText: existing?.locationText.isNotEmpty == true
+              ? existing!.locationText
+              : _locationController.text.trim(),
+          bytes: pending?.bytes,
+          fileName: pending?.name,
+        );
+      }
+
+      activeArtworkSlot = null;
+
+      if (touchedArtworkSlots.isNotEmpty) {
+        final confirmed = await repository.load();
+
+        for (final slot in touchedArtworkSlots) {
+          final saved = _existingArtworkSlot(confirmed, slot);
+
+          if (_deletedSlots.contains(slot)) {
+            if (saved != null) {
+              throw ApiException(
+                message: 'Content $slot removal could not be confirmed.',
+                code: 'maker_info_slot_delete_unconfirmed',
+              );
+            }
+            continue;
+          }
+
+          if (saved == null || saved.artwork.primaryImageUrl == null) {
+            throw ApiException(
+              message: 'Content $slot save could not be confirmed.',
+              code: 'maker_info_slot_save_unconfirmed',
+            );
+          }
+        }
+
+        if (!mounted) return;
+
+        setState(() {
+          _data = confirmed;
+          for (final slot in touchedArtworkSlots) {
+            _pendingMedia.remove(slot);
+            _deletedSlots.remove(slot);
+
+            final artwork = _existingArtworkSlot(confirmed, slot)?.artwork;
+            _artworkTitleControllers[slot]!.text = artwork?.title ?? '';
+            _captionControllers[slot]!.text = artwork?.description ?? '';
+          }
+        });
+      }
+
+      if (_nameController.text.trim().isEmpty) {
+        setState(() {
+          _errorMessage =
+              'Content was saved, but please enter your Maker name before closing.';
+        });
+        return;
+      }
+
+      if (_selectedTypes.isEmpty || _selectedStyles.isEmpty) {
+        setState(() {
+          _errorMessage =
+              'Content was saved, but select at least one Type and one Style before closing.';
+        });
+        return;
+      }
+
       await repository.saveProfile(
         MakerInfoSettingsDraft(
           name: _nameController.text,
@@ -231,63 +325,21 @@ class _MakerInfoSettingsScreenState
         }
       }
 
-      for (var slot = 2; slot <= 4; slot++) {
-        if (_deletedSlots.contains(slot)) {
-          await repository.deleteArtworkSlot(slot);
-          continue;
-        }
-
-        final pending = _pendingMedia[slot];
-        final existing = _existingArtworkSlot(_data, slot)?.artwork;
-        final title = _artworkTitleControllers[slot]!.text.trim();
-        final description = _captionControllers[slot]!.text.trim();
-        final metadataChanged =
-            existing != null &&
-            (title != existing.title || description != existing.description);
-
-        if (pending == null && !metadataChanged) {
-          continue;
-        }
-
-        final typeId =
-            existing?.typeId ??
-            (_selectedTypes.isEmpty ? null : _selectedTypes.first);
-        final styleId =
-            existing?.styleId ??
-            (_selectedStyles.isEmpty ? null : _selectedStyles.first);
-        final currentLocationId =
-            _locationController.text.trim() == _initialLocationText
-            ? _managedLocationId
-            : null;
-
-        await repository.saveArtworkSlot(
-          slot: slot,
-          existingArtwork: existing,
-          title: title,
-          description: description,
-          typeId: typeId,
-          styleId: styleId,
-          locationId: existing?.locationId ?? currentLocationId,
-          locationText: existing?.locationText.isNotEmpty == true
-              ? existing!.locationText
-              : _locationController.text.trim(),
-          bytes: pending?.bytes,
-          fileName: pending?.name,
-        );
-      }
-
       if (!mounted) return;
       widget.onClose();
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = error.message;
+        _errorMessage = activeArtworkSlot == null
+            ? error.message
+            : 'Content $activeArtworkSlot: ${error.message}';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _errorMessage =
-            'We could not save your Maker settings. Please try again.';
+        _errorMessage = activeArtworkSlot == null
+            ? 'We could not save your Maker settings. Please try again.'
+            : 'We could not save Content $activeArtworkSlot. Please try again.';
       });
     } finally {
       if (mounted) {
