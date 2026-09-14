@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_envelope.dart';
+import '../../../core/network/api_exception.dart';
 import '../../../core/network/api_gateway.dart';
 import '../../../core/network/api_paths.dart';
 import '../../../core/providers/core_providers.dart';
@@ -231,12 +232,11 @@ class MakerInfoSettingsRepository
         throw ArgumentError('A new artwork requires an image.');
       }
 
-      final formData = FormData.fromMap(<String, dynamic>{
-        ...metadata,
-        'media': <MultipartFile>[
-          MultipartFile.fromBytes(bytes, filename: fileName),
-        ],
-      });
+      final formData = _artworkFormData(
+        metadata: metadata,
+        bytes: bytes,
+        fileName: fileName,
+      );
 
       final response = await api.post(ApiPaths.myArtworks, data: formData);
       artwork = MakerSettingsArtwork.fromMap(
@@ -256,11 +256,11 @@ class MakerInfoSettingsRepository
             .map((item) => item.id)
             .toSet();
         final oldPrimaryId = existingArtwork.primaryMedia?.id;
-        final mediaData = FormData.fromMap(<String, dynamic>{
-          'media': <MultipartFile>[
-            MultipartFile.fromBytes(bytes, filename: fileName),
-          ],
-        });
+        final mediaData = _artworkFormData(
+          metadata: const <String, dynamic>{},
+          bytes: bytes,
+          fileName: fileName,
+        );
 
         final mediaResponse = await api.post(
           '${ApiPaths.myArtworks}/${existingArtwork.id}/media',
@@ -305,6 +305,159 @@ class MakerInfoSettingsRepository
     return MakerInfoArtworkSlot.fromMap(
       ApiEnvelope(raw: assignmentResponse).dataMap,
     );
+  }
+
+  static FormData _artworkFormData({
+    required Map<String, dynamic> metadata,
+    required Uint8List bytes,
+    required String fileName,
+  }) {
+    if (bytes.lengthInBytes > 10 * 1024 * 1024) {
+      throw const ApiException(
+        message: 'Artwork image must be 10 MB or smaller.',
+        code: 'artwork_image_too_large',
+      );
+    }
+
+    final detected = _detectArtworkImage(bytes);
+    if (detected == null) {
+      throw const ApiException(
+        message: 'Artwork image must be JPG, PNG, or WebP.',
+        code: 'unsupported_artwork_image',
+      );
+    }
+
+    final formData = FormData();
+
+    for (final entry in metadata.entries) {
+      final value = entry.value;
+      if (value == null) {
+        continue;
+      }
+
+      formData.fields.add(
+        MapEntry<String, String>(entry.key, value.toString()),
+      );
+    }
+
+    final originalBase = fileName
+        .trim()
+        .replaceFirst(RegExp(r'\.[^.]+    if (slot < 2 || slot > 4) {
+      throw ArgumentError.value(slot, 'slot', 'Artwork slots are Content 2-4.');
+    }
+
+    await api.delete('${ApiPaths.makerProfile}/artwork-slots/$slot');
+  }
+
+  @override
+  Future<void> logout() => auth.logout();
+
+  static Map<String, dynamic>? _mapOrNull(Object? value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+
+    if (value is Map) {
+      return Map<String, dynamic>.from(value);
+    }
+
+    return null;
+  }
+
+  static List<Map<String, dynamic>> _mapList(Object? value) {
+    if (value is! List) {
+      return const <Map<String, dynamic>>[];
+    }
+
+    return value
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList(growable: false);
+  }
+
+  static int? _asInt(Object? value) {
+    if (value is int) {
+      return value;
+    }
+
+    return int.tryParse(value?.toString() ?? '');
+  }
+
+  static bool _asBool(Object? value, {bool fallback = false}) {
+    if (value == null) {
+      return fallback;
+    }
+
+    if (value is bool) {
+      return value;
+    }
+
+    return value == 1 || value == '1' || value == 'true';
+  }
+
+  static String? _nullableString(Object? value) {
+    final text = value?.toString().trim() ?? '';
+    return text.isEmpty ? null : text;
+  }
+
+  static String? _emptyToNull(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+}
+), '')
+        .replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '_');
+    final safeBase = originalBase.isEmpty ? 'artwork' : originalBase;
+
+    formData.files.add(
+      MapEntry<String, MultipartFile>(
+        'media[]',
+        MultipartFile.fromBytes(
+          bytes,
+          filename: '$safeBase.${detected.extension}',
+          contentType: DioMediaType('image', detected.subtype),
+        ),
+      ),
+    );
+
+    return formData;
+  }
+
+  static ({String extension, String subtype})? _detectArtworkImage(
+    Uint8List bytes,
+  ) {
+    if (bytes.length >= 3 &&
+        bytes[0] == 0xFF &&
+        bytes[1] == 0xD8 &&
+        bytes[2] == 0xFF) {
+      return (extension: 'jpg', subtype: 'jpeg');
+    }
+
+    if (bytes.length >= 8 &&
+        bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47 &&
+        bytes[4] == 0x0D &&
+        bytes[5] == 0x0A &&
+        bytes[6] == 0x1A &&
+        bytes[7] == 0x0A) {
+      return (extension: 'png', subtype: 'png');
+    }
+
+    if (bytes.length >= 12 &&
+        bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46 &&
+        bytes[8] == 0x57 &&
+        bytes[9] == 0x45 &&
+        bytes[10] == 0x42 &&
+        bytes[11] == 0x50) {
+      return (extension: 'webp', subtype: 'webp');
+    }
+
+    return null;
   }
 
   @override
