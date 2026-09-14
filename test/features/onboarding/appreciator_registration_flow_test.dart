@@ -121,7 +121,15 @@ void main() {
       expect(text.style?.color, AppColors.darkGray);
       expect(text.style?.decoration, TextDecoration.underline);
 
-      await tester.tap(switchFinder);
+      await Scrollable.ensureVisible(
+        tester.element(switchFinder),
+        alignment: 0.35,
+        duration: Duration.zero,
+      );
+      await tester.pump();
+
+      expect(switchFinder.hitTestable(), findsOneWidget);
+      await tester.tap(switchFinder.hitTestable());
       await tester.pumpAndSettle();
 
       expect(repository.makerCalls, 1);
