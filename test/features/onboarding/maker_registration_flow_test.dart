@@ -92,7 +92,7 @@ void main() {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    container.read(makerRegistrationProvider.notifier).setName('A' * 121);
+    container.read(makerRegistrationProvider.notifier).setName('A'.padLeft(121, 'A'));
 
     await tester.pumpWidget(
       UncontrolledProviderScope(

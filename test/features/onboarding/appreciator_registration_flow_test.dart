@@ -95,7 +95,7 @@ void main() {
 
       await tester.enterText(
         find.byKey(const Key('appreciator_name_field')),
-        'A' * 121,
+        'A'.padLeft(121, 'A'),
       );
       await tester.tap(find.byKey(const Key('maker_next_button')));
       await tester.pump();

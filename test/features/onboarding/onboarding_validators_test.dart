@@ -8,14 +8,14 @@ void main() {
     test('validates names and locations with contract limits', () {
       expect(OnboardingValidators.makerName('   '), isNotNull);
       expect(
-        OnboardingValidators.makerName('A' * 121),
+        OnboardingValidators.makerName('A'.padLeft(121, 'A')),
         contains('120 characters'),
       );
       expect(OnboardingValidators.makerName('MA Studio'), isNull);
 
       expect(OnboardingValidators.appreciatorName('   '), isNotNull);
       expect(
-        OnboardingValidators.location('L' * 181),
+        OnboardingValidators.location('L'.padLeft(181, 'L')),
         contains('180 characters'),
       );
       expect(OnboardingValidators.location('New York, NY'), isNull);
