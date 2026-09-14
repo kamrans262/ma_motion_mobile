@@ -142,28 +142,31 @@ class MaOnboardingScaffold extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (!keyboardOpen)
-                        Padding(
-                          key: const Key('maker_onboarding_footer'),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: footerHorizontal,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              MaOnboardingButton(
-                                key: const Key('maker_next_button'),
-                                label: isBusy ? 'Saving...' : 'Next',
-                                onPressed: isBusy ? null : onNext,
-                                filled: false,
-                              ),
-                              const SizedBox(height: 13),
-                              MaOnboardingButton(
-                                key: const Key('maker_back_button'),
-                                label: 'Back',
-                                onPressed: isBusy ? null : onBack,
-                                filled: false,
-                              ),
+                      Padding(
+                        key: const Key('maker_onboarding_footer'),
+                        padding: EdgeInsets.fromLTRB(
+                          footerHorizontal,
+                          0,
+                          footerHorizontal,
+                          keyboardOpen ? 12 : 0,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            MaOnboardingButton(
+                              key: const Key('maker_next_button'),
+                              label: isBusy ? 'Saving...' : 'Next',
+                              onPressed: isBusy ? null : onNext,
+                              filled: false,
+                            ),
+                            const SizedBox(height: 13),
+                            MaOnboardingButton(
+                              key: const Key('maker_back_button'),
+                              label: 'Back',
+                              onPressed: isBusy ? null : onBack,
+                              filled: false,
+                            ),
+                            if (!keyboardOpen) ...[
                               const SizedBox(height: 30),
                               MaStepDots(
                                 currentStep: currentStep,
@@ -174,8 +177,9 @@ class MaOnboardingScaffold extends StatelessWidget {
                                 height: dotsBottomGap,
                               ),
                             ],
-                          ),
+                          ],
                         ),
+                      ),
                     ],
                   );
                 },
