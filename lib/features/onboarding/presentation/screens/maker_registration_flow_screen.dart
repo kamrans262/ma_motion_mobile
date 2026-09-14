@@ -309,7 +309,6 @@ class _MakerRegistrationFlowScreenState
           onNext: _next,
           onBack: _back,
           validationMessage: _validationMessage,
-          keyboardContentTop: 18,
           child: MaOnboardingTextField(
             key: const Key('maker_about_field'),
             controller: _aboutController,
