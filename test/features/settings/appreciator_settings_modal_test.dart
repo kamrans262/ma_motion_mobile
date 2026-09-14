@@ -35,9 +35,7 @@ void main() {
 
     expect(
       tester
-          .widget<TextField>(
-            find.byKey(const Key('appreciator_settings_name')),
-          )
+          .widget<TextField>(find.byKey(const Key('appreciator_settings_name')))
           .controller
           ?.text,
       'Ari Viewer',

@@ -5,18 +5,21 @@ import 'package:ma_motion_mobile/features/settings/data/appreciator_settings_rep
 import 'package:ma_motion_mobile/features/settings/domain/appreciator_settings_models.dart';
 
 void main() {
-  test('loads current Appreciator settings from protected profile API', () async {
-    final api = _FakeGateway();
-    final repository = AppreciatorSettingsRepository(api: api);
+  test(
+    'loads current Appreciator settings from protected profile API',
+    () async {
+      final api = _FakeGateway();
+      final repository = AppreciatorSettingsRepository(api: api);
 
-    final data = await repository.load();
+      final data = await repository.load();
 
-    expect(api.lastGetPath, ApiPaths.appreciatorProfile);
-    expect(data.name, 'Ari Viewer');
-    expect(data.locationText, 'New York, NY');
-    expect(data.locationId, 8);
-    expect(data.email, 'ari@example.com');
-  });
+      expect(api.lastGetPath, ApiPaths.appreciatorProfile);
+      expect(data.name, 'Ari Viewer');
+      expect(data.locationText, 'New York, NY');
+      expect(data.locationId, 8);
+      expect(data.email, 'ari@example.com');
+    },
+  );
 
   test('resolves changed location and saves normalized account data', () async {
     final api = _FakeGateway();

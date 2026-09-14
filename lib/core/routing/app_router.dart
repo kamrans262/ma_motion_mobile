@@ -172,8 +172,7 @@ GoRouter createAppRouter({
           child: MakerArtworkDiscoveryScreen(
             onFilterTap: () => context.push('/appreciator/discovery/filter'),
             onSavedTap: () => context.push('/appreciator/saved-artworks'),
-            onSettingsTap: () =>
-                unawaited(openAppreciatorSettings(context)),
+            onSettingsTap: () => unawaited(openAppreciatorSettings(context)),
             settingsSemanticsLabel: 'Appreciator settings',
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
