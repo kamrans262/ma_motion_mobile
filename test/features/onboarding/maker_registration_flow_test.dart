@@ -161,35 +161,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('about-work field stays fully visible above the keyboard', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
+  testWidgets(
+    'about-work keeps Next and Back visible above the keyboard',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
 
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    const keyboardInset = 320.0;
+      const keyboardInset = 320.0;
 
-    await tester.pumpWidget(app(initialStep: 2, keyboardInset: keyboardInset));
-    await tester.pump();
+      await tester.pumpWidget(app(initialStep: 2, keyboardInset: keyboardInset));
+      await tester.pump();
 
-    expect(find.text('Tell us about your work'), findsOneWidget);
-    expect(find.byKey(const Key('maker_onboarding_footer')), findsNothing);
+      expect(find.text('Tell us about your work'), findsOneWidget);
 
-    final field = find.byKey(const Key('maker_about_field'));
-    expect(field, findsOneWidget);
+      final footer = find.byKey(const Key('maker_onboarding_footer'));
+      final next = find.byKey(const Key('maker_next_button'));
+      final back = find.byKey(const Key('maker_back_button'));
+      final field = find.byKey(const Key('maker_about_field'));
 
-    final headingTop = tester
-        .getTopLeft(find.byKey(const Key('maker_step_heading')))
-        .dy;
-    final fieldRect = tester.getRect(field);
+      expect(footer, findsOneWidget);
+      expect(next.hitTestable(), findsOneWidget);
+      expect(back.hitTestable(), findsOneWidget);
+      expect(find.byKey(const Key('maker_step_dot_0')), findsNothing);
 
-    expect(headingTop, greaterThan(100));
-    expect(fieldRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
-    expect(tester.takeException(), isNull);
-  });
+      final headingTop = tester
+          .getTopLeft(find.byKey(const Key('maker_step_heading')))
+          .dy;
+      final fieldRect = tester.getRect(field);
+      final footerRect = tester.getRect(footer);
+
+      expect(headingTop, greaterThan(100));
+      expect(fieldRect.bottom, lessThanOrEqualTo(footerRect.top));
+      expect(footerRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('type and style content starts higher and clears the footer', (
     tester,
