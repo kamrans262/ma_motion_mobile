@@ -1,8 +1,11 @@
 import 'dart:typed_data';
 
 abstract final class OnboardingValidators {
+  static const int nameMinLength = 2;
   static const int nameMaxLength = 120;
+  static const int locationMinLength = 2;
   static const int locationMaxLength = 180;
+  static const int aboutMinLength = 20;
   static const int aboutMaxLength = 5000;
   static const int emailMaxLength = 255;
   static const int websiteMaxLength = 2048;
@@ -12,6 +15,8 @@ abstract final class OnboardingValidators {
     return _requiredText(
       value,
       emptyMessage: 'Please enter your name or studio name.',
+      minLength: nameMinLength,
+      minMessage: 'Name or studio name must be at least 2 characters.',
       maxLength: nameMaxLength,
       maxMessage: 'Name or studio name must be 120 characters or fewer.',
     );
@@ -21,6 +26,8 @@ abstract final class OnboardingValidators {
     return _requiredText(
       value,
       emptyMessage: 'Please enter your name.',
+      minLength: nameMinLength,
+      minMessage: 'Name must be at least 2 characters.',
       maxLength: nameMaxLength,
       maxMessage: 'Name must be 120 characters or fewer.',
     );
@@ -30,6 +37,8 @@ abstract final class OnboardingValidators {
     return _requiredText(
       value,
       emptyMessage: 'Please enter your city or ZIP code.',
+      minLength: locationMinLength,
+      minMessage: 'Location must be at least 2 characters.',
       maxLength: locationMaxLength,
       maxMessage: 'Location must be 180 characters or fewer.',
     );
@@ -39,6 +48,8 @@ abstract final class OnboardingValidators {
     return _requiredText(
       value,
       emptyMessage: 'Please tell us a little about your work.',
+      minLength: aboutMinLength,
+      minMessage: 'About your work must be at least 20 characters.',
       maxLength: aboutMaxLength,
       maxMessage: 'About your work must be 5000 characters or fewer.',
     );
@@ -128,6 +139,8 @@ abstract final class OnboardingValidators {
   static String? _requiredText(
     String value, {
     required String emptyMessage,
+    required int minLength,
+    required String minMessage,
     required int maxLength,
     required String maxMessage,
   }) {
@@ -135,6 +148,10 @@ abstract final class OnboardingValidators {
 
     if (normalized.isEmpty) {
       return emptyMessage;
+    }
+
+    if (normalized.length < minLength) {
+      return minMessage;
     }
 
     if (normalized.length > maxLength) {

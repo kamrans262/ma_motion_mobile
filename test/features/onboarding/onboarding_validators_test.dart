@@ -5,8 +5,20 @@ import 'package:ma_motion_mobile/features/onboarding/domain/onboarding_validator
 
 void main() {
   group('shared onboarding validation', () {
-    test('validates names and locations with contract limits', () {
+    test('validates names and locations with minimum and maximum limits', () {
       expect(OnboardingValidators.makerName('   '), isNotNull);
+      expect(
+        OnboardingValidators.makerName('A'),
+        contains('at least 2 characters'),
+      );
+      expect(
+        OnboardingValidators.appreciatorName('A'),
+        contains('at least 2 characters'),
+      );
+      expect(
+        OnboardingValidators.location('A'),
+        contains('at least 2 characters'),
+      );
       expect(
         OnboardingValidators.makerName('A'.padLeft(121, 'A')),
         contains('120 characters'),
@@ -19,6 +31,21 @@ void main() {
         contains('180 characters'),
       );
       expect(OnboardingValidators.location('New York, NY'), isNull);
+    });
+
+    test('validates Maker about-work minimum and maximum', () {
+      expect(
+        OnboardingValidators.aboutWork('Short'),
+        contains('at least 20 characters'),
+      );
+      expect(
+        OnboardingValidators.aboutWork('Original mixed-media artwork'),
+        isNull,
+      );
+      expect(
+        OnboardingValidators.aboutWork('A'.padLeft(5001, 'A')),
+        contains('5000 characters'),
+      );
     });
 
     test('validates email and optional website formats', () {
