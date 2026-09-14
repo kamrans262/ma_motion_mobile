@@ -10,6 +10,48 @@ import 'package:ma_motion_mobile/features/discovery/presentation/screens/maker_a
 void main() {
   WidgetController.hitTestWarningShouldBeFatal = true;
 
+  testWidgets(
+    'Appreciator Settings nav item invokes overlay callback with Appreciator semantics',
+    (WidgetTester tester) async {
+      var settingsTapped = false;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            artworkDiscoveryRepositoryProvider.overrideWithValue(
+              _EmptyDiscoveryRepository(),
+            ),
+          ],
+          child: MaterialApp(
+            home: MakerArtworkDiscoveryScreen(
+              settingsSemanticsLabel: 'Appreciator settings',
+              onSettingsTap: () {
+                settingsTapped = true;
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump();
+
+      final settings = find.byKey(const Key('maker_nav_settings'));
+      expect(settings, findsOneWidget);
+      expect(settings.hitTestable(), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Appreciator settings'),
+        findsOneWidget,
+      );
+
+      await tester.tap(settings.hitTestable());
+      await tester.pump();
+
+      expect(settingsTapped, isTrue);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Maker Settings nav item emits Maker-only settings index 4', (
     WidgetTester tester,
   ) async {
