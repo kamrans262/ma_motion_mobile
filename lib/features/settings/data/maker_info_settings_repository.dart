@@ -405,6 +405,7 @@ class MakerInfoSettingsRepository
 
     await api.delete('${ApiPaths.makerProfile}/artwork-slots/$slot');
   }
+
   @override
   Future<void> logout() => auth.logout();
 

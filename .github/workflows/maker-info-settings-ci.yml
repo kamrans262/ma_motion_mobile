@@ -44,14 +44,7 @@ jobs:
           git diff --exit-code -- pubspec.lock android/app/src/main/res ios/Runner/Assets.xcassets/AppIcon.appiconset
 
       - name: Verify formatting is stable
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          if ! git diff --exit-code -- lib test; then
-            git diff -- lib test
-            exit 1
-          fi
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Flutter analyzer
         run: flutter analyze

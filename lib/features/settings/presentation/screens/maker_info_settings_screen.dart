@@ -275,16 +275,14 @@ class _MakerInfoSettingsScreenState
 
       if (_nameController.text.trim().isEmpty) {
         setState(() {
-          _errorMessage =
-              'Content was saved, but please enter your Maker name before closing.';
+          _errorMessage = 'Content was saved, but please enter your Maker name before closing.';
         });
         return;
       }
 
       if (_selectedTypes.isEmpty || _selectedStyles.isEmpty) {
         setState(() {
-          _errorMessage =
-              'Content was saved, but select at least one Type and one Style before closing.';
+          _errorMessage = 'Content was saved, but select at least one Type and one Style before closing.';
         });
         return;
       }
