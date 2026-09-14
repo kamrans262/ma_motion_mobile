@@ -193,8 +193,7 @@ GoRouter createAppRouter({
           state: state,
           child: MakerSavedArtworksScreen(
             onBack: () => context.pop(),
-            onSettingsTap: () =>
-                unawaited(openAppreciatorSettings(context)),
+            onSettingsTap: () => unawaited(openAppreciatorSettings(context)),
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
