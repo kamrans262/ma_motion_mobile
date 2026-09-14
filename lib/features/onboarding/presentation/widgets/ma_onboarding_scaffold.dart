@@ -41,6 +41,8 @@ class MaOnboardingScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -62,7 +64,6 @@ class MaOnboardingScaffold extends StatelessWidget {
                 builder: (context, constraints) {
                   final media = MediaQuery.of(context);
                   final width = constraints.maxWidth;
-                  final keyboardOpen = media.viewInsets.bottom > 0;
 
                   final contentTop = keyboardOpen
                       ? 18.0
