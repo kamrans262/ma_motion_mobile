@@ -7,85 +7,99 @@ import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 
 void main() {
-  test('completed Appreciator profile switches directly without logout', () async {
-    final api = _ExperienceGateway(
-      role: 'maker',
-      makerCompleted: true,
-      appreciatorCompleted: true,
-    );
-    final tokenStore = _MemoryTokenStore('same-account-token');
-    final repository = ExperienceSwitchRepository(
-      auth: AuthRepository(api: api, tokenStore: tokenStore),
-      api: api,
-    );
+  test(
+    'completed Appreciator profile switches directly without logout',
+    () async {
+      final api = _ExperienceGateway(
+        role: 'maker',
+        makerCompleted: true,
+        appreciatorCompleted: true,
+      );
+      final tokenStore = _MemoryTokenStore('same-account-token');
+      final repository = ExperienceSwitchRepository(
+        auth: AuthRepository(api: api, tokenStore: tokenStore),
+        api: api,
+      );
 
-    final destination = await repository.switchToAppreciator();
+      final destination = await repository.switchToAppreciator();
 
-    expect(destination, MakerEntryDestination.appreciatorDiscovery);
-    expect(api.lastPatchPath, ApiPaths.experience);
-    expect(api.lastPatchData, <String, dynamic>{'experience': 'appreciator'});
-    expect(tokenStore.value, 'same-account-token');
-  });
+      expect(destination, MakerEntryDestination.appreciatorDiscovery);
+      expect(api.lastPatchPath, ApiPaths.experience);
+      expect(api.lastPatchData, <String, dynamic>{
+        'experience': 'appreciator',
+      });
+      expect(tokenStore.value, 'same-account-token');
+    },
+  );
 
-  test('missing Appreciator profile routes to Appreciator registration', () async {
-    final api = _ExperienceGateway(
-      role: 'maker',
-      makerCompleted: true,
-      appreciatorCompleted: false,
-    );
-    final tokenStore = _MemoryTokenStore('same-account-token');
-    final repository = ExperienceSwitchRepository(
-      auth: AuthRepository(api: api, tokenStore: tokenStore),
-      api: api,
-    );
+  test(
+    'missing Appreciator profile routes to Appreciator registration',
+    () async {
+      final api = _ExperienceGateway(
+        role: 'maker',
+        makerCompleted: true,
+        appreciatorCompleted: false,
+      );
+      final tokenStore = _MemoryTokenStore('same-account-token');
+      final repository = ExperienceSwitchRepository(
+        auth: AuthRepository(api: api, tokenStore: tokenStore),
+        api: api,
+      );
 
-    final destination = await repository.switchToAppreciator();
+      final destination = await repository.switchToAppreciator();
 
-    expect(destination, MakerEntryDestination.appreciatorProfileSetup);
-    expect(api.lastPatchPath, isNull);
-    expect(tokenStore.value, 'same-account-token');
-  });
+      expect(destination, MakerEntryDestination.appreciatorProfileSetup);
+      expect(api.lastPatchPath, isNull);
+      expect(tokenStore.value, 'same-account-token');
+    },
+  );
 
-  test('completed Maker profile switches directly to Maker discovery', () async {
-    final api = _ExperienceGateway(
-      role: 'appreciator',
-      makerCompleted: true,
-      appreciatorCompleted: true,
-    );
-    final tokenStore = _MemoryTokenStore('same-account-token');
-    final repository = ExperienceSwitchRepository(
-      auth: AuthRepository(api: api, tokenStore: tokenStore),
-      api: api,
-    );
+  test(
+    'completed Maker profile switches directly to Maker discovery',
+    () async {
+      final api = _ExperienceGateway(
+        role: 'appreciator',
+        makerCompleted: true,
+        appreciatorCompleted: true,
+      );
+      final tokenStore = _MemoryTokenStore('same-account-token');
+      final repository = ExperienceSwitchRepository(
+        auth: AuthRepository(api: api, tokenStore: tokenStore),
+        api: api,
+      );
 
-    final destination = await repository.switchToMaker();
+      final destination = await repository.switchToMaker();
 
-    expect(destination, MakerEntryDestination.discovery);
-    expect(api.lastPatchPath, ApiPaths.experience);
-    expect(api.lastPatchData, <String, dynamic>{'experience': 'maker'});
-    expect(api.lastPostPath, isNull);
-    expect(tokenStore.value, 'same-account-token');
-  });
+      expect(destination, MakerEntryDestination.discovery);
+      expect(api.lastPatchPath, ApiPaths.experience);
+      expect(api.lastPatchData, <String, dynamic>{'experience': 'maker'});
+      expect(api.lastPostPath, isNull);
+      expect(tokenStore.value, 'same-account-token');
+    },
+  );
 
-  test('missing Maker profile starts same-account Maker onboarding', () async {
-    final api = _ExperienceGateway(
-      role: 'appreciator',
-      makerCompleted: false,
-      appreciatorCompleted: true,
-    );
-    final tokenStore = _MemoryTokenStore('same-account-token');
-    final repository = ExperienceSwitchRepository(
-      auth: AuthRepository(api: api, tokenStore: tokenStore),
-      api: api,
-    );
+  test(
+    'missing Maker profile starts same-account Maker onboarding',
+    () async {
+      final api = _ExperienceGateway(
+        role: 'appreciator',
+        makerCompleted: false,
+        appreciatorCompleted: true,
+      );
+      final tokenStore = _MemoryTokenStore('same-account-token');
+      final repository = ExperienceSwitchRepository(
+        auth: AuthRepository(api: api, tokenStore: tokenStore),
+        api: api,
+      );
 
-    final destination = await repository.switchToMaker();
+      final destination = await repository.switchToMaker();
 
-    expect(destination, MakerEntryDestination.profileSetup);
-    expect(api.lastPostPath, ApiPaths.makerExperienceOnboarding);
-    expect(api.lastPatchPath, isNull);
-    expect(tokenStore.value, 'same-account-token');
-  });
+      expect(destination, MakerEntryDestination.profileSetup);
+      expect(api.lastPostPath, ApiPaths.makerExperienceOnboarding);
+      expect(api.lastPatchPath, isNull);
+      expect(tokenStore.value, 'same-account-token');
+    },
+  );
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
