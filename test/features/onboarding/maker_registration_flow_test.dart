@@ -230,6 +230,16 @@ void main() {
     expect(scrollPadding.top, lessThan(60));
     expect(scrollPadding.bottom, 30);
 
+    final scrollable = find.descendant(
+      of: find.byKey(const Key('maker_onboarding_scroll')),
+      matching: find.byType(Scrollable),
+    );
+    expect(scrollable, findsOneWidget);
+
+    final scrollableState = tester.state<ScrollableState>(scrollable);
+    scrollableState.position.jumpTo(scrollableState.position.maxScrollExtent);
+    await tester.pump();
+
     final lastStyle = find.byKey(const Key('maker_style_Experimental'));
     final footerTop = tester
         .getTopLeft(find.byKey(const Key('maker_onboarding_footer')))
