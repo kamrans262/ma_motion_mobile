@@ -17,45 +17,49 @@ void main() {
   testWidgets(
     'Appreciator bottom Settings icon opens modal over discovery grid',
     (tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          artworkDiscoveryRepositoryProvider.overrideWithValue(
-            _EmptyDiscoveryRepository(),
-          ),
-          appreciatorSettingsRepositoryProvider.overrideWithValue(
-            _FakeAppreciatorSettingsRepository(),
-          ),
-          experienceSwitchRepositoryProvider.overrideWithValue(
-            _FakeExperienceSwitchRepository(),
-          ),
-        ],
-        child: const MaterialApp(home: AppreciatorArtworkDiscoveryScreen()),
-      ),
-    );
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            artworkDiscoveryRepositoryProvider.overrideWithValue(
+              _EmptyDiscoveryRepository(),
+            ),
+            appreciatorSettingsRepositoryProvider.overrideWithValue(
+              _FakeAppreciatorSettingsRepository(),
+            ),
+            experienceSwitchRepositoryProvider.overrideWithValue(
+              _FakeExperienceSwitchRepository(),
+            ),
+          ],
+          child: const MaterialApp(home: AppreciatorArtworkDiscoveryScreen()),
+        ),
+      );
 
-    await tester.pump();
-    await tester.pump();
+      await tester.pump();
+      await tester.pump();
 
-    final settings = find.byKey(const Key('maker_nav_settings'));
-    expect(settings, findsOneWidget);
-    expect(settings.hitTestable(), findsOneWidget);
+      final settings = find.byKey(const Key('maker_nav_settings'));
+      expect(settings, findsOneWidget);
+      expect(settings.hitTestable(), findsOneWidget);
 
-    await tester.tap(settings.hitTestable());
-    await tester.pumpAndSettle();
+      await tester.tap(settings.hitTestable());
+      await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const Key('maker_artwork_discovery_screen')),
-      findsOneWidget,
-    );
-    expect(find.byKey(const Key('appreciator_settings_card')), findsOneWidget);
-    expect(
-      find.byKey(const Key('appreciator_settings_heading')),
-      findsOneWidget,
-    );
-    expect(tester.takeException(), isNull);
+      expect(
+        find.byKey(const Key('maker_artwork_discovery_screen')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('appreciator_settings_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('appreciator_settings_heading')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
     },
   );
+
 }
 
 class _EmptyDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
