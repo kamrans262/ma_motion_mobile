@@ -146,15 +146,18 @@ void main() {
     },
   );
 
-  test('configured art display starts with tapped artwork and avoids duplicates', () async {
-    final detail = await _ConfiguredArtDisplayRepository().fetch(42);
+  test(
+    'configured art display starts with tapped artwork and avoids duplicates',
+    () async {
+      final detail = await _ConfiguredArtDisplayRepository().fetch(42);
 
-    expect(
-      detail.orderedArtDisplayItems.map((item) => item.id).toList(),
-      <int>[42, 41, 43],
-    );
-    expect(detail.viewerPageCount, 4);
-  });
+      expect(
+        detail.orderedArtDisplayItems.map((item) => item.id).toList(),
+        <int>[42, 41, 43],
+      );
+      expect(detail.viewerPageCount, 4);
+    },
+  );
 
   testWidgets('configured Content 2 3 4 form one viewer with Maker Info last', (
     tester,
