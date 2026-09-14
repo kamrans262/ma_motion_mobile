@@ -25,9 +25,7 @@ void main() {
 
       expect(destination, MakerEntryDestination.appreciatorDiscovery);
       expect(api.lastPatchPath, ApiPaths.experience);
-      expect(api.lastPatchData, <String, dynamic>{
-        'experience': 'appreciator',
-      });
+      expect(api.lastPatchData, <String, dynamic>{'experience': 'appreciator'});
       expect(tokenStore.value, 'same-account-token');
     },
   );
@@ -78,9 +76,7 @@ void main() {
     },
   );
 
-  test(
-    'missing Maker profile starts same-account Maker onboarding',
-    () async {
+  test('missing Maker profile starts same-account Maker onboarding', () async {
       final api = _ExperienceGateway(
         role: 'appreciator',
         makerCompleted: false,
@@ -98,8 +94,7 @@ void main() {
       expect(api.lastPostPath, ApiPaths.makerExperienceOnboarding);
       expect(api.lastPatchPath, isNull);
       expect(tokenStore.value, 'same-account-token');
-    },
-  );
+    });
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
