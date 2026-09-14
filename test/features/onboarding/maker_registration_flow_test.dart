@@ -92,14 +92,14 @@ void main() {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    container.read(makerRegistrationProvider.notifier).setName('A'.padLeft(121, 'A'));
+    container
+        .read(makerRegistrationProvider.notifier)
+        .setName('A'.padLeft(121, 'A'));
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
-          home: MakerRegistrationFlowScreen(onExit: () {}),
-        ),
+        child: MaterialApp(home: MakerRegistrationFlowScreen(onExit: () {})),
       ),
     );
 
@@ -133,10 +133,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
-          home: MakerRegistrationFlowScreen(
-            initialStep: 4,
-            onExit: () {},
-          ),
+          home: MakerRegistrationFlowScreen(initialStep: 4, onExit: () {}),
         ),
       ),
     );

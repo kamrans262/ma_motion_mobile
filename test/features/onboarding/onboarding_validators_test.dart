@@ -34,7 +34,10 @@ void main() {
       expect(OnboardingValidators.makerTypes(<String>{}), isNotNull);
       expect(OnboardingValidators.makerStyles(<String>{}), isNotNull);
       expect(OnboardingValidators.makerTypes(<String>{'Painting'}), isNull);
-      expect(OnboardingValidators.makerStyles(<String>{'Contemporary'}), isNull);
+      expect(
+        OnboardingValidators.makerStyles(<String>{'Contemporary'}),
+        isNull,
+      );
 
       expect(
         OnboardingValidators.salonImage(bytes: null, fileName: null),
