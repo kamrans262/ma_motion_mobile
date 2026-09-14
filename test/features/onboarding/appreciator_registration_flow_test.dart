@@ -127,10 +127,14 @@ void main() {
         final lastWidget = find.byKey(Key(entry.value));
 
         expect(footer, findsOneWidget);
-        expect(find.byKey(const Key('maker_next_button')).hitTestable(),
-            findsOneWidget);
-        expect(find.byKey(const Key('maker_back_button')).hitTestable(),
-            findsOneWidget);
+        expect(
+          find.byKey(const Key('maker_next_button')).hitTestable(),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('maker_back_button')).hitTestable(),
+          findsOneWidget,
+        );
         expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
 
         final lastWidgetRect = tester.getRect(lastWidget);
