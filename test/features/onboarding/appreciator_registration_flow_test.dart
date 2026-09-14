@@ -102,7 +102,7 @@ void main() {
   });
 
   testWidgets(
-    'Appreciator Next and Back remain visible while keyboard is open',
+    'Appreciator text-entry steps keep the default footer and 20px clearance',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
@@ -111,24 +111,42 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       const keyboardInset = 320.0;
+      const lastWidgetKeys = <int, String>{
+        0: 'appreciator_name_field',
+        1: 'appreciator_location_field',
+        2: 'appreciator_switch_maker',
+      };
 
-      await tester.pumpWidget(
-        app(initialStep: 2, keyboardInset: keyboardInset),
-      );
-      await tester.pump();
+      for (final entry in lastWidgetKeys.entries) {
+        await tester.pumpWidget(
+          app(initialStep: entry.key, keyboardInset: keyboardInset),
+        );
+        await tester.pump();
 
-      final footer = find.byKey(const Key('maker_onboarding_footer'));
-      final next = find.byKey(const Key('maker_next_button'));
-      final back = find.byKey(const Key('maker_back_button'));
+        final footer = find.byKey(const Key('maker_onboarding_footer'));
+        final lastWidget = find.byKey(Key(entry.value));
 
-      expect(footer, findsOneWidget);
-      expect(next.hitTestable(), findsOneWidget);
-      expect(back.hitTestable(), findsOneWidget);
-      expect(find.byKey(const Key('maker_step_dot_0')), findsNothing);
+        expect(footer, findsOneWidget);
+        expect(find.byKey(const Key('maker_next_button')).hitTestable(),
+            findsOneWidget);
+        expect(find.byKey(const Key('maker_back_button')).hitTestable(),
+            findsOneWidget);
+        expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
 
-      final footerRect = tester.getRect(footer);
-      expect(footerRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
-      expect(tester.takeException(), isNull);
+        final lastWidgetRect = tester.getRect(lastWidget);
+        final footerRect = tester.getRect(footer);
+
+        expect(
+          lastWidgetRect.bottom,
+          lessThanOrEqualTo(footerRect.top - 20),
+          reason: 'Step ${entry.key} must clear the footer by at least 20px.',
+        );
+        expect(
+          footerRect.bottom,
+          lessThanOrEqualTo(844 - keyboardInset),
+        );
+        expect(tester.takeException(), isNull);
+      }
     },
   );
 
