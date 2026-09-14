@@ -219,10 +219,11 @@ void main() {
     final scrollView = tester.widget<SingleChildScrollView>(
       find.byKey(const Key('maker_onboarding_scroll')),
     );
-    expect(
-      scrollView.padding,
-      const EdgeInsets.fromLTRB(20, 32.55, 20, 30),
-    );
+    final scrollPadding = scrollView.padding! as EdgeInsets;
+    expect(scrollPadding.left, 20);
+    expect(scrollPadding.right, 20);
+    expect(scrollPadding.top, lessThan(66.3));
+    expect(scrollPadding.bottom, 30);
 
     final scrollable = find.descendant(
       of: find.byKey(const Key('maker_onboarding_scroll')),

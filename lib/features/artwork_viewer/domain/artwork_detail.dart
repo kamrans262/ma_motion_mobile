@@ -111,11 +111,16 @@ class ArtworkDetail {
   }
 
   List<ArtworkDisplayItem> get orderedArtDisplayItems {
+    int? selectedSlot;
+    for (final item in artDisplayArtworks) {
+      if (item.id == id) {
+        selectedSlot = item.slot;
+        break;
+      }
+    }
+
     final selected = ArtworkDisplayItem(
-      slot: artDisplayArtworks
-          .where((item) => item.id == id)
-          .map((item) => item.slot)
-          .firstOrNull,
+      slot: selectedSlot,
       id: id,
       title: title,
       description: description,
