@@ -6,6 +6,8 @@ import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
 import 'package:ma_motion_mobile/main.dart';
 
 void main() {
+  WidgetController.hitTestWarningShouldBeFatal = true;
+
   testWidgets('app first Flutter frame is the custom MA splash', (
     tester,
   ) async {
@@ -73,13 +75,12 @@ void main() {
     await tester.pumpAndSettle();
 
     final field = find.byKey(const Key('maker_name_field'));
-    await tester.tap(field);
     await tester.showKeyboard(field);
     await tester.pump();
 
     expect(tester.testTextInput.isVisible, isTrue);
 
-    await tester.tap(find.text("This is how you'll appear to others"));
+    await tester.tapAt(const Offset(20, 20));
     await tester.pump();
 
     expect(tester.testTextInput.isVisible, isFalse);
