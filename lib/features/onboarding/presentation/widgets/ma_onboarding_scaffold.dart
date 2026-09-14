@@ -52,7 +52,7 @@ class MaOnboardingScaffold extends StatelessWidget {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.splashBackground,
         body: Stack(
           fit: StackFit.expand,
@@ -65,13 +65,13 @@ class MaOnboardingScaffold extends StatelessWidget {
                   final media = MediaQuery.of(context);
                   final width = constraints.maxWidth;
 
-                  final contentTop = keyboardOpen
-                      ? 18.0
-                      : math.max(
-                          18.0,
-                          (width * contentTopWidthFactor) - media.padding.top,
-                        );
-                  final resolvedContentBottom = math.max(20.0, contentBottom);
+                  final contentTop = math.max(
+                    18.0,
+                    (width * contentTopWidthFactor) - media.padding.top,
+                  );
+                  final resolvedContentBottom = keyboardOpen
+                      ? media.viewInsets.bottom + 20
+                      : math.max(20.0, contentBottom);
 
                   final footerHorizontal = (width * 0.116)
                       .clamp(24.0, 50.0)
