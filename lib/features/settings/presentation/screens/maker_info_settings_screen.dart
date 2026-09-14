@@ -249,9 +249,11 @@ class _MakerInfoSettingsScreenState
           continue;
         }
 
-        final typeId = existing?.typeId ??
+        final typeId =
+            existing?.typeId ??
             (_selectedTypes.isEmpty ? null : _selectedTypes.first);
-        final styleId = existing?.styleId ??
+        final styleId =
+            existing?.styleId ??
             (_selectedStyles.isEmpty ? null : _selectedStyles.first);
         final currentLocationId =
             _locationController.text.trim() == _initialLocationText
@@ -686,10 +688,7 @@ class _MakerInfoSettingsScreenState
     return null;
   }
 
-  static MakerCarouselItem? _displayItem(
-    MakerInfoSettingsData data,
-    int slot,
-  ) {
+  static MakerCarouselItem? _displayItem(MakerInfoSettingsData data, int slot) {
     if (slot == 1) return _existingItem(data, 1);
 
     final artwork = _existingArtworkSlot(data, slot)?.artwork;

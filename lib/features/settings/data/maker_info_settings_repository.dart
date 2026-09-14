@@ -150,7 +150,11 @@ class MakerInfoSettingsRepository
     String? fileName,
   }) async {
     if (slot != 1) {
-      throw ArgumentError.value(slot, 'slot', 'Only Content 1 is profile media.');
+      throw ArgumentError.value(
+        slot,
+        'slot',
+        'Only Content 1 is profile media.',
+      );
     }
 
     final formData = FormData();
@@ -179,7 +183,11 @@ class MakerInfoSettingsRepository
   @override
   Future<void> deleteCarouselSlot(int slot) async {
     if (slot != 1) {
-      throw ArgumentError.value(slot, 'slot', 'Only Content 1 is profile media.');
+      throw ArgumentError.value(
+        slot,
+        'slot',
+        'Only Content 1 is profile media.',
+      );
     }
 
     await api.delete('${ApiPaths.makerProfile}/carousel/$slot');
@@ -244,7 +252,9 @@ class MakerInfoSettingsRepository
       );
 
       if (bytes != null && bytes.isNotEmpty && fileName != null) {
-        final oldMediaIds = existingArtwork.media.map((item) => item.id).toSet();
+        final oldMediaIds = existingArtwork.media
+            .map((item) => item.id)
+            .toSet();
         final oldPrimaryId = existingArtwork.primaryMedia?.id;
         final mediaData = FormData.fromMap(<String, dynamic>{
           'media': <MultipartFile>[

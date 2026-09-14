@@ -10,27 +10,30 @@ import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repo
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 
 void main() {
-  test('loads private profile, statistics, taxonomy and artwork slots', () async {
-    final api = _FakeApiGateway();
-    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
-    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
+  test(
+    'loads private profile, statistics, taxonomy and artwork slots',
+    () async {
+      final api = _FakeApiGateway();
+      final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+      final repository = MakerInfoSettingsRepository(api: api, auth: auth);
 
-    final data = await repository.load();
+      final data = await repository.load();
 
-    expect(data.name, 'Artist Ken');
-    expect(data.savedCount, 37);
-    expect(data.availableTypes.single.name, 'Painting');
-    expect(data.availableStyles.single.name, 'Contemporary');
-    expect(data.selectedTypeIds, <int>{1});
-    expect(data.selectedStyleIds, <int>{2});
-    expect(data.managedLocationId, 3);
-    expect(data.showWebsite, isTrue);
-    expect(data.showEmail, isFalse);
-    expect(data.showShows, isTrue);
-    expect(data.carousel.single.slot, 1);
-    expect(data.artworkSlots.single.slot, 2);
-    expect(data.artworkSlots.single.artwork.title, 'Real Artwork');
-  });
+      expect(data.name, 'Artist Ken');
+      expect(data.savedCount, 37);
+      expect(data.availableTypes.single.name, 'Painting');
+      expect(data.availableStyles.single.name, 'Contemporary');
+      expect(data.selectedTypeIds, <int>{1});
+      expect(data.selectedStyleIds, <int>{2});
+      expect(data.managedLocationId, 3);
+      expect(data.showWebsite, isTrue);
+      expect(data.showEmail, isFalse);
+      expect(data.showShows, isTrue);
+      expect(data.carousel.single.slot, 1);
+      expect(data.artworkSlots.single.slot, 2);
+      expect(data.artworkSlots.single.artwork.title, 'Real Artwork');
+    },
+  );
 
   test(
     'saves Figma Maker Info settings to protected profile endpoint',

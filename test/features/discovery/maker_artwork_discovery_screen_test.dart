@@ -192,10 +192,7 @@ void main() {
 
     expect(find.byKey(const Key('discovery_inline_search')), findsNothing);
     expect(find.byKey(const Key('discovery_search_svg')), findsOneWidget);
-    expect(
-      find.byKey(const Key('discovery_search_close_icon')),
-      findsNothing,
-    );
+    expect(find.byKey(const Key('discovery_search_close_icon')), findsNothing);
     expect(repository.lastQuery?.search, '');
 
     expect(

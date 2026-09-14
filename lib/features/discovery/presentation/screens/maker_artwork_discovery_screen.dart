@@ -196,8 +196,12 @@ class _MakerArtworkDiscoveryScreenState
                               : const Key('discovery_search_svg'),
                           assetName: 'assets/search.svg',
                           fallbackAssetName: 'assets/icons/search.svg',
-                          materialIcon: _searchOpen ? Icons.close_rounded : null,
-                          tooltip: _searchOpen ? 'Close search' : 'Search artwork',
+                          materialIcon: _searchOpen
+                              ? Icons.close_rounded
+                              : null,
+                          tooltip: _searchOpen
+                              ? 'Close search'
+                              : 'Search artwork',
                           size: metrics.toolbarIconSize,
                           alignment: _searchOpen
                               ? Alignment.centerRight
