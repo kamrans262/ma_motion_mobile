@@ -23,7 +23,6 @@ class MaOnboardingScaffold extends StatelessWidget {
     this.isBusy = false,
     this.contentTopWidthFactor = 0.555,
     this.keyboardContentTop,
-    this.centerContentWhenKeyboardOpen = false,
     this.childGap = 20,
     this.contentBottom = 36,
   });
@@ -39,14 +38,11 @@ class MaOnboardingScaffold extends StatelessWidget {
   final bool isBusy;
   final double contentTopWidthFactor;
   final double? keyboardContentTop;
-  final bool centerContentWhenKeyboardOpen;
   final double childGap;
   final double contentBottom;
 
   @override
   Widget build(BuildContext context) {
-    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -68,28 +64,16 @@ class MaOnboardingScaffold extends StatelessWidget {
                 builder: (context, constraints) {
                   final media = MediaQuery.of(context);
                   final width = constraints.maxWidth;
+                  final keyboardOpen = media.viewInsets.bottom > 0;
 
-                  final centerKeyboardContent =
-                      keyboardOpen && centerContentWhenKeyboardOpen;
-                  final contentTop = centerKeyboardContent
-                      ? 18.0
-                      : keyboardOpen && keyboardContentTop != null
+                  final contentTop =
+                      keyboardOpen && keyboardContentTop != null
                       ? math.max(18.0, keyboardContentTop!)
                       : math.max(
                           18.0,
                           (width * contentTopWidthFactor) - media.padding.top,
                         );
-                  final resolvedContentBottom = keyboardOpen
-                      ? 28.0
-                      : contentBottom;
-                  final minimumContentHeight = centerKeyboardContent
-                      ? math.max(
-                          0.0,
-                          constraints.maxHeight -
-                              contentTop -
-                              resolvedContentBottom,
-                        )
-                      : 0.0;
+                  final resolvedContentBottom = math.max(20.0, contentBottom);
 
                   final footerHorizontal = (width * 0.116)
                       .clamp(24.0, 50.0)
@@ -112,49 +96,38 @@ class MaOnboardingScaffold extends StatelessWidget {
                             20,
                             resolvedContentBottom,
                           ),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: minimumContentHeight,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: centerKeyboardContent
-                                  ? MainAxisAlignment.center
-                                  : MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                heading,
+                                key: const Key('maker_step_heading'),
+                                style: AppTextStyles.onboardingHeading,
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                subtitle,
+                                key: const Key('maker_step_subtitle'),
+                                style: AppTextStyles.onboardingHelper,
+                              ),
+                              SizedBox(height: childGap),
+                              child,
+                              if (validationMessage != null) ...[
+                                const SizedBox(height: 10),
                                 Text(
-                                  heading,
-                                  key: const Key('maker_step_heading'),
-                                  style: AppTextStyles.onboardingHeading,
+                                  validationMessage!,
+                                  key: const Key('maker_validation_message'),
+                                  style: AppTextStyles.error,
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  subtitle,
-                                  key: const Key('maker_step_subtitle'),
-                                  style: AppTextStyles.onboardingHelper,
-                                ),
-                                SizedBox(height: childGap),
-                                child,
-                                if (validationMessage != null) ...[
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    validationMessage!,
-                                    key: const Key('maker_validation_message'),
-                                    style: AppTextStyles.error,
-                                  ),
-                                ],
                               ],
-                            ),
+                            ],
                           ),
                         ),
                       ),
                       Padding(
                         key: const Key('maker_onboarding_footer'),
-                        padding: EdgeInsets.fromLTRB(
-                          footerHorizontal,
-                          0,
-                          footerHorizontal,
-                          keyboardOpen ? 12 : 0,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: footerHorizontal,
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -172,17 +145,15 @@ class MaOnboardingScaffold extends StatelessWidget {
                               onPressed: isBusy ? null : onBack,
                               filled: false,
                             ),
-                            if (!keyboardOpen) ...[
-                              const SizedBox(height: 30),
-                              MaStepDots(
-                                currentStep: currentStep,
-                                totalSteps: totalSteps,
-                              ),
-                              SizedBox(
-                                key: const Key('maker_dots_bottom_gap'),
-                                height: dotsBottomGap,
-                              ),
-                            ],
+                            const SizedBox(height: 30),
+                            MaStepDots(
+                              currentStep: currentStep,
+                              totalSteps: totalSteps,
+                            ),
+                            SizedBox(
+                              key: const Key('maker_dots_bottom_gap'),
+                              height: dotsBottomGap,
+                            ),
                           ],
                         ),
                       ),
