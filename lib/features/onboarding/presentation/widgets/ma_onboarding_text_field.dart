@@ -14,6 +14,7 @@ class MaOnboardingTextField extends StatelessWidget {
     this.minLines,
     this.onChanged,
     this.autofillHints,
+    this.errorText,
   });
 
   final TextEditingController controller;
@@ -24,6 +25,7 @@ class MaOnboardingTextField extends StatelessWidget {
   final int? minLines;
   final ValueChanged<String>? onChanged;
   final Iterable<String>? autofillHints;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,8 @@ class MaOnboardingTextField extends StatelessWidget {
         fillColor: AppColors.inputFill,
         hintText: hintText,
         hintStyle: AppTextStyles.fieldHint,
+        errorText: errorText,
+        errorStyle: AppTextStyles.error,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20,
           vertical: maxLines > 1 ? 16 : 14,
@@ -58,6 +62,14 @@ class MaOnboardingTextField extends StatelessWidget {
         focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: AppColors.primary, width: 1.4),
+        ),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
+        ),
+        focusedErrorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: AppColors.error, width: 1.4),
         ),
       ),
     );

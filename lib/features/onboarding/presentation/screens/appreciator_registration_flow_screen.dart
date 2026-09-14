@@ -10,6 +10,7 @@ import '../../../auth/data/experience_switch_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../../application/appreciator_registration_controller.dart';
 import '../../data/appreciator_onboarding_repository.dart';
+import '../../domain/onboarding_validators.dart';
 import '../widgets/ma_onboarding_scaffold.dart';
 import '../widgets/ma_onboarding_text_field.dart';
 
@@ -42,6 +43,7 @@ class _AppreciatorRegistrationFlowScreenState
 
   late int _step;
   String? _validationMessage;
+  final Map<String, String> _fieldErrors = <String, String>{};
   bool _isSubmitting = false;
   bool _isSwitchingExperience = false;
   bool _submissionCompleted = false;
@@ -72,6 +74,7 @@ class _AppreciatorRegistrationFlowScreenState
     setState(() {
       _step = step;
       _validationMessage = null;
+      _fieldErrors.clear();
       _submissionCompleted = false;
     });
   }
@@ -91,34 +94,103 @@ class _AppreciatorRegistrationFlowScreenState
 
   bool _validateCurrentStep() {
     final draft = ref.read(appreciatorRegistrationProvider);
-    String? message;
+    final errors = <String, String>{};
 
     switch (_step) {
       case 0:
-        if (draft.name.trim().isEmpty) {
-          message = 'Please enter your name.';
-        }
+        _addError(
+          errors,
+          'name',
+          OnboardingValidators.appreciatorName(draft.name),
+        );
         break;
       case 1:
-        if (draft.location.trim().isEmpty) {
-          message = 'Please enter your city or ZIP code.';
-        }
+        _addError(
+          errors,
+          'location',
+          OnboardingValidators.location(draft.location),
+        );
         break;
       case 2:
-        final email = draft.email.trim();
-        final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
-        if (email.isEmpty || !emailPattern.hasMatch(email)) {
-          message = 'Please enter a valid email address.';
-        }
+        _addError(errors, 'email', OnboardingValidators.email(draft.email));
         break;
     }
 
     setState(() {
-      _validationMessage = message;
+      _fieldErrors
+        ..clear()
+        ..addAll(errors);
+      _validationMessage = errors.isEmpty
+          ? null
+          : 'Please check the highlighted information.';
     });
 
-    return message == null;
+    return errors.isEmpty;
+  }
+
+  static void _addError(
+    Map<String, String> errors,
+    String field,
+    String? message,
+  ) {
+    if (message != null) {
+      errors[field] = message;
+    }
+  }
+
+  void _clearFieldError(String field) {
+    if (!_fieldErrors.containsKey(field) && _validationMessage == null) {
+      return;
+    }
+
+    setState(() {
+      _fieldErrors.remove(field);
+      if (_fieldErrors.isEmpty) {
+        _validationMessage = null;
+      }
+      _submissionCompleted = false;
+    });
+  }
+
+  bool _applyApiValidation(ApiException error) {
+    if (error.fieldErrors.isEmpty) {
+      return false;
+    }
+
+    const fieldMap = <String, ({int step, String field})>{
+      'name': (step: 0, field: 'name'),
+      'location_text': (step: 1, field: 'location'),
+      'location_id': (step: 1, field: 'location'),
+      'email': (step: 2, field: 'email'),
+    };
+
+    final mapped = <String, String>{};
+    int? targetStep;
+
+    for (final entry in error.fieldErrors.entries) {
+      final mapping = fieldMap[entry.key];
+      if (mapping == null || entry.value.isEmpty) {
+        continue;
+      }
+
+      mapped[mapping.field] = entry.value.first;
+      targetStep ??= mapping.step;
+    }
+
+    if (mapped.isEmpty || targetStep == null) {
+      return false;
+    }
+
+    setState(() {
+      _step = targetStep!;
+      _fieldErrors
+        ..clear()
+        ..addAll(mapped);
+      _validationMessage = 'Please check the highlighted information.';
+      _submissionCompleted = false;
+    });
+
+    return true;
   }
 
   void _next() {
@@ -211,9 +283,11 @@ class _AppreciatorRegistrationFlowScreenState
         return;
       }
 
-      setState(() {
-        _validationMessage = error.message;
-      });
+      if (!_applyApiValidation(error)) {
+        setState(() {
+          _validationMessage = error.message;
+        });
+      }
     } catch (_) {
       if (!mounted) {
         return;
@@ -262,9 +336,11 @@ class _AppreciatorRegistrationFlowScreenState
             hintText: 'Your name',
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.name],
-            onChanged: ref
-                .read(appreciatorRegistrationProvider.notifier)
-                .setName,
+            errorText: _fieldErrors['name'],
+            onChanged: (value) {
+              ref.read(appreciatorRegistrationProvider.notifier).setName(value);
+              _clearFieldError('name');
+            },
           ),
         );
 
@@ -282,9 +358,13 @@ class _AppreciatorRegistrationFlowScreenState
             controller: _locationController,
             hintText: 'City/Zip Code',
             textInputAction: TextInputAction.next,
-            onChanged: ref
-                .read(appreciatorRegistrationProvider.notifier)
-                .setLocation,
+            errorText: _fieldErrors['location'],
+            onChanged: (value) {
+              ref
+                  .read(appreciatorRegistrationProvider.notifier)
+                  .setLocation(value);
+              _clearFieldError('location');
+            },
           ),
         );
 
@@ -308,9 +388,13 @@ class _AppreciatorRegistrationFlowScreenState
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.email],
-                onChanged: ref
-                    .read(appreciatorRegistrationProvider.notifier)
-                    .setEmail,
+                errorText: _fieldErrors['email'],
+                onChanged: (value) {
+                  ref
+                      .read(appreciatorRegistrationProvider.notifier)
+                      .setEmail(value);
+                  _clearFieldError('email');
+                },
               ),
               const SizedBox(height: 8),
               TextButton(

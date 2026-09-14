@@ -86,6 +86,97 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Maker text validation is field-level and blocks invalid input', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    container.read(makerRegistrationProvider.notifier).setName('A' * 121);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          home: MakerRegistrationFlowScreen(onExit: () {}),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pump();
+
+    expect(find.textContaining('120 characters'), findsOneWidget);
+    expect(find.text('Where are you based?'), findsNothing);
+
+    await tester.enterText(
+      find.byKey(const Key('maker_name_field')),
+      'MA Studio',
+    );
+    await tester.pump();
+
+    expect(find.textContaining('120 characters'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Maker website is optional but must be valid when supplied', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    container
+        .read(makerRegistrationProvider.notifier)
+        .setWebsite('not a website');
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          home: MakerRegistrationFlowScreen(
+            initialStep: 4,
+            onExit: () {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pump();
+
+    expect(find.text('Please enter a valid website address.'), findsOneWidget);
+    expect(find.text('Email Address'), findsNothing);
+
+    await tester.enterText(
+      find.byKey(const Key('maker_website_field')),
+      'artist.com',
+    );
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Email Address'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Maker Type and Style show independent validation errors', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app(initialStep: 3));
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pump();
+
+    expect(find.byKey(const Key('maker_type_error')), findsOneWidget);
+    expect(find.byKey(const Key('maker_style_error')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('maker_type_Painting')));
+    await tester.pump();
+
+    expect(find.byKey(const Key('maker_type_error')), findsNothing);
+    expect(find.byKey(const Key('maker_style_error')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Back from first maker step exits to role selection', (
     tester,
   ) async {

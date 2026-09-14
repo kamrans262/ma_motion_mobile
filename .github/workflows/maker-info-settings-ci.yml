@@ -99,6 +99,9 @@ jobs:
       - name: Prior Auth regression
         run: flutter test test/features/auth/maker_entry_repository_test.dart
 
+      - name: Onboarding validation unit tests
+        run: flutter test test/features/onboarding/onboarding_validators_test.dart
+
       - name: Prior Onboarding regression
         run: flutter test test/features/onboarding/maker_registration_backend_submission_test.dart
 

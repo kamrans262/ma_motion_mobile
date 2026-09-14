@@ -88,6 +88,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'Appreciator validation enforces name length and clears field error on edit',
+    (tester) async {
+      await tester.pumpWidget(app());
+
+      await tester.enterText(
+        find.byKey(const Key('appreciator_name_field')),
+        'A' * 121,
+      );
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pump();
+
+      expect(find.textContaining('120 characters'), findsOneWidget);
+      expect(find.text('Where are you based?'), findsNothing);
+
+      await tester.enterText(
+        find.byKey(const Key('appreciator_name_field')),
+        'Art Lover',
+      );
+      await tester.pump();
+
+      expect(find.textContaining('120 characters'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Appreciator email validation blocks malformed email', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app(initialStep: 2));
+
+    await tester.enterText(
+      find.byKey(const Key('appreciator_email_field')),
+      'invalid-email',
+    );
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pump();
+
+    expect(find.text('Please enter a valid email address.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Back from first Appreciator step returns to role selection', (
     tester,
   ) async {

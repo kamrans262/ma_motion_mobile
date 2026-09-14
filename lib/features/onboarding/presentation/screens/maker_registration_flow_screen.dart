@@ -11,6 +11,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../application/maker_registration_controller.dart';
 import '../../data/maker_onboarding_repository.dart';
 import '../../domain/maker_registration_options.dart';
+import '../../domain/onboarding_validators.dart';
 import '../widgets/ma_choice_chip.dart';
 import '../widgets/ma_onboarding_scaffold.dart';
 import '../widgets/ma_onboarding_text_field.dart';
@@ -46,6 +47,7 @@ class _MakerRegistrationFlowScreenState
 
   late int _step;
   String? _validationMessage;
+  final Map<String, String> _fieldErrors = <String, String>{};
   bool _isSubmitting = false;
   bool _submissionCompleted = false;
 
@@ -80,6 +82,7 @@ class _MakerRegistrationFlowScreenState
     setState(() {
       _step = step;
       _validationMessage = null;
+      _fieldErrors.clear();
       _submissionCompleted = false;
     });
   }
@@ -99,53 +102,141 @@ class _MakerRegistrationFlowScreenState
 
   bool _validateCurrentStep() {
     final draft = ref.read(makerRegistrationProvider);
-
-    String? message;
+    final errors = <String, String>{};
 
     switch (_step) {
       case 0:
-        if (draft.name.trim().isEmpty) {
-          message = 'Please enter your name or studio name.';
-        }
+        _addError(errors, 'name', OnboardingValidators.makerName(draft.name));
         break;
       case 1:
-        if (draft.location.trim().isEmpty) {
-          message = 'Please enter your city or ZIP code.';
-        }
+        _addError(
+          errors,
+          'location',
+          OnboardingValidators.location(draft.location),
+        );
         break;
       case 2:
-        if (draft.aboutWork.trim().isEmpty) {
-          message = 'Please tell us a little about your work.';
-        }
+        _addError(
+          errors,
+          'about',
+          OnboardingValidators.aboutWork(draft.aboutWork),
+        );
         break;
       case 3:
-        if (draft.types.isEmpty || draft.styles.isEmpty) {
-          message = 'Select at least one type and one style.';
-        }
+        _addError(
+          errors,
+          'types',
+          OnboardingValidators.makerTypes(draft.types),
+        );
+        _addError(
+          errors,
+          'styles',
+          OnboardingValidators.makerStyles(draft.styles),
+        );
         break;
       case 4:
-        message = null;
+        _addError(
+          errors,
+          'website',
+          OnboardingValidators.website(draft.website),
+        );
         break;
       case 5:
-        final email = draft.email.trim();
-        final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
-        if (email.isEmpty || !emailPattern.hasMatch(email)) {
-          message = 'Please enter a valid email address.';
-        }
+        _addError(errors, 'email', OnboardingValidators.email(draft.email));
         break;
       case 6:
-        if (draft.imageBytes == null || draft.imageBytes!.isEmpty) {
-          message = 'Please upload your salon image.';
-        }
+        _addError(
+          errors,
+          'image',
+          OnboardingValidators.salonImage(
+            bytes: draft.imageBytes,
+            fileName: draft.imageName,
+          ),
+        );
         break;
     }
 
     setState(() {
-      _validationMessage = message;
+      _fieldErrors
+        ..clear()
+        ..addAll(errors);
+      _validationMessage = errors.isEmpty
+          ? null
+          : 'Please check the highlighted information.';
     });
 
-    return message == null;
+    return errors.isEmpty;
+  }
+
+  static void _addError(
+    Map<String, String> errors,
+    String field,
+    String? message,
+  ) {
+    if (message != null) {
+      errors[field] = message;
+    }
+  }
+
+  void _clearFieldError(String field) {
+    if (!_fieldErrors.containsKey(field) && _validationMessage == null) {
+      return;
+    }
+
+    setState(() {
+      _fieldErrors.remove(field);
+      if (_fieldErrors.isEmpty) {
+        _validationMessage = null;
+      }
+      _submissionCompleted = false;
+    });
+  }
+
+  bool _applyApiValidation(ApiException error) {
+    if (error.fieldErrors.isEmpty) {
+      return false;
+    }
+
+    const fieldMap = <String, ({int step, String field})>{
+      'name': (step: 0, field: 'name'),
+      'location_text': (step: 1, field: 'location'),
+      'location_id': (step: 1, field: 'location'),
+      'bio': (step: 2, field: 'about'),
+      'type_ids': (step: 3, field: 'types'),
+      'style_ids': (step: 3, field: 'styles'),
+      'website_url': (step: 4, field: 'website'),
+      'email': (step: 5, field: 'email'),
+      'contact_email': (step: 5, field: 'email'),
+      'image': (step: 6, field: 'image'),
+    };
+
+    final mapped = <String, String>{};
+    int? targetStep;
+
+    for (final entry in error.fieldErrors.entries) {
+      final mapping = fieldMap[entry.key];
+      if (mapping == null || entry.value.isEmpty) {
+        continue;
+      }
+
+      mapped[mapping.field] = entry.value.first;
+      targetStep ??= mapping.step;
+    }
+
+    if (mapped.isEmpty || targetStep == null) {
+      return false;
+    }
+
+    setState(() {
+      _step = targetStep!;
+      _fieldErrors
+        ..clear()
+        ..addAll(mapped);
+      _validationMessage = 'Please check the highlighted information.';
+      _submissionCompleted = false;
+    });
+
+    return true;
   }
 
   void _next() {
@@ -195,9 +286,11 @@ class _MakerRegistrationFlowScreenState
         return;
       }
 
-      setState(() {
-        _validationMessage = error.message;
-      });
+      if (!_applyApiValidation(error)) {
+        setState(() {
+          _validationMessage = error.message;
+        });
+      }
     } catch (_) {
       if (!mounted) {
         return;
@@ -243,6 +336,7 @@ class _MakerRegistrationFlowScreenState
         );
 
     setState(() {
+      _fieldErrors.remove('image');
       _validationMessage = null;
       _submissionCompleted = false;
     });
@@ -278,7 +372,11 @@ class _MakerRegistrationFlowScreenState
             hintText: 'Your name',
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.name],
-            onChanged: ref.read(makerRegistrationProvider.notifier).setName,
+            errorText: _fieldErrors['name'],
+            onChanged: (value) {
+              ref.read(makerRegistrationProvider.notifier).setName(value);
+              _clearFieldError('name');
+            },
           ),
         );
 
@@ -296,7 +394,11 @@ class _MakerRegistrationFlowScreenState
             controller: _locationController,
             hintText: 'City/Zip Code',
             textInputAction: TextInputAction.next,
-            onChanged: ref.read(makerRegistrationProvider.notifier).setLocation,
+            errorText: _fieldErrors['location'],
+            onChanged: (value) {
+              ref.read(makerRegistrationProvider.notifier).setLocation(value);
+              _clearFieldError('location');
+            },
           ),
         );
 
@@ -317,9 +419,11 @@ class _MakerRegistrationFlowScreenState
             maxLines: 6,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.newline,
-            onChanged: ref
-                .read(makerRegistrationProvider.notifier)
-                .setAboutWork,
+            errorText: _fieldErrors['about'],
+            onChanged: (value) {
+              ref.read(makerRegistrationProvider.notifier).setAboutWork(value);
+              _clearFieldError('about');
+            },
           ),
         );
 
@@ -327,6 +431,9 @@ class _MakerRegistrationFlowScreenState
         return _TypeStyleStep(
           currentStep: _step,
           validationMessage: _validationMessage,
+          typeError: _fieldErrors['types'],
+          styleError: _fieldErrors['styles'],
+          onSelectionChanged: _clearFieldError,
           onNext: _next,
           onBack: _back,
         );
@@ -347,7 +454,11 @@ class _MakerRegistrationFlowScreenState
             keyboardType: TextInputType.url,
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.url],
-            onChanged: ref.read(makerRegistrationProvider.notifier).setWebsite,
+            errorText: _fieldErrors['website'],
+            onChanged: (value) {
+              ref.read(makerRegistrationProvider.notifier).setWebsite(value);
+              _clearFieldError('website');
+            },
           ),
         );
 
@@ -367,7 +478,11 @@ class _MakerRegistrationFlowScreenState
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.email],
-            onChanged: ref.read(makerRegistrationProvider.notifier).setEmail,
+            errorText: _fieldErrors['email'],
+            onChanged: (value) {
+              ref.read(makerRegistrationProvider.notifier).setEmail(value);
+              _clearFieldError('email');
+            },
           ),
         );
 
@@ -387,9 +502,22 @@ class _MakerRegistrationFlowScreenState
           onBack: _back,
           validationMessage: _validationMessage,
           isBusy: _isSubmitting,
-          child: _SalonImagePicker(
-            imageBytes: imageBytes,
-            onTap: _isSubmitting ? () {} : _pickImage,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _SalonImagePicker(
+                imageBytes: imageBytes,
+                onTap: _isSubmitting ? () {} : _pickImage,
+              ),
+              if (_fieldErrors['image'] != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  _fieldErrors['image']!,
+                  key: const Key('maker_salon_image_error'),
+                  style: AppTextStyles.error,
+                ),
+              ],
+            ],
           ),
         );
 
@@ -403,12 +531,18 @@ class _TypeStyleStep extends ConsumerWidget {
   const _TypeStyleStep({
     required this.currentStep,
     required this.validationMessage,
+    required this.typeError,
+    required this.styleError,
+    required this.onSelectionChanged,
     required this.onNext,
     required this.onBack,
   });
 
   final int currentStep;
   final String? validationMessage;
+  final String? typeError;
+  final String? styleError;
+  final ValueChanged<String> onSelectionChanged;
   final VoidCallback onNext;
   final VoidCallback onBack;
 
@@ -448,10 +582,21 @@ class _TypeStyleStep extends ConsumerWidget {
                   key: Key('maker_type_$type'),
                   label: type,
                   selected: draft.types.contains(type),
-                  onTap: () => controller.toggleType(type),
+                  onTap: () {
+                    controller.toggleType(type);
+                    onSelectionChanged('types');
+                  },
                 ),
             ],
           ),
+          if (typeError != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              typeError!,
+              key: const Key('maker_type_error'),
+              style: AppTextStyles.error,
+            ),
+          ],
           const SizedBox(height: 22),
           Text(
             'Style',
@@ -470,10 +615,21 @@ class _TypeStyleStep extends ConsumerWidget {
                   key: Key('maker_style_$style'),
                   label: style,
                   selected: draft.styles.contains(style),
-                  onTap: () => controller.toggleStyle(style),
+                  onTap: () {
+                    controller.toggleStyle(style);
+                    onSelectionChanged('styles');
+                  },
                 ),
             ],
           ),
+          if (styleError != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              styleError!,
+              key: const Key('maker_style_error'),
+              style: AppTextStyles.error,
+            ),
+          ],
         ],
       ),
     );
