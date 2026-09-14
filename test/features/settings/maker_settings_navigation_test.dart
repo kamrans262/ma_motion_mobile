@@ -39,10 +39,7 @@ void main() {
       final settings = find.byKey(const Key('maker_nav_settings'));
       expect(settings, findsOneWidget);
       expect(settings.hitTestable(), findsOneWidget);
-      expect(
-        find.bySemanticsLabel('Appreciator settings'),
-        findsOneWidget,
-      );
+      expect(find.bySemanticsLabel('Appreciator settings'), findsOneWidget);
 
       await tester.tap(settings.hitTestable());
       await tester.pump();
