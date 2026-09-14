@@ -172,7 +172,9 @@ void main() {
 
       const keyboardInset = 320.0;
 
-      await tester.pumpWidget(app(initialStep: 2, keyboardInset: keyboardInset));
+      await tester.pumpWidget(
+        app(initialStep: 2, keyboardInset: keyboardInset),
+      );
       await tester.pump();
 
       expect(find.text('Tell us about your work'), findsOneWidget);
