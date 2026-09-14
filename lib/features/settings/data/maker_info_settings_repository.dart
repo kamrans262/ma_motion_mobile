@@ -32,6 +32,21 @@ abstract interface class MakerInfoSettingsRepositoryContract {
 
   Future<void> deleteCarouselSlot(int slot);
 
+  Future<MakerInfoArtworkSlot> saveArtworkSlot({
+    required int slot,
+    required MakerSettingsArtwork? existingArtwork,
+    required String title,
+    required String description,
+    required int? typeId,
+    required int? styleId,
+    required int? locationId,
+    required String locationText,
+    Uint8List? bytes,
+    String? fileName,
+  });
+
+  Future<void> deleteArtworkSlot(int slot);
+
   Future<void> logout();
 }
 
@@ -75,7 +90,12 @@ class MakerInfoSettingsRepository
 
     final carousel = _mapList(profile['carousel_content'])
         .map(MakerCarouselItem.fromMap)
-        .where((item) => item.slot >= 1 && item.slot <= 3)
+        .where((item) => item.slot == 1)
+        .toList(growable: false);
+
+    final artworkSlots = _mapList(profile['artwork_slots'])
+        .map(MakerInfoArtworkSlot.fromMap)
+        .where((item) => item.slot >= 2 && item.slot <= 4)
         .toList(growable: false);
 
     return MakerInfoSettingsData(
@@ -95,6 +115,7 @@ class MakerInfoSettingsRepository
       selectedTypeIds: selectedTypeIds,
       selectedStyleIds: selectedStyleIds,
       carousel: carousel,
+      artworkSlots: artworkSlots,
       savedCount: _asInt(statistics['profile_saved_count']) ?? 0,
       availableTypes: availableTypes,
       availableStyles: availableStyles,
@@ -128,6 +149,10 @@ class MakerInfoSettingsRepository
     Uint8List? bytes,
     String? fileName,
   }) async {
+    if (slot != 1) {
+      throw ArgumentError.value(slot, 'slot', 'Only Content 1 is profile media.');
+    }
+
     final formData = FormData();
 
     formData.fields.add(
@@ -153,7 +178,132 @@ class MakerInfoSettingsRepository
 
   @override
   Future<void> deleteCarouselSlot(int slot) async {
+    if (slot != 1) {
+      throw ArgumentError.value(slot, 'slot', 'Only Content 1 is profile media.');
+    }
+
     await api.delete('${ApiPaths.makerProfile}/carousel/$slot');
+  }
+
+  @override
+  Future<MakerInfoArtworkSlot> saveArtworkSlot({
+    required int slot,
+    required MakerSettingsArtwork? existingArtwork,
+    required String title,
+    required String description,
+    required int? typeId,
+    required int? styleId,
+    required int? locationId,
+    required String locationText,
+    Uint8List? bytes,
+    String? fileName,
+  }) async {
+    if (slot < 2 || slot > 4) {
+      throw ArgumentError.value(slot, 'slot', 'Artwork slots are Content 2-4.');
+    }
+
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isEmpty) {
+      throw ArgumentError.value(title, 'title', 'Artwork title is required.');
+    }
+
+    final metadata = <String, dynamic>{
+      'title': trimmedTitle,
+      'description': _emptyToNull(description),
+      'artwork_type_id': typeId,
+      'artwork_style_id': styleId,
+      'location_id': locationId,
+      'location_text': _emptyToNull(locationText),
+    };
+
+    MakerSettingsArtwork artwork;
+
+    if (existingArtwork == null) {
+      if (bytes == null || bytes.isEmpty || fileName == null) {
+        throw ArgumentError('A new artwork requires an image.');
+      }
+
+      final formData = FormData.fromMap(<String, dynamic>{
+        ...metadata,
+        'media': <MultipartFile>[
+          MultipartFile.fromBytes(bytes, filename: fileName),
+        ],
+      });
+
+      final response = await api.post(ApiPaths.myArtworks, data: formData);
+      artwork = MakerSettingsArtwork.fromMap(
+        ApiEnvelope(raw: response).dataMap,
+      );
+    } else {
+      final response = await api.patch(
+        '${ApiPaths.myArtworks}/${existingArtwork.id}',
+        data: metadata,
+      );
+      artwork = MakerSettingsArtwork.fromMap(
+        ApiEnvelope(raw: response).dataMap,
+      );
+
+      if (bytes != null && bytes.isNotEmpty && fileName != null) {
+        final oldMediaIds = existingArtwork.media.map((item) => item.id).toSet();
+        final oldPrimaryId = existingArtwork.primaryMedia?.id;
+        final mediaData = FormData.fromMap(<String, dynamic>{
+          'media': <MultipartFile>[
+            MultipartFile.fromBytes(bytes, filename: fileName),
+          ],
+        });
+
+        final mediaResponse = await api.post(
+          '${ApiPaths.myArtworks}/${existingArtwork.id}/media',
+          data: mediaData,
+        );
+        final withMedia = MakerSettingsArtwork.fromMap(
+          ApiEnvelope(raw: mediaResponse).dataMap,
+        );
+
+        MakerSettingsArtworkMedia? newMedia;
+        for (final item in withMedia.media) {
+          if (!oldMediaIds.contains(item.id)) {
+            newMedia = item;
+            break;
+          }
+        }
+
+        if (newMedia != null) {
+          final primaryResponse = await api.patch(
+            '${ApiPaths.myArtworks}/${existingArtwork.id}/media/${newMedia.id}/primary',
+          );
+          artwork = MakerSettingsArtwork.fromMap(
+            ApiEnvelope(raw: primaryResponse).dataMap,
+          );
+
+          if (oldPrimaryId != null && oldPrimaryId != newMedia.id) {
+            await api.delete(
+              '${ApiPaths.myArtworks}/${existingArtwork.id}/media/$oldPrimaryId',
+            );
+          }
+        } else {
+          artwork = withMedia;
+        }
+      }
+    }
+
+    final assignmentResponse = await api.put(
+      '${ApiPaths.makerProfile}/artwork-slots/$slot',
+      data: <String, dynamic>{'artwork_id': artwork.id},
+    );
+
+    return MakerInfoArtworkSlot.fromMap(
+      ApiEnvelope(raw: assignmentResponse).dataMap,
+    );
+  }
+
+  @override
+  Future<void> deleteArtworkSlot(int slot) async {
+    if (slot < 2 || slot > 4) {
+      throw ArgumentError.value(slot, 'slot', 'Artwork slots are Content 2-4.');
+    }
+
+    await api.delete('${ApiPaths.makerProfile}/artwork-slots/$slot');
   }
 
   @override

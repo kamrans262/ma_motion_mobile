@@ -112,12 +112,12 @@ void main() {
     expect(settingsList, findsOneWidget);
 
     await tester.dragUntilVisible(
-      find.byKey(const Key('maker_settings_carousel_3')),
+      find.byKey(const Key('maker_settings_carousel_4')),
       settingsList,
       const Offset(0, -300),
     );
 
-    expect(find.byKey(const Key('maker_settings_carousel_3')), findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_carousel_4')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -217,6 +217,8 @@ void main() {
       expect(repository.saveCalls, 1);
       expect(repository.saveCarouselCalls, 0);
       expect(repository.deleteCarouselCalls, 0);
+      expect(repository.saveArtworkCalls, 0);
+      expect(repository.deleteArtworkCalls, 0);
       expect(repository.closeCalls, 1);
       expect(tester.takeException(), isNull);
     },
@@ -256,6 +258,8 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int logoutCalls = 0;
   int saveCarouselCalls = 0;
   int deleteCarouselCalls = 0;
+  int saveArtworkCalls = 0;
+  int deleteArtworkCalls = 0;
   MakerInfoSettingsDraft? lastDraft;
 
   @override
@@ -274,6 +278,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
       selectedTypeIds: <int>{1},
       selectedStyleIds: <int>{2},
       carousel: <MakerCarouselItem>[],
+      artworkSlots: <MakerInfoArtworkSlot>[],
       savedCount: 37,
       availableTypes: <MakerSettingsTaxonomyOption>[
         MakerSettingsTaxonomyOption(id: 1, name: 'Painting', slug: 'painting'),
@@ -309,6 +314,42 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   @override
   Future<void> deleteCarouselSlot(int slot) async {
     deleteCarouselCalls++;
+  }
+
+  @override
+  Future<MakerInfoArtworkSlot> saveArtworkSlot({
+    required int slot,
+    required MakerSettingsArtwork? existingArtwork,
+    required String title,
+    required String description,
+    required int? typeId,
+    required int? styleId,
+    required int? locationId,
+    required String locationText,
+    Uint8List? bytes,
+    String? fileName,
+  }) async {
+    saveArtworkCalls++;
+    return MakerInfoArtworkSlot(
+      slot: slot,
+      artwork: MakerSettingsArtwork(
+        id: existingArtwork?.id ?? 100 + slot,
+        title: title,
+        description: description,
+        typeId: typeId,
+        styleId: styleId,
+        locationId: locationId,
+        locationText: locationText,
+        moderationStatus: 'pending',
+        isVisible: true,
+        media: const <MakerSettingsArtworkMedia>[],
+      ),
+    );
+  }
+
+  @override
+  Future<void> deleteArtworkSlot(int slot) async {
+    deleteArtworkCalls++;
   }
 
   @override

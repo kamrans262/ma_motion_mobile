@@ -171,13 +171,32 @@ void main() {
     );
     expect(searchField.decoration?.enabledBorder, isA<UnderlineInputBorder>());
 
-    final searchIconCenter = tester.getCenter(
-      find.byKey(const Key('discovery_search_svg')),
+    expect(
+      find.byKey(const Key('discovery_search_close_icon')),
+      findsOneWidget,
     );
-    final filterIconCenter = tester.getCenter(
-      find.byKey(const Key('discovery_filter_svg')),
+    expect(find.byKey(const Key('discovery_search_svg')), findsNothing);
+
+    final closeRect = tester.getRect(
+      find.byKey(const Key('discovery_search_close_icon')),
     );
-    expect(searchIconCenter.dy, closeTo(filterIconCenter.dy, 0.5));
+    final fieldRect = tester.getRect(
+      find.byKey(const Key('discovery_inline_search')),
+    );
+    expect(fieldRect.left - closeRect.right, closeTo(2, 0.5));
+
+    await tester.tap(
+      find.byKey(const Key('discovery_search_button')).hitTestable(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('discovery_inline_search')), findsNothing);
+    expect(find.byKey(const Key('discovery_search_svg')), findsOneWidget);
+    expect(
+      find.byKey(const Key('discovery_search_close_icon')),
+      findsNothing,
+    );
+    expect(repository.lastQuery?.search, '');
 
     expect(
       find.byKey(const Key('maker_artwork_discovery_grid')),

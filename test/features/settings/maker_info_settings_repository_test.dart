@@ -10,7 +10,7 @@ import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repo
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 
 void main() {
-  test('loads private profile, statistics and live taxonomy', () async {
+  test('loads private profile, statistics, taxonomy and artwork slots', () async {
     final api = _FakeApiGateway();
     final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
     final repository = MakerInfoSettingsRepository(api: api, auth: auth);
@@ -28,6 +28,8 @@ void main() {
     expect(data.showEmail, isFalse);
     expect(data.showShows, isTrue);
     expect(data.carousel.single.slot, 1);
+    expect(data.artworkSlots.single.slot, 2);
+    expect(data.artworkSlots.single.artwork.title, 'Real Artwork');
   });
 
   test(
@@ -62,28 +64,55 @@ void main() {
     },
   );
 
-  test('uploads carousel slot using multipart data', () async {
+  test('uploads salon media only through profile content endpoint', () async {
     final api = _FakeApiGateway();
     final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
     final repository = MakerInfoSettingsRepository(api: api, auth: auth);
 
     final item = await repository.saveCarouselSlot(
-      slot: 2,
-      caption: 'Detail view',
+      slot: 1,
+      caption: 'Salon view',
       bytes: Uint8List.fromList(<int>[1, 2, 3]),
-      fileName: 'detail.jpg',
+      fileName: 'salon.jpg',
     );
 
-    expect(api.lastPostPath, '${ApiPaths.makerProfile}/carousel/2');
+    expect(api.lastPostPath, '${ApiPaths.makerProfile}/carousel/1');
     expect(api.lastPostData, isA<FormData>());
-    final formData = api.lastPostData! as FormData;
-    expect(formData.fields.single.value, 'Detail view');
-    expect(formData.files.single.value.filename, 'detail.jpg');
-    expect(item.slot, 2);
-    expect(item.caption, 'Detail view');
+    expect(item.slot, 1);
+    expect(item.caption, 'Salon view');
 
-    await repository.deleteCarouselSlot(2);
-    expect(api.lastDeletePath, '${ApiPaths.makerProfile}/carousel/2');
+    await repository.deleteCarouselSlot(1);
+    expect(api.lastDeletePath, '${ApiPaths.makerProfile}/carousel/1');
+  });
+
+  test('creates a real artwork and assigns it to Content 2', () async {
+    final api = _FakeApiGateway();
+    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
+
+    final slot = await repository.saveArtworkSlot(
+      slot: 2,
+      existingArtwork: null,
+      title: 'New Grid Artwork',
+      description: 'Shown in Maker Info and artwork management.',
+      typeId: 1,
+      styleId: 2,
+      locationId: 3,
+      locationText: 'Chicago, IL',
+      bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+      fileName: 'artwork.jpg',
+    );
+
+    expect(api.lastPostPath, ApiPaths.myArtworks);
+    expect(api.lastPostData, isA<FormData>());
+    expect(api.lastPutPath, '${ApiPaths.makerProfile}/artwork-slots/2');
+    expect(api.lastPutData?['artwork_id'], 20);
+    expect(slot.slot, 2);
+    expect(slot.artwork.id, 20);
+    expect(slot.artwork.title, 'New Grid Artwork');
+
+    await repository.deleteArtworkSlot(2);
+    expect(api.lastDeletePath, '${ApiPaths.makerProfile}/artwork-slots/2');
   });
 }
 
@@ -109,7 +138,33 @@ class _FakeApiGateway implements ApiGateway {
   Map<String, dynamic>? lastPatchData;
   String? lastPostPath;
   Object? lastPostData;
+  String? lastPutPath;
+  Map<String, dynamic>? lastPutData;
   String? lastDeletePath;
+
+  Map<String, dynamic> get _artwork => <String, dynamic>{
+    'id': 20,
+    'maker': <String, dynamic>{'id': 1, 'name': 'Artist Ken'},
+    'title': 'New Grid Artwork',
+    'description': 'Shown in Maker Info and artwork management.',
+    'type': <String, dynamic>{'id': 1, 'name': 'Painting', 'slug': 'painting'},
+    'style': <String, dynamic>{
+      'id': 2,
+      'name': 'Contemporary',
+      'slug': 'contemporary',
+    },
+    'location': <String, dynamic>{'id': 3, 'label': 'Chicago, IL'},
+    'location_text': 'Chicago, IL',
+    'moderation_status': 'pending',
+    'is_visible': true,
+    'media': <dynamic>[
+      <String, dynamic>{
+        'id': 30,
+        'url': 'https://example.test/art.jpg',
+        'is_primary': true,
+      },
+    ],
+  };
 
   @override
   Future<Map<String, dynamic>> get(
@@ -149,6 +204,15 @@ class _FakeApiGateway implements ApiGateway {
               'kind': 'image',
               'url': '',
               'caption': 'Salon photo',
+            },
+          ],
+          'artwork_slots': <dynamic>[
+            <String, dynamic>{
+              'slot': 2,
+              'artwork': <String, dynamic>{
+                ..._artwork,
+                'title': 'Real Artwork',
+              },
             },
           ],
         },
@@ -196,7 +260,7 @@ class _FakeApiGateway implements ApiGateway {
       lastPatchData = Map<String, dynamic>.from(data);
     }
 
-    return <String, dynamic>{'success': true, 'data': <String, dynamic>{}};
+    return <String, dynamic>{'success': true, 'data': _artwork};
   }
 
   @override
@@ -209,14 +273,18 @@ class _FakeApiGateway implements ApiGateway {
     lastPostPath = path;
     lastPostData = data;
 
+    if (path == ApiPaths.myArtworks) {
+      return <String, dynamic>{'success': true, 'data': _artwork};
+    }
+
     return <String, dynamic>{
       'success': true,
       'data': <String, dynamic>{
-        'id': 20,
-        'slot': 2,
+        'id': 10,
+        'slot': 1,
         'kind': 'image',
         'url': '',
-        'caption': 'Detail view',
+        'caption': 'Salon view',
       },
     };
   }
@@ -227,8 +295,16 @@ class _FakeApiGateway implements ApiGateway {
     Object? data,
     Map<String, dynamic>? queryParameters,
     bool requiresAuth = true,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    lastPutPath = path;
+    if (data is Map) {
+      lastPutData = Map<String, dynamic>.from(data);
+    }
+
+    return <String, dynamic>{
+      'success': true,
+      'data': <String, dynamic>{'slot': 2, 'artwork': _artwork},
+    };
   }
 
   @override
@@ -239,7 +315,6 @@ class _FakeApiGateway implements ApiGateway {
     bool requiresAuth = true,
   }) async {
     lastDeletePath = path;
-
     return <String, dynamic>{'success': true, 'data': null};
   }
 }

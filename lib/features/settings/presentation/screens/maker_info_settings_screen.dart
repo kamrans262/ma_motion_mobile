@@ -44,6 +44,13 @@ class _MakerInfoSettingsScreenState
         1: TextEditingController(),
         2: TextEditingController(),
         3: TextEditingController(),
+        4: TextEditingController(),
+      };
+  final Map<int, TextEditingController> _artworkTitleControllers =
+      <int, TextEditingController>{
+        2: TextEditingController(),
+        3: TextEditingController(),
+        4: TextEditingController(),
       };
 
   MakerInfoSettingsData? _data;
@@ -83,6 +90,9 @@ class _MakerInfoSettingsScreenState
     for (final controller in _captionControllers.values) {
       controller.dispose();
     }
+    for (final controller in _artworkTitleControllers.values) {
+      controller.dispose();
+    }
 
     super.dispose();
   }
@@ -117,9 +127,13 @@ class _MakerInfoSettingsScreenState
       _showEmail = data.showEmail;
       _showShows = data.showShows;
 
-      for (var slot = 1; slot <= 3; slot++) {
-        final item = _existingItem(data, slot);
-        _captionControllers[slot]!.text = item?.caption ?? '';
+      final salon = _existingItem(data, 1);
+      _captionControllers[1]!.text = salon?.caption ?? '';
+
+      for (var slot = 2; slot <= 4; slot++) {
+        final artwork = _existingArtworkSlot(data, slot)?.artwork;
+        _artworkTitleControllers[slot]!.text = artwork?.title ?? '';
+        _captionControllers[slot]!.text = artwork?.description ?? '';
       }
 
       setState(() {
@@ -159,6 +173,20 @@ class _MakerInfoSettingsScreenState
       return;
     }
 
+    for (var slot = 2; slot <= 4; slot++) {
+      final existing = _existingArtworkSlot(_data, slot)?.artwork;
+      final pending = _pendingMedia[slot];
+
+      if ((existing != null || pending != null) &&
+          !_deletedSlots.contains(slot) &&
+          _artworkTitleControllers[slot]!.text.trim().isEmpty) {
+        setState(() {
+          _errorMessage = 'Please enter a title for Content $slot artwork.';
+        });
+        return;
+      }
+    }
+
     setState(() {
       _saving = true;
       _errorMessage = null;
@@ -185,25 +213,65 @@ class _MakerInfoSettingsScreenState
         ),
       );
 
-      for (var slot = 1; slot <= 3; slot++) {
-        if (_deletedSlots.contains(slot)) {
-          await repository.deleteCarouselSlot(slot);
-          continue;
-        }
-
-        final pending = _pendingMedia[slot];
-        final existing = _existingItem(_data, slot);
-        final caption = _captionControllers[slot]!.text.trim();
+      if (_deletedSlots.contains(1)) {
+        await repository.deleteCarouselSlot(1);
+      } else {
+        final pending = _pendingMedia[1];
+        final existing = _existingItem(_data, 1);
+        final caption = _captionControllers[1]!.text.trim();
         final captionChanged = caption != (existing?.caption ?? '');
 
         if (pending != null || (existing != null && captionChanged)) {
           await repository.saveCarouselSlot(
-            slot: slot,
+            slot: 1,
             caption: caption,
             bytes: pending?.bytes,
             fileName: pending?.name,
           );
         }
+      }
+
+      for (var slot = 2; slot <= 4; slot++) {
+        if (_deletedSlots.contains(slot)) {
+          await repository.deleteArtworkSlot(slot);
+          continue;
+        }
+
+        final pending = _pendingMedia[slot];
+        final existing = _existingArtworkSlot(_data, slot)?.artwork;
+        final title = _artworkTitleControllers[slot]!.text.trim();
+        final description = _captionControllers[slot]!.text.trim();
+        final metadataChanged =
+            existing != null &&
+            (title != existing.title || description != existing.description);
+
+        if (pending == null && !metadataChanged) {
+          continue;
+        }
+
+        final typeId = existing?.typeId ??
+            (_selectedTypes.isEmpty ? null : _selectedTypes.first);
+        final styleId = existing?.styleId ??
+            (_selectedStyles.isEmpty ? null : _selectedStyles.first);
+        final currentLocationId =
+            _locationController.text.trim() == _initialLocationText
+            ? _managedLocationId
+            : null;
+
+        await repository.saveArtworkSlot(
+          slot: slot,
+          existingArtwork: existing,
+          title: title,
+          description: description,
+          typeId: typeId,
+          styleId: styleId,
+          locationId: existing?.locationId ?? currentLocationId,
+          locationText: existing?.locationText.isNotEmpty == true
+              ? existing!.locationText
+              : _locationController.text.trim(),
+          bytes: pending?.bytes,
+          fileName: pending?.name,
+        );
       }
 
       if (!mounted) return;
@@ -231,40 +299,46 @@ class _MakerInfoSettingsScreenState
   Future<void> _chooseMedia(int slot) async {
     if (_saving) return;
 
-    final choice = await showModalBottomSheet<_MediaChoice>(
-      context: context,
-      backgroundColor: AppColors.inputFill,
-      builder: (context) {
-        return SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.image_outlined,
-                  color: AppColors.primary,
+    _MediaChoice? choice;
+
+    if (slot == 1) {
+      choice = await showModalBottomSheet<_MediaChoice>(
+        context: context,
+        backgroundColor: AppColors.inputFill,
+        builder: (context) {
+          return SafeArea(
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    Icons.image_outlined,
+                    color: AppColors.primary,
+                  ),
+                  title: const Text(
+                    'Choose image',
+                    style: TextStyle(color: AppColors.white),
+                  ),
+                  onTap: () => Navigator.of(context).pop(_MediaChoice.image),
                 ),
-                title: const Text(
-                  'Choose image',
-                  style: TextStyle(color: AppColors.white),
+                ListTile(
+                  leading: const Icon(
+                    Icons.videocam_outlined,
+                    color: AppColors.primary,
+                  ),
+                  title: const Text(
+                    'Choose video (15 seconds max)',
+                    style: TextStyle(color: AppColors.white),
+                  ),
+                  onTap: () => Navigator.of(context).pop(_MediaChoice.video),
                 ),
-                onTap: () => Navigator.of(context).pop(_MediaChoice.image),
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.videocam_outlined,
-                  color: AppColors.primary,
-                ),
-                title: const Text(
-                  'Choose video (15 seconds max)',
-                  style: TextStyle(color: AppColors.white),
-                ),
-                onTap: () => Navigator.of(context).pop(_MediaChoice.video),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      choice = _MediaChoice.image;
+    }
 
     if (choice == null) return;
 
@@ -299,6 +373,13 @@ class _MakerInfoSettingsScreenState
         kind: choice == _MediaChoice.video ? 'video' : 'image',
         caption: _captionControllers[slot]!.text,
       );
+
+      if (slot >= 2 && _artworkTitleControllers[slot]!.text.trim().isEmpty) {
+        final baseName = file.name.replaceFirst(RegExp(r'\.[^.]+$'), '');
+        _artworkTitleControllers[slot]!.text = baseName
+            .replaceAll(RegExp(r'[_-]+'), ' ')
+            .trim();
+      }
     });
   }
 
@@ -307,6 +388,7 @@ class _MakerInfoSettingsScreenState
       _pendingMedia.remove(slot);
       _deletedSlots.add(slot);
       _captionControllers[slot]!.clear();
+      _artworkTitleControllers[slot]?.clear();
     });
   }
 
@@ -518,23 +600,30 @@ class _MakerInfoSettingsScreenState
             ),
             const SizedBox(height: 24),
             Text(
-              'Carousel Images',
+              'Maker Info Content',
               style: AppTextStyles.onboardingHelper.copyWith(
                 color: AppColors.primary,
                 fontSize: 17,
               ),
             ),
             const SizedBox(height: 12),
-            for (var slot = 1; slot <= 3; slot++) ...[
+            for (var slot = 1; slot <= 4; slot++) ...[
               _CarouselEditor(
                 slot: slot,
-                label: slot == 1 ? 'Content 1 (Salon Photo)' : 'Content $slot',
+                label: slot == 1
+                    ? 'Content 1 (Salon Photo)'
+                    : 'Content $slot (Artwork)',
                 existing: _deletedSlots.contains(slot)
                     ? null
-                    : _existingItem(data, slot),
+                    : _displayItem(data, slot),
                 fallbackImageUrl: slot == 1 ? data.profileImageUrl : null,
                 pending: _pendingMedia[slot],
+                titleController: _artworkTitleControllers[slot],
                 captionController: _captionControllers[slot]!,
+                isArtwork: slot >= 2,
+                moderationStatus: slot >= 2
+                    ? _existingArtworkSlot(data, slot)?.artwork.moderationStatus
+                    : null,
                 onChoose: () => _chooseMedia(slot),
                 onRemove: () => _removeSlot(slot),
               ),
@@ -582,6 +671,37 @@ class _MakerInfoSettingsScreenState
     }
 
     return null;
+  }
+
+  static MakerInfoArtworkSlot? _existingArtworkSlot(
+    MakerInfoSettingsData? data,
+    int slot,
+  ) {
+    if (data == null) return null;
+
+    for (final item in data.artworkSlots) {
+      if (item.slot == slot) return item;
+    }
+
+    return null;
+  }
+
+  static MakerCarouselItem? _displayItem(
+    MakerInfoSettingsData data,
+    int slot,
+  ) {
+    if (slot == 1) return _existingItem(data, 1);
+
+    final artwork = _existingArtworkSlot(data, slot)?.artwork;
+    if (artwork == null) return null;
+
+    return MakerCarouselItem(
+      id: artwork.id,
+      slot: slot,
+      kind: 'image',
+      url: artwork.primaryImageUrl,
+      caption: artwork.description,
+    );
   }
 
   static void _toggle(Set<int> values, int id) {
@@ -891,7 +1011,10 @@ class _CarouselEditor extends StatelessWidget {
     required this.existing,
     required this.fallbackImageUrl,
     required this.pending,
+    required this.titleController,
     required this.captionController,
+    required this.isArtwork,
+    required this.moderationStatus,
     required this.onChoose,
     required this.onRemove,
   });
@@ -901,7 +1024,10 @@ class _CarouselEditor extends StatelessWidget {
   final MakerCarouselItem? existing;
   final String? fallbackImageUrl;
   final PendingCarouselMedia? pending;
+  final TextEditingController? titleController;
   final TextEditingController captionController;
+  final bool isArtwork;
+  final String? moderationStatus;
   final VoidCallback onChoose;
   final VoidCallback onRemove;
 
@@ -920,12 +1046,25 @@ class _CarouselEditor extends StatelessWidget {
           ),
         ),
         Text(
-          'image or video (15 seconds or less)',
+          isArtwork
+              ? 'Artwork image (JPG, PNG or WebP)'
+              : 'image or video (15 seconds or less)',
           style: AppTextStyles.onboardingHelper.copyWith(
             fontSize: 9,
             color: AppColors.mutedText,
           ),
         ),
+        if (isArtwork && moderationStatus != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            'Status: $moderationStatus',
+            key: Key('maker_settings_artwork_status_$slot'),
+            style: AppTextStyles.onboardingHelper.copyWith(
+              fontSize: 9,
+              color: AppColors.mutedText,
+            ),
+          ),
+        ],
         const SizedBox(height: 8),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -960,8 +1099,45 @@ class _CarouselEditor extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
+        if (isArtwork && titleController != null) ...[
+          Text(
+            'Artwork title:',
+            style: AppTextStyles.onboardingHelper.copyWith(
+              color: AppColors.primary,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 6),
+          TextField(
+            key: Key('maker_settings_artwork_title_$slot'),
+            controller: titleController,
+            maxLength: 180,
+            style: AppTextStyles.field,
+            cursorColor: AppColors.primary,
+            decoration: InputDecoration(
+              counterText: '',
+              hintText: 'Artwork title',
+              hintStyle: AppTextStyles.fieldHint,
+              filled: true,
+              fillColor: AppColors.inputFill,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 13,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: AppColors.primary50),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: AppColors.primary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
         Text(
-          'A sentence about the content:',
+          isArtwork ? 'Artwork description:' : 'A sentence about the content:',
           style: AppTextStyles.onboardingHelper.copyWith(
             color: AppColors.primary,
             fontSize: 11,

@@ -113,12 +113,26 @@ class _MakerArtworkDiscoveryScreenState
     });
   }
 
-  void _openSearch() {
-    if (!_searchOpen) {
+  void _toggleSearch() {
+    if (_searchOpen) {
+      _searchDebounce?.cancel();
+      _searchFocusNode.unfocus();
+      final hadSearch = _searchController.text.isNotEmpty;
+      _searchController.clear();
+
       setState(() {
-        _searchOpen = true;
+        _searchOpen = false;
       });
+
+      if (hadSearch) {
+        unawaited(_applySearch(''));
+      }
+      return;
     }
+
+    setState(() {
+      _searchOpen = true;
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -177,16 +191,21 @@ class _MakerArtworkDiscoveryScreenState
                       children: [
                         _ToolbarSvgButton(
                           buttonKey: const Key('discovery_search_button'),
-                          iconKey: const Key('discovery_search_svg'),
+                          iconKey: _searchOpen
+                              ? const Key('discovery_search_close_icon')
+                              : const Key('discovery_search_svg'),
                           assetName: 'assets/search.svg',
                           fallbackAssetName: 'assets/icons/search.svg',
-                          tooltip: 'Search artwork',
+                          materialIcon: _searchOpen ? Icons.close_rounded : null,
+                          tooltip: _searchOpen ? 'Close search' : 'Search artwork',
                           size: metrics.toolbarIconSize,
-                          alignment: Alignment.centerLeft,
-                          onPressed: _openSearch,
+                          alignment: _searchOpen
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          onPressed: _toggleSearch,
                         ),
                         if (_searchOpen) ...[
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 2),
                           SizedBox(
                             width: (constraints.maxWidth * 0.34)
                                 .clamp(112.0, 150.0)
@@ -343,6 +362,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     required this.size,
     required this.alignment,
     required this.onPressed,
+    this.materialIcon,
   });
 
   final Key buttonKey;
@@ -353,6 +373,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final double size;
   final Alignment alignment;
   final VoidCallback onPressed;
+  final IconData? materialIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -370,17 +391,28 @@ class _ToolbarSvgButton extends StatelessWidget {
             height: 48,
             child: Align(
               alignment: alignment,
-              child: SizedBox(
-                key: iconKey,
-                width: size,
-                height: size,
-                child: MaSvgAsset(
-                  assetName: assetName,
-                  fallbackAssetName: fallbackAssetName,
-                  fit: BoxFit.contain,
-                  color: AppColors.primary,
-                ),
-              ),
+              child: materialIcon == null
+                  ? SizedBox(
+                      key: iconKey,
+                      width: size,
+                      height: size,
+                      child: MaSvgAsset(
+                        assetName: assetName,
+                        fallbackAssetName: fallbackAssetName,
+                        fit: BoxFit.contain,
+                        color: AppColors.primary,
+                      ),
+                    )
+                  : SizedBox(
+                      key: iconKey,
+                      width: size,
+                      height: size,
+                      child: Icon(
+                        materialIcon,
+                        size: size,
+                        color: AppColors.primary,
+                      ),
+                    ),
             ),
           ),
         ),
