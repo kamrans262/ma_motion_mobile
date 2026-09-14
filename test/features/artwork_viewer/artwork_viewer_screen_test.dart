@@ -8,6 +8,7 @@ import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/data/artwork_detail_repository.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/domain/artwork_detail.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
+import 'package:ma_motion_mobile/features/artwork_viewer/presentation/widgets/artwork_viewer_dots.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
 import 'package:ma_motion_mobile/features/saved_artworks/data/saved_artworks_repository.dart';
@@ -145,6 +146,16 @@ void main() {
     },
   );
 
+  test('configured art display starts with tapped artwork and avoids duplicates', () async {
+    final detail = await _ConfiguredArtDisplayRepository().fetch(42);
+
+    expect(
+      detail.orderedArtDisplayItems.map((item) => item.id).toList(),
+      <int>[42, 41, 43],
+    );
+    expect(detail.viewerPageCount, 4);
+  });
+
   testWidgets('configured Content 2 3 4 form one viewer with Maker Info last', (
     tester,
   ) async {
@@ -163,39 +174,33 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const Key('artwork_display_artwork_42')).hitTestable(),
-      findsOneWidget,
+    ArtworkViewerDots dots() => tester.widget<ArtworkViewerDots>(
+      find.byType(ArtworkViewerDots),
     );
-    expect(find.byKey(const Key('artwork_viewer_dot_0')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_dot_3')), findsOneWidget);
-    expect(find.byKey(const Key('artwork_viewer_dot_4')), findsNothing);
+
+    expect(dots().count, 4);
+    expect(dots().currentIndex, 0);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
       const Offset(-500, 0),
     );
     await tester.pumpAndSettle();
-    expect(
-      find.byKey(const Key('artwork_display_artwork_41')).hitTestable(),
-      findsOneWidget,
-    );
+    expect(dots().currentIndex, 1);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
       const Offset(-500, 0),
     );
     await tester.pumpAndSettle();
-    expect(
-      find.byKey(const Key('artwork_display_artwork_43')).hitTestable(),
-      findsOneWidget,
-    );
+    expect(dots().currentIndex, 2);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
       const Offset(-500, 0),
     );
     await tester.pumpAndSettle();
+    expect(dots().currentIndex, 3);
     expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
