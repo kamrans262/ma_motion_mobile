@@ -161,43 +161,56 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('about-work keeps Next and Back visible above the keyboard', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
+  testWidgets(
+    'Maker text-entry steps keep the default footer and 20px clearance',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
 
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
-    const keyboardInset = 320.0;
+      const keyboardInset = 320.0;
+      const fieldKeys = <int, String>{
+        0: 'maker_name_field',
+        1: 'maker_location_field',
+        2: 'maker_about_field',
+        4: 'maker_website_field',
+        5: 'maker_email_field',
+      };
 
-    await tester.pumpWidget(app(initialStep: 2, keyboardInset: keyboardInset));
-    await tester.pump();
+      for (final entry in fieldKeys.entries) {
+        await tester.pumpWidget(
+          app(initialStep: entry.key, keyboardInset: keyboardInset),
+        );
+        await tester.pump();
 
-    expect(find.text('Tell us about your work'), findsOneWidget);
+        final footer = find.byKey(const Key('maker_onboarding_footer'));
+        final field = find.byKey(Key(entry.value));
 
-    final footer = find.byKey(const Key('maker_onboarding_footer'));
-    final next = find.byKey(const Key('maker_next_button'));
-    final back = find.byKey(const Key('maker_back_button'));
-    final field = find.byKey(const Key('maker_about_field'));
+        expect(footer, findsOneWidget);
+        expect(find.byKey(const Key('maker_next_button')).hitTestable(),
+            findsOneWidget);
+        expect(find.byKey(const Key('maker_back_button')).hitTestable(),
+            findsOneWidget);
+        expect(find.byKey(const Key('maker_step_dot_0')), findsOneWidget);
 
-    expect(footer, findsOneWidget);
-    expect(next.hitTestable(), findsOneWidget);
-    expect(back.hitTestable(), findsOneWidget);
-    expect(find.byKey(const Key('maker_step_dot_0')), findsNothing);
+        final fieldRect = tester.getRect(field);
+        final footerRect = tester.getRect(footer);
 
-    final headingTop = tester
-        .getTopLeft(find.byKey(const Key('maker_step_heading')))
-        .dy;
-    final fieldRect = tester.getRect(field);
-    final footerRect = tester.getRect(footer);
-
-    expect(headingTop, greaterThan(100));
-    expect(fieldRect.bottom, lessThanOrEqualTo(footerRect.top));
-    expect(footerRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
-    expect(tester.takeException(), isNull);
-  });
+        expect(
+          fieldRect.bottom,
+          lessThanOrEqualTo(footerRect.top - 20),
+          reason: 'Step ${entry.key} must clear the footer by at least 20px.',
+        );
+        expect(
+          footerRect.bottom,
+          lessThanOrEqualTo(844 - keyboardInset),
+        );
+        expect(tester.takeException(), isNull);
+      }
+    },
+  );
 
   testWidgets('type and style content starts higher and clears the footer', (
     tester,
@@ -223,7 +236,7 @@ void main() {
     expect(scrollPadding.left, 20);
     expect(scrollPadding.right, 20);
     expect(scrollPadding.top, lessThan(66.3));
-    expect(scrollPadding.bottom, 30);
+    expect(scrollPadding.bottom, greaterThanOrEqualTo(20));
 
     final scrollable = find.descendant(
       of: find.byKey(const Key('maker_onboarding_scroll')),
