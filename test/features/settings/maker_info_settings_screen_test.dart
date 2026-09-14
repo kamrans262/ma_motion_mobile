@@ -174,6 +174,52 @@ void main() {
   );
 
   testWidgets(
+    'Content 2 update is confirmed from backend before settings closes',
+    (WidgetTester tester) async {
+      final repository = _FakeSettingsRepository()..confirmedSlots.add(2);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+          ],
+          child: MaterialApp(
+            home: MakerInfoSettingsScreen(
+              onClose: () {
+                repository.closeCalls++;
+              },
+              onSwitchedToAppreciator: _noopDestination,
+            ),
+          ),
+        ),
+      );
+
+      await _finishInitialLoad(tester);
+
+      final settingsList = find.byKey(const Key('maker_settings_scroll'));
+      final title = find.byKey(const Key('maker_settings_artwork_title_2'));
+      await _scrollIntoSafeTapRegion(
+        tester,
+        target: title,
+        scrollView: settingsList,
+      );
+
+      await tester.enterText(title, 'Updated Content Two');
+      await tester.pump();
+
+      await tester.tap(find.byKey(const Key('maker_settings_save_close')));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(repository.saveArtworkCalls, 1);
+      expect(repository.loadCalls, 2);
+      expect(repository.closeCalls, 1);
+      expect(repository.confirmedSlots.contains(2), isTrue);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'caption text alone does not create an empty carousel media slot',
     (WidgetTester tester) async {
       final repository = _FakeSettingsRepository();
@@ -255,16 +301,19 @@ void _noopDestination(MakerEntryDestination destination) {}
 class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int saveCalls = 0;
   int closeCalls = 0;
+  int loadCalls = 0;
   int logoutCalls = 0;
   int saveCarouselCalls = 0;
   int deleteCarouselCalls = 0;
   int saveArtworkCalls = 0;
   int deleteArtworkCalls = 0;
   MakerInfoSettingsDraft? lastDraft;
+  final Set<int> confirmedSlots = <int>{};
 
   @override
   Future<MakerInfoSettingsData> load() async {
-    return const MakerInfoSettingsData(
+    loadCalls++;
+    return MakerInfoSettingsData(
       name: 'Artist Ken',
       bio: 'A contemporary artist exploring form and color.',
       locationText: 'Chicago, IL',
@@ -278,7 +327,31 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
       selectedTypeIds: <int>{1},
       selectedStyleIds: <int>{2},
       carousel: <MakerCarouselItem>[],
-      artworkSlots: <MakerInfoArtworkSlot>[],
+      artworkSlots: confirmedSlots
+          .map(
+            (slot) => MakerInfoArtworkSlot(
+              slot: slot,
+              artwork: MakerSettingsArtwork(
+                id: 100 + slot,
+                title: slot == 2 ? 'Content Two' : 'Artwork $slot',
+                description: '',
+                typeId: 1,
+                styleId: 2,
+                locationId: 3,
+                locationText: 'Chicago, IL',
+                moderationStatus: 'pending',
+                isVisible: true,
+                media: <MakerSettingsArtworkMedia>[
+                  MakerSettingsArtworkMedia(
+                    id: 200 + slot,
+                    url: 'https://example.test/content$slot.jpg',
+                    isPrimary: true,
+                  ),
+                ],
+              ),
+            ),
+          )
+          .toList(growable: false),
       savedCount: 37,
       availableTypes: <MakerSettingsTaxonomyOption>[
         MakerSettingsTaxonomyOption(id: 1, name: 'Painting', slug: 'painting'),
@@ -330,6 +403,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
     String? fileName,
   }) async {
     saveArtworkCalls++;
+    confirmedSlots.add(slot);
     return MakerInfoArtworkSlot(
       slot: slot,
       artwork: MakerSettingsArtwork(
