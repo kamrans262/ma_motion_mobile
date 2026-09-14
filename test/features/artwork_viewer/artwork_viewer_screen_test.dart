@@ -145,61 +145,60 @@ void main() {
     },
   );
 
-  testWidgets(
-    'configured Content 2 3 4 form one viewer with Maker Info last',
-    (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            artworkDetailRepositoryProvider.overrideWithValue(
-              _ConfiguredArtDisplayRepository(),
-            ),
-            savedArtworksRepositoryProvider.overrideWithValue(
-              _FakeSavedArtworksRepository(),
-            ),
-          ],
-          child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 42)),
-        ),
-      );
-      await tester.pumpAndSettle();
+  testWidgets('configured Content 2 3 4 form one viewer with Maker Info last', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDetailRepositoryProvider.overrideWithValue(
+            _ConfiguredArtDisplayRepository(),
+          ),
+          savedArtworksRepositoryProvider.overrideWithValue(
+            _FakeSavedArtworksRepository(),
+          ),
+        ],
+        child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 42)),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('artwork_display_artwork_42')).hitTestable(),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('artwork_viewer_dot_0')), findsOneWidget);
-      expect(find.byKey(const Key('artwork_viewer_dot_3')), findsOneWidget);
-      expect(find.byKey(const Key('artwork_viewer_dot_4')), findsNothing);
+    expect(
+      find.byKey(const Key('artwork_display_artwork_42')).hitTestable(),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('artwork_viewer_dot_0')), findsOneWidget);
+    expect(find.byKey(const Key('artwork_viewer_dot_3')), findsOneWidget);
+    expect(find.byKey(const Key('artwork_viewer_dot_4')), findsNothing);
 
-      await tester.drag(
-        find.byKey(const Key('artwork_viewer_page_view')),
-        const Offset(-500, 0),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const Key('artwork_display_artwork_41')).hitTestable(),
-        findsOneWidget,
-      );
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('artwork_display_artwork_41')).hitTestable(),
+      findsOneWidget,
+    );
 
-      await tester.drag(
-        find.byKey(const Key('artwork_viewer_page_view')),
-        const Offset(-500, 0),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const Key('artwork_display_artwork_43')).hitTestable(),
-        findsOneWidget,
-      );
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('artwork_display_artwork_43')).hitTestable(),
+      findsOneWidget,
+    );
 
-      await tester.drag(
-        find.byKey(const Key('artwork_viewer_page_view')),
-        const Offset(-500, 0),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('seeded discovery artwork opens before detail request finishes', (
     tester,

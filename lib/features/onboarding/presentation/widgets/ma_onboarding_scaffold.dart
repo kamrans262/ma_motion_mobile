@@ -85,7 +85,9 @@ class MaOnboardingScaffold extends StatelessWidget {
                   final minimumContentHeight = centerKeyboardContent
                       ? math.max(
                           0.0,
-                          constraints.maxHeight - contentTop - resolvedContentBottom,
+                          constraints.maxHeight -
+                              contentTop -
+                              resolvedContentBottom,
                         )
                       : 0.0;
 
