@@ -48,10 +48,7 @@ void main() {
         find.byKey(const Key('maker_artwork_discovery_screen')),
         findsOneWidget,
       );
-      expect(
-        find.byKey(const Key('appreciator_settings_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('appreciator_settings_card')), findsOneWidget);
       expect(
         find.byKey(const Key('appreciator_settings_heading')),
         findsOneWidget,
