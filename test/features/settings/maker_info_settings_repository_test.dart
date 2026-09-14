@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/api_exception.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
 import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
@@ -102,12 +103,22 @@ void main() {
       styleId: 2,
       locationId: 3,
       locationText: 'Chicago, IL',
-      bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+      bytes: Uint8List.fromList(<int>[0xFF, 0xD8, 0xFF, 0x00]),
       fileName: 'artwork.jpg',
     );
 
     expect(api.lastPostPath, ApiPaths.myArtworks);
     expect(api.lastPostData, isA<FormData>());
+    final formData = api.lastPostData! as FormData;
+    expect(formData.files.single.key, 'media[]');
+    expect(formData.files.single.value.filename, 'artwork.jpg');
+    expect(formData.files.single.value.contentType.toString(), 'image/jpeg');
+    expect(
+      formData.fields.any(
+        (entry) => entry.key == 'title' && entry.value == 'New Grid Artwork',
+      ),
+      isTrue,
+    );
     expect(api.lastPutPath, '${ApiPaths.makerProfile}/artwork-slots/2');
     expect(api.lastPutData?['artwork_id'], 20);
     expect(slot.slot, 2);
@@ -116,6 +127,37 @@ void main() {
 
     await repository.deleteArtworkSlot(2);
     expect(api.lastDeletePath, '${ApiPaths.makerProfile}/artwork-slots/2');
+  });
+
+  test('rejects unsupported artwork bytes before hitting the API', () async {
+    final api = _FakeApiGateway();
+    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
+
+    await expectLater(
+      repository.saveArtworkSlot(
+        slot: 2,
+        existingArtwork: null,
+        title: 'Unsupported',
+        description: '',
+        typeId: null,
+        styleId: null,
+        locationId: null,
+        locationText: '',
+        bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+        fileName: 'photo.heic',
+      ),
+      throwsA(
+        isA<ApiException>().having(
+          (error) => error.code,
+          'code',
+          'unsupported_artwork_image',
+        ),
+      ),
+    );
+
+    expect(api.lastPostPath, isNull);
+    expect(api.lastPutPath, isNull);
   });
 }
 
