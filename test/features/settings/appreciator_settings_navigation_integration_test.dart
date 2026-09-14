@@ -14,9 +14,9 @@ import 'package:ma_motion_mobile/features/settings/domain/appreciator_settings_m
 void main() {
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets('Appreciator bottom Settings icon opens modal over discovery grid', (
-    tester,
-  ) async {
+  testWidgets(
+    'Appreciator bottom Settings icon opens modal over discovery grid',
+    (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -48,16 +48,14 @@ void main() {
       find.byKey(const Key('maker_artwork_discovery_screen')),
       findsOneWidget,
     );
-    expect(
-      find.byKey(const Key('appreciator_settings_card')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const Key('appreciator_settings_card')), findsOneWidget);
     expect(
       find.byKey(const Key('appreciator_settings_heading')),
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
-  });
+    },
+  );
 }
 
 class _EmptyDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
