@@ -135,7 +135,458 @@ class _AppreciatorSettingsModalState
     final name = _nameController.text.trim();
     final location = _locationController.text.trim();
     final email = _emailController.text.trim();
-    final emailPattern = RegExp(r'^[^@s]+@[^@s]+.[^@s]+$');
+    final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+
+    if (name.isEmpty) {
+      _fieldErrors['name'] = 'Please enter your name.';
+    }
+    if (location.isEmpty) {
+      _fieldErrors['location_text'] = 'Please enter your location.';
+    }
+    if (email.isEmpty || !emailPattern.hasMatch(email)) {
+      _fieldErrors['email'] = 'Please enter a valid email address.';
+    }
+
+    if (_fieldErrors.isNotEmpty) {
+      setState(() {
+        _errorMessage = 'Please check the highlighted fields.';
+        _successMessage = null;
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<AppreciatorSettingsData?> _saveProfile({
+    required bool showSuccess,
+  }) async {
+    if (_busy || !_validate()) {
+      return null;
+    }
+
+    setState(() {
+      _saving = true;
+      _errorMessage = null;
+      _successMessage = null;
+      _fieldErrors.clear();
+    });
+
+    final repository = ref.read(appreciatorSettingsRepositoryProvider);
+
+    try {
+      final locationText = _locationController.text.trim();
+      final locationId = locationText == _initialLocation
+          ? _initialLocationId
+          : await repository.resolveLocationId(locationText);
+
+      final saved = await repository.save(
+        AppreciatorSettingsDraft(
+          name: _nameController.text,
+          email: _emailController.text,
+          locationText: locationText,
+          locationId: locationId,
+        ),
+      );
+
+      if (!mounted) return null;
+
+      _initialLocation = saved.locationText.trim();
+      _initialLocationId = saved.locationId;
+
+      setState(() {
+        _data = saved;
+        _successMessage = showSuccess ? 'Settings saved.' : null;
+      });
+
+      return saved;
+    } on ApiException catch (error) {
+      if (!mounted) return null;
+
+      final fieldErrors = <String, String>{};
+      for (final entry in error.fieldErrors.entries) {
+        if (entry.value.isNotEmpty) {
+          fieldErrors[entry.key] = entry.value.first;
+        }
+      }
+
+      setState(() {
+        _fieldErrors
+          ..clear()
+          ..addAll(fieldErrors);
+        _errorMessage = error.message;
+      });
+      return null;
+    } catch (_) {
+      if (!mounted) return null;
+      setState(() {
+        _errorMessage =
+            'We could not save your Appreciator settings. Please try again.';
+      });
+      return null;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _saveAndClose() async {
+    FocusScope.of(context).unfocus();
+
+    final saved = await _saveProfile(showSuccess: true);
+    if (saved == null || !mounted) return;
+
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
+
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _switchToMaker() async {
+    FocusScope.of(context).unfocus();
+
+    final saved = await _saveProfile(showSuccess: false);
+    if (saved == null || !mounted) return;
+
+    setState(() {
+      _switching = true;
+      _errorMessage = null;
+      _successMessage = null;
+    });
+
+    try {
+      final destination = await ref
+          .read(experienceSwitchRepositoryProvider)
+          .switchToMaker();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(destination);
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _switching = false;
+        _errorMessage = error.message;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _switching = false;
+        _errorMessage =
+            'We could not switch to Maker right now. Please try again.';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+
+    return PopScope(
+      canPop: !_busy,
+      child: SafeArea(
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.fromLTRB(
+            media.size.width < 360 ? 16 : 20,
+            20,
+            media.size.width < 360 ? 16 : 20,
+            media.viewInsets.bottom + 20,
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final maxHeight = constraints.maxHeight.clamp(300.0, 600.0);
+
+              return Center(
+                child: Material(
+                  key: const Key('appreciator_settings_card'),
+                  color: const Color(0xFF050505),
+                  elevation: 18,
+                  shadowColor: Colors.black,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: 360,
+                      maxHeight: maxHeight,
+                    ),
+                    child: _loading
+                        ? const SizedBox(
+                            width: 300,
+                            height: 280,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          )
+                        : _data == null
+                        ? _LoadFailure(
+                            message:
+                                _errorMessage ??
+                                'We could not load your Appreciator settings.',
+                            onRetry: _load,
+                          )
+                        : _buildForm(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm() {
+    return SingleChildScrollView(
+      key: const Key('appreciator_settings_scroll'),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Settings',
+            key: Key('appreciator_settings_heading'),
+            style: TextStyle(
+              fontFamily: 'Instrument Sans',
+              fontSize: 20,
+              height: 1.15,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: 18),
+          _SettingsField(
+            fieldKey: const Key('appreciator_settings_name'),
+            label: 'Name',
+            controller: _nameController,
+            errorText: _fieldErrors['name'],
+            textInputAction: TextInputAction.next,
+            onChanged: (_) => _clearFieldError('name'),
+          ),
+          const SizedBox(height: 13),
+          _SettingsField(
+            fieldKey: const Key('appreciator_settings_location'),
+            label: 'Location',
+            controller: _locationController,
+            errorText: _fieldErrors['location_text'],
+            textInputAction: TextInputAction.next,
+            onChanged: (_) => _clearFieldError('location_text'),
+          ),
+          const SizedBox(height: 13),
+          _SettingsField(
+            fieldKey: const Key('appreciator_settings_email'),
+            label: 'Email Address',
+            controller: _emailController,
+            errorText: _fieldErrors['email'],
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.done,
+            onChanged: (_) => _clearFieldError('email'),
+          ),
+          const SizedBox(height: 11),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('appreciator_settings_switch_to_maker'),
+              onPressed: _busy ? null : _switchToMaker,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.mutedText,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 36),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                _switching ? 'Switching…' : 'Switch to Maker',
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 11,
+                  decoration: TextDecoration.underline,
+                  color: AppColors.mutedText,
+                ),
+              ),
+            ),
+          ),
+          if (_errorMessage != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _errorMessage!,
+              key: const Key('appreciator_settings_error'),
+              style: AppTextStyles.error,
+            ),
+          ],
+          if (_successMessage != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _successMessage!,
+              key: const Key('appreciator_settings_success'),
+              style: AppTextStyles.onboardingHelper.copyWith(
+                color: AppColors.primary,
+                fontSize: 12,
+              ),
+            ),
+          ],
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 46,
+            child: OutlinedButton(
+              key: const Key('appreciator_settings_save_close'),
+              onPressed: _busy ? null : _saveAndClose,
+              style: AppButtonStyles.outlineAction(),
+              child: _saving
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
+                    )
+                  : const Text(
+                      'Save & Close',
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.fontFamily,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _clearFieldError(String field) {
+    if (!_fieldErrors.containsKey(field) &&
+        _errorMessage == null &&
+        _successMessage == null) {
+      return;
+    }
+
+    setState(() {
+      _fieldErrors.remove(field);
+      _errorMessage = null;
+      _successMessage = null;
+    });
+  }
+}
+
+class _SettingsField extends StatelessWidget {
+  const _SettingsField({
+    required this.fieldKey,
+    required this.label,
+    required this.controller,
+    required this.errorText,
+    required this.textInputAction,
+    required this.onChanged,
+    this.keyboardType,
+  });
+
+  final Key fieldKey;
+  final String label;
+  final TextEditingController controller;
+  final String? errorText;
+  final TextInputAction textInputAction;
+  final ValueChanged<String> onChanged;
+  final TextInputType? keyboardType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 10,
+            color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          key: fieldKey,
+          controller: controller,
+          enabled: true,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          onChanged: onChanged,
+          style: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 13,
+            color: AppColors.white,
+          ),
+          cursorColor: AppColors.primary,
+          decoration: InputDecoration(
+            isDense: true,
+            errorText: errorText,
+            errorStyle: AppTextStyles.error,
+            filled: true,
+            fillColor: const Color(0xFF120A1D),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: AppColors.primary50),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: AppColors.primary),
+            ),
+            errorBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: AppColors.error),
+            ),
+            focusedErrorBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: AppColors.error),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LoadFailure extends StatelessWidget {
+  const _LoadFailure({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      height: 300,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.onboardingHelper,
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              key: const Key('appreciator_settings_retry'),
+              onPressed: onRetry,
+              style: AppButtonStyles.outlineAction(),
+              child: const Text('Try again'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+);
 
     if (name.isEmpty) {
       _fieldErrors['name'] = 'Please enter your name.';

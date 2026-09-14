@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
 import '../../features/discovery/domain/discovery_artwork.dart';
+import '../../features/discovery/presentation/screens/appreciator_artwork_discovery_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
 import '../../features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 import '../../features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
@@ -169,10 +170,12 @@ GoRouter createAppRouter({
         path: '/appreciator/discovery',
         pageBuilder: (context, state) => _premiumPage(
           state: state,
-          child: MakerArtworkDiscoveryScreen(
+          child: AppreciatorArtworkDiscoveryScreen(
             onFilterTap: () => context.push('/appreciator/discovery/filter'),
             onSavedTap: () => context.push('/appreciator/saved-artworks'),
-            onSettingsTap: () => unawaited(openAppreciatorSettings(context)),
+            onMakerDestination: (destination) {
+              goForMakerEntry(context, destination);
+            },
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
