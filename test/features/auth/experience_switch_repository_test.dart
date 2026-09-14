@@ -77,24 +77,24 @@ void main() {
   );
 
   test('missing Maker profile starts same-account Maker onboarding', () async {
-      final api = _ExperienceGateway(
-        role: 'appreciator',
-        makerCompleted: false,
-        appreciatorCompleted: true,
-      );
-      final tokenStore = _MemoryTokenStore('same-account-token');
-      final repository = ExperienceSwitchRepository(
-        auth: AuthRepository(api: api, tokenStore: tokenStore),
-        api: api,
-      );
+    final api = _ExperienceGateway(
+      role: 'appreciator',
+      makerCompleted: false,
+      appreciatorCompleted: true,
+    );
+    final tokenStore = _MemoryTokenStore('same-account-token');
+    final repository = ExperienceSwitchRepository(
+      auth: AuthRepository(api: api, tokenStore: tokenStore),
+      api: api,
+    );
 
-      final destination = await repository.switchToMaker();
+    final destination = await repository.switchToMaker();
 
-      expect(destination, MakerEntryDestination.profileSetup);
-      expect(api.lastPostPath, ApiPaths.makerExperienceOnboarding);
-      expect(api.lastPatchPath, isNull);
-      expect(tokenStore.value, 'same-account-token');
-    });
+    expect(destination, MakerEntryDestination.profileSetup);
+    expect(api.lastPostPath, ApiPaths.makerExperienceOnboarding);
+    expect(api.lastPatchPath, isNull);
+    expect(tokenStore.value, 'same-account-token');
+  });
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
