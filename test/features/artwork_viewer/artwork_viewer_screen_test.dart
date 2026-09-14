@@ -177,9 +177,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    ArtworkViewerDots dots() => tester.widget<ArtworkViewerDots>(
-      find.byType(ArtworkViewerDots),
-    );
+    ArtworkViewerDots dots() =>
+        tester.widget<ArtworkViewerDots>(find.byType(ArtworkViewerDots));
 
     expect(dots().count, 4);
     expect(dots().currentIndex, 0);
