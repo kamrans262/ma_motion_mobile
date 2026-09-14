@@ -12,7 +12,15 @@ void main() {
     VoidCallback? onExit,
     ValueChanged<MakerEntryDestination>? onSwitchToMaker,
     ExperienceSwitchRepositoryContract? switchRepository,
+    double keyboardInset = 0,
   }) {
+    final flow = AppreciatorRegistrationFlowScreen(
+      key: ValueKey<int>(initialStep),
+      initialStep: initialStep,
+      onExit: onExit ?? () {},
+      onSwitchToMaker: onSwitchToMaker,
+    );
+
     return ProviderScope(
       overrides: [
         if (switchRepository != null)
@@ -21,12 +29,15 @@ void main() {
           ),
       ],
       child: MaterialApp(
-        home: AppreciatorRegistrationFlowScreen(
-          key: ValueKey<int>(initialStep),
-          initialStep: initialStep,
-          onExit: onExit ?? () {},
-          onSwitchToMaker: onSwitchToMaker,
-        ),
+        home: keyboardInset > 0
+            ? MediaQuery(
+                data: MediaQueryData(
+                  size: const Size(390, 844),
+                  viewInsets: EdgeInsets.only(bottom: keyboardInset),
+                ),
+                child: flow,
+              )
+            : flow,
       ),
     );
   }
@@ -89,6 +100,37 @@ void main() {
     expect(exited, isTrue);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Appreciator Next and Back remain visible while keyboard is open',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      const keyboardInset = 320.0;
+
+      await tester.pumpWidget(
+        app(initialStep: 2, keyboardInset: keyboardInset),
+      );
+      await tester.pump();
+
+      final footer = find.byKey(const Key('maker_onboarding_footer'));
+      final next = find.byKey(const Key('maker_next_button'));
+      final back = find.byKey(const Key('maker_back_button'));
+
+      expect(footer, findsOneWidget);
+      expect(next.hitTestable(), findsOneWidget);
+      expect(back.hitTestable(), findsOneWidget);
+      expect(find.byKey(const Key('maker_step_dot_0')), findsNothing);
+
+      final footerRect = tester.getRect(footer);
+      expect(footerRect.bottom, lessThanOrEqualTo(844 - keyboardInset));
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'Email step shows small dark-grey underlined Switch to Maker action',
