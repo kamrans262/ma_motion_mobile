@@ -19,7 +19,7 @@ class DiscoveryLayoutMetrics {
       toolbarHeight: 24 + (24 * scale).clamp(22.0, 26.0).toDouble() * 0.75,
       toolbarIconSize: (24 * scale).clamp(22.0, 26.0).toDouble(),
       controlsToGridGap: (10 * scale).clamp(8.0, 12.0).toDouble(),
-      gridSpacing: (2 * scale).clamp(1.0, 3.0).toDouble(),
+      gridSpacing: 1.0,
     );
   }
 
