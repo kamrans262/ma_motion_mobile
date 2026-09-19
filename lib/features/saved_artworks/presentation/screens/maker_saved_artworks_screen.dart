@@ -17,11 +17,13 @@ class MakerSavedArtworksScreen extends ConsumerStatefulWidget {
     this.onBack,
     this.onArtworkTap,
     this.onSettingsTap,
+    this.settingsSemanticsLabel = 'Maker settings',
   });
 
   final VoidCallback? onBack;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
   final VoidCallback? onSettingsTap;
+  final String settingsSemanticsLabel;
 
   @override
   ConsumerState<MakerSavedArtworksScreen> createState() =>
@@ -179,6 +181,7 @@ class _MakerSavedArtworksScreenState
           });
         },
         onSettingsTap: widget.onSettingsTap,
+        settingsSemanticsLabel: widget.settingsSemanticsLabel,
       ),
     );
   }
