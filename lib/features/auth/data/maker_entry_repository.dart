@@ -48,11 +48,19 @@ class MakerEntryRepository implements MakerEntryRepositoryContract {
     }
 
     if (session.user.isAppreciator) {
-      return MakerEntryDestination.appreciatorDiscovery;
+      return session.user.appreciatorOnboardingCompleted
+          ? MakerEntryDestination.appreciatorDiscovery
+          : MakerEntryDestination.appreciatorProfileSetup;
     }
 
     if (!session.user.isMaker) {
       return MakerEntryDestination.join;
+    }
+
+    // /me is authoritative for both completion flags and the active role.
+    // Keep the legacy Maker profile fallback for previously issued sessions.
+    if (session.user.makerOnboardingCompleted) {
+      return MakerEntryDestination.discovery;
     }
 
     return _makerProfileDestination();
