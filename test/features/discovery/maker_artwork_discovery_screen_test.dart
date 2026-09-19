@@ -76,13 +76,13 @@ void main() {
       find.byKey(const Key('maker_nav_column_text_1')),
     );
 
-    expect(selected.style?.fontFamily, 'Instrument Sans');
+    expect(selected.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(selected.style?.fontSize, 16);
-    expect(selected.style?.fontWeight, FontWeight.w400);
+    expect(selected.style?.fontWeight, FontWeight.w500);
     expect(selected.style?.color, const Color(0xFF904AFF));
-    expect(unselected.style?.fontFamily, 'Instrument Sans');
+    expect(unselected.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(unselected.style?.fontSize, 14);
-    expect(unselected.style?.fontWeight, FontWeight.w400);
+    expect(unselected.style?.fontWeight, FontWeight.w500);
     expect(
       unselected.style?.color,
       const Color(0xFF904AFF).withValues(alpha: 0.50),
