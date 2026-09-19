@@ -241,6 +241,7 @@ class _MakerArtworkDiscoveryScreenState
                                     ? 'Close search'
                                     : 'Search artwork',
                                 size: metrics.toolbarIconSize,
+                                barHeight: metrics.toolbarHeight,
                                 alignment: _searchOpen
                                     ? Alignment.centerRight
                                     : Alignment.center,
@@ -322,6 +323,7 @@ class _MakerArtworkDiscoveryScreenState
                                         'assets/icons/filter.svg',
                                     tooltip: 'Filter artwork',
                                     size: metrics.toolbarIconSize,
+                                    barHeight: metrics.toolbarHeight,
                                     alignment: Alignment.center,
                                     onPressed: widget.onFilterTap ?? () {},
                                   ),
@@ -416,6 +418,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     required this.fallbackAssetName,
     required this.tooltip,
     required this.size,
+    required this.barHeight,
     required this.alignment,
     required this.onPressed,
     this.materialIcon,
@@ -427,6 +430,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final String fallbackAssetName;
   final String tooltip;
   final double size;
+  final double barHeight;
   final Alignment alignment;
   final VoidCallback onPressed;
   final IconData? materialIcon;
@@ -444,10 +448,12 @@ class _ToolbarSvgButton extends StatelessWidget {
           radius: 28,
           child: SizedBox(
             width: 48,
-            height: 48,
-            child: Align(
-              alignment: alignment,
-              child: materialIcon == null
+            height: barHeight,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 10),
+              child: Align(
+                alignment: alignment,
+                child: materialIcon == null
                   ? SizedBox(
                       key: iconKey,
                       width: size,
@@ -469,6 +475,7 @@ class _ToolbarSvgButton extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
+              ),
             ),
           ),
         ),
