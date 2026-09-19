@@ -313,10 +313,13 @@ class _MakerArtworkDiscoveryScreenState
                                 clipBehavior: Clip.none,
                                 children: [
                                   _ToolbarSvgButton(
-                                    buttonKey: const Key('discovery_filter_button'),
+                                    buttonKey: const Key(
+                                      'discovery_filter_button',
+                                    ),
                                     iconKey: const Key('discovery_filter_svg'),
                                     assetName: 'assets/filter.svg',
-                                    fallbackAssetName: 'assets/icons/filter.svg',
+                                    fallbackAssetName:
+                                        'assets/icons/filter.svg',
                                     tooltip: 'Filter artwork',
                                     size: metrics.toolbarIconSize,
                                     alignment: Alignment.center,
@@ -343,7 +346,8 @@ class _MakerArtworkDiscoveryScreenState
                                         child: Text(
                                           '$filterCount',
                                           style: const TextStyle(
-                                            fontFamily: AppTextStyles.fontFamily,
+                                            fontFamily:
+                                                AppTextStyles.fontFamily,
                                             fontSize: 10,
                                             fontWeight: FontWeight.w700,
                                             color: AppColors.black,
@@ -354,8 +358,8 @@ class _MakerArtworkDiscoveryScreenState
                                 ],
                               ),
                             ],
-                            ),
                           ),
+                        ),
                       ),
                     ),
                   ),
