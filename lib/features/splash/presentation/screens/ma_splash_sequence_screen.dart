@@ -204,9 +204,9 @@ class _WelcomeMessage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.primary,
-                  fontFamily: 'Arial',
+                  fontFamily: 'HelveticaNeueLTStd',
                   fontSize: fontSize,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w500,
                   height: 1.14,
                 ),
               ),
