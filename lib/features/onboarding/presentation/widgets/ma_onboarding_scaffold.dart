@@ -20,6 +20,7 @@ class MaOnboardingScaffold extends StatelessWidget {
     required this.onNext,
     required this.onBack,
     this.validationMessage,
+    this.headingStyle,
     this.isBusy = false,
     this.contentTopWidthFactor = 0.555,
     this.childGap = 20,
@@ -34,6 +35,7 @@ class MaOnboardingScaffold extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
   final String? validationMessage;
+  final TextStyle? headingStyle;
   final bool isBusy;
   final double contentTopWidthFactor;
   final double childGap;
@@ -100,7 +102,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                               Text(
                                 heading,
                                 key: const Key('maker_step_heading'),
-                                style: AppTextStyles.onboardingHeading,
+                                style: headingStyle ?? AppTextStyles.onboardingHeading,
                               ),
                               const SizedBox(height: 6),
                               Text(
@@ -115,7 +117,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                                 Text(
                                   validationMessage!,
                                   key: const Key('maker_validation_message'),
-                                  style: AppTextStyles.error,
+                                  style: AppTextStyles.onboardingError,
                                 ),
                               ],
                             ],
@@ -135,6 +137,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                               label: isBusy ? 'Saving...' : 'Next',
                               onPressed: isBusy ? null : onNext,
                               filled: false,
+                              height: 53,
                             ),
                             const SizedBox(height: 13),
                             MaOnboardingButton(
@@ -142,6 +145,8 @@ class MaOnboardingScaffold extends StatelessWidget {
                               label: 'Back',
                               onPressed: isBusy ? null : onBack,
                               filled: false,
+                              subdued: true,
+                              height: 53,
                             ),
                             const SizedBox(height: 30),
                             MaStepDots(
