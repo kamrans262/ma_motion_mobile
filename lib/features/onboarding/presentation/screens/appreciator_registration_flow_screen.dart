@@ -120,9 +120,7 @@ class _AppreciatorRegistrationFlowScreenState
       _fieldErrors
         ..clear()
         ..addAll(errors);
-      _validationMessage = errors.isEmpty
-          ? null
-          : 'Please check the highlighted information.';
+      _validationMessage = null;
     });
 
     return errors.isEmpty;
@@ -186,7 +184,7 @@ class _AppreciatorRegistrationFlowScreenState
       _fieldErrors
         ..clear()
         ..addAll(mapped);
-      _validationMessage = 'Please check the highlighted information.';
+      _validationMessage = null;
       _submissionCompleted = false;
     });
 
