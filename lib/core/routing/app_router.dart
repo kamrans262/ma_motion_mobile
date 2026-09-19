@@ -148,6 +148,7 @@ GoRouter createAppRouter({
         pageBuilder: (context, state) => _premiumPage(
           state: state,
           child: MakerRegistrationFlowScreen(
+            prefillFromAccount: true,
             onExit: () => context.go('/join'),
             onCompleted: () => context.go('/maker/discovery'),
           ),
@@ -158,6 +159,7 @@ GoRouter createAppRouter({
         pageBuilder: (context, state) => _premiumPage(
           state: state,
           child: AppreciatorRegistrationFlowScreen(
+            prefillFromAccount: true,
             onExit: () => context.go('/join'),
             onCompleted: () => context.go('/appreciator/discovery'),
             onSwitchToMaker: (destination) {
