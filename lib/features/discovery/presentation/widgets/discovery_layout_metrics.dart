@@ -14,7 +14,8 @@ class DiscoveryLayoutMetrics {
     return DiscoveryLayoutMetrics._(
       scale: scale,
       gridHorizontalPadding: (20 * scale).clamp(16.0, 24.0).toDouble(),
-      toolbarHeight: (62 * scale).clamp(54.0, 68.0).toDouble(),
+      // Exact icon spacing: 20px above and 10px below the icon.
+      toolbarHeight: (24 * scale).clamp(22.0, 26.0).toDouble() + 30,
       toolbarIconSize: (24 * scale).clamp(22.0, 26.0).toDouble(),
       controlsToGridGap: (10 * scale).clamp(8.0, 12.0).toDouble(),
       gridSpacing: (2 * scale).clamp(1.0, 3.0).toDouble(),
