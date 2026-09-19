@@ -13,6 +13,16 @@ abstract final class AppButtonStyles {
     );
   }
 
+  /// Give non-ButtonStyle InkWell surfaces a purple pressed highlight
+  /// without adding a white circular splash or changing their idle layout.
+  static WidgetStateProperty<Color> get purpleInkOverlay {
+    return WidgetStateProperty.resolveWith<Color>(
+      (states) => states.contains(WidgetState.pressed)
+          ? AppColors.primary.withValues(alpha: 0.25)
+          : Colors.transparent,
+    );
+  }
+
   static ButtonStyle outlineAction({double borderWidth = 1.2}) {
     return ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
