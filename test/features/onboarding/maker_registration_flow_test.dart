@@ -83,8 +83,14 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byKey(const Key('maker_next_button'))).height, 53);
-    expect(tester.getSize(find.byKey(const Key('maker_back_button'))).height, 53);
+    expect(
+      tester.getSize(find.byKey(const Key('maker_next_button'))).height,
+      53,
+    );
+    expect(
+      tester.getSize(find.byKey(const Key('maker_back_button'))).height,
+      53,
+    );
     expect(
       next.style?.foregroundColor?.resolve(<WidgetState>{}),
       const Color(0xFF904AFF),
