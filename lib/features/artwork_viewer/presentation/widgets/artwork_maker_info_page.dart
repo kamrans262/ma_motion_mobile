@@ -141,7 +141,9 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                   const SizedBox(height: 5),
                                   Text(
                                     'Currently exhibiting at ${show.name}$through.',
-                                    key: const Key('artwork_maker_current_show'),
+                                    key: const Key(
+                                      'artwork_maker_current_show',
+                                    ),
                                     style: const _InfoValueStyle(),
                                   ),
                                 ],
@@ -182,7 +184,8 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                                           )
                                         : const MaSvgAsset(
                                             assetName: 'assets/icons/heart.svg',
-                                            fallbackAssetName: 'assets/heart.svg',
+                                            fallbackAssetName:
+                                                'assets/heart.svg',
                                             color: Color(0xFFF0F0F0),
                                           ),
                                   ),
@@ -197,7 +200,9 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             style: TextButton.styleFrom(
                               foregroundColor: const Color(0xFFF0F0F0),
                               minimumSize: const Size(44, 44),
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
                             ),
                             child: const Text(
                               'Share',
