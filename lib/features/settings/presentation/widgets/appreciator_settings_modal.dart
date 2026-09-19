@@ -440,7 +440,9 @@ class _AppreciatorSettingsModalState
             child: OutlinedButton(
               key: const Key('appreciator_settings_save_close'),
               onPressed: _busy ? null : _saveAndClose,
-              style: AppButtonStyles.outlineAction(),
+              style: AppButtonStyles.outlineAction().copyWith(
+                backgroundColor: const WidgetStatePropertyAll(Colors.black),
+              ),
               child: _saving
                   ? const SizedBox.square(
                       dimension: 18,
