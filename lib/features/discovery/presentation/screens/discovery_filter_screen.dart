@@ -659,14 +659,19 @@ class _ChoicePill extends StatelessWidget {
               width: 0.8,
             ),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: fontSize,
-              height: 1.1,
-              fontWeight: fontWeight ?? FontWeight.w500,
-              color: AppColors.white,
+          child: Center(
+            widthFactor: 1,
+            heightFactor: 1,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: fontSize,
+                height: 1.1,
+                fontWeight: fontWeight ?? FontWeight.w500,
+                color: AppColors.white,
+              ),
             ),
           ),
         ),
