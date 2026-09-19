@@ -162,10 +162,7 @@ void main() {
     expect(styleText.style?.fontSize, 14);
     expect(styleText.style?.fontWeight, FontWeight.w500);
 
-    for (final text in <String>[
-      'Currently Showing Work',
-      'Upcoming Show',
-    ]) {
+    for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
       final widget = tester.widget<Text>(find.text(text));
       expect(widget.style?.fontSize, 14);
       expect(widget.style?.fontWeight, FontWeight.w500);
@@ -174,17 +171,21 @@ void main() {
     expect(find.textContaining('Past'), findsNothing);
 
     final typePill = tester.widget<Material>(
-      find.ancestor(
-        of: find.byKey(const Key('filter_type_1')),
-        matching: find.byType(Material),
-      ).first,
+      find
+          .ancestor(
+            of: find.byKey(const Key('filter_type_1')),
+            matching: find.byType(Material),
+          )
+          .first,
     );
     expect(typePill.color, AppColors.savedBackground);
     final currentPill = tester.widget<Material>(
-      find.ancestor(
-        of: find.byKey(const Key('filter_status_current')),
-        matching: find.byType(Material),
-      ).first,
+      find
+          .ancestor(
+            of: find.byKey(const Key('filter_status_current')),
+            matching: find.byType(Material),
+          )
+          .first,
     );
     expect(currentPill.color, AppColors.savedBackground);
 
@@ -348,10 +349,7 @@ class _FakeFilterRepository implements DiscoveryFilterRepositoryContract {
           value: 'current',
           label: 'Currently Showing Work',
         ),
-        DiscoveryShowStatusOption(
-          value: 'upcoming',
-          label: 'Upcoming Show',
-        ),
+        DiscoveryShowStatusOption(value: 'upcoming', label: 'Upcoming Show'),
         DiscoveryShowStatusOption(value: 'past', label: 'Past shows'),
       ],
       radiusMinKm: 1,
