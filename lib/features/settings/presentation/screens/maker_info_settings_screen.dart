@@ -963,6 +963,7 @@ class _CompactVisibilityToggle extends StatelessWidget {
       child: InkWell(
         onTap: enabled ? () => onChanged!(!value) : null,
         borderRadius: BorderRadius.circular(14),
+        overlayColor: AppButtonStyles.purpleInkOverlay,
         child: SizedBox(
           width: 78,
           height: 28,
@@ -1122,6 +1123,7 @@ class _CarouselEditor extends StatelessWidget {
             InkWell(
               key: Key('maker_settings_carousel_pick_$slot'),
               onTap: onChoose,
+              overlayColor: AppButtonStyles.purpleInkOverlay,
               child: Container(
                 width: 98,
                 height: 98,
