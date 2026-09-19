@@ -321,6 +321,7 @@ class _MakerArtworkDiscoveryScreenState
                                     assetName: 'assets/filter.svg',
                                     fallbackAssetName:
                                         'assets/icons/filter.svg',
+                                    materialIcon: Icons.filter_list_rounded,
                                     tooltip: 'Filter artwork',
                                     size: metrics.toolbarIconSize,
                                     barHeight: metrics.toolbarHeight,
@@ -446,16 +447,20 @@ class _ToolbarSvgButton extends StatelessWidget {
           key: buttonKey,
           onTap: onPressed,
           radius: 28,
+          splashFactory: NoSplash.splashFactory,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
           child: SizedBox(
             width: 48,
             height: barHeight,
             child: Padding(
-              // Both SVGs draw between y=3 and y=21 in a 24px viewBox.
-              // Compensate for that transparent inset so the *visible*
-              // icon (not merely its canvas) has 20px above and 10px below.
+              // Compensate for the Search SVG's transparent 3px inset.
+              // Keep the icon's visible top gap at 20px and bottom at 4px.
               padding: EdgeInsets.only(
                 top: 20 - size / 8,
-                bottom: 10 - size / 8,
+                bottom: 4 - size / 8,
               ),
               child: Align(
                 alignment: alignment,
