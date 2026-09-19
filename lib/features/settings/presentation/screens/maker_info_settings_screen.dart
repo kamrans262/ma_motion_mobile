@@ -536,7 +536,8 @@ class _MakerInfoSettingsScreenState
             Text(
               'Maker Info Setting',
               style: AppTextStyles.onboardingHeading.copyWith(
-                fontSize: constraints.maxWidth < 360 ? 24 : 26,
+                fontSize: 30,
+                 fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 28),

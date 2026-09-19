@@ -278,8 +278,6 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   @override
   Widget build(BuildContext context) {
     final options = _options;
-    final compactTitle = MediaQuery.sizeOf(context).width < 360;
-
     return Scaffold(
       key: const Key('discovery_filter_screen'),
       backgroundColor: AppColors.artworkBackground,
@@ -296,7 +294,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
-                        fontSize: compactTitle ? 24 : 26,
+                        fontSize: 30,
+                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -346,7 +345,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
-                      style: AppButtonStyles.outlineAction(borderWidth: 1),
+                      style: AppButtonStyles.outlineAction(borderWidth: 1).copyWith(
+                         backgroundColor: const WidgetStatePropertyAll(
+                           Color(0xFF020202),
+                         ),
+                       ),
                       child: _applying
                           ? const SizedBox.square(
                               dimension: 18,
@@ -396,7 +399,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 selected: _selectedTypeIds.contains(type.id),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                onTap: () => _toggleType(type.id),
+                darkBackground: true,
+                 onTap: () => _toggleType(type.id),
               ),
           ],
         ),
@@ -413,7 +417,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 selected: _selectedStyleIds.contains(style.id),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                onTap: () => _toggleStyle(style.id),
+                darkBackground: true,
+                 onTap: () => _toggleStyle(style.id),
               ),
           ],
         ),
@@ -620,6 +625,7 @@ class _ChoicePill extends StatelessWidget {
     required this.onTap,
     this.fontSize = 14,
     this.fontWeight,
+    this.darkBackground = false,
   });
 
   final String label;
@@ -627,11 +633,14 @@ class _ChoicePill extends StatelessWidget {
   final VoidCallback onTap;
   final double fontSize;
   final FontWeight? fontWeight;
+  final bool darkBackground;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? AppColors.white : AppColors.savedBackground,
+      color: darkBackground
+          ? const Color(0xFF020202)
+          : (selected ? AppColors.white : AppColors.savedBackground),
       child: InkWell(
         onTap: onTap,
         child: Container(
@@ -649,7 +658,9 @@ class _ChoicePill extends StatelessWidget {
               fontSize: fontSize,
               height: 1.1,
               fontWeight: fontWeight ?? FontWeight.w500,
-              color: selected ? AppColors.black : AppColors.white,
+              color: selected && !darkBackground
+                   ? AppColors.black
+                   : AppColors.white,
             ),
           ),
         ),
