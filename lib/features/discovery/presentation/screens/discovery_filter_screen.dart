@@ -302,6 +302,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   InkWell(
                     key: const Key('filter_clear_button'),
                     onTap: _clearAll,
+                    overlayColor: AppButtonStyles.purpleInkOverlay,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 2,
@@ -649,6 +650,7 @@ class _ChoicePill extends StatelessWidget {
           : AppColors.savedBackground,
       child: InkWell(
         onTap: onTap,
+        overlayColor: AppButtonStyles.purpleInkOverlay,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
           decoration: BoxDecoration(
