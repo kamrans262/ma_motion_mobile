@@ -14,11 +14,9 @@ class DiscoveryLayoutMetrics {
     return DiscoveryLayoutMetrics._(
       scale: scale,
       gridHorizontalPadding: (20 * scale).clamp(16.0, 24.0).toDouble(),
-      // The Search and Filter SVGs have a 24px viewport but only draw
-      // between y=3 and y=21. Size the bar around the visible artwork
-      // so its actual painted edges sit 20px from the top and 10px
-      // from the bottom; keep the icon's 24px layout size unchanged.
-      toolbarHeight: 30 + (24 * scale).clamp(22.0, 26.0).toDouble() * 0.75,
+      // Keep the icons 20px from the top, but tighten the visible
+      // bottom gap to 4px. The artwork occupies 18/24 of its canvas.
+      toolbarHeight: 24 + (24 * scale).clamp(22.0, 26.0).toDouble() * 0.75,
       toolbarIconSize: (24 * scale).clamp(22.0, 26.0).toDouble(),
       controlsToGridGap: (10 * scale).clamp(8.0, 12.0).toDouble(),
       gridSpacing: (2 * scale).clamp(1.0, 3.0).toDouble(),
