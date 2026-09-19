@@ -274,19 +274,21 @@ GoRouter createAppRouter({
         path: '/maker/saved-artworks',
         pageBuilder: (context, state) => _premiumPage(
           state: state,
-          child: MakerSavedArtworksScreen(
-            onBack: () => context.pop(),
-            onSettingsTap: () => context.push('/maker/settings'),
+          child: Builder(
+            builder: (savedContext) => MakerSavedArtworksScreen(
+              onBack: () => savedContext.pop(),
+              onSettingsTap: () => savedContext.push('/maker/settings'),
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
                 precacheImage(NetworkImage(url), context);
               }
-              context.push(
+              savedContext.push(
                 '/maker/discovery/artwork/${artwork.id}',
                 extra: artwork,
               );
             },
+            ),
           ),
         ),
       ),
