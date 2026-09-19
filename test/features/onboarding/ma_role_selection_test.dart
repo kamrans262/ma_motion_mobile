@@ -51,7 +51,10 @@ void main() {
       appreciator.style?.backgroundColor?.resolve(<WidgetState>{}),
       AppColors.splashBackground,
     );
-    expect(maker.style?.foregroundColor?.resolve(<WidgetState>{}), AppColors.primary);
+    expect(
+      maker.style?.foregroundColor?.resolve(<WidgetState>{}),
+      AppColors.primary,
+    );
     expect(
       appreciator.style?.foregroundColor?.resolve(<WidgetState>{}),
       AppColors.primary,

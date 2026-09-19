@@ -130,6 +130,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            ],
                           ),
                         ],
                       ),

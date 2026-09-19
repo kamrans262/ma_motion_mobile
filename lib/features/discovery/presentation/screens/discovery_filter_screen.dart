@@ -275,6 +275,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   @override
   Widget build(BuildContext context) {
     final options = _options;
+    final compactTitle = MediaQuery.sizeOf(context).width < 360;
 
     return Scaffold(
       key: const Key('discovery_filter_screen'),
@@ -292,7 +293,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
-                        fontSize: MediaQuery.sizeOf(context).width < 360 ? 24 : 26,
+                        fontSize: compactTitle ? 24 : 26,
                       ),
                     ),
                   ),
