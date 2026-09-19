@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
@@ -18,6 +19,7 @@ void main() {
 
     final repository = _FakeSavedRepository();
     var settingsTapped = 0;
+    DiscoveryArtwork? openedArtwork;
 
     await tester.pumpWidget(
       ProviderScope(
@@ -25,7 +27,10 @@ void main() {
           savedArtworksRepositoryProvider.overrideWithValue(repository),
         ],
         child: MaterialApp(
-          home: MakerSavedArtworksScreen(onSettingsTap: () => settingsTapped++),
+          home: MakerSavedArtworksScreen(
+            onArtworkTap: (artwork) => openedArtwork = artwork,
+            onSettingsTap: () => settingsTapped++,
+          ),
         ),
       ),
     );
@@ -36,6 +41,29 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const Key('artwork_tile_91')), findsOneWidget);
+
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('maker_saved_artworks_screen')),
+    );
+    expect(scaffold.backgroundColor, AppColors.savedBackground);
+    expect(AppColors.savedBackground, const Color(0xFF0F2519));
+
+    final artistBar = find.byKey(const Key('saved_artwork_artist_bar_91'));
+    final artistName = find.byKey(const Key('saved_artwork_artist_name_91'));
+    expect(artistBar, findsOneWidget);
+    expect(artistName, findsOneWidget);
+    expect(tester.widget<Text>(artistName).data, 'Mara Vellan');
+    expect(find.byKey(const Key('saved_artwork_remove_91')), findsNothing);
+    expect(tester.widget<Text>(artistName).style?.color, AppColors.white);
+    expect(
+      tester.getRect(artistBar).bottom,
+      tester.getRect(find.byKey(const Key('artwork_tile_91'))).bottom,
+    );
+
+    await tester.tap(find.byKey(const Key('artwork_tile_91')).hitTestable());
+    await tester.pump();
+    expect(openedArtwork?.id, 91);
+    expect(repository.unsavedIds, isEmpty);
 
     var grid = tester.widget<GridView>(
       find.byKey(const Key('maker_saved_artworks_grid')),
@@ -53,13 +81,8 @@ void main() {
     delegate = grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
     expect(delegate.crossAxisCount, 4);
 
-    await tester.tap(
-      find.byKey(const Key('saved_artwork_remove_91')).hitTestable(),
-    );
-    await tester.pumpAndSettle();
-
-    expect(repository.unsavedIds, <int>[91]);
-    expect(find.byKey(const Key('saved_artworks_empty')), findsOneWidget);
+    expect(find.byKey(const Key('saved_artwork_artist_bar_91')), findsOneWidget);
+    expect(repository.unsavedIds, isEmpty);
 
     await tester.tap(find.byKey(const Key('maker_nav_settings')).hitTestable());
     await tester.pump();
@@ -84,6 +107,7 @@ class _FakeSavedRepository implements SavedArtworksRepositoryContract {
               DiscoveryArtwork(
                 id: 91,
                 title: 'Saved',
+                maker: DiscoveryMakerPreview(id: 5, name: 'Mara Vellan'),
                 primaryMedia: DiscoveryArtworkMedia(
                   id: 911,
                   kind: 'image',

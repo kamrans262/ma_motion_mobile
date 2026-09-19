@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/ma_svg_asset.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../discovery/presentation/widgets/discovery_artwork_tile.dart';
 import '../../../discovery/presentation/widgets/discovery_layout_metrics.dart';
@@ -88,7 +87,7 @@ class _MakerSavedArtworksScreenState
 
     return Scaffold(
       key: const Key('maker_saved_artworks_screen'),
-      backgroundColor: AppColors.artworkBackground,
+      backgroundColor: AppColors.savedBackground,
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
@@ -152,11 +151,6 @@ class _MakerSavedArtworksScreenState
                     gridSpacing: metrics.gridSpacing,
                     columnCount: _columnCount,
                     onArtworkTap: widget.onArtworkTap,
-                    onRemove: (artworkId) {
-                      ref
-                          .read(savedArtworksControllerProvider.notifier)
-                          .remove(artworkId);
-                    },
                   ),
                 ),
               ],
@@ -189,7 +183,6 @@ class _SavedBody extends ConsumerWidget {
     required this.gridSpacing,
     required this.columnCount,
     required this.onArtworkTap,
-    required this.onRemove,
   });
 
   final SavedArtworksState state;
@@ -198,7 +191,6 @@ class _SavedBody extends ConsumerWidget {
   final double gridSpacing;
   final int columnCount;
   final ValueChanged<DiscoveryArtwork>? onArtworkTap;
-  final ValueChanged<int> onRemove;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -272,6 +264,8 @@ class _SavedBody extends ConsumerWidget {
         itemBuilder: (context, index) {
           final artwork = state.items[index];
 
+          final artistName = artwork.maker?.name.trim() ?? '';
+
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -279,30 +273,35 @@ class _SavedBody extends ConsumerWidget {
                 artwork: artwork,
                 onTap: () => onArtworkTap?.call(artwork),
               ),
-              Positioned(
-                top: 6,
-                right: 6,
-                child: Material(
-                  color: AppColors.artworkBackground.withValues(alpha: 0.86),
-                  shape: const CircleBorder(),
-                  child: InkResponse(
-                    key: Key('saved_artwork_remove_${artwork.id}'),
-                    onTap: () => onRemove(artwork.id),
-                    radius: 22,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: SizedBox.square(
-                        dimension: 16,
-                        child: const MaSvgAsset(
-                          assetName: 'assets/heart.svg',
-                          fallbackAssetName: 'assets/icons/heart.svg',
-                          color: AppColors.primary,
+              if (artistName.isNotEmpty)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: IgnorePointer(
+                    child: Container(
+                      key: Key('saved_artwork_artist_bar_${artwork.id}'),
+                      width: double.infinity,
+                      color: const Color(0xC05C5C5C),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
+                      child: Text(
+                        artistName,
+                        key: Key('saved_artwork_artist_name_${artwork.id}'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 16,
+                          height: 1.2,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
+                          color: AppColors.white,
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           );
         },
