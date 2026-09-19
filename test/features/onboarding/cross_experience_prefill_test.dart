@@ -11,7 +11,7 @@ import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_
 
 void main() {
   testWidgets('Maker onboarding prefills account fields and persisted Maker work', (tester) async {
-    final gateway = _PrefillGateway(makerIsActive: true);
+    final gateway = _PrefillGateway(makerIsActive: false);
     final container = ProviderContainer(overrides: [
       apiGatewayProvider.overrideWithValue(gateway),
       authTokenStoreProvider.overrideWithValue(_TokenStore()),
