@@ -303,10 +303,10 @@ class _ArtworkMediaPage extends StatelessWidget {
                   maxLines: constraints.maxHeight < 620 ? 2 : 3,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontFamily: 'Arial',
+                    fontFamily: 'HelveticaNeueLTStd',
                     fontSize: 14,
                     height: 1.22,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                     fontStyle: FontStyle.italic,
                     color: Color(0xFFF0F0F0),
                   ),

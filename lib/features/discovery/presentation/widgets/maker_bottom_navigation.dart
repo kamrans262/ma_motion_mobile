@@ -162,9 +162,9 @@ class _ColumnCountItem extends StatelessWidget {
             '$columnCount',
             key: Key('maker_nav_column_text_$columnCount'),
             style: TextStyle(
-              fontFamily: 'Instrument Sans',
+              fontFamily: 'HelveticaNeueLTStd',
               fontSize: selected ? 16 : 14,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
               color: selected
                   ? AppColors.primary
                   : AppColors.primary.withValues(alpha: 0.50),

@@ -512,7 +512,7 @@ class _MakerInfoSettingsScreenState
                             'Save & Close',
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                   ),
@@ -536,7 +536,7 @@ class _MakerInfoSettingsScreenState
             Text(
               'Maker Info Setting',
               style: AppTextStyles.onboardingHeading.copyWith(
-                fontSize: constraints.maxWidth < 360 ? 24 : 27,
+                fontSize: constraints.maxWidth < 360 ? 24 : 26,
               ),
             ),
             const SizedBox(height: 28),
@@ -573,7 +573,7 @@ class _MakerInfoSettingsScreenState
                     text: '${data.savedCount}',
                     style: const TextStyle(
                       color: AppColors.white,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const TextSpan(text: ' People'),
@@ -976,7 +976,7 @@ class _CompactVisibilityToggle extends StatelessWidget {
                   style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 10,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.white,
                   ),
                 ),

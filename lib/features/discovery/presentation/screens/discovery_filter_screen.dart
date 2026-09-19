@@ -292,7 +292,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
-                        fontSize: 26,
+                        fontSize: MediaQuery.sizeOf(context).width < 360 ? 24 : 26,
                       ),
                     ),
                   ),
@@ -356,7 +356,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                               style: TextStyle(
                                 fontFamily: AppTextStyles.fontFamily,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                     ),
@@ -389,7 +389,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 label: type.name,
                 selected: _selectedTypeIds.contains(type.id),
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 onTap: () => _toggleType(type.id),
               ),
           ],
@@ -406,7 +406,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 label: style.name,
                 selected: _selectedStyleIds.contains(style.id),
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 onTap: () => _toggleStyle(style.id),
               ),
           ],
@@ -487,7 +487,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           style: AppTextStyles.onboardingHelper.copyWith(
             color: AppColors.primary,
             fontSize: 14,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 2),
@@ -536,7 +536,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 style: AppTextStyles.onboardingHelper.copyWith(
                   color: AppColors.white,
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -554,7 +554,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         style: AppTextStyles.onboardingHelper.copyWith(
           color: AppColors.primary,
           fontSize: 14,
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
@@ -640,7 +640,7 @@ class _ChoicePill extends StatelessWidget {
               fontSize: fontSize,
               height: 1.1,
               fontWeight:
-                  fontWeight ?? (selected ? FontWeight.w700 : FontWeight.w600),
+                  fontWeight ?? (selected ? FontWeight.w500 : FontWeight.w500),
               color: selected ? AppColors.black : AppColors.white,
             ),
           ),

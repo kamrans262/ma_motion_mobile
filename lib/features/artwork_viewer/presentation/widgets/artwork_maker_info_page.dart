@@ -54,10 +54,10 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         artwork.title,
                         key: const Key('artwork_maker_info_title'),
                         style: const TextStyle(
-                          fontFamily: 'Instrument Sans',
+                          fontFamily: 'HelveticaNeueLTStd',
                           fontSize: 24,
                           height: 1.08,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                           color: Color(0xFFF0F0F0),
                         ),
                       ),
@@ -68,10 +68,10 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         _makerMeta(artwork),
                         key: const Key('artwork_maker_info_meta'),
                         style: const TextStyle(
-                          fontFamily: 'Instrument Sans',
+                          fontFamily: 'HelveticaNeueLTStd',
                           fontSize: 15,
                           height: 1.2,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                           color: Color(0xFFF0F0F0),
                         ),
                       ),
@@ -82,10 +82,10 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         maker!.bio!,
                         key: const Key('artwork_maker_info_bio'),
                         style: const TextStyle(
-                          fontFamily: 'Instrument Sans',
+                          fontFamily: 'HelveticaNeueLTStd',
                           fontSize: 14,
                           height: 1.45,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                           color: Color(0xFFF0F0F0),
                         ),
                       ),
@@ -206,10 +206,10 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                           child: const Text(
                             'Share',
                             style: TextStyle(
-                              fontFamily: 'Instrument Sans',
+                              fontFamily: 'HelveticaNeueLTStd',
                               fontSize: 18,
                               height: 1,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w500,
                               color: Color(0xFFF0F0F0),
                             ),
                           ),
@@ -248,10 +248,10 @@ class _InfoLabel extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        fontFamily: 'Instrument Sans',
+        fontFamily: 'HelveticaNeueLTStd',
         fontSize: 13,
         height: 1.2,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
         color: Color(0xFFBDBDBD),
       ),
     );
@@ -261,7 +261,7 @@ class _InfoLabel extends StatelessWidget {
 class _InfoValueStyle extends TextStyle {
   const _InfoValueStyle()
     : super(
-        fontFamily: 'Instrument Sans',
+        fontFamily: 'HelveticaNeueLTStd',
         fontSize: 17,
         height: 1.25,
         fontWeight: FontWeight.w500,

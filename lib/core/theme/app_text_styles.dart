@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppTextStyles {
-  static const String fontFamily = 'Arial';
+  static const String fontFamily = 'HelveticaNeueLTStd';
 
   static const TextStyle onboardingHeading = TextStyle(
-    fontFamily: 'Instrument Sans',
-    fontSize: 28,
+    fontFamily: fontFamily,
+    fontSize: 32,
     height: 1.12,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.primary,
   );
 
@@ -17,7 +17,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 14,
     height: 1.35,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: AppColors.mutedText,
   );
 
@@ -25,7 +25,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 18,
     height: 1.2,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: AppColors.white,
   );
 
@@ -33,21 +33,21 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 18,
     height: 1.2,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: AppColors.mutedText,
   );
 
   static const TextStyle buttonDark = TextStyle(
     fontFamily: fontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w500,
     color: AppColors.black,
   );
 
   static const TextStyle buttonPurple = TextStyle(
     fontFamily: fontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w500,
     color: AppColors.primary,
   );
 
@@ -56,7 +56,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 14,
     height: 1.2,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: AppColors.primary,
   );
 
@@ -64,7 +64,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 14,
     height: 1.2,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.black,
   );
 
@@ -72,7 +72,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 12,
     height: 1.25,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: AppColors.error,
   );
 }

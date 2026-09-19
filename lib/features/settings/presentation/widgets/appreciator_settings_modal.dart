@@ -357,10 +357,10 @@ class _AppreciatorSettingsModalState
             'Settings',
             key: Key('appreciator_settings_heading'),
             style: TextStyle(
-              fontFamily: 'Instrument Sans',
-              fontSize: 20,
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: 26,
               height: 1.15,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: AppColors.primary,
             ),
           ),
@@ -454,7 +454,7 @@ class _AppreciatorSettingsModalState
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 13,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
             ),
