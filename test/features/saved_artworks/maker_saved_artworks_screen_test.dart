@@ -81,7 +81,10 @@ void main() {
     delegate = grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
     expect(delegate.crossAxisCount, 4);
 
-    expect(find.byKey(const Key('saved_artwork_artist_bar_91')), findsOneWidget);
+    expect(
+      find.byKey(const Key('saved_artwork_artist_bar_91')),
+      findsOneWidget,
+    );
     expect(repository.unsavedIds, isEmpty);
 
     await tester.tap(find.byKey(const Key('maker_nav_settings')).hitTestable());
