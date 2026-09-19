@@ -34,10 +34,14 @@ class MaChoiceChip extends StatelessWidget {
             color: selected ? AppColors.primary : AppColors.savedBackground,
             border: Border.all(color: AppColors.primary, width: 1.1),
           ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
+          child: Center(
+            widthFactor: 1,
+            heightFactor: 1,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
+            ),
           ),
         ),
       ),
