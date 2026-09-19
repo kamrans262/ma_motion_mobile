@@ -107,7 +107,8 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   Widget build(BuildContext context) {
     final asyncDetail = ref.watch(artworkDetailProvider(widget.artworkId));
     final asyncSaved = ref.watch(artworkSavedStatusProvider(widget.artworkId));
-    final isSaved = _optimisticSaved ??
+    final isSaved =
+        _optimisticSaved ??
         asyncSaved.when(
           data: (value) => value,
           loading: () => false,
