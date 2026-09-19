@@ -1,0 +1,28 @@
+name: MA Temporary Heart Format Preview
+on:
+  push:
+    branches:
+      - feature/maker-onboarding-ui-polish
+permissions:
+  contents: read
+jobs:
+  format-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - name: Print canonically formatted heart files
+        shell: bash
+        run: |
+          dart format lib/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart test/features/artwork_viewer/artwork_viewer_screen_test.dart
+          echo MA_HEART_SOURCE_START
+          cat lib/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart
+          echo MA_HEART_SOURCE_END
+          echo MA_HEART_TEST_START
+          cat test/features/artwork_viewer/artwork_viewer_screen_test.dart
+          echo MA_HEART_TEST_END
