@@ -63,11 +63,18 @@ void main() {
     );
     expect(navMaterial.color, const Color(0xFF0F2419));
 
-    final topIcon = tester.getRect(find.byKey(const Key('discovery_search_svg')));
-    final bottomIcon = tester.getRect(find.byKey(const Key('maker_nav_saved_svg')));
+    final topIcon = tester.getRect(
+      find.byKey(const Key('discovery_search_svg')),
+    );
+    final bottomIcon = tester.getRect(
+      find.byKey(const Key('maker_nav_saved_svg')),
+    );
     expect(topIcon.width, bottomIcon.width);
     expect(topIcon.height, bottomIcon.height);
-    expect(tester.getRect(find.byKey(const Key('discovery_filter_svg'))).height, bottomIcon.height);
+    expect(
+      tester.getRect(find.byKey(const Key('discovery_filter_svg'))).height,
+      bottomIcon.height,
+    );
 
     expect(
       tester

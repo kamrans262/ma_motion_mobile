@@ -207,7 +207,9 @@ class _MakerArtworkDiscoveryScreenState
                                 ? 'Close search'
                                 : 'Search artwork',
                             size: metrics.toolbarIconSize,
-                            alignment: Alignment.center,
+                            alignment: _searchOpen
+                                ? Alignment.centerRight
+                                : Alignment.center,
                             onPressed: _toggleSearch,
                           ),
                           if (_searchOpen) ...[
