@@ -408,7 +408,7 @@ class _AppreciatorSettingsModalState
                 _switching ? 'Switching…' : 'Switch to Maker',
                 style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 11,
+                  fontSize: 14,
                   decoration: TextDecoration.underline,
                   color: AppColors.mutedText,
                 ),
@@ -420,7 +420,7 @@ class _AppreciatorSettingsModalState
             Text(
               _errorMessage!,
               key: const Key('appreciator_settings_error'),
-              style: AppTextStyles.error,
+              style: AppTextStyles.error.copyWith(fontSize: 14),
             ),
           ],
           if (_successMessage != null) ...[
@@ -430,7 +430,7 @@ class _AppreciatorSettingsModalState
               key: const Key('appreciator_settings_success'),
               style: AppTextStyles.onboardingHelper.copyWith(
                 color: AppColors.primary,
-                fontSize: 12,
+                fontSize: 14,
               ),
             ),
           ],
@@ -463,7 +463,7 @@ class _AppreciatorSettingsModalState
                       'Save & Close',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -517,7 +517,7 @@ class _SettingsField extends StatelessWidget {
           label,
           style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 10,
+            fontSize: 14,
             color: AppColors.primary,
           ),
         ),
@@ -531,14 +531,14 @@ class _SettingsField extends StatelessWidget {
           onChanged: onChanged,
           style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
-            fontSize: 13,
+            fontSize: 14,
             color: AppColors.white,
           ),
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             isDense: true,
             errorText: errorText,
-            errorStyle: AppTextStyles.error,
+            errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
             filled: true,
             fillColor: const Color(0xFF120A1D),
             contentPadding: const EdgeInsets.symmetric(
