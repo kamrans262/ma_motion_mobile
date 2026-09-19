@@ -10,6 +10,7 @@ import '../../../auth/data/experience_switch_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../../application/appreciator_registration_controller.dart';
 import '../../data/appreciator_onboarding_repository.dart';
+import '../../data/onboarding_prefill_repository.dart';
 import '../../domain/onboarding_validators.dart';
 import '../widgets/ma_onboarding_scaffold.dart';
 import '../widgets/ma_onboarding_text_field.dart';
@@ -21,6 +22,7 @@ class AppreciatorRegistrationFlowScreen extends ConsumerStatefulWidget {
     this.onCompleted,
     this.onSwitchToMaker,
     this.initialStep = 0,
+    this.prefillFromAccount = false,
   }) : assert(initialStep >= 0 && initialStep < totalSteps);
 
   static const int totalSteps = 3;
@@ -29,6 +31,7 @@ class AppreciatorRegistrationFlowScreen extends ConsumerStatefulWidget {
   final VoidCallback? onCompleted;
   final ValueChanged<MakerEntryDestination>? onSwitchToMaker;
   final int initialStep;
+  final bool prefillFromAccount;
 
   @override
   ConsumerState<AppreciatorRegistrationFlowScreen> createState() =>
@@ -47,6 +50,7 @@ class _AppreciatorRegistrationFlowScreenState
   bool _isSubmitting = false;
   bool _isSwitchingExperience = false;
   bool _submissionCompleted = false;
+  bool _prefilling = false;
 
   @override
   void initState() {
@@ -58,6 +62,54 @@ class _AppreciatorRegistrationFlowScreenState
     _nameController = TextEditingController(text: draft.name);
     _locationController = TextEditingController(text: draft.location);
     _emailController = TextEditingController(text: draft.email);
+
+    if (widget.prefillFromAccount) {
+      _prefilling = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_prefillFromAccount());
+      });
+    }
+  }
+
+  Future<void> _prefillFromAccount() async {
+    try {
+      final user = await ref.read(onboardingPrefillRepositoryProvider).account();
+      if (!mounted || user == null) return;
+
+      final draft = ref.read(appreciatorRegistrationProvider);
+      final controller = ref.read(appreciatorRegistrationProvider.notifier);
+
+      if (draft.name.trim().isEmpty && user.name.trim().isNotEmpty) {
+        controller.setName(user.name.trim());
+        _nameController.text = user.name.trim();
+      }
+      final location = user.appreciatorLocation.trim().isNotEmpty
+          ? user.appreciatorLocation.trim()
+          : user.makerLocation.trim();
+      if (draft.location.trim().isEmpty && location.isNotEmpty) {
+        controller.setLocation(location);
+        _locationController.text = location;
+      }
+      if (draft.email.trim().isEmpty && user.email.trim().isNotEmpty) {
+        controller.setEmail(user.email.trim());
+        _emailController.text = user.email.trim();
+      }
+    } on ApiException catch (error) {
+      if (mounted) {
+        setState(() {
+          _validationMessage = error.message;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _validationMessage =
+              'We could not restore your profile. Please try again.';
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _prefilling = false);
+    }
   }
 
   @override
@@ -196,7 +248,7 @@ class _AppreciatorRegistrationFlowScreenState
   }
 
   Future<void> _switchToMaker() async {
-    if (_isSubmitting || _isSwitchingExperience) {
+    if (_isSubmitting || _isSwitchingExperience || _prefilling) {
       return;
     }
 
@@ -242,7 +294,10 @@ class _AppreciatorRegistrationFlowScreenState
   }
 
   Future<void> _handleNext() async {
-    if (_isSubmitting || _submissionCompleted || !_validateCurrentStep()) {
+    if (_isSubmitting ||
+        _prefilling ||
+        _submissionCompleted ||
+        !_validateCurrentStep()) {
       return;
     }
 
