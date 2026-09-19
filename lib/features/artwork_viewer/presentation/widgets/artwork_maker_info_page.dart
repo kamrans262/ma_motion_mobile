@@ -42,7 +42,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                 key: const Key('artwork_maker_info_card'),
                 width: double.infinity,
                 constraints: const BoxConstraints(maxWidth: 396),
-                decoration: const BoxDecoration(color: Color(0xFF121212)),
+                decoration: const BoxDecoration(color: Color(0xFF0A0A0A)),
                 padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
