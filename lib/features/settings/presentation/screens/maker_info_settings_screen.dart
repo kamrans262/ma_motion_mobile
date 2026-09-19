@@ -993,8 +993,8 @@ class _CompactVisibilityToggle extends StatelessWidget {
                     child: Switch(
                       value: value,
                       onChanged: enabled ? (_) {} : null,
-                      activeThumbColor: AppColors.black,
-                      activeTrackColor: AppColors.white,
+                      activeThumbColor: AppColors.white,
+                      activeTrackColor: AppColors.primary,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
