@@ -12,6 +12,7 @@ class MakerRegistrationDraft {
     this.imageBytes,
     this.imageName,
     this.imagePath,
+    this.existingImageUrl,
   });
 
   final String name;
@@ -28,6 +29,8 @@ class MakerRegistrationDraft {
 
   /// Native image path retained for later multipart-upload optimization.
   final String? imagePath;
+  /// A previously uploaded image can be reused when finishing onboarding.
+  final String? existingImageUrl;
 
   MakerRegistrationDraft copyWith({
     String? name,
@@ -40,6 +43,7 @@ class MakerRegistrationDraft {
     Uint8List? imageBytes,
     String? imageName,
     String? imagePath,
+    String? existingImageUrl,
     bool clearImage = false,
   }) {
     return MakerRegistrationDraft(
@@ -53,6 +57,9 @@ class MakerRegistrationDraft {
       imageBytes: clearImage ? null : (imageBytes ?? this.imageBytes),
       imageName: clearImage ? null : (imageName ?? this.imageName),
       imagePath: clearImage ? null : (imagePath ?? this.imagePath),
+      existingImageUrl: clearImage
+          ? null
+          : (existingImageUrl ?? this.existingImageUrl),
     );
   }
 }
