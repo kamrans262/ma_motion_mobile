@@ -111,13 +111,15 @@ void main() {
       expect(makerCardRect.center.dx, frameRect.center.dx);
       expect(makerCardRect.left, frameRect.left);
       expect(makerCardRect.right, frameRect.right);
+      expect(makerCardRect.top, frameRect.top);
+      expect(makerCardRect.bottom, frameRect.bottom);
 
       final infoCard = tester.widget<Container>(
         find.byKey(const Key('artwork_maker_info_card')),
       );
       expect(
         (infoCard.decoration! as BoxDecoration).color,
-        const Color(0xFF0A0A0A),
+        const Color(0xFF121212),
       );
 
       expect(find.text('Tide Register No. 4'), findsOneWidget);
@@ -202,7 +204,17 @@ void main() {
     final card = tester.widget<Container>(
       find.byKey(const Key('artwork_maker_info_card')),
     );
-    expect((card.decoration! as BoxDecoration).color, const Color(0xFF0A0A0A));
+    expect((card.decoration! as BoxDecoration).color, const Color(0xFF121212));
+
+    final divider = tester.widget<Divider>(
+      find.byKey(const Key('artwork_maker_info_divider')),
+    );
+    expect(divider.thickness, 1);
+    expect(divider.color, const Color(0xFF494949));
+    expect(
+      tester.getTopLeft(find.byKey(const Key('artwork_maker_info_divider'))).dy,
+      greaterThan(tester.getBottomLeft(find.byKey(const Key('artwork_maker_info_bio'))).dy),
+    );
 
     for (final key in <String>[
       'artwork_maker_info_title',
