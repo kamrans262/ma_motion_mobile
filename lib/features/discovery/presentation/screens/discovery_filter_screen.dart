@@ -294,7 +294,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
-                        fontSize: 30,
+                        fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -347,8 +347,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       onPressed: _applying ? null : _apply,
                       style: AppButtonStyles.outlineAction(borderWidth: 1)
                           .copyWith(
-                            backgroundColor: const WidgetStatePropertyAll(
-                              Color(0xFF020202),
+                            backgroundColor: WidgetStateProperty.resolveWith(
+                              (states) => states.contains(WidgetState.pressed)
+                                  ? AppColors.primary
+                                  : const Color(0xFF020202),
                             ),
                           ),
                       child: _applying
@@ -640,9 +642,11 @@ class _ChoicePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: darkBackground
+      color: selected
+          ? AppColors.primary
+          : darkBackground
           ? const Color(0xFF020202)
-          : (selected ? AppColors.white : AppColors.savedBackground),
+          : AppColors.savedBackground,
       child: InkWell(
         onTap: onTap,
         child: Container(
@@ -660,9 +664,7 @@ class _ChoicePill extends StatelessWidget {
               fontSize: fontSize,
               height: 1.1,
               fontWeight: fontWeight ?? FontWeight.w500,
-              color: selected && !darkBackground
-                  ? AppColors.black
-                  : AppColors.white,
+              color: AppColors.white,
             ),
           ),
         ),
