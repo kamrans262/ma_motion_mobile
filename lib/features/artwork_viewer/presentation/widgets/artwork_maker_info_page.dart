@@ -35,17 +35,19 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
         return SingleChildScrollView(
           key: const Key('artwork_maker_info_scroll'),
           physics: const ClampingScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Container(
-                key: const Key('artwork_maker_info_card'),
-                width: double.infinity,
-                constraints: const BoxConstraints(maxWidth: 396),
-                decoration: const BoxDecoration(color: Color(0xFF0A0A0A)),
-                padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+                maxWidth: 396,
+              ),
+              child: IntrinsicHeight(
+                child: Container(
+                  key: const Key('artwork_maker_info_card'),
+                  width: double.infinity,
+                  decoration: const BoxDecoration(color: Color(0xFF121212)),
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
@@ -90,8 +92,13 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 18),
-                    const Divider(height: 1, color: Color(0x53535656)),
+                    const SizedBox(height: 22),
+                    const Divider(
+                      key: Key('artwork_maker_info_divider'),
+                      height: 1,
+                      thickness: 1,
+                      color: Color(0xFF494949),
+                    ),
                     if ((maker?.websiteUrl ?? '').isNotEmpty) ...[
                       const SizedBox(height: 16),
                       const _InfoLabel('Website'),
@@ -144,7 +151,8 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         loading: () => const SizedBox.shrink(),
                         error: (error, stackTrace) => const SizedBox.shrink(),
                       ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 28),
+                    const Spacer(),
                     Row(
                       children: [
                         Semantics(
@@ -205,6 +213,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                       ],
                     ),
                   ],
+                  ),
                 ),
               ),
             ),
