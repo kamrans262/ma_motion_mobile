@@ -11,6 +11,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../application/maker_registration_controller.dart';
 import '../../data/maker_onboarding_repository.dart';
+import '../../data/onboarding_prefill_repository.dart';
 import '../../domain/maker_registration_options.dart';
 import '../../domain/onboarding_validators.dart';
 import '../widgets/ma_choice_chip.dart';
@@ -23,6 +24,7 @@ class MakerRegistrationFlowScreen extends ConsumerStatefulWidget {
     required this.onExit,
     this.onCompleted,
     this.initialStep = 0,
+    this.prefillFromAccount = false,
   }) : assert(initialStep >= 0 && initialStep < totalSteps);
 
   static const int totalSteps = 7;
@@ -30,6 +32,7 @@ class MakerRegistrationFlowScreen extends ConsumerStatefulWidget {
   final VoidCallback onExit;
   final VoidCallback? onCompleted;
   final int initialStep;
+  final bool prefillFromAccount;
 
   @override
   ConsumerState<MakerRegistrationFlowScreen> createState() =>
@@ -51,6 +54,7 @@ class _MakerRegistrationFlowScreenState
   final Map<String, String> _fieldErrors = <String, String>{};
   bool _isSubmitting = false;
   bool _submissionCompleted = false;
+  bool _prefilling = false;
 
   @override
   void initState() {
@@ -65,6 +69,134 @@ class _MakerRegistrationFlowScreenState
     _aboutController = TextEditingController(text: draft.aboutWork);
     _websiteController = TextEditingController(text: draft.website);
     _emailController = TextEditingController(text: draft.email);
+
+    if (widget.prefillFromAccount) {
+      _prefilling = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_prefillFromAccount());
+      });
+    }
+  }
+
+  static String _firstAvailable(Iterable<String> values) {
+    for (final value in values) {
+      if (value.trim().isNotEmpty) return value.trim();
+    }
+    return '';
+  }
+
+  static Set<String> _selectedNames(
+    Object? data,
+    List<String> available,
+  ) {
+    if (data is! List) return const <String>{};
+    final labels = data.whereType<Map>().map(
+      (item) => item['name']?.toString().trim().toLowerCase() ?? '',
+    ).toSet();
+    return available.where(
+      (candidate) => labels.contains(candidate.toLowerCase()) ||
+          (candidate == 'Graphic Designer' && labels.contains('graphic design')),
+    ).toSet();
+  }
+
+  Future<void> _prefillFromAccount() async {
+    try {
+      final repository = ref.read(onboardingPrefillRepositoryProvider);
+      final user = await repository.account();
+      if (user == null || !mounted) return;
+
+      // Only a currently active, incomplete Maker profile can be fetched
+      // through the Maker-scoped endpoint. /me supplies both locations.
+      var makerProfile = <String, dynamic>{};
+      if (user.isMaker &&
+          user.makerRegistered &&
+          !user.makerOnboardingCompleted) {
+        makerProfile = await repository.incompleteMakerProfile();
+      }
+      if (!mounted) return;
+
+      final draft = ref.read(makerRegistrationProvider);
+      final controller = ref.read(makerRegistrationProvider.notifier);
+
+      final name = _firstAvailable(<String>[draft.name, user.name]);
+      final location = _firstAvailable(<String>[
+        draft.location,
+        makerProfile['location_text']?.toString() ?? '',
+        user.makerLocation,
+        user.appreciatorLocation,
+      ]);
+      final email = _firstAvailable(<String>[draft.email, user.email]);
+
+      if (draft.name.trim().isEmpty && name.isNotEmpty) {
+        controller.setName(name);
+        _nameController.text = name;
+      }
+      if (draft.location.trim().isEmpty && location.isNotEmpty) {
+        controller.setLocation(location);
+        _locationController.text = location;
+      }
+      if (draft.email.trim().isEmpty && email.isNotEmpty) {
+        controller.setEmail(email);
+        _emailController.text = email;
+      }
+
+      final bio = _firstAvailable(<String>[
+        draft.aboutWork,
+        makerProfile['bio']?.toString() ?? '',
+        user.makerBio,
+      ]);
+      if (draft.aboutWork.trim().isEmpty && bio.isNotEmpty) {
+        controller.setAboutWork(bio);
+        _aboutController.text = bio;
+      }
+
+      final website = _firstAvailable(<String>[
+        draft.website,
+        makerProfile['website_url']?.toString() ?? '',
+      ]);
+      if (draft.website.trim().isEmpty && website.isNotEmpty) {
+        controller.setWebsite(website);
+        _websiteController.text = website;
+      }
+
+      if (draft.types.isEmpty) {
+        final types = _selectedNames(
+          makerProfile['types'],
+          MakerRegistrationOptions.types,
+        );
+        if (types.isNotEmpty) controller.setTypes(types);
+      }
+      if (draft.styles.isEmpty) {
+        final styles = _selectedNames(
+          makerProfile['styles'],
+          MakerRegistrationOptions.styles,
+        );
+        if (styles.isNotEmpty) controller.setStyles(styles);
+      }
+      final image = _firstAvailable(<String>[
+        draft.existingImageUrl ?? '',
+        makerProfile['profile_image_url']?.toString() ?? '',
+        user.makerProfileImageUrl ?? '',
+      ]);
+      if (draft.existingImageUrl == null && image.isNotEmpty) {
+        controller.setExistingImageUrl(image);
+      }
+    } on ApiException catch (error) {
+      if (mounted) {
+        setState(() {
+          _validationMessage = error.message;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _validationMessage =
+              'We could not restore your profile. Please try again.';
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _prefilling = false);
+    }
   }
 
   @override
@@ -146,14 +278,17 @@ class _MakerRegistrationFlowScreenState
         _addError(errors, 'email', OnboardingValidators.email(draft.email));
         break;
       case 6:
-        _addError(
-          errors,
-          'image',
-          OnboardingValidators.salonImage(
-            bytes: draft.imageBytes,
-            fileName: draft.imageName,
-          ),
-        );
+        if (draft.existingImageUrl?.trim().isNotEmpty != true ||
+            draft.imageBytes != null) {
+          _addError(
+            errors,
+            'image',
+            OnboardingValidators.salonImage(
+              bytes: draft.imageBytes,
+              fileName: draft.imageName,
+            ),
+          );
+        }
         break;
     }
 
@@ -243,7 +378,10 @@ class _MakerRegistrationFlowScreenState
   }
 
   Future<void> _handleNext() async {
-    if (_isSubmitting || _submissionCompleted || !_validateCurrentStep()) {
+    if (_isSubmitting ||
+        _prefilling ||
+        _submissionCompleted ||
+        !_validateCurrentStep()) {
       return;
     }
 
@@ -506,6 +644,11 @@ class _MakerRegistrationFlowScreenState
             children: [
               _SalonImagePicker(
                 imageBytes: imageBytes,
+                existingImageUrl: ref.watch(
+                  makerRegistrationProvider.select(
+                    (draft) => draft.existingImageUrl,
+                  ),
+                ),
                 onTap: _isSubmitting ? () {} : _pickImage,
               ),
               if (_fieldErrors['image'] != null) ...[
@@ -636,14 +779,20 @@ class _TypeStyleStep extends ConsumerWidget {
 }
 
 class _SalonImagePicker extends StatelessWidget {
-  const _SalonImagePicker({required this.imageBytes, required this.onTap});
+  const _SalonImagePicker({
+    required this.imageBytes,
+    required this.existingImageUrl,
+    required this.onTap,
+  });
 
   final Uint8List? imageBytes;
+  final String? existingImageUrl;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageBytes != null && imageBytes!.isNotEmpty;
+    final hasBytes = imageBytes != null && imageBytes!.isNotEmpty;
+    final hasImage = hasBytes || (existingImageUrl?.trim().isNotEmpty ?? false);
 
     return Semantics(
       button: true,
@@ -669,20 +818,23 @@ class _SalonImagePicker extends StatelessWidget {
                     weight: 300,
                   ),
                 )
-              : Image.memory(
+              : hasBytes
+              ? Image.memory(
                   imageBytes!,
                   key: const Key('maker_salon_image_preview'),
                   fit: BoxFit.cover,
                   gaplessPlayback: true,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                      child: Icon(
+                )
+              : Image.network(
+                  existingImageUrl!,
+                  key: const Key('maker_salon_image_preview'),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(
                         Icons.image_not_supported_outlined,
                         color: AppColors.primary,
                         size: 36,
                       ),
-                    );
-                  },
                 ),
         ),
       ),
