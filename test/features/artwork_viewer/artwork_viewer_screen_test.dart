@@ -111,8 +111,8 @@ void main() {
       expect(makerCardRect.center.dx, frameRect.center.dx);
       expect(makerCardRect.left, frameRect.left);
       expect(makerCardRect.right, frameRect.right);
-      expect(makerCardRect.top, frameRect.top);
-      expect(makerCardRect.bottom, frameRect.bottom);
+      expect(makerCardRect.height, lessThan(frameRect.height));
+      expect(makerCardRect.center.dy, closeTo(frameRect.center.dy, 1));
 
       final infoCard = tester.widget<Container>(
         find.byKey(const Key('artwork_maker_info_card')),
