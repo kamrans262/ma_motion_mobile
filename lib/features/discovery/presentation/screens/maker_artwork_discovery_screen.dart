@@ -49,6 +49,7 @@ class _MakerArtworkDiscoveryScreenState
   Timer? _searchDebounce;
   bool _searchOpen = false;
   bool _initialLoadScheduled = false;
+  bool _toolbarVisible = true;
   int _columnCount = 2;
 
   @override
@@ -62,7 +63,14 @@ class _MakerArtworkDiscoveryScreenState
 
     _searchController = TextEditingController(text: initialSearch);
     _searchFocusNode = FocusNode();
-    _scrollController = ScrollController()..addListener(_handleScroll);
+    _scrollController = ScrollController(
+      onAttach: (position) {
+        position.isScrollingNotifier.addListener(_handleScrollingChange);
+      },
+      onDetach: (position) {
+        position.isScrollingNotifier.removeListener(_handleScrollingChange);
+      },
+    )..addListener(_handleScroll);
     _searchOpen = initialSearch.isNotEmpty;
   }
 
@@ -77,8 +85,27 @@ class _MakerArtworkDiscoveryScreenState
     super.dispose();
   }
 
+  void _handleScrollingChange() {
+    if (!_scrollController.hasClients ||
+        _scrollController.position.isScrollingNotifier.value ||
+        _toolbarVisible ||
+        !mounted) {
+      return;
+    }
+
+    // Wait for the drag and any ballistic scrolling to finish.
+    setState(() => _toolbarVisible = true);
+  }
+
   void _handleScroll() {
     if (!_scrollController.hasClients) return;
+
+    // Only hide the toolbar once the artwork grid actually moves.
+    if (_scrollController.position.isScrollingNotifier.value &&
+        _toolbarVisible &&
+        mounted) {
+      setState(() => _toolbarVisible = false);
+    }
 
     if (_scrollController.position.extentAfter < 520) {
       unawaited(
@@ -182,9 +209,16 @@ class _MakerArtworkDiscoveryScreenState
 
             return Column(
               children: [
-                SizedBox(
-                  height: metrics.toolbarHeight,
-                  child: ColoredBox(
+                ClipRect(
+                  child: AnimatedAlign(
+                    key: const Key('discovery_top_bar_visibility'),
+                    duration: const Duration(milliseconds: 160),
+                    curve: Curves.easeOut,
+                    alignment: Alignment.topCenter,
+                    heightFactor: _toolbarVisible ? 1 : 0,
+                    child: SizedBox(
+                      height: metrics.toolbarHeight,
+                      child: ColoredBox(
                     color: AppColors.artworkNavBackground,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -320,6 +354,8 @@ class _MakerArtworkDiscoveryScreenState
                             ],
                           ),
                         ],
+                      ),
+                    ),
                       ),
                     ),
                   ),
