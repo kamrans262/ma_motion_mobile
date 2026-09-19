@@ -49,9 +49,9 @@ void main() {
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
       );
-      expect(description.style?.fontFamily, 'Arial');
+      expect(description.style?.fontFamily, 'HelveticaNeueLTStd');
       expect(description.style?.fontSize, 14);
-      expect(description.style?.fontWeight, FontWeight.w400);
+      expect(description.style?.fontWeight, FontWeight.w500);
       expect(description.style?.fontStyle, FontStyle.italic);
       expect(description.style?.color, const Color(0xFFF0F0F0));
 
@@ -113,14 +113,14 @@ void main() {
       final title = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_title')),
       );
-      expect(title.style?.fontFamily, 'Instrument Sans');
+      expect(title.style?.fontFamily, 'HelveticaNeueLTStd');
       expect(title.style?.fontSize, 24);
-      expect(title.style?.fontWeight, FontWeight.w700);
+      expect(title.style?.fontWeight, FontWeight.w500);
 
       final meta = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_meta')),
       );
-      expect(meta.style?.fontFamily, 'Instrument Sans');
+      expect(meta.style?.fontFamily, 'HelveticaNeueLTStd');
       expect(meta.style?.fontSize, 15);
 
       expect(
@@ -134,9 +134,9 @@ void main() {
           matching: find.text('Share'),
         ),
       );
-      expect(share.style?.fontFamily, 'Instrument Sans');
+      expect(share.style?.fontFamily, 'HelveticaNeueLTStd');
       expect(share.style?.fontSize, 18);
-      expect(share.style?.fontWeight, FontWeight.w700);
+      expect(share.style?.fontWeight, FontWeight.w500);
 
       expect(
         find.byKey(const Key('artwork_viewer_close_button')),
