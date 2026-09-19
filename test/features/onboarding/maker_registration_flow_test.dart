@@ -48,7 +48,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Next has a brighter outline than Back and taller buttons', (tester) async {
+  testWidgets('Next has a brighter outline than Back and taller buttons', (
+    tester,
+  ) async {
     await tester.pumpWidget(app());
 
     final nextButton = find.byKey(const Key('maker_next_button'));

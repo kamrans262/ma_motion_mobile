@@ -60,7 +60,9 @@ class MaOnboardingTextField extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(
-                color: errorText == null ? AppColors.primary50 : AppColors.primary,
+                color: errorText == null
+                    ? AppColors.primary50
+                    : AppColors.primary,
                 width: 1.2,
               ),
             ),

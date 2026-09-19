@@ -102,7 +102,9 @@ class MaOnboardingScaffold extends StatelessWidget {
                               Text(
                                 heading,
                                 key: const Key('maker_step_heading'),
-                                style: headingStyle ?? AppTextStyles.onboardingHeading,
+                                style:
+                                    headingStyle ??
+                                    AppTextStyles.onboardingHeading,
                               ),
                               const SizedBox(height: 6),
                               Text(

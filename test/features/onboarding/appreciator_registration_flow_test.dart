@@ -145,8 +145,14 @@ void main() {
       back.style!.foregroundColor!.resolve(<WidgetState>{})!.a,
       lessThan(next.style!.foregroundColor!.resolve(<WidgetState>{})!.a),
     );
-    expect(tester.getSize(find.byKey(const Key('maker_next_button'))).height, 53);
-    expect(tester.getSize(find.byKey(const Key('maker_back_button'))).height, 53);
+    expect(
+      tester.getSize(find.byKey(const Key('maker_next_button'))).height,
+      53,
+    );
+    expect(
+      tester.getSize(find.byKey(const Key('maker_back_button'))).height,
+      53,
+    );
     expect(tester.takeException(), isNull);
   });
 
