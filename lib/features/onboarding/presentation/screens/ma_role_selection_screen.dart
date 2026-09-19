@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
@@ -79,6 +80,19 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                     14,
                                   ),
                                   shape: const RoundedRectangleBorder(),
+                                ).copyWith(
+                                  backgroundColor:
+                                      AppButtonStyles.purpleWhenPressed(
+                                    AppColors.savedBackground,
+                                  ),
+                                  foregroundColor:
+                                      WidgetStateProperty.resolveWith<Color>(
+                                    (states) => states.contains(
+                                      WidgetState.pressed,
+                                    )
+                                        ? AppColors.white
+                                        : AppColors.primary,
+                                  ),
                                 ),
                                 child: const Text(
                                   'Maker',
@@ -86,7 +100,6 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                     fontFamily: AppTextStyles.fontFamily,
                                     fontSize: roleFontSize,
                                     fontWeight: FontWeight.w500,
-                                    color: AppColors.primary,
                                   ),
                                 ),
                               ),
@@ -107,6 +120,19 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                     14,
                                   ),
                                   shape: const RoundedRectangleBorder(),
+                                ).copyWith(
+                                  backgroundColor:
+                                      AppButtonStyles.purpleWhenPressed(
+                                    AppColors.savedBackground,
+                                  ),
+                                  foregroundColor:
+                                      WidgetStateProperty.resolveWith<Color>(
+                                    (states) => states.contains(
+                                      WidgetState.pressed,
+                                    )
+                                        ? AppColors.white
+                                        : AppColors.primary,
+                                  ),
                                 ),
                                 child: const Text(
                                   'Appreciator',
@@ -114,7 +140,6 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                     fontFamily: AppTextStyles.fontFamily,
                                     fontSize: roleFontSize,
                                     fontWeight: FontWeight.w500,
-                                    color: AppColors.primary,
                                   ),
                                 ),
                               ),
