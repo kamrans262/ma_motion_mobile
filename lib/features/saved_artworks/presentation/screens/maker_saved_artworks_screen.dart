@@ -103,43 +103,43 @@ class _MakerSavedArtworksScreenState
                   child: ColoredBox(
                     color: AppColors.artworkNavBackground,
                     child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: metrics.gridHorizontalPadding,
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 48,
-                          height: 48,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              key: const Key('saved_artworks_back_button'),
-                              onPressed: widget.onBack,
-                              padding: EdgeInsets.zero,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: metrics.gridHorizontalPadding,
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 48,
+                            height: 48,
+                            child: Align(
                               alignment: Alignment.center,
-                              color: AppColors.primary,
-                              iconSize: metrics.toolbarIconSize,
-                              icon: const Icon(Icons.arrow_back_rounded),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Saved',
-                              style: AppTextStyles.onboardingHeading.copyWith(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 22,
+                              child: IconButton(
+                                key: const Key('saved_artworks_back_button'),
+                                onPressed: widget.onBack,
+                                padding: EdgeInsets.zero,
+                                alignment: Alignment.center,
+                                color: AppColors.primary,
+                                iconSize: metrics.toolbarIconSize,
+                                icon: const Icon(Icons.arrow_back_rounded),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 48, height: 48),
-                      ],
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Saved',
+                                style: AppTextStyles.onboardingHeading.copyWith(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 48, height: 48),
+                        ],
+                      ),
                     ),
-                  ),
                   ),
                 ),
                 ColoredBox(
@@ -153,12 +153,12 @@ class _MakerSavedArtworksScreenState
                   child: ColoredBox(
                     color: AppColors.savedBackground,
                     child: _SavedBody(
-                    state: state,
-                    scrollController: _scrollController,
-                    horizontalPadding: metrics.gridHorizontalPadding,
-                    gridSpacing: metrics.gridSpacing,
-                    columnCount: _columnCount,
-                    onArtworkTap: widget.onArtworkTap,
+                      state: state,
+                      scrollController: _scrollController,
+                      horizontalPadding: metrics.gridHorizontalPadding,
+                      gridSpacing: metrics.gridSpacing,
+                      columnCount: _columnCount,
+                      onArtworkTap: widget.onArtworkTap,
                     ),
                   ),
                 ),

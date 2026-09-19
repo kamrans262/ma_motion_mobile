@@ -295,7 +295,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
                         fontSize: 30,
-                         fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -345,11 +345,12 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
-                      style: AppButtonStyles.outlineAction(borderWidth: 1).copyWith(
-                         backgroundColor: const WidgetStatePropertyAll(
-                           Color(0xFF020202),
-                         ),
-                       ),
+                      style: AppButtonStyles.outlineAction(borderWidth: 1)
+                          .copyWith(
+                            backgroundColor: const WidgetStatePropertyAll(
+                              Color(0xFF020202),
+                            ),
+                          ),
                       child: _applying
                           ? const SizedBox.square(
                               dimension: 18,
@@ -400,7 +401,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 darkBackground: true,
-                 onTap: () => _toggleType(type.id),
+                onTap: () => _toggleType(type.id),
               ),
           ],
         ),
@@ -418,7 +419,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 darkBackground: true,
-                 onTap: () => _toggleStyle(style.id),
+                onTap: () => _toggleStyle(style.id),
               ),
           ],
         ),
@@ -659,8 +660,8 @@ class _ChoicePill extends StatelessWidget {
               height: 1.1,
               fontWeight: fontWeight ?? FontWeight.w500,
               color: selected && !darkBackground
-                   ? AppColors.black
-                   : AppColors.white,
+                  ? AppColors.black
+                  : AppColors.white,
             ),
           ),
         ),

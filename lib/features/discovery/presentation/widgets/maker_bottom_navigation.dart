@@ -47,39 +47,39 @@ class MakerBottomNavigation extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                  Expanded(
-                    child: _SvgNavigationItem(
-                      itemKey: const Key('maker_nav_saved'),
-                      iconKey: const Key('maker_nav_saved_svg'),
-                      assetName: 'assets/heart.svg',
-                      fallbackAssetName: 'assets/icons/heart.svg',
-                      semanticsLabel: 'Saved artwork',
-                      iconSize: iconSize,
-                      selected: heartSelected,
-                      filledHeart: heartSelected,
-                      onTap: onSavedTap,
-                    ),
-                  ),
-                  for (var columnCount = 1; columnCount <= 4; columnCount++)
                     Expanded(
-                      child: _ColumnCountItem(
-                        columnCount: columnCount,
-                        selected: columnCount == selectedColumnCount,
-                        onTap: () => onColumnCountSelected?.call(columnCount),
+                      child: _SvgNavigationItem(
+                        itemKey: const Key('maker_nav_saved'),
+                        iconKey: const Key('maker_nav_saved_svg'),
+                        assetName: 'assets/heart.svg',
+                        fallbackAssetName: 'assets/icons/heart.svg',
+                        semanticsLabel: 'Saved artwork',
+                        iconSize: iconSize,
+                        selected: heartSelected,
+                        filledHeart: heartSelected,
+                        onTap: onSavedTap,
                       ),
                     ),
-                  Expanded(
-                    child: _SvgNavigationItem(
-                      itemKey: const Key('maker_nav_settings'),
-                      iconKey: const Key('maker_nav_settings_svg'),
-                      assetName: 'assets/setting.svg',
-                      fallbackAssetName: 'assets/icons/setting.svg',
-                      semanticsLabel: settingsSemanticsLabel,
-                      iconSize: iconSize,
-                      selected: settingsSelected,
-                      onTap: onSettingsTap,
+                    for (var columnCount = 1; columnCount <= 4; columnCount++)
+                      Expanded(
+                        child: _ColumnCountItem(
+                          columnCount: columnCount,
+                          selected: columnCount == selectedColumnCount,
+                          onTap: () => onColumnCountSelected?.call(columnCount),
+                        ),
+                      ),
+                    Expanded(
+                      child: _SvgNavigationItem(
+                        itemKey: const Key('maker_nav_settings'),
+                        iconKey: const Key('maker_nav_settings_svg'),
+                        assetName: 'assets/setting.svg',
+                        fallbackAssetName: 'assets/icons/setting.svg',
+                        semanticsLabel: settingsSemanticsLabel,
+                        iconSize: iconSize,
+                        selected: settingsSelected,
+                        onTap: onSettingsTap,
+                      ),
                     ),
-                  ),
                   ],
                 ),
               ),
