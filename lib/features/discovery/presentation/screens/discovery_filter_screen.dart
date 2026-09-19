@@ -437,6 +437,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   selected: _selectedStatuses.contains(status.value),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
+                  darkBackground: true,
                   onTap: () => _toggleStatus(status.value),
                 ),
           ],
