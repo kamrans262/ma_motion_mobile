@@ -41,8 +41,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                       ((constraints.maxWidth - horizontal * 2 - buttonGap) / 2)
                           .clamp(0.0, 154.0)
                           .toDouble();
-                  final roleFontSize =
-                      constraints.maxWidth < 360 ? 24.0 : 26.0;
+                  final roleFontSize = constraints.maxWidth < 360 ? 24.0 : 26.0;
 
                   return Center(
                     child: Padding(
@@ -78,9 +77,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                       color: AppColors.primary,
                                       width: 1.2,
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 4),
                                     shape: const RoundedRectangleBorder(),
                                   ),
                                   child: FittedBox(
@@ -111,9 +108,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                       color: AppColors.primary,
                                       width: 1.2,
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 4),
                                     shape: const RoundedRectangleBorder(),
                                   ),
                                   child: FittedBox(
