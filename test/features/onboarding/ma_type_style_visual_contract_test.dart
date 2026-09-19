@@ -63,10 +63,12 @@ void main() {
     expect(abstractText.style?.fontSize, 14);
 
     final unselected = tester.widget<AnimatedContainer>(
-      find.ancestor(
-        of: find.text('Painting'),
-        matching: find.byType(AnimatedContainer),
-      ).first,
+      find
+          .ancestor(
+            of: find.text('Painting'),
+            matching: find.byType(AnimatedContainer),
+          )
+          .first,
     );
     expect(unselected.decoration, isA<BoxDecoration>());
     expect(
