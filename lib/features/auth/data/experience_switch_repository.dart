@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/api_exception.dart';
 import '../../../core/network/api_gateway.dart';
 import '../../../core/network/api_paths.dart';
 import '../../../core/providers/core_providers.dart';
@@ -31,17 +32,22 @@ class ExperienceSwitchRepository implements ExperienceSwitchRepositoryContract {
     final session = await auth.restoreSession();
 
     if (session == null) {
-      return MakerEntryDestination.appreciatorProfileSetup;
+      throw const ApiException(
+        message: 'Your session has expired. Please sign in again.',
+        statusCode: 401,
+      );
     }
 
     if (!session.user.appreciatorOnboardingCompleted) {
       return MakerEntryDestination.appreciatorProfileSetup;
     }
 
-    await api.patch(
-      ApiPaths.experience,
-      data: const <String, dynamic>{'experience': 'appreciator'},
-    );
+    if (!session.user.isAppreciator) {
+      await api.patch(
+        ApiPaths.experience,
+        data: const <String, dynamic>{'experience': 'appreciator'},
+      );
+    }
 
     return MakerEntryDestination.appreciatorDiscovery;
   }
@@ -51,19 +57,26 @@ class ExperienceSwitchRepository implements ExperienceSwitchRepositoryContract {
     final session = await auth.restoreSession();
 
     if (session == null) {
-      return MakerEntryDestination.profileSetup;
+      throw const ApiException(
+        message: 'Your session has expired. Please sign in again.',
+        statusCode: 401,
+      );
     }
 
     if (session.user.makerOnboardingCompleted) {
-      await api.patch(
-        ApiPaths.experience,
-        data: const <String, dynamic>{'experience': 'maker'},
-      );
+      if (!session.user.isMaker) {
+        await api.patch(
+          ApiPaths.experience,
+          data: const <String, dynamic>{'experience': 'maker'},
+        );
+      }
 
       return MakerEntryDestination.discovery;
     }
 
-    await api.post(ApiPaths.makerExperienceOnboarding);
+    if (!session.user.isMaker) {
+      await api.post(ApiPaths.makerExperienceOnboarding);
+    }
 
     return MakerEntryDestination.profileSetup;
   }
