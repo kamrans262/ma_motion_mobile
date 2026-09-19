@@ -46,7 +46,7 @@ void main() {
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('maker_saved_artworks_screen')),
     );
-    expect(scaffold.backgroundColor, AppColors.savedBackground);
+    expect(scaffold.backgroundColor, AppColors.artworkNavBackground);
     expect(AppColors.savedBackground, const Color(0xFF0F2519));
 
     final artistBar = find.byKey(const Key('saved_artwork_artist_bar_91'));

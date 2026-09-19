@@ -128,6 +128,7 @@ void main() {
     final title = tester.widget<Text>(find.text('Filter'));
     expect(title.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(title.style?.fontWeight, FontWeight.w500);
+    expect(title.style?.fontSize, 30);
     final clearText = tester.widget<Text>(find.text('Clear filters'));
     expect(clearText.style?.fontSize, 14);
     expect(clearText.style?.fontWeight, FontWeight.w500);
@@ -191,13 +192,13 @@ void main() {
     );
     expect(
       applyButton.style?.backgroundColor?.resolve(<WidgetState>{}),
-      AppColors.savedBackground,
+      const Color(0xFF020202),
     );
     expect(
       applyButton.style?.backgroundColor?.resolve(<WidgetState>{
         WidgetState.pressed,
       }),
-      AppColors.primary,
+      const Color(0xFF020202),
     );
     expect(
       applyButton.style?.foregroundColor?.resolve(<WidgetState>{}),
@@ -292,7 +293,7 @@ void main() {
           )
           .first,
     );
-    expect(typePill.color, AppColors.savedBackground);
+    expect(typePill.color, const Color(0xFF020202));
     final currentPill = tester.widget<Material>(
       find
           .descendant(

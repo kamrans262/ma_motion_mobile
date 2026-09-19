@@ -97,6 +97,14 @@ void main() {
       53,
     );
     expect(
+      next.style?.backgroundColor?.resolve(<WidgetState>{}),
+      Colors.transparent,
+    );
+    expect(
+      back.style?.backgroundColor?.resolve(<WidgetState>{}),
+      Colors.transparent,
+    );
+    expect(
       next.style?.foregroundColor?.resolve(<WidgetState>{}),
       const Color(0xFF904AFF),
     );

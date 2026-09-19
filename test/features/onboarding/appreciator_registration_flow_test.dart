@@ -63,6 +63,25 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Appreciator Next and Back have transparent backgrounds', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app());
+    for (final key in <String>['maker_next_button', 'maker_back_button']) {
+      final button = tester.widget<OutlinedButton>(
+        find.descendant(
+          of: find.byKey(Key(key)),
+          matching: find.byType(OutlinedButton),
+        ),
+      );
+      expect(
+        button.style?.backgroundColor?.resolve(<WidgetState>{}),
+        Colors.transparent,
+      );
+    }
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Appreciator name and location validate and advance', (
     tester,
   ) async {

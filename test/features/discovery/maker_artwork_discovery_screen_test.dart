@@ -39,12 +39,12 @@ void main() {
     );
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
-      const Size(18, 18),
+      const Size(24, 24),
     );
     expect(find.byKey(const Key('maker_nav_saved_filled')), findsNothing);
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))),
-      const Size(18, 18),
+      const Size(24, 24),
     );
     expect(
       tester
@@ -56,12 +56,18 @@ void main() {
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('maker_artwork_discovery_screen')),
     );
-    expect(scaffold.backgroundColor, const Color(0xFF020101));
+    expect(scaffold.backgroundColor, const Color(0xFF0F2419));
 
     final navMaterial = tester.widget<Material>(
       find.byKey(const Key('maker_bottom_navigation_material')),
     );
     expect(navMaterial.color, const Color(0xFF0F2419));
+
+    final topIcon = tester.getRect(find.byKey(const Key('discovery_search_svg')));
+    final bottomIcon = tester.getRect(find.byKey(const Key('maker_nav_saved_svg')));
+    expect(topIcon.width, bottomIcon.width);
+    expect(topIcon.height, bottomIcon.height);
+    expect(tester.getRect(find.byKey(const Key('discovery_filter_svg'))).height, bottomIcon.height);
 
     expect(
       tester
