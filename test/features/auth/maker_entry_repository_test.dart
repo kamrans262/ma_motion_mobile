@@ -68,6 +68,26 @@ void main() {
     expect(api.makerProfileReads, 0);
   });
 
+  test('session restore routes incomplete Appreciator to onboarding', () async {
+    final api = _FakeApiGateway(
+      role: 'appreciator',
+      appreciatorCompleted: false,
+    );
+    final repository = MakerEntryRepository(
+      auth: AuthRepository(
+        api: api,
+        tokenStore: _MemoryTokenStore('saved-appreciator-token'),
+      ),
+      api: api,
+    );
+
+    expect(
+      await repository.restoreAppEntry(),
+      MakerEntryDestination.appreciatorProfileSetup,
+    );
+    expect(api.meReads, 1);
+  });
+
   test('session restore without token routes to join', () async {
     final api = _FakeApiGateway();
     final tokenStore = _MemoryTokenStore();
@@ -114,10 +134,15 @@ class _MemoryTokenStore implements AuthTokenStore {
 }
 
 class _FakeApiGateway implements ApiGateway {
-  _FakeApiGateway({this.onboardingCompleted = false, this.role = 'maker'});
+  _FakeApiGateway({
+    this.onboardingCompleted = false,
+    this.role = 'maker',
+    this.appreciatorCompleted = true,
+  });
 
   final bool onboardingCompleted;
   final String role;
+  final bool appreciatorCompleted;
 
   String? lastPostedPath;
   Map<String, dynamic>? lastPostedData;
@@ -143,6 +168,8 @@ class _FakeApiGateway implements ApiGateway {
               : 'maker@example.com',
           'role': role,
           'is_active': true,
+          'maker_onboarding_completed': onboardingCompleted,
+          'appreciator_onboarding_completed': appreciatorCompleted,
         },
       };
     }
