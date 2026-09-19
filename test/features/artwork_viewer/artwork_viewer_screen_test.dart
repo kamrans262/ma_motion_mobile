@@ -301,6 +301,111 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'shared Maker and Appreciator viewer heart updates immediately and '
+    'refreshes saved state when artwork is reopened',
+    (tester) async {
+      final repository = _DeferredSavedArtworksRepository();
+      final container = ProviderContainer(
+        overrides: [
+          artworkDetailRepositoryProvider.overrideWithValue(
+            _FakeArtworkDetailRepository(),
+          ),
+          savedArtworksRepositoryProvider.overrideWithValue(repository),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      Widget page({required bool visible}) => UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          home: visible
+              ? const ArtworkViewerScreen(artworkId: 41)
+              : const Scaffold(body: SizedBox.shrink()),
+        ),
+      );
+
+      Future<void> openMakerInfo() async {
+        await tester.drag(
+          find.byKey(const Key('artwork_viewer_page_view')),
+          const Offset(-500, 0),
+        );
+        await tester.pumpAndSettle();
+        await tester.drag(
+          find.byKey(const Key('artwork_viewer_page_view')),
+          const Offset(-500, 0),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+      }
+
+      final heart = find.byKey(const Key('artwork_maker_info_heart'));
+      final filled = find.byKey(const Key('artwork_maker_info_heart_filled'));
+      final button = find.byKey(const Key('artwork_maker_info_save_button'));
+
+      await tester.pumpWidget(page(visible: true));
+      await tester.pumpAndSettle();
+      await openMakerInfo();
+
+      expect(heart, findsOneWidget);
+      expect(filled, findsNothing);
+
+      repository.saveGate = Completer<void>();
+      await tester.tap(button.hitTestable());
+      await tester.pump();
+      expect(filled, findsOneWidget);
+      expect(repository.saved, isFalse);
+      repository.saveGate!.complete();
+      await tester.pumpAndSettle();
+      expect(repository.saved, isTrue);
+      expect(filled, findsOneWidget);
+
+      repository.unsaveGate = Completer<void>();
+      await tester.tap(button.hitTestable());
+      await tester.pump();
+      expect(heart, findsOneWidget);
+      expect(filled, findsNothing);
+      expect(repository.saved, isTrue);
+      repository.unsaveGate!.complete();
+      await tester.pumpAndSettle();
+      expect(repository.saved, isFalse);
+      expect(filled, findsNothing);
+
+      // Keep the Riverpod container alive across navigation. The backend may
+      // have changed the artwork's saved state while its viewer was closed.
+      final checkedBeforeReopen = repository.statusQueries;
+      await tester.pumpWidget(page(visible: false));
+      await tester.pump();
+      repository.saved = true;
+      await tester.pumpWidget(page(visible: true));
+      await tester.pumpAndSettle();
+      await openMakerInfo();
+      expect(repository.statusQueries, greaterThan(checkedBeforeReopen));
+      expect(filled, findsOneWidget);
+
+      await tester.pumpWidget(page(visible: false));
+      await tester.pump();
+      repository.saved = false;
+      await tester.pumpWidget(page(visible: true));
+      await tester.pumpAndSettle();
+      await openMakerInfo();
+      expect(heart, findsOneWidget);
+      expect(filled, findsNothing);
+
+      // Rejected saves revert the immediate optimistic heart change.
+      repository.saveGate = Completer<void>();
+      repository.failNextSave = true;
+      await tester.tap(button.hitTestable());
+      await tester.pump();
+      expect(filled, findsOneWidget);
+      repository.saveGate!.complete();
+      await tester.pumpAndSettle();
+      expect(repository.saved, isFalse);
+      expect(filled, findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('viewer has no overflow on 320x520 compact viewport', (
     tester,
   ) async {
@@ -487,6 +592,35 @@ class _FakeArtworkDetailRepository implements ArtworkDetailRepositoryContract {
       ),
       createdAt: DateTime.utc(2024, 5, 1),
     );
+  }
+}
+
+class _DeferredSavedArtworksRepository extends _FakeSavedArtworksRepository {
+  Completer<void>? saveGate;
+  Completer<void>? unsaveGate;
+  bool failNextSave = false;
+  int statusQueries = 0;
+
+  @override
+  Future<bool> isSaved(int artworkId) async {
+    statusQueries++;
+    return super.isSaved(artworkId);
+  }
+
+  @override
+  Future<void> save(int artworkId) async {
+    if (saveGate != null) await saveGate!.future;
+    if (failNextSave) {
+      failNextSave = false;
+      throw StateError('Simulated save failure');
+    }
+    await super.save(artworkId);
+  }
+
+  @override
+  Future<void> unsave(int artworkId) async {
+    if (unsaveGate != null) await unsaveGate!.future;
+    await super.unsave(artworkId);
   }
 }
 

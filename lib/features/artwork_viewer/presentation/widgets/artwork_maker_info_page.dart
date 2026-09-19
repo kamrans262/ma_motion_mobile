@@ -160,36 +160,24 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             child: SizedBox.square(
                               dimension: 44,
                               child: Center(
-                                child: isSaving
-                                    ? const SizedBox.square(
-                                        dimension: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
+                                child: SizedBox.square(
+                                  key: const Key('artwork_maker_info_heart'),
+                                  dimension: 24,
+                                  child: isSaved
+                                      ? const Icon(
+                                          Icons.favorite_rounded,
+                                          key: Key(
+                                            'artwork_maker_info_heart_filled',
+                                          ),
+                                          size: 24,
                                           color: AppColors.primary,
+                                        )
+                                      : const MaSvgAsset(
+                                          assetName: 'assets/icons/heart.svg',
+                                          fallbackAssetName: 'assets/heart.svg',
+                                          color: Color(0xFFF0F0F0),
                                         ),
-                                      )
-                                    : SizedBox.square(
-                                        key: const Key(
-                                          'artwork_maker_info_heart',
-                                        ),
-                                        dimension: 24,
-                                        child: isSaved
-                                            ? const Icon(
-                                                Icons.favorite_rounded,
-                                                key: Key(
-                                                  'artwork_maker_info_heart_filled',
-                                                ),
-                                                size: 24,
-                                                color: AppColors.primary,
-                                              )
-                                            : const MaSvgAsset(
-                                                assetName:
-                                                    'assets/icons/heart.svg',
-                                                fallbackAssetName:
-                                                    'assets/heart.svg',
-                                                color: Color(0xFFF0F0F0),
-                                              ),
-                                      ),
+                                ),
                               ),
                             ),
                           ),

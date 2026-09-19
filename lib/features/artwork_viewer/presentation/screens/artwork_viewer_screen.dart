@@ -38,12 +38,16 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   late final PageController _pageController;
   int _currentPage = 0;
   bool _isSaving = false;
+  bool? _optimisticSaved;
   final Set<String> _precachedUrls = <String>{};
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    // The same viewer is used by Maker and Appreciator. Check the current
+    // account's saved state whenever an artwork is reopened.
+    ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
   }
 
   @override
@@ -55,7 +59,12 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   Future<void> _toggleSaved(bool isSaved) async {
     if (_isSaving) return;
 
-    setState(() => _isSaving = true);
+    // Keep the heart visible and switch it immediately; the network request
+    // runs afterwards. Restore the prior state if persistence fails.
+    setState(() {
+      _isSaving = true;
+      _optimisticSaved = !isSaved;
+    });
 
     try {
       final repository = ref.read(savedArtworksRepositoryProvider);
@@ -69,7 +78,10 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
       ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
       ref.invalidate(savedArtworksControllerProvider);
     } catch (_) {
-      // Keep the viewer intact if persistence is temporarily unavailable.
+      // Do not show a successful heart change if the server rejected it.
+      if (mounted) {
+        setState(() => _optimisticSaved = null);
+      }
     } finally {
       if (mounted) {
         setState(() => _isSaving = false);
@@ -95,11 +107,12 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   Widget build(BuildContext context) {
     final asyncDetail = ref.watch(artworkDetailProvider(widget.artworkId));
     final asyncSaved = ref.watch(artworkSavedStatusProvider(widget.artworkId));
-    final isSaved = asyncSaved.when(
-      data: (value) => value,
-      loading: () => false,
-      error: (error, stackTrace) => false,
-    );
+    final isSaved = _optimisticSaved ??
+        asyncSaved.when(
+          data: (value) => value,
+          loading: () => false,
+          error: (error, stackTrace) => false,
+        );
 
     final seededArtwork = widget.initialArtwork == null
         ? null

@@ -132,63 +132,6 @@ void main() {
     expect(clearText.style?.fontSize, 14);
     expect(clearText.style?.fontWeight, FontWeight.w500);
 
-    for (final label in <String>[
-      'Type',
-      'Style',
-      'Show Status',
-      'Location',
-      'Radius (miles)',
-    ]) {
-      final text = tester.widget<Text>(find.text(label));
-      expect(text.style?.fontSize, 14);
-      expect(text.style?.fontWeight, FontWeight.w500);
-    }
-
-    final typeText = tester.widget<Text>(
-      find.descendant(
-        of: find.byKey(const Key('filter_type_1')),
-        matching: find.text('Painting'),
-      ),
-    );
-    expect(typeText.style?.fontSize, 14);
-    expect(typeText.style?.fontWeight, FontWeight.w500);
-
-    final styleText = tester.widget<Text>(
-      find.descendant(
-        of: find.byKey(const Key('filter_style_2')),
-        matching: find.text('Minimal'),
-      ),
-    );
-    expect(styleText.style?.fontSize, 14);
-    expect(styleText.style?.fontWeight, FontWeight.w500);
-
-    for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
-      final widget = tester.widget<Text>(find.text(text));
-      expect(widget.style?.fontSize, 14);
-      expect(widget.style?.fontWeight, FontWeight.w500);
-    }
-    expect(find.byKey(const Key('filter_status_past')), findsNothing);
-    expect(find.textContaining('Past'), findsNothing);
-
-    final typePill = tester.widget<Material>(
-      find
-          .ancestor(
-            of: find.byKey(const Key('filter_type_1')),
-            matching: find.byType(Material),
-          )
-          .first,
-    );
-    expect(typePill.color, AppColors.savedBackground);
-    final currentPill = tester.widget<Material>(
-      find
-          .ancestor(
-            of: find.byKey(const Key('filter_status_current')),
-            matching: find.byType(Material),
-          )
-          .first,
-    );
-    expect(currentPill.color, AppColors.savedBackground);
-
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('discovery_filter_screen')),
     );
@@ -278,6 +221,88 @@ void main() {
     expect(sliderTheme.data.thumbColor, AppColors.white);
 
     expect(find.byKey(const Key('filter_radius_control_row')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Filter text stays at or above 14px and options are opaque', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 1500));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          discoveryFilterRepositoryProvider.overrideWithValue(
+            _FakeFilterRepository(),
+          ),
+          artworkDiscoveryRepositoryProvider.overrideWithValue(
+            _FakeArtworkRepository(),
+          ),
+        ],
+        child: const MaterialApp(home: DiscoveryFilterScreen()),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    for (final label in <String>[
+      'Type',
+      'Style',
+      'Show Status',
+      'Location',
+      'Radius (miles)',
+    ]) {
+      final text = tester.widget<Text>(find.text(label));
+      expect(text.style?.fontSize, 14);
+      expect(text.style?.fontWeight, FontWeight.w500);
+    }
+
+    final typeText = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('filter_type_1')),
+        matching: find.text('Painting'),
+      ),
+    );
+    expect(typeText.style?.fontSize, 14);
+    expect(typeText.style?.fontWeight, FontWeight.w500);
+
+    final styleText = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('filter_style_2')),
+        matching: find.text('Minimal'),
+      ),
+    );
+    expect(styleText.style?.fontSize, 14);
+    expect(styleText.style?.fontWeight, FontWeight.w500);
+
+    for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
+      final widget = tester.widget<Text>(find.text(text));
+      expect(widget.style?.fontSize, 14);
+      expect(widget.style?.fontWeight, FontWeight.w500);
+    }
+    expect(find.byKey(const Key('filter_status_past')), findsNothing);
+    expect(find.textContaining('Past'), findsNothing);
+
+    final typePill = tester.widget<Material>(
+      find
+          .ancestor(
+            of: find.byKey(const Key('filter_type_1')),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+    expect(typePill.color, AppColors.savedBackground);
+    final currentPill = tester.widget<Material>(
+      find
+          .ancestor(
+            of: find.byKey(const Key('filter_status_current')),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+    expect(currentPill.color, AppColors.savedBackground);
+
     expect(tester.takeException(), isNull);
   });
 
