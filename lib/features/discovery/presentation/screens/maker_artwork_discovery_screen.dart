@@ -318,9 +318,8 @@ class _MakerArtworkDiscoveryScreenState
                                       'discovery_filter_button',
                                     ),
                                     iconKey: const Key('discovery_filter_svg'),
-                                    assetName: 'assets/filter.svg',
-                                    fallbackAssetName:
-                                        'assets/icons/filter.svg',
+                                    assetName: 'assets/filter2.svg',
+                                    fallbackAssetName: 'assets/filter.svg',
                                     tooltip: 'Filter artwork',
                                     size: metrics.toolbarIconSize,
                                     barHeight: metrics.toolbarHeight,
@@ -455,12 +454,15 @@ class _ToolbarSvgButton extends StatelessWidget {
             width: 48,
             height: barHeight,
             child: Padding(
-              // Compensate for the Search SVG's transparent 3px inset.
-              // Keep the icon's visible top gap at 20px and bottom at 4px.
-              padding: EdgeInsets.only(
-                top: 20 - size / 8,
-                bottom: 4 - size / 8,
-              ),
+              // The close icon and the inline search field must share
+              // the same vertical center. Only the SVG artwork needs
+              // compensation for its transparent viewBox margins.
+              padding: materialIcon == null
+                  ? EdgeInsets.only(
+                      top: 20 - size / 8,
+                      bottom: 4 - size / 8,
+                    )
+                  : EdgeInsets.zero,
               child: Align(
                 alignment: alignment,
                 child: materialIcon == null
