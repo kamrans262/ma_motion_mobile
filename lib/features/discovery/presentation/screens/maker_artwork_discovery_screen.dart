@@ -219,141 +219,141 @@ class _MakerArtworkDiscoveryScreenState
                     child: SizedBox(
                       height: metrics.toolbarHeight,
                       child: ColoredBox(
-                    color: AppColors.artworkNavBackground,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: metrics.gridHorizontalPadding,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          _ToolbarSvgButton(
-                            buttonKey: const Key('discovery_search_button'),
-                            iconKey: _searchOpen
-                                ? const Key('discovery_search_close_icon')
-                                : const Key('discovery_search_svg'),
-                            assetName: 'assets/search.svg',
-                            fallbackAssetName: 'assets/icons/search.svg',
-                            materialIcon: _searchOpen
-                                ? Icons.close_rounded
-                                : null,
-                            tooltip: _searchOpen
-                                ? 'Close search'
-                                : 'Search artwork',
-                            size: metrics.toolbarIconSize,
-                            alignment: _searchOpen
-                                ? Alignment.centerRight
-                                : Alignment.center,
-                            onPressed: _toggleSearch,
+                        color: AppColors.artworkNavBackground,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: metrics.gridHorizontalPadding,
                           ),
-                          if (_searchOpen) ...[
-                            const SizedBox(width: 2),
-                            SizedBox(
-                              width: (constraints.maxWidth * 0.34)
-                                  .clamp(112.0, 150.0)
-                                  .toDouble(),
-                              height: 40,
-                              child: TextField(
-                                key: const Key('discovery_inline_search'),
-                                controller: _searchController,
-                                focusNode: _searchFocusNode,
-                                onChanged: _onSearchChanged,
-                                textInputAction: TextInputAction.search,
-                                textAlignVertical: TextAlignVertical.center,
-                                style: const TextStyle(
-                                  fontFamily: AppTextStyles.fontFamily,
-                                  fontSize: 14,
-                                  height: 1,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.primary,
-                                ),
-                                cursorColor: AppColors.primary,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: 'Artist name...',
-                                  hintStyle: TextStyle(
-                                    fontFamily: AppTextStyles.fontFamily,
-                                    fontSize: 14,
-                                    height: 1,
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.50,
-                                    ),
-                                  ),
-                                  contentPadding: const EdgeInsets.only(
-                                    left: 0,
-                                    right: 4,
-                                    top: 10,
-                                    bottom: 8,
-                                  ),
-                                  border: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                          ] else
-                            const Spacer(),
-                          Stack(
-                            clipBehavior: Clip.none,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               _ToolbarSvgButton(
-                                buttonKey: const Key('discovery_filter_button'),
-                                iconKey: const Key('discovery_filter_svg'),
-                                assetName: 'assets/filter.svg',
-                                fallbackAssetName: 'assets/icons/filter.svg',
-                                tooltip: 'Filter artwork',
+                                buttonKey: const Key('discovery_search_button'),
+                                iconKey: _searchOpen
+                                    ? const Key('discovery_search_close_icon')
+                                    : const Key('discovery_search_svg'),
+                                assetName: 'assets/search.svg',
+                                fallbackAssetName: 'assets/icons/search.svg',
+                                materialIcon: _searchOpen
+                                    ? Icons.close_rounded
+                                    : null,
+                                tooltip: _searchOpen
+                                    ? 'Close search'
+                                    : 'Search artwork',
                                 size: metrics.toolbarIconSize,
-                                alignment: Alignment.center,
-                                onPressed: widget.onFilterTap ?? () {},
+                                alignment: _searchOpen
+                                    ? Alignment.centerRight
+                                    : Alignment.center,
+                                onPressed: _toggleSearch,
                               ),
-                              if (filterCount > 0)
-                                Positioned(
-                                  right: -5,
-                                  bottom: metrics.toolbarIconSize - 2,
-                                  child: Container(
-                                    key: const Key('active_filter_badge'),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 18,
-                                      minHeight: 18,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    decoration: const BoxDecoration(
+                              if (_searchOpen) ...[
+                                const SizedBox(width: 2),
+                                SizedBox(
+                                  width: (constraints.maxWidth * 0.34)
+                                      .clamp(112.0, 150.0)
+                                      .toDouble(),
+                                  height: 40,
+                                  child: TextField(
+                                    key: const Key('discovery_inline_search'),
+                                    controller: _searchController,
+                                    focusNode: _searchFocusNode,
+                                    onChanged: _onSearchChanged,
+                                    textInputAction: TextInputAction.search,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    style: const TextStyle(
+                                      fontFamily: AppTextStyles.fontFamily,
+                                      fontSize: 14,
+                                      height: 1,
+                                      fontWeight: FontWeight.w400,
                                       color: AppColors.primary,
-                                      shape: BoxShape.circle,
                                     ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      '$filterCount',
-                                      style: const TextStyle(
+                                    cursorColor: AppColors.primary,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      hintText: 'Artist name...',
+                                      hintStyle: TextStyle(
                                         fontFamily: AppTextStyles.fontFamily,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.black,
+                                        fontSize: 14,
+                                        height: 1,
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.50,
+                                        ),
+                                      ),
+                                      contentPadding: const EdgeInsets.only(
+                                        left: 0,
+                                        right: 4,
+                                        top: 10,
+                                        bottom: 8,
+                                      ),
+                                      border: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.primary,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.primary,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      focusedBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.primary,
+                                          width: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
+                                const Spacer(),
+                              ] else
+                                const Spacer(),
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  _ToolbarSvgButton(
+                                    buttonKey: const Key('discovery_filter_button'),
+                                    iconKey: const Key('discovery_filter_svg'),
+                                    assetName: 'assets/filter.svg',
+                                    fallbackAssetName: 'assets/icons/filter.svg',
+                                    tooltip: 'Filter artwork',
+                                    size: metrics.toolbarIconSize,
+                                    alignment: Alignment.center,
+                                    onPressed: widget.onFilterTap ?? () {},
+                                  ),
+                                  if (filterCount > 0)
+                                    Positioned(
+                                      right: -5,
+                                      bottom: metrics.toolbarIconSize - 2,
+                                      child: Container(
+                                        key: const Key('active_filter_badge'),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 18,
+                                          minHeight: 18,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                        ),
+                                        decoration: const BoxDecoration(
+                                          color: AppColors.primary,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '$filterCount',
+                                          style: const TextStyle(
+                                            fontFamily: AppTextStyles.fontFamily,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ],
-                          ),
-                        ],
                       ),
                     ),
                       ),
