@@ -87,7 +87,7 @@ class _MakerSavedArtworksScreenState
 
     return Scaffold(
       key: const Key('maker_saved_artworks_screen'),
-      backgroundColor: AppColors.savedBackground,
+      backgroundColor: AppColors.artworkNavBackground,
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
@@ -100,7 +100,9 @@ class _MakerSavedArtworksScreenState
               children: [
                 SizedBox(
                   height: metrics.toolbarHeight,
-                  child: Padding(
+                  child: ColoredBox(
+                    color: AppColors.artworkNavBackground,
+                    child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: metrics.gridHorizontalPadding,
                     ),
@@ -110,21 +112,21 @@ class _MakerSavedArtworksScreenState
                           width: 48,
                           height: 48,
                           child: Align(
-                            alignment: Alignment.bottomLeft,
+                            alignment: Alignment.center,
                             child: IconButton(
                               key: const Key('saved_artworks_back_button'),
                               onPressed: widget.onBack,
                               padding: EdgeInsets.zero,
-                              alignment: Alignment.bottomLeft,
+                              alignment: Alignment.center,
                               color: AppColors.primary,
-                              iconSize: 24,
+                              iconSize: metrics.toolbarIconSize,
                               icon: const Icon(Icons.arrow_back_rounded),
                             ),
                           ),
                         ),
                         Expanded(
                           child: Align(
-                            alignment: Alignment.bottomCenter,
+                            alignment: Alignment.center,
                             child: Text(
                               'Saved',
                               style: AppTextStyles.onboardingHeading.copyWith(
@@ -138,19 +140,26 @@ class _MakerSavedArtworksScreenState
                       ],
                     ),
                   ),
+                  ),
                 ),
-                SizedBox(
-                  key: const Key('saved_controls_grid_gap'),
-                  height: metrics.controlsToGridGap,
+                ColoredBox(
+                  color: AppColors.savedBackground,
+                  child: SizedBox(
+                    key: const Key('saved_controls_grid_gap'),
+                    height: metrics.controlsToGridGap,
+                  ),
                 ),
                 Expanded(
-                  child: _SavedBody(
+                  child: ColoredBox(
+                    color: AppColors.savedBackground,
+                    child: _SavedBody(
                     state: state,
                     scrollController: _scrollController,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
                     columnCount: _columnCount,
                     onArtworkTap: widget.onArtworkTap,
+                    ),
                   ),
                 ),
               ],

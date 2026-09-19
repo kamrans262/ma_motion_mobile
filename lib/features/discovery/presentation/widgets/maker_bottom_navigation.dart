@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/ma_svg_asset.dart';
+import 'discovery_layout_metrics.dart';
 
 class MakerBottomNavigation extends StatelessWidget {
   const MakerBottomNavigation({
@@ -29,7 +30,8 @@ class MakerBottomNavigation extends StatelessWidget {
       builder: (context, constraints) {
         final scale = (constraints.maxWidth / 430).clamp(0.86, 1.10);
         final barHeight = (65 * scale).clamp(58.0, 72.0).toDouble();
-        final iconSize = (18 * scale).clamp(18.0, 20.0).toDouble();
+        final metrics = DiscoveryLayoutMetrics.fromWidth(constraints.maxWidth);
+        final iconSize = metrics.toolbarIconSize;
 
         return Material(
           key: const Key('maker_bottom_navigation_material'),
@@ -39,8 +41,12 @@ class MakerBottomNavigation extends StatelessWidget {
             child: SizedBox(
               key: const Key('maker_bottom_navigation_surface'),
               height: barHeight,
-              child: Row(
-                children: [
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: metrics.gridHorizontalPadding,
+                ),
+                child: Row(
+                  children: [
                   Expanded(
                     child: _SvgNavigationItem(
                       itemKey: const Key('maker_nav_saved'),
@@ -74,7 +80,8 @@ class MakerBottomNavigation extends StatelessWidget {
                       onTap: onSettingsTap,
                     ),
                   ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

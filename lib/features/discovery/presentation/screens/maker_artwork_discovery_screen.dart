@@ -171,7 +171,7 @@ class _MakerArtworkDiscoveryScreenState
 
     return Scaffold(
       key: const Key('maker_artwork_discovery_screen'),
-      backgroundColor: AppColors.artworkBackground,
+      backgroundColor: AppColors.artworkNavBackground,
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
@@ -184,7 +184,9 @@ class _MakerArtworkDiscoveryScreenState
               children: [
                 SizedBox(
                   height: metrics.toolbarHeight,
-                  child: Padding(
+                  child: ColoredBox(
+                    color: AppColors.artworkNavBackground,
+                    child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: metrics.gridHorizontalPadding,
                     ),
@@ -205,9 +207,7 @@ class _MakerArtworkDiscoveryScreenState
                               ? 'Close search'
                               : 'Search artwork',
                           size: metrics.toolbarIconSize,
-                          alignment: _searchOpen
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
+                          alignment: Alignment.center,
                           onPressed: _toggleSearch,
                         ),
                         if (_searchOpen) ...[
@@ -283,7 +283,7 @@ class _MakerArtworkDiscoveryScreenState
                               fallbackAssetName: 'assets/icons/filter.svg',
                               tooltip: 'Filter artwork',
                               size: metrics.toolbarIconSize,
-                              alignment: Alignment.centerRight,
+                              alignment: Alignment.center,
                               onPressed: widget.onFilterTap ?? () {},
                             ),
                             if (filterCount > 0)
@@ -320,19 +320,26 @@ class _MakerArtworkDiscoveryScreenState
                       ],
                     ),
                   ),
+                  ),
                 ),
-                SizedBox(
-                  key: const Key('discovery_controls_grid_gap'),
-                  height: metrics.controlsToGridGap,
+                ColoredBox(
+                  color: AppColors.artworkBackground,
+                  child: SizedBox(
+                    key: const Key('discovery_controls_grid_gap'),
+                    height: metrics.controlsToGridGap,
+                  ),
                 ),
                 Expanded(
-                  child: _DiscoveryBody(
+                  child: ColoredBox(
+                    color: AppColors.artworkBackground,
+                    child: _DiscoveryBody(
                     state: state,
                     scrollController: _scrollController,
                     horizontalPadding: metrics.gridHorizontalPadding,
                     gridSpacing: metrics.gridSpacing,
                     columnCount: _columnCount,
                     onArtworkTap: widget.onArtworkTap,
+                    ),
                   ),
                 ),
               ],
