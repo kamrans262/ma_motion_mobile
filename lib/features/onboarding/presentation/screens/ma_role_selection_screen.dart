@@ -77,7 +77,9 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                       color: AppColors.primary,
                                       width: 1.2,
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
                                     shape: const RoundedRectangleBorder(),
                                   ),
                                   child: FittedBox(
@@ -108,7 +110,9 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                       color: AppColors.primary,
                                       width: 1.2,
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
                                     shape: const RoundedRectangleBorder(),
                                   ),
                                   child: FittedBox(
