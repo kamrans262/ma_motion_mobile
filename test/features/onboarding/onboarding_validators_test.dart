@@ -33,11 +33,10 @@ void main() {
       expect(OnboardingValidators.location('New York, NY'), isNull);
     });
 
-    test('validates Maker about-work minimum and maximum', () {
-      expect(
-        OnboardingValidators.aboutWork('Short'),
-        contains('at least 20 characters'),
-      );
+    test('Maker statement is optional and has a 5000-character maximum', () {
+      expect(OnboardingValidators.aboutWork(''), isNull);
+      expect(OnboardingValidators.aboutWork('   '), isNull);
+      expect(OnboardingValidators.aboutWork('Short'), isNull);
       expect(
         OnboardingValidators.aboutWork('Original mixed-media artwork'),
         isNull,

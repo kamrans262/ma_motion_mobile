@@ -5,7 +5,6 @@ abstract final class OnboardingValidators {
   static const int nameMaxLength = 120;
   static const int locationMinLength = 2;
   static const int locationMaxLength = 180;
-  static const int aboutMinLength = 20;
   static const int aboutMaxLength = 5000;
   static const int emailMaxLength = 255;
   static const int websiteMaxLength = 2048;
@@ -45,14 +44,10 @@ abstract final class OnboardingValidators {
   }
 
   static String? aboutWork(String value) {
-    return _requiredText(
-      value,
-      emptyMessage: 'Please tell us a little about your work.',
-      minLength: aboutMinLength,
-      minMessage: 'About your work must be at least 20 characters.',
-      maxLength: aboutMaxLength,
-      maxMessage: 'About your work must be 5000 characters or fewer.',
-    );
+    if (value.trim().length > aboutMaxLength) {
+      return 'About your work must be 5000 characters or fewer.';
+    }
+    return null;
   }
 
   static String? email(String value) {
