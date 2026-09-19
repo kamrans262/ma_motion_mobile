@@ -37,10 +37,6 @@ class MaRoleSelectionScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   final horizontal = constraints.maxWidth < 360 ? 20.0 : 28.0;
                   final buttonGap = constraints.maxWidth < 360 ? 12.0 : 16.0;
-                  final buttonWidth =
-                      ((constraints.maxWidth - horizontal * 2 - buttonGap) / 2)
-                          .clamp(0.0, 154.0)
-                          .toDouble();
                   const roleFontSize = 22.0;
 
                   return Center(
@@ -61,71 +57,64 @@ class MaRoleSelectionScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 32),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: buttonGap,
+                            runSpacing: buttonGap,
                             children: [
-                              SizedBox(
-                                width: buttonWidth,
-                                height: 76,
-                                child: OutlinedButton(
-                                  key: const Key('select_maker_button'),
-                                  onPressed: onMaker,
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColors.savedBackground,
-                                    foregroundColor: AppColors.primary,
-                                    side: const BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1.2,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    shape: const RoundedRectangleBorder(),
+                              OutlinedButton(
+                                key: const Key('select_maker_button'),
+                                onPressed: onMaker,
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: AppColors.savedBackground,
+                                  foregroundColor: AppColors.primary,
+                                  side: const BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1.2,
                                   ),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      'Maker',
-                                      style: TextStyle(
-                                        fontFamily: AppTextStyles.fontFamily,
-                                        fontSize: roleFontSize,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    32,
+                                    18,
+                                    32,
+                                    14,
+                                  ),
+                                  shape: const RoundedRectangleBorder(),
+                                ),
+                                child: const Text(
+                                  'Maker',
+                                  style: TextStyle(
+                                    fontFamily: AppTextStyles.fontFamily,
+                                    fontSize: roleFontSize,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.primary,
                                   ),
                                 ),
                               ),
-                              SizedBox(width: buttonGap),
-                              SizedBox(
-                                width: buttonWidth,
-                                height: 76,
-                                child: OutlinedButton(
-                                  key: const Key('select_appreciator_button'),
-                                  onPressed: onAppreciator,
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColors.savedBackground,
-                                    foregroundColor: AppColors.primary,
-                                    side: const BorderSide(
-                                      color: AppColors.primary,
-                                      width: 1.2,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    shape: const RoundedRectangleBorder(),
+                              OutlinedButton(
+                                key: const Key('select_appreciator_button'),
+                                onPressed: onAppreciator,
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: AppColors.savedBackground,
+                                  foregroundColor: AppColors.primary,
+                                  side: const BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1.2,
                                   ),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      'Appreciator',
-                                      style: TextStyle(
-                                        fontFamily: AppTextStyles.fontFamily,
-                                        fontSize: roleFontSize,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    32,
+                                    18,
+                                    32,
+                                    14,
+                                  ),
+                                  shape: const RoundedRectangleBorder(),
+                                ),
+                                child: const Text(
+                                  'Appreciator',
+                                  style: TextStyle(
+                                    fontFamily: AppTextStyles.fontFamily,
+                                    fontSize: roleFontSize,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.primary,
                                   ),
                                 ),
                               ),
