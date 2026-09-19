@@ -98,10 +98,12 @@ class MakerOnboardingRepository {
         ApiPaths.makerProfile,
         data: <String, dynamic>{
           'name': draft.name.trim(),
-          'bio': draft.aboutWork.trim(),
+          if (draft.aboutWork.trim().isNotEmpty)
+            'bio': draft.aboutWork.trim(),
           'location_text': draft.location.trim(),
-          'location_id': locationId,
-          'website_url': _normalizeWebsite(draft.website),
+          if (locationId != null) 'location_id': locationId,
+          if (draft.website.trim().isNotEmpty)
+            'website_url': _normalizeWebsite(draft.website),
           'contact_email': draft.email.trim(),
           'type_ids': typeIds,
           'style_ids': styleIds,
@@ -110,12 +112,14 @@ class MakerOnboardingRepository {
 
       final imageBytes = draft.imageBytes;
       if (imageBytes == null || imageBytes.isEmpty) {
-        throw const ApiException(
-          message: 'Please upload your salon image before continuing.',
-        );
+        if (draft.existingImageUrl?.trim().isNotEmpty != true) {
+          throw const ApiException(
+            message: 'Please upload your salon image before continuing.',
+          );
+        }
+      } else {
+        await _uploadProfileImage(imageBytes, draft.imageName);
       }
-
-      await _uploadProfileImage(imageBytes, draft.imageName);
 
       await api.patch(
         ApiPaths.makerProfile,
