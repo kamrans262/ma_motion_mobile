@@ -119,7 +119,7 @@ void main() {
       );
       expect(
         (infoCard.decoration! as BoxDecoration).color,
-        const Color(0xFF121212),
+        const Color(0xFF0A0A0A),
       );
 
       expect(find.text('Tide Register No. 4'), findsOneWidget);
@@ -204,7 +204,7 @@ void main() {
     final card = tester.widget<Container>(
       find.byKey(const Key('artwork_maker_info_card')),
     );
-    expect((card.decoration! as BoxDecoration).color, const Color(0xFF121212));
+    expect((card.decoration! as BoxDecoration).color, const Color(0xFF0A0A0A));
 
     final divider = tester.widget<Divider>(
       find.byKey(const Key('artwork_maker_info_divider')),
