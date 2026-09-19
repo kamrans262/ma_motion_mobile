@@ -94,6 +94,27 @@ void main() {
     expect(settingsTapped, 1);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Settings remains tappable when Saved is empty', (tester) async {
+    final repository = _FakeSavedRepository()..saved = false;
+    var settingsTapped = 0;
+    await tester.pumpWidget(ProviderScope(
+      overrides: [savedArtworksRepositoryProvider.overrideWithValue(repository)],
+      child: MaterialApp(home: MakerSavedArtworksScreen(
+        settingsSemanticsLabel: 'Appreciator settings',
+        onSettingsTap: () => settingsTapped++,
+      )),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('saved_artworks_empty')), findsOneWidget);
+    expect(find.bySemanticsLabel('Appreciator settings'), findsOneWidget);
+    final button = find.byKey(const Key('maker_nav_settings'));
+    expect(button.hitTestable(), findsOneWidget);
+    await tester.tap(button.hitTestable());
+    await tester.pump();
+    expect(settingsTapped, 1);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 class _FakeSavedRepository implements SavedArtworksRepositoryContract {
