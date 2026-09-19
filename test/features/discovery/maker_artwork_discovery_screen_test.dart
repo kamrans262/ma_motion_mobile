@@ -6,6 +6,7 @@ import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repos
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_query.dart';
+import 'package:ma_motion_mobile/features/discovery/presentation/screens/appreciator_artwork_discovery_screen.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/screens/maker_artwork_discovery_screen.dart';
 
 void main() {
@@ -215,6 +216,63 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  for (final isAppreciator in <bool>[false, true]) {
+    testWidgets(
+      '${isAppreciator ? 'Appreciator' : 'Maker'} discovery hides the top bar '
+      'during grid scrolling and restores it when scrolling ends',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(430, 700));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              artworkDiscoveryRepositoryProvider.overrideWithValue(
+                _FakeDiscoveryRepository(lastPage: 1),
+              ),
+            ],
+            child: MaterialApp(
+              home: isAppreciator
+                  ? const AppreciatorArtworkDiscoveryScreen()
+                  : const MakerArtworkDiscoveryScreen(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final topBar = find.byKey(const Key('discovery_top_bar_visibility'));
+        final grid = find.byKey(const Key('maker_artwork_discovery_grid'));
+        final bottomNav = find.byKey(
+          const Key('maker_bottom_navigation_surface'),
+        );
+        final bottomBefore = tester.getRect(bottomNav);
+        final initialBarHeight = tester.getSize(topBar).height;
+        expect(initialBarHeight, greaterThan(0));
+
+        final gesture = await tester.startGesture(
+          tester.getCenter(grid.hitTestable()),
+        );
+        await gesture.moveBy(const Offset(0, -180));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 180));
+
+        expect(tester.getSize(topBar).height, closeTo(0, 0.1));
+        expect(tester.getRect(bottomNav), bottomBefore);
+
+        await gesture.up();
+        await tester.pumpAndSettle();
+
+        expect(tester.getSize(topBar).height, closeTo(initialBarHeight, 0.1));
+        expect(
+          find.byKey(const Key('discovery_search_button')).hitTestable(),
+          findsOneWidget,
+        );
+        expect(tester.getRect(bottomNav), bottomBefore);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   testWidgets('scrolling near the end loads the next server page', (
     tester,
