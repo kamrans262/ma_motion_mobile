@@ -211,10 +211,13 @@ void main() {
     );
     expect(divider.thickness, 1);
     expect(divider.color, const Color(0xFF494949));
-    expect(
-      tester.getTopLeft(find.byKey(const Key('artwork_maker_info_divider'))).dy,
-      greaterThan(tester.getBottomLeft(find.byKey(const Key('artwork_maker_info_bio'))).dy),
+    final dividerRect = tester.getRect(
+      find.byKey(const Key('artwork_maker_info_divider')),
     );
+    final bioRect = tester.getRect(
+      find.byKey(const Key('artwork_maker_info_bio')),
+    );
+    expect(dividerRect.top, greaterThan(bioRect.bottom));
 
     for (final key in <String>[
       'artwork_maker_info_title',
