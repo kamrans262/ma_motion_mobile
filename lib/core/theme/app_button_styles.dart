@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppButtonStyles {
+  /// Keep the established idle color and border; use MA purple only
+  /// while an action button is pressed.
+  static WidgetStateProperty<Color> purpleWhenPressed(Color idleColor) {
+    return WidgetStateProperty.resolveWith<Color>(
+      (states) => states.contains(WidgetState.pressed)
+          ? AppColors.primary
+          : idleColor,
+    );
+  }
+
   static ButtonStyle outlineAction({double borderWidth = 1.2}) {
     return ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
