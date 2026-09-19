@@ -128,6 +128,11 @@ class _SvgNavigationItem extends StatelessWidget {
         key: itemKey,
         onTap: onTap,
         radius: 28,
+        splashFactory: NoSplash.splashFactory,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
         child: Center(
           child: SizedBox(
             key: iconKey,
@@ -174,6 +179,11 @@ class _ColumnCountItem extends StatelessWidget {
         key: Key('maker_nav_$columnCount'),
         onTap: onTap,
         radius: 28,
+        splashFactory: NoSplash.splashFactory,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
         child: Center(
           child: Text(
             '$columnCount',
