@@ -154,7 +154,7 @@ class _AppreciatorSettingsModalState
 
     if (_fieldErrors.isNotEmpty) {
       setState(() {
-        _errorMessage = 'Please check the highlighted fields.';
+        _errorMessage = null;
         _successMessage = null;
       });
       return false;
@@ -442,8 +442,10 @@ class _AppreciatorSettingsModalState
               key: const Key('appreciator_settings_save_close'),
               onPressed: _busy ? null : _saveAndClose,
               style: AppButtonStyles.outlineAction().copyWith(
-                backgroundColor: const WidgetStatePropertyAll<Color>(
-                  Color(0xFF000000),
+                backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  (states) => states.contains(WidgetState.pressed)
+                      ? AppColors.primary
+                      : const Color(0xFF000000),
                 ),
                 surfaceTintColor: const WidgetStatePropertyAll<Color>(
                   Colors.transparent,
