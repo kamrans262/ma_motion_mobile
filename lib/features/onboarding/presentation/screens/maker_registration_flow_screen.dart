@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../application/maker_registration_controller.dart';
@@ -650,6 +651,7 @@ class _SalonImagePicker extends StatelessWidget {
       child: InkWell(
         key: const Key('maker_salon_image_picker'),
         onTap: onTap,
+        overlayColor: AppButtonStyles.purpleInkOverlay,
         child: Container(
           width: 132,
           height: 132,
