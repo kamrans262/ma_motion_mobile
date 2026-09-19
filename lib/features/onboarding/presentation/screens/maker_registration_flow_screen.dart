@@ -160,7 +160,9 @@ class _MakerRegistrationFlowScreenState
       _fieldErrors
         ..clear()
         ..addAll(errors);
-      _validationMessage = null;
+      _validationMessage = errors.isEmpty
+          ? null
+          : 'Please check the highlighted information.';
     });
 
     return errors.isEmpty;
@@ -403,8 +405,7 @@ class _MakerRegistrationFlowScreenState
       case 2:
         return MaOnboardingScaffold(
           heading: 'Tell us about your work',
-          headingStyle: AppTextStyles.onboardingHeading.copyWith(fontSize: 36),
-          subtitle: 'A few sentences about your practice (optional)',
+          subtitle: 'A few sentences about your practice',
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,
           onNext: _next,
@@ -513,7 +514,7 @@ class _MakerRegistrationFlowScreenState
                 Text(
                   _fieldErrors['image']!,
                   key: const Key('maker_salon_image_error'),
-                  style: AppTextStyles.onboardingError,
+                  style: AppTextStyles.error,
                 ),
               ],
             ],
@@ -593,7 +594,7 @@ class _TypeStyleStep extends ConsumerWidget {
             Text(
               typeError!,
               key: const Key('maker_type_error'),
-              style: AppTextStyles.onboardingError,
+              style: AppTextStyles.error,
             ),
           ],
           const SizedBox(height: 22),
@@ -652,8 +653,8 @@ class _SalonImagePicker extends StatelessWidget {
         key: const Key('maker_salon_image_picker'),
         onTap: onTap,
         child: Container(
-          width: 132,
-          height: 132,
+          width: 88,
+          height: 88,
           decoration: BoxDecoration(
             color: hasImage ? AppColors.inputFill : Colors.transparent,
             border: Border.all(color: AppColors.primary50, width: 1.2),

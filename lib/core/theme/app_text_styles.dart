@@ -68,14 +68,6 @@ abstract final class AppTextStyles {
     color: AppColors.black,
   );
 
-  static const TextStyle onboardingError = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 12,
-    height: 1.25,
-    fontWeight: FontWeight.w500,
-    color: AppColors.white,
-  );
-
   static const TextStyle error = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,

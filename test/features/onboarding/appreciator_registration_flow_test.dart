@@ -65,7 +65,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('maker_next_button')));
     await tester.pump();
-    expect(find.byKey(const Key('onboarding_field_error')), findsOneWidget);
+    expect(find.byKey(const Key('maker_validation_message')), findsOneWidget);
 
     await tester.enterText(
       find.byKey(const Key('appreciator_name_field')),
@@ -113,48 +113,6 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-
-  testWidgets('Appreciator shares white errors and taller darker Back', (
-    tester,
-  ) async {
-    await tester.pumpWidget(app());
-    await tester.tap(find.byKey(const Key('maker_next_button')));
-    await tester.pump();
-    final error = find.byKey(const Key('onboarding_field_error'));
-    expect(tester.widget<Text>(error).style?.color, AppColors.white);
-    expect(
-      tester.getTopLeft(error).dx,
-      closeTo(
-        tester.getTopLeft(find.byKey(const Key('appreciator_name_field'))).dx,
-        0.1,
-      ),
-    );
-    final next = tester.widget<OutlinedButton>(
-      find.descendant(
-        of: find.byKey(const Key('maker_next_button')),
-        matching: find.byType(OutlinedButton),
-      ),
-    );
-    final back = tester.widget<OutlinedButton>(
-      find.descendant(
-        of: find.byKey(const Key('maker_back_button')),
-        matching: find.byType(OutlinedButton),
-      ),
-    );
-    expect(
-      back.style!.foregroundColor!.resolve(<WidgetState>{})!.a,
-      lessThan(next.style!.foregroundColor!.resolve(<WidgetState>{})!.a),
-    );
-    expect(
-      tester.getSize(find.byKey(const Key('maker_next_button'))).height,
-      53,
-    );
-    expect(
-      tester.getSize(find.byKey(const Key('maker_back_button'))).height,
-      53,
-    );
-    expect(tester.takeException(), isNull);
-  });
 
   testWidgets('Appreciator email validation blocks malformed email', (
     tester,

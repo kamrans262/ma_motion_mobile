@@ -32,7 +32,7 @@ void main() {
     final draft = container.read(makerRegistrationProvider.notifier);
     draft.setName('MA Studio');
     draft.setLocation('Chicago 60601');
-    draft.setAboutWork('');
+    draft.setAboutWork('About the work');
     draft.toggleType('Painting');
     draft.toggleStyle('Contemporary');
     draft.setWebsite('www.artist.com');
