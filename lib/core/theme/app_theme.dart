@@ -19,7 +19,10 @@ abstract final class AppTheme {
       fontFamily: AppTextStyles.fontFamily,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.splashBackground,
-      splashFactory: InkRipple.splashFactory,
+      // Purple button feedback replaces the default white circular ripple.
+      splashFactory: NoSplash.splashFactory,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: AppColors.primary,
         selectionColor: Color(0x66904AFF),
@@ -27,6 +30,33 @@ abstract final class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: AppButtonStyles.outlineAction(),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: AppButtonStyles.purpleWhenPressed(
+            Colors.transparent,
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith<Color>(
+            (states) => states.contains(WidgetState.pressed)
+                ? AppColors.white
+                : AppColors.primary,
+          ),
+          overlayColor: const WidgetStatePropertyAll<Color>(
+            Colors.transparent,
+          ),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith<Color>(
+            (states) => states.contains(WidgetState.pressed)
+                ? AppColors.primary.withValues(alpha: 0.22)
+                : Colors.transparent,
+          ),
+          overlayColor: const WidgetStatePropertyAll<Color>(
+            Colors.transparent,
+          ),
+        ),
       ),
     );
   }
