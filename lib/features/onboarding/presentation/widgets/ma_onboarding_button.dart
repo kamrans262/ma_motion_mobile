@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
@@ -52,13 +53,24 @@ class MaOnboardingButton extends StatelessWidget {
                 ),
                 shape: const RoundedRectangleBorder(),
                 padding: EdgeInsets.zero,
+              ).copyWith(
+                backgroundColor: AppButtonStyles.purpleWhenPressed(
+                  Colors.transparent,
+                ),
+                foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                  (states) => states.contains(WidgetState.pressed)
+                      ? AppColors.white
+                      : subdued
+                      ? AppColors.primary.withValues(alpha: 0.55)
+                      : AppColors.primary,
+                ),
               ),
               child: Text(
                 label,
-                style: AppTextStyles.buttonPurple.copyWith(
-                  color: subdued
-                      ? AppColors.primary.withValues(alpha: 0.55)
-                      : AppColors.primary,
+                style: const TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
