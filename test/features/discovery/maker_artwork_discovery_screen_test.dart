@@ -77,6 +77,21 @@ void main() {
       bottomIcon.height,
     );
 
+    // Search and Filter SVGs draw from y=3 to y=21 inside their 24px
+    // canvas. Verify the visible glyph bounds, not just the outer SVG box.
+    final topBar = tester.getRect(
+      find.byKey(const Key('discovery_top_bar_visibility')),
+    );
+    for (final iconKey in <Key>[
+      const Key('discovery_search_svg'),
+      const Key('discovery_filter_svg'),
+    ]) {
+      final icon = tester.getRect(find.byKey(iconKey));
+      final transparentInset = icon.height / 8;
+      expect(icon.top + transparentInset, closeTo(topBar.top + 20, 0.1));
+      expect(icon.bottom - transparentInset, closeTo(topBar.bottom - 10, 0.1));
+    }
+
     expect(
       tester
           .getSize(find.byKey(const Key('discovery_controls_grid_gap')))
