@@ -286,7 +286,7 @@ void main() {
 
     final typePill = tester.widget<Material>(
       find
-          .ancestor(
+          .descendant(
             of: find.byKey(const Key('filter_type_1')),
             matching: find.byType(Material),
           )
@@ -295,7 +295,7 @@ void main() {
     expect(typePill.color, AppColors.savedBackground);
     final currentPill = tester.widget<Material>(
       find
-          .ancestor(
+          .descendant(
             of: find.byKey(const Key('filter_status_current')),
             matching: find.byType(Material),
           )
