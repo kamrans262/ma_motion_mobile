@@ -450,7 +450,13 @@ class _ToolbarSvgButton extends StatelessWidget {
             width: 48,
             height: barHeight,
             child: Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 10),
+              // Both SVGs draw between y=3 and y=21 in a 24px viewBox.
+              // Compensate for that transparent inset so the *visible*
+              // icon (not merely its canvas) has 20px above and 10px below.
+              padding: EdgeInsets.only(
+                top: 20 - size / 8,
+                bottom: 10 - size / 8,
+              ),
               child: Align(
                 alignment: alignment,
                 child: materialIcon == null
