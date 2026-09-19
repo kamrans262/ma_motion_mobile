@@ -41,6 +41,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const Key('artwork_tile_91')), findsOneWidget);
+    expect(find.byKey(const Key('maker_nav_saved_filled')), findsOneWidget);
 
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('maker_saved_artworks_screen')),

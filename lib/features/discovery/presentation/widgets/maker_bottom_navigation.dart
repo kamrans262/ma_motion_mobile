@@ -50,6 +50,7 @@ class MakerBottomNavigation extends StatelessWidget {
                       semanticsLabel: 'Saved artwork',
                       iconSize: iconSize,
                       selected: heartSelected,
+                      filledHeart: heartSelected,
                       onTap: onSavedTap,
                     ),
                   ),
@@ -92,6 +93,7 @@ class _SvgNavigationItem extends StatelessWidget {
     required this.semanticsLabel,
     required this.iconSize,
     required this.selected,
+    this.filledHeart = false,
     required this.onTap,
   });
 
@@ -102,6 +104,7 @@ class _SvgNavigationItem extends StatelessWidget {
   final String semanticsLabel;
   final double iconSize;
   final bool selected;
+  final bool filledHeart;
   final VoidCallback? onTap;
 
   @override
@@ -123,12 +126,19 @@ class _SvgNavigationItem extends StatelessWidget {
             key: iconKey,
             width: iconSize,
             height: iconSize,
-            child: MaSvgAsset(
-              assetName: assetName,
-              fallbackAssetName: fallbackAssetName,
-              fit: BoxFit.contain,
-              color: color,
-            ),
+            child: filledHeart
+                ? Icon(
+                    Icons.favorite_rounded,
+                    key: const Key('maker_nav_saved_filled'),
+                    size: iconSize,
+                    color: AppColors.primary,
+                  )
+                : MaSvgAsset(
+                    assetName: assetName,
+                    fallbackAssetName: fallbackAssetName,
+                    fit: BoxFit.contain,
+                    color: color,
+                  ),
           ),
         ),
       ),

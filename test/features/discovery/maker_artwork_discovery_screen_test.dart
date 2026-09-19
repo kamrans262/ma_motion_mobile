@@ -41,6 +41,7 @@ void main() {
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
       const Size(18, 18),
     );
+    expect(find.byKey(const Key('maker_nav_saved_filled')), findsNothing);
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))),
       const Size(18, 18),
