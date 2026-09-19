@@ -9,16 +9,20 @@ class MaOnboardingButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.filled = true,
+    this.subdued = false,
+    this.height = 46,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool filled;
+  final bool subdued;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 46,
+      height: height,
       width: double.infinity,
       child: filled
           ? FilledButton(
@@ -36,12 +40,29 @@ class MaOnboardingButton extends StatelessWidget {
           : OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary, width: 1.2),
+                foregroundColor: subdued
+                    ? AppColors.primary.withValues(alpha: 0.55)
+                    : AppColors.primary,
+                backgroundColor: subdued
+                    ? AppColors.black.withValues(alpha: 0.18)
+                    : Colors.transparent,
+                side: BorderSide(
+                  color: subdued
+                      ? AppColors.primary.withValues(alpha: 0.55)
+                      : AppColors.primary,
+                  width: 1.2,
+                ),
                 shape: const RoundedRectangleBorder(),
                 padding: EdgeInsets.zero,
               ),
-              child: Text(label, style: AppTextStyles.buttonPurple),
+              child: Text(
+                label,
+                style: AppTextStyles.buttonPurple.copyWith(
+                  color: subdued
+                      ? AppColors.primary.withValues(alpha: 0.55)
+                      : AppColors.primary,
+                ),
+              ),
             ),
     );
   }

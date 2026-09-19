@@ -65,6 +65,85 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Next and Back are 15% taller with Back consistently darker', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app());
+
+    final next = tester.widget<OutlinedButton>(
+      find.descendant(
+        of: find.byKey(const Key('maker_next_button')),
+        matching: find.byType(OutlinedButton),
+      ),
+    );
+    final back = tester.widget<OutlinedButton>(
+      find.descendant(
+        of: find.byKey(const Key('maker_back_button')),
+        matching: find.byType(OutlinedButton),
+      ),
+    );
+
+    expect(tester.getSize(find.byKey(const Key('maker_next_button'))).height, 53);
+    expect(tester.getSize(find.byKey(const Key('maker_back_button'))).height, 53);
+    expect(
+      next.style?.foregroundColor?.resolve(<WidgetState>{}),
+      const Color(0xFF904AFF),
+    );
+    expect(
+      back.style?.foregroundColor?.resolve(<WidgetState>{}),
+      const Color(0xFF904AFF).withValues(alpha: 0.55),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Maker validation errors are white and align with input edge', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app());
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pump();
+
+    final field = find.byKey(const Key('maker_name_field'));
+    final fieldError = find.byKey(const Key('onboarding_field_error'));
+    final generalError = find.byKey(const Key('maker_validation_message'));
+
+    expect(fieldError, findsOneWidget);
+    expect(generalError, findsOneWidget);
+    expect(tester.widget<Text>(fieldError).style?.color, Colors.white);
+    expect(tester.widget<Text>(generalError).style?.color, Colors.white);
+    expect(
+      tester.getTopLeft(fieldError).dx,
+      closeTo(tester.getTopLeft(field).dx, 0.1),
+    );
+    expect(
+      tester.getTopLeft(generalError).dx,
+      closeTo(tester.getTopLeft(field).dx, 0.1),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Maker artist statement is optional and has a larger heading', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app(initialStep: 2));
+
+    final heading = tester.widget<Text>(
+      find.byKey(const Key('maker_step_heading')),
+    );
+    expect(heading.style?.fontSize, 36);
+    expect(
+      find.text('A few sentences about your practice (optional)'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const Key('maker_next_button')));
+    await tester.pumpAndSettle();
+    expect(find.text('What kind of work do\nyou make?'), findsOneWidget);
+    expect(find.byKey(const Key('maker_about_field')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('name Next validates and then moves to location', (tester) async {
     await tester.pumpWidget(app());
 
@@ -387,19 +466,19 @@ void main() {
     expect(headingTop.dy, closeTo(216.45, 1.0));
     expect(fieldRect.left, closeTo(20, 0.1));
     expect(fieldRect.right, closeTo(370, 0.1));
-    expect(nextSize.height, 46);
-    expect(backSize.height, 46);
+    expect(nextSize.height, 53);
+    expect(backSize.height, 53);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('salon image picker follows the supplied 88px square', (
+  testWidgets('salon image picker is 150% of the original square', (
     tester,
   ) async {
     await tester.pumpWidget(app(initialStep: 6));
 
     expect(
       tester.getSize(find.byKey(const Key('maker_salon_image_picker'))),
-      const Size(88, 88),
+      const Size(132, 132),
     );
     expect(tester.takeException(), isNull);
   });

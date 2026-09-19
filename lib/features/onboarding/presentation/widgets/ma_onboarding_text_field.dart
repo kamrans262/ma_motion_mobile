@@ -29,49 +29,58 @@ class MaOnboardingTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      maxLines: maxLines,
-      minLines: minLines,
-      onChanged: onChanged,
-      autofillHints: autofillHints,
-      cursorColor: AppColors.primary,
-      style: AppTextStyles.field,
-      decoration: InputDecoration(
-        isDense: true,
-        filled: true,
-        fillColor: AppColors.inputFill,
-        hintText: hintText,
-        hintStyle: AppTextStyles.fieldHint,
-        errorText: errorText,
-        errorStyle: AppTextStyles.error,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: maxLines > 1 ? 16 : 14,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          maxLines: maxLines,
+          minLines: minLines,
+          onChanged: onChanged,
+          autofillHints: autofillHints,
+          cursorColor: AppColors.primary,
+          style: AppTextStyles.field,
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: AppColors.inputFill,
+            hintText: hintText,
+            hintStyle: AppTextStyles.fieldHint,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: maxLines > 1 ? 16 : 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: AppColors.primary50, width: 1.2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(
+                color: errorText == null
+                    ? AppColors.primary50
+                    : AppColors.primary,
+                width: 1.2,
+              ),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: AppColors.primary, width: 1.4),
+            ),
+          ),
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: AppColors.primary50, width: 1.2),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: AppColors.primary50, width: 1.2),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: AppColors.primary, width: 1.4),
-        ),
-        errorBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: AppColors.error, width: 1.2),
-        ),
-        focusedErrorBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: AppColors.error, width: 1.4),
-        ),
-      ),
+        if (errorText != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            errorText!,
+            key: const Key('onboarding_field_error'),
+            style: AppTextStyles.onboardingError,
+          ),
+        ],
+      ],
     );
   }
 }
