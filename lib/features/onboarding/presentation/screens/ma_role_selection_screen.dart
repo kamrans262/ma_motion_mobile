@@ -41,7 +41,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                       ((constraints.maxWidth - horizontal * 2 - buttonGap) / 2)
                           .clamp(0.0, 154.0)
                           .toDouble();
-                  final roleFontSize = constraints.maxWidth < 360 ? 24.0 : 26.0;
+                  const roleFontSize = 22.0;
 
                   return Center(
                     child: Padding(

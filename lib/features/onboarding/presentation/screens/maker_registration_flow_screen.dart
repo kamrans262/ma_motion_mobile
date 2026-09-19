@@ -405,7 +405,6 @@ class _MakerRegistrationFlowScreenState
       case 2:
         return MaOnboardingScaffold(
           heading: 'Tell us about your work',
-          headingStyle: AppTextStyles.onboardingHeading.copyWith(fontSize: 36),
           subtitle: 'A few sentences about your practice (optional)',
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,

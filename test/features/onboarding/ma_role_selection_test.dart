@@ -75,7 +75,7 @@ void main() {
     for (final label in <String>['Maker', 'Appreciator']) {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontFamily, AppTextStyles.fontFamily);
-      expect(text.style?.fontSize, 26);
+      expect(text.style?.fontSize, 22);
       expect(text.style?.fontWeight, FontWeight.w500);
     }
 
@@ -98,6 +98,11 @@ void main() {
     );
 
     expect(find.byKey(const Key('role_selection_screen')), findsOneWidget);
+    for (final label in <String>['Maker', 'Appreciator']) {
+      final text = tester.widget<Text>(find.text(label));
+      expect(text.style?.fontSize, 22);
+      expect(text.style?.fontWeight, FontWeight.w500);
+    }
     expect(tester.takeException(), isNull);
   });
 }

@@ -49,6 +49,11 @@ void main() {
 
     expect(find.text("What's your name?"), findsOneWidget);
     expect(find.byKey(const Key('appreciator_name_field')), findsOneWidget);
+    final heading = tester.widget<Text>(
+      find.byKey(const Key('maker_step_heading')),
+    );
+    expect(heading.style?.fontSize, 30);
+    expect(heading.style?.fontWeight, FontWeight.w500);
 
     for (var index = 0; index < 3; index++) {
       expect(find.byKey(Key('maker_step_dot_$index')), findsOneWidget);

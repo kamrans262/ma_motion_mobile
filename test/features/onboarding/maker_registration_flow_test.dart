@@ -40,6 +40,11 @@ void main() {
 
     expect(find.text("What's your name or studio name?"), findsOneWidget);
     expect(find.byKey(const Key('maker_name_field')), findsOneWidget);
+    final heading = tester.widget<Text>(
+      find.byKey(const Key('maker_step_heading')),
+    );
+    expect(heading.style?.fontSize, 30);
+    expect(heading.style?.fontWeight, FontWeight.w500);
 
     for (var index = 0; index < 7; index++) {
       expect(find.byKey(Key('maker_step_dot_$index')), findsOneWidget);
@@ -137,7 +142,7 @@ void main() {
     final heading = tester.widget<Text>(
       find.byKey(const Key('maker_step_heading')),
     );
-    expect(heading.style?.fontSize, 36);
+    expect(heading.style?.fontSize, 30);
     expect(
       find.text('A few sentences about your practice (optional)'),
       findsOneWidget,
