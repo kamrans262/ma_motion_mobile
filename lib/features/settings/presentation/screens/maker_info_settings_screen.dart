@@ -512,6 +512,7 @@ class _MakerInfoSettingsScreenState
                             'Save & Close',
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -566,7 +567,7 @@ class _MakerInfoSettingsScreenState
               TextSpan(
                 style: AppTextStyles.onboardingHelper.copyWith(
                   color: AppColors.primary,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
                 children: [
                   const TextSpan(text: 'Your Profile Has Been Saved By '),
@@ -692,7 +693,11 @@ class _MakerInfoSettingsScreenState
               ),
               child: const Text(
                 'Switch to Appreciator',
-                style: TextStyle(decoration: TextDecoration.underline),
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
             if (_errorMessage != null) ...[
@@ -703,6 +708,7 @@ class _MakerInfoSettingsScreenState
                 style: const TextStyle(
                   color: AppColors.error,
                   fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
                 ),
               ),
             ],
@@ -868,7 +874,7 @@ class _VisibilityField extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               SizedBox(
-                width: 166,
+                width: 190,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -880,7 +886,7 @@ class _VisibilityField extends StatelessWidget {
                         textAlign: TextAlign.right,
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.primary,
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -965,43 +971,20 @@ class _CompactVisibilityToggle extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         overlayColor: AppButtonStyles.purpleInkOverlay,
         child: SizedBox(
-          width: 78,
+          width: 50,
           height: 28,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                width: 26,
-                child: Text(
-                  value ? 'ON' : 'OFF',
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.white,
-                  ),
-                ),
+          child: IgnorePointer(
+            child: Transform.scale(
+              scale: 0.72,
+              alignment: Alignment.center,
+              child: Switch(
+                value: value,
+                onChanged: enabled ? (_) {} : null,
+                activeThumbColor: AppColors.white,
+                activeTrackColor: AppColors.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              const SizedBox(width: 2),
-              SizedBox(
-                width: 50,
-                height: 28,
-                child: IgnorePointer(
-                  child: Transform.scale(
-                    scale: 0.72,
-                    alignment: Alignment.centerRight,
-                    child: Switch(
-                      value: value,
-                      onChanged: enabled ? (_) {} : null,
-                      activeThumbColor: AppColors.white,
-                      activeTrackColor: AppColors.primary,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -1101,7 +1084,7 @@ class _CarouselEditor extends StatelessWidget {
               ? 'Artwork image (JPG, PNG or WebP)'
               : 'image or video (15 seconds or less)',
           style: AppTextStyles.onboardingHelper.copyWith(
-            fontSize: 9,
+            fontSize: 14,
             color: AppColors.mutedText,
           ),
         ),
@@ -1111,7 +1094,7 @@ class _CarouselEditor extends StatelessWidget {
             'Status: $moderationStatus',
             key: Key('maker_settings_artwork_status_$slot'),
             style: AppTextStyles.onboardingHelper.copyWith(
-              fontSize: 9,
+              fontSize: 14,
               color: AppColors.mutedText,
             ),
           ),
@@ -1156,7 +1139,7 @@ class _CarouselEditor extends StatelessWidget {
             'Artwork title:',
             style: AppTextStyles.onboardingHelper.copyWith(
               color: AppColors.primary,
-              fontSize: 11,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 6),
@@ -1192,7 +1175,7 @@ class _CarouselEditor extends StatelessWidget {
           isArtwork ? 'Artwork description:' : 'A sentence about the content:',
           style: AppTextStyles.onboardingHelper.copyWith(
             color: AppColors.primary,
-            fontSize: 11,
+            fontSize: 14,
           ),
         ),
         const SizedBox(height: 6),
