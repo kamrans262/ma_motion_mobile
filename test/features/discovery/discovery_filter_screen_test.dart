@@ -127,7 +127,7 @@ void main() {
     ]) {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontSize, 14);
-      expect(text.style?.fontWeight, FontWeight.w400);
+      expect(text.style?.fontWeight, FontWeight.w500);
     }
 
     final typeText = tester.widget<Text>(
@@ -137,7 +137,7 @@ void main() {
       ),
     );
     expect(typeText.style?.fontSize, 14);
-    expect(typeText.style?.fontWeight, FontWeight.w600);
+    expect(typeText.style?.fontWeight, FontWeight.w500);
 
     final styleText = tester.widget<Text>(
       find.descendant(
@@ -146,7 +146,7 @@ void main() {
       ),
     );
     expect(styleText.style?.fontSize, 14);
-    expect(styleText.style?.fontWeight, FontWeight.w600);
+    expect(styleText.style?.fontWeight, FontWeight.w500);
 
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('discovery_filter_screen')),
