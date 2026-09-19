@@ -824,6 +824,15 @@ class _SalonImagePicker extends StatelessWidget {
                   key: const Key('maker_salon_image_preview'),
                   fit: BoxFit.cover,
                   gaplessPlayback: true,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: AppColors.primary,
+                        size: 36,
+                      ),
+                    );
+                  },
                 )
               : Image.network(
                   existingImageUrl!,
