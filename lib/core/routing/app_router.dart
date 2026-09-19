@@ -195,19 +195,23 @@ GoRouter createAppRouter({
         path: '/appreciator/saved-artworks',
         pageBuilder: (context, state) => _premiumPage(
           state: state,
-          child: MakerSavedArtworksScreen(
-            onBack: () => context.pop(),
-            onSettingsTap: () => unawaited(openAppreciatorSettings(context)),
+          child: Builder(
+            builder: (savedContext) => MakerSavedArtworksScreen(
+              onBack: () => savedContext.pop(),
+              settingsSemanticsLabel: 'Appreciator settings',
+              onSettingsTap: () =>
+                  unawaited(openAppreciatorSettings(savedContext)),
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
                 precacheImage(NetworkImage(url), context);
               }
-              context.push(
+              savedContext.push(
                 '/appreciator/discovery/artwork/${artwork.id}',
                 extra: artwork,
               );
             },
+            ),
           ),
         ),
       ),
