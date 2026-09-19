@@ -454,27 +454,27 @@ class _ToolbarSvgButton extends StatelessWidget {
               child: Align(
                 alignment: alignment,
                 child: materialIcon == null
-                  ? SizedBox(
-                      key: iconKey,
-                      width: size,
-                      height: size,
-                      child: MaSvgAsset(
-                        assetName: assetName,
-                        fallbackAssetName: fallbackAssetName,
-                        fit: BoxFit.contain,
-                        color: AppColors.primary,
+                    ? SizedBox(
+                        key: iconKey,
+                        width: size,
+                        height: size,
+                        child: MaSvgAsset(
+                          assetName: assetName,
+                          fallbackAssetName: fallbackAssetName,
+                          fit: BoxFit.contain,
+                          color: AppColors.primary,
+                        ),
+                      )
+                    : SizedBox(
+                        key: iconKey,
+                        width: size,
+                        height: size,
+                        child: Icon(
+                          materialIcon,
+                          size: size,
+                          color: AppColors.primary,
+                        ),
                       ),
-                    )
-                  : SizedBox(
-                      key: iconKey,
-                      width: size,
-                      height: size,
-                      child: Icon(
-                        materialIcon,
-                        size: size,
-                        color: AppColors.primary,
-                      ),
-                    ),
               ),
             ),
           ),
