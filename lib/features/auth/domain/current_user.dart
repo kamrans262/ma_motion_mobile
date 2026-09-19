@@ -10,6 +10,10 @@ class CurrentUser {
     this.makerOnboardingCompleted = false,
     this.appreciatorRegistered = false,
     this.appreciatorOnboardingCompleted = false,
+    this.makerLocation = '',
+    this.appreciatorLocation = '',
+    this.makerBio = '',
+    this.makerProfileImageUrl,
   });
 
   final int? id;
@@ -22,6 +26,10 @@ class CurrentUser {
   final bool makerOnboardingCompleted;
   final bool appreciatorRegistered;
   final bool appreciatorOnboardingCompleted;
+  final String makerLocation;
+  final String appreciatorLocation;
+  final String makerBio;
+  final String? makerProfileImageUrl;
 
   bool get isMaker => role.toLowerCase() == 'maker';
   bool get isAppreciator => role.toLowerCase() == 'appreciator';
@@ -47,6 +55,15 @@ class CurrentUser {
       return null;
     }
 
+    Map<String, dynamic> nested(Object? value) {
+      return value is Map
+          ? Map<String, dynamic>.from(value)
+          : const <String, dynamic>{};
+    }
+
+    final makerProfile = nested(map['maker_profile']);
+    final appreciatorProfile = nested(map['appreciator_profile']);
+
     return CurrentUser(
       id: asInt(map['id']),
       name: map['name']?.toString() ?? '',
@@ -62,6 +79,15 @@ class CurrentUser {
       appreciatorRegistered: asBool(map['appreciator_registered']) ?? false,
       appreciatorOnboardingCompleted:
           asBool(map['appreciator_onboarding_completed']) ?? false,
+      makerLocation: (makerProfile['location_text'] ??
+              makerProfile['location'] ??
+              '')
+          .toString(),
+      appreciatorLocation:
+          (appreciatorProfile['location_text'] ?? '').toString(),
+      makerBio: (makerProfile['bio'] ?? '').toString(),
+      makerProfileImageUrl:
+          makerProfile['profile_image_url']?.toString(),
     );
   }
 }
