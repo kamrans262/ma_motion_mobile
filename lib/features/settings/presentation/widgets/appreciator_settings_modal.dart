@@ -358,7 +358,7 @@ class _AppreciatorSettingsModalState
             key: Key('appreciator_settings_heading'),
             style: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              fontSize: 30,
+              fontSize: 22,
               height: 1.15,
               fontWeight: FontWeight.w500,
               color: AppColors.primary,
