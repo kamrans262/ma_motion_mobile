@@ -33,18 +33,21 @@ void main() {
       expect(OnboardingValidators.location('New York, NY'), isNull);
     });
 
-    test('Maker artist statement is optional with a 5000-character maximum', () {
-      expect(OnboardingValidators.aboutWork(''), isNull);
-      expect(OnboardingValidators.aboutWork('Short'), isNull);
-      expect(
-        OnboardingValidators.aboutWork('Original mixed-media artwork'),
-        isNull,
-      );
-      expect(
-        OnboardingValidators.aboutWork('A'.padLeft(5001, 'A')),
-        contains('5000 characters'),
-      );
-    });
+    test(
+      'Maker artist statement is optional with a 5000-character maximum',
+      () {
+        expect(OnboardingValidators.aboutWork(''), isNull);
+        expect(OnboardingValidators.aboutWork('Short'), isNull);
+        expect(
+          OnboardingValidators.aboutWork('Original mixed-media artwork'),
+          isNull,
+        );
+        expect(
+          OnboardingValidators.aboutWork('A'.padLeft(5001, 'A')),
+          contains('5000 characters'),
+        );
+      },
+    );
 
     test('validates email and optional website formats', () {
       expect(OnboardingValidators.email('invalid'), isNotNull);
