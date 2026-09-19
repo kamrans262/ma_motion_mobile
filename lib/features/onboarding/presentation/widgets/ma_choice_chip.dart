@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
@@ -24,6 +25,7 @@ class MaChoiceChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.zero,
+        overlayColor: AppButtonStyles.purpleInkOverlay,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
           constraints: const BoxConstraints(minHeight: 34),
