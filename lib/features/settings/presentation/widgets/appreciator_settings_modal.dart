@@ -435,13 +435,19 @@ class _AppreciatorSettingsModalState
             ),
           ],
           const SizedBox(height: 18),
-          SizedBox(
+          Container(
             height: 46,
+            decoration: const BoxDecoration(color: Color(0xFF000000)),
             child: OutlinedButton(
               key: const Key('appreciator_settings_save_close'),
               onPressed: _busy ? null : _saveAndClose,
               style: AppButtonStyles.outlineAction().copyWith(
-                backgroundColor: const WidgetStatePropertyAll(Colors.black),
+                backgroundColor: const WidgetStatePropertyAll<Color>(
+                  Color(0xFF000000),
+                ),
+                surfaceTintColor: const WidgetStatePropertyAll<Color>(
+                  Colors.transparent,
+                ),
               ),
               child: _saving
                   ? const SizedBox.square(
