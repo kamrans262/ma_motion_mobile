@@ -6,12 +6,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/data/artwork_detail_repository.dart';
+import 'package:ma_motion_mobile/features/artwork_viewer/data/maker_current_show_repository.dart';
+import 'package:ma_motion_mobile/features/artwork_viewer/domain/maker_current_show.dart';
+import 'package:ma_motion_mobile/features/artwork_viewer/presentation/widgets/artwork_maker_info_page.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/domain/artwork_detail.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import 'package:ma_motion_mobile/features/artwork_viewer/presentation/widgets/artwork_viewer_dots.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
 import 'package:ma_motion_mobile/features/saved_artworks/data/saved_artworks_repository.dart';
+
+void _noop() {}
 
 void main() {
   testWidgets(
@@ -107,20 +112,28 @@ void main() {
       expect(makerCardRect.left, frameRect.left);
       expect(makerCardRect.right, frameRect.right);
 
+      final infoCard = tester.widget<Container>(
+        find.byKey(const Key('artwork_maker_info_card')),
+      );
+      expect(
+        (infoCard.decoration! as BoxDecoration).color,
+        const Color(0xFF0A0A0A),
+      );
+
       expect(find.text('Tide Register No. 4'), findsOneWidget);
       expect(find.text('Mara Vellan · 2024'), findsOneWidget);
 
       final title = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_title')),
       );
-      expect(title.style?.fontFamily, 'HelveticaNeueLTStd');
+      expect(title.style?.fontFamily, 'Fraunces');
       expect(title.style?.fontSize, 24);
       expect(title.style?.fontWeight, FontWeight.w500);
 
       final meta = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_meta')),
       );
-      expect(meta.style?.fontFamily, 'HelveticaNeueLTStd');
+      expect(meta.style?.fontFamily, 'Instrument Sans');
       expect(meta.style?.fontSize, 15);
 
       expect(
@@ -134,7 +147,7 @@ void main() {
           matching: find.text('Share'),
         ),
       );
-      expect(share.style?.fontFamily, 'HelveticaNeueLTStd');
+      expect(share.style?.fontFamily, 'Instrument Sans');
       expect(share.style?.fontSize, 18);
       expect(share.style?.fontWeight, FontWeight.w500);
 
@@ -145,6 +158,85 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('Maker Info card uses only the requested typography', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerCurrentShowProvider(7).overrideWith(
+            (ref) async => MakerCurrentShow(
+              id: 1,
+              name: 'Modern Gallery',
+              endDate: DateTime(2026, 4),
+            ),
+          ),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(
+            body: ArtworkMakerInfoPage(
+              artwork: ArtworkDetail(
+                id: 41,
+                title: 'Tide Register No. 4',
+                media: <DiscoveryArtworkMedia>[],
+                maker: ArtworkDetailMaker(
+                  id: 7,
+                  name: 'Mara Vellan',
+                  bio: 'A contemporary artist exploring form and color.',
+                  websiteUrl: 'www.artist.com',
+                  contactEmail: 'contact@artist.com',
+                ),
+              ),
+              isSaved: false,
+              isSaving: false,
+              onSavedTap: _noop,
+              onShare: _noop,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final card = tester.widget<Container>(
+      find.byKey(const Key('artwork_maker_info_card')),
+    );
+    expect((card.decoration! as BoxDecoration).color, const Color(0xFF0A0A0A));
+
+    for (final key in <String>[
+      'artwork_maker_info_title',
+      'artwork_maker_info_website',
+      'artwork_maker_info_email',
+      'artwork_maker_current_show',
+    ]) {
+      final value = tester.widget<Text>(find.byKey(Key(key)));
+      expect(value.style?.fontFamily, 'Fraunces', reason: key);
+    }
+
+    for (final key in <String>[
+      'artwork_maker_info_meta',
+      'artwork_maker_info_bio',
+    ]) {
+      if (key == 'artwork_maker_info_meta') continue;
+      final text = tester.widget<Text>(find.byKey(Key(key)));
+      expect(text.style?.fontFamily, 'Instrument Sans', reason: key);
+    }
+
+    for (final label in <String>['Website', 'Email', 'Current Show']) {
+      final text = tester.widget<Text>(find.text(label));
+      expect(text.style?.fontFamily, 'Instrument Sans', reason: label);
+    }
+
+    final share = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('artwork_maker_info_share_button')),
+        matching: find.text('Share'),
+      ),
+    );
+    expect(share.style?.fontFamily, 'Instrument Sans');
+    expect(tester.takeException(), isNull);
+  });
 
   test(
     'configured art display starts with tapped artwork and avoids duplicates',

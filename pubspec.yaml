@@ -124,6 +124,12 @@ flutter:
       fonts:
         - asset: assets/fonts/Helvetica Neue LT Std 65 Medium.otf
           weight: 500
+    - family: Fraunces
+      fonts:
+        - asset: assets/fonts/Fraunces.ttf
+    - family: Instrument Sans
+      fonts:
+        - asset: assets/fonts/InstrumentSans.ttf
 
 flutter_launcher_icons:
   android: true

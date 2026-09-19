@@ -42,7 +42,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                 key: const Key('artwork_maker_info_card'),
                 width: double.infinity,
                 constraints: const BoxConstraints(maxWidth: 396),
-                decoration: const BoxDecoration(color: Color(0xFF101717)),
+                decoration: const BoxDecoration(color: Color(0xFF0A0A0A)),
                 padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -54,7 +54,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         artwork.title,
                         key: const Key('artwork_maker_info_title'),
                         style: const TextStyle(
-                          fontFamily: 'HelveticaNeueLTStd',
+                          fontFamily: 'Fraunces',
                           fontSize: 24,
                           height: 1.08,
                           fontWeight: FontWeight.w500,
@@ -68,7 +68,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         _makerMeta(artwork),
                         key: const Key('artwork_maker_info_meta'),
                         style: const TextStyle(
-                          fontFamily: 'HelveticaNeueLTStd',
+                          fontFamily: 'Instrument Sans',
                           fontSize: 15,
                           height: 1.2,
                           fontWeight: FontWeight.w500,
@@ -82,7 +82,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         maker!.bio!,
                         key: const Key('artwork_maker_info_bio'),
                         style: const TextStyle(
-                          fontFamily: 'HelveticaNeueLTStd',
+                          fontFamily: 'Instrument Sans',
                           fontSize: 14,
                           height: 1.45,
                           fontWeight: FontWeight.w500,
@@ -194,7 +194,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                           child: const Text(
                             'Share',
                             style: TextStyle(
-                              fontFamily: 'HelveticaNeueLTStd',
+                              fontFamily: 'Instrument Sans',
                               fontSize: 18,
                               height: 1,
                               fontWeight: FontWeight.w500,
@@ -236,7 +236,7 @@ class _InfoLabel extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        fontFamily: 'HelveticaNeueLTStd',
+        fontFamily: 'Instrument Sans',
         fontSize: 13,
         height: 1.2,
         fontWeight: FontWeight.w500,
@@ -249,7 +249,7 @@ class _InfoLabel extends StatelessWidget {
 class _InfoValueStyle extends TextStyle {
   const _InfoValueStyle()
     : super(
-        fontFamily: 'HelveticaNeueLTStd',
+        fontFamily: 'Fraunces',
         fontSize: 17,
         height: 1.25,
         fontWeight: FontWeight.w500,
