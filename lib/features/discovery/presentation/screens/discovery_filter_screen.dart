@@ -53,8 +53,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
     _selectedTypeIds = Set<int>.from(query.typeIds);
     _selectedStyleIds = Set<int>.from(query.styleIds);
-    _selectedStatuses = Set<String>.from(query.showStatuses)
-      ..remove('past');
+    _selectedStatuses = Set<String>.from(query.showStatuses)..remove('past');
 
     final locationLabel = query.locationLabel?.trim() ?? '';
     if (locationLabel.isNotEmpty &&
@@ -377,8 +376,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   Widget _buildForm(DiscoveryFilterOptions options) {
     final minMiles = _kmToMiles(options.radiusMinKm);
     final maxMiles = _kmToMiles(options.radiusMaxKm)
-          .clamp(minMiles, _maxRadiusMiles)
-          .toDouble();
+        .clamp(minMiles, _maxRadiusMiles)
+        .toDouble();
     final radiusValue = _radiusMiles.clamp(minMiles, maxMiles).toDouble();
 
     return ListView(
@@ -427,13 +426,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             for (final status in options.showStatuses)
               if (status.value != 'past')
                 _ChoicePill(
-                key: Key('filter_status_${status.value}'),
-                label: status.label,
-                selected: _selectedStatuses.contains(status.value),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                onTap: () => _toggleStatus(status.value),
-              ),
+                  key: Key('filter_status_${status.value}'),
+                  label: status.label,
+                  selected: _selectedStatuses.contains(status.value),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  onTap: () => _toggleStatus(status.value),
+                ),
           ],
         ),
         const SizedBox(height: 22),
