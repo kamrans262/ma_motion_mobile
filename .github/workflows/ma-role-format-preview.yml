@@ -1,0 +1,28 @@
+name: MA Role Format Preview
+
+on:
+  push:
+    branches:
+      - feature/maker-onboarding-ui-polish
+
+permissions:
+  contents: read
+
+jobs:
+  formatted-role:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - name: Print canonical role source
+        shell: bash
+        run: |
+          dart format lib/features/onboarding/presentation/screens/ma_role_selection_screen.dart
+          echo MA_ROLE_FORMAT_START
+          cat lib/features/onboarding/presentation/screens/ma_role_selection_screen.dart
+          echo MA_ROLE_FORMAT_END
