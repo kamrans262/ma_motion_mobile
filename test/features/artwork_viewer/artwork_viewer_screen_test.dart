@@ -336,7 +336,10 @@ void main() {
           const Offset(-500, 0),
         );
         await tester.pumpAndSettle();
-        expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+        expect(
+          find.byKey(const Key('artwork_maker_info_card')),
+          findsOneWidget,
+        );
       }
 
       final heart = find.byKey(const Key('artwork_maker_info_heart'));
