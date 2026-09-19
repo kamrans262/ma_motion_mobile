@@ -29,7 +29,7 @@ class MaChoiceChip extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 34),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? AppColors.primary : Colors.transparent,
+            color: selected ? AppColors.primary : AppColors.savedBackground,
             border: Border.all(color: AppColors.primary, width: 1.1),
           ),
           child: Text(

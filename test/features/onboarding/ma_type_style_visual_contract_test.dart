@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
 void main() {
@@ -60,6 +61,18 @@ void main() {
     expect(styleText.style?.fontSize, 14);
     expect(paintingText.style?.fontSize, 14);
     expect(abstractText.style?.fontSize, 14);
+
+    final unselected = tester.widget<AnimatedContainer>(
+      find.ancestor(
+        of: find.text('Painting'),
+        matching: find.byType(AnimatedContainer),
+      ).first,
+    );
+    expect(unselected.decoration, isA<BoxDecoration>());
+    expect(
+      (unselected.decoration! as BoxDecoration).color,
+      AppColors.savedBackground,
+    );
 
     expect(tester.takeException(), isNull);
   });

@@ -26,6 +26,7 @@ class DiscoveryFilterScreen extends ConsumerStatefulWidget {
 class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   static const double _kmPerMile = 1.609344;
   static const double _defaultRadiusMiles = 25;
+  static const double _maxRadiusMiles = 200;
 
   late final TextEditingController _locationSearchController;
 
@@ -52,7 +53,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
     _selectedTypeIds = Set<int>.from(query.typeIds);
     _selectedStyleIds = Set<int>.from(query.styleIds);
-    _selectedStatuses = Set<String>.from(query.showStatuses);
+    _selectedStatuses = Set<String>.from(query.showStatuses)
+      ..remove('past');
 
     final locationLabel = query.locationLabel?.trim() ?? '';
     if (locationLabel.isNotEmpty &&
@@ -103,7 +105,9 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       if (!mounted) return;
 
       final minMiles = _kmToMiles(options.radiusMinKm);
-      final maxMiles = _kmToMiles(options.radiusMaxKm);
+      final maxMiles = _kmToMiles(options.radiusMaxKm)
+          .clamp(minMiles, _maxRadiusMiles)
+          .toDouble();
 
       setState(() {
         _options = options;
@@ -309,7 +313,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                         'Clear filters',
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.darkGray,
-                          fontSize: 11,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -372,7 +376,9 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
   Widget _buildForm(DiscoveryFilterOptions options) {
     final minMiles = _kmToMiles(options.radiusMinKm);
-    final maxMiles = _kmToMiles(options.radiusMaxKm);
+    final maxMiles = _kmToMiles(options.radiusMaxKm)
+          .clamp(minMiles, _maxRadiusMiles)
+          .toDouble();
     final radiusValue = _radiusMiles.clamp(minMiles, maxMiles).toDouble();
 
     return ListView(
@@ -419,10 +425,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           runSpacing: 7,
           children: [
             for (final status in options.showStatuses)
-              _ChoicePill(
+              if (status.value != 'past')
+                _ChoicePill(
                 key: Key('filter_status_${status.value}'),
                 label: status.label,
                 selected: _selectedStatuses.contains(status.value),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
                 onTap: () => _toggleStatus(status.value),
               ),
           ],
@@ -473,7 +482,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                         suggestion.label,
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.white,
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                       onTap: () => _selectLocation(suggestion),
@@ -529,14 +538,14 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             ),
             const SizedBox(width: 10),
             SizedBox(
-              width: 28,
+              width: 36,
               child: Text(
                 '${radiusValue.round()}',
                 key: const Key('filter_radius_value'),
                 textAlign: TextAlign.right,
                 style: AppTextStyles.onboardingHelper.copyWith(
                   color: AppColors.white,
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -610,7 +619,7 @@ class _ChoicePill extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.fontSize = 11,
+    this.fontSize = 14,
     this.fontWeight,
   });
 
@@ -623,7 +632,7 @@ class _ChoicePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? AppColors.white : Colors.transparent,
+      color: selected ? AppColors.white : AppColors.savedBackground,
       child: InkWell(
         onTap: onTap,
         child: Container(
@@ -640,8 +649,7 @@ class _ChoicePill extends StatelessWidget {
               fontFamily: AppTextStyles.fontFamily,
               fontSize: fontSize,
               height: 1.1,
-              fontWeight:
-                  fontWeight ?? (selected ? FontWeight.w500 : FontWeight.w500),
+              fontWeight: fontWeight ?? FontWeight.w500,
               color: selected ? AppColors.black : AppColors.white,
             ),
           ),

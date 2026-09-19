@@ -71,7 +71,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                   key: const Key('select_maker_button'),
                                   onPressed: onMaker,
                                   style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColors.splashBackground,
+                                    backgroundColor: AppColors.savedBackground,
                                     foregroundColor: AppColors.primary,
                                     side: const BorderSide(
                                       color: AppColors.primary,
@@ -104,7 +104,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                   key: const Key('select_appreciator_button'),
                                   onPressed: onAppreciator,
                                   style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColors.splashBackground,
+                                    backgroundColor: AppColors.savedBackground,
                                     foregroundColor: AppColors.primary,
                                     side: const BorderSide(
                                       color: AppColors.primary,

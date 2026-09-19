@@ -8,7 +8,7 @@ abstract final class AppButtonStyles {
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
         return states.contains(WidgetState.pressed)
             ? AppColors.primary
-            : Colors.transparent;
+            : AppColors.savedBackground;
       }),
       foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.disabled)) {

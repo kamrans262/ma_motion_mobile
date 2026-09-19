@@ -71,6 +71,13 @@ void main() {
     );
     expect(radiusValue, findsOneWidget);
 
+    final radiusSlider = tester.widget<Slider>(
+      find.byKey(const Key('filter_radius_slider')),
+    );
+    expect(radiusSlider.max, 200);
+    radiusSlider.onChanged?.call(200);
+    await tester.pump();
+
     final applyButton = find.byKey(const Key('filter_apply_button'));
     expect(applyButton, findsOneWidget);
     await tester.tap(applyButton);
@@ -84,7 +91,7 @@ void main() {
     expect(query.showStatuses, <String>{'current'});
     expect(query.latitude, 40.7128);
     expect(query.longitude, -74.0060);
-    expect(query.radiusKm, isNotNull);
+    expect(query.radiusKm, closeTo(200 * 1.609344, 0.00001));
     expect(query.locationId, isNull);
     expect(tester.takeException(), isNull);
   });
@@ -118,6 +125,13 @@ void main() {
     expect(find.text('Clear filters'), findsOneWidget);
     expect(find.text('Filter'), findsOneWidget);
 
+    final title = tester.widget<Text>(find.text('Filter'));
+    expect(title.style?.fontFamily, 'HelveticaNeueLTStd');
+    expect(title.style?.fontWeight, FontWeight.w500);
+    final clearText = tester.widget<Text>(find.text('Clear filters'));
+    expect(clearText.style?.fontSize, 14);
+    expect(clearText.style?.fontWeight, FontWeight.w500);
+
     for (final label in <String>[
       'Type',
       'Style',
@@ -147,6 +161,32 @@ void main() {
     );
     expect(styleText.style?.fontSize, 14);
     expect(styleText.style?.fontWeight, FontWeight.w500);
+
+    for (final text in <String>[
+      'Currently Showing Work',
+      'Upcoming Show',
+    ]) {
+      final widget = tester.widget<Text>(find.text(text));
+      expect(widget.style?.fontSize, 14);
+      expect(widget.style?.fontWeight, FontWeight.w500);
+    }
+    expect(find.byKey(const Key('filter_status_past')), findsNothing);
+    expect(find.textContaining('Past'), findsNothing);
+
+    final typePill = tester.widget<Material>(
+      find.ancestor(
+        of: find.byKey(const Key('filter_type_1')),
+        matching: find.byType(Material),
+      ).first,
+    );
+    expect(typePill.color, AppColors.savedBackground);
+    final currentPill = tester.widget<Material>(
+      find.ancestor(
+        of: find.byKey(const Key('filter_status_current')),
+        matching: find.byType(Material),
+      ).first,
+    );
+    expect(currentPill.color, AppColors.savedBackground);
 
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('discovery_filter_screen')),
@@ -188,6 +228,13 @@ void main() {
 
     expect(radiusSlider, findsOneWidget);
     expect(find.text('Radius (miles)'), findsOneWidget);
+    final configuredSlider = tester.widget<Slider>(radiusSlider);
+    expect(configuredSlider.max, 200);
+    final radiusText = tester.widget<Text>(
+      find.byKey(const Key('filter_radius_value')),
+    );
+    expect(radiusText.style?.fontSize, 14);
+    expect(radiusText.data, '25');
 
     final locationField = tester.widget<TextField>(locationSearch);
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
@@ -200,7 +247,7 @@ void main() {
     );
     expect(
       applyButton.style?.backgroundColor?.resolve(<WidgetState>{}),
-      Colors.transparent,
+      AppColors.savedBackground,
     );
     expect(
       applyButton.style?.backgroundColor?.resolve(<WidgetState>{
@@ -301,6 +348,11 @@ class _FakeFilterRepository implements DiscoveryFilterRepositoryContract {
           value: 'current',
           label: 'Currently Showing Work',
         ),
+        DiscoveryShowStatusOption(
+          value: 'upcoming',
+          label: 'Upcoming Show',
+        ),
+        DiscoveryShowStatusOption(value: 'past', label: 'Past shows'),
       ],
       radiusMinKm: 1,
       radiusMaxKm: 500,

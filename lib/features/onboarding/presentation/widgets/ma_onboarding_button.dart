@@ -43,9 +43,7 @@ class MaOnboardingButton extends StatelessWidget {
                 foregroundColor: subdued
                     ? AppColors.primary.withValues(alpha: 0.55)
                     : AppColors.primary,
-                backgroundColor: subdued
-                    ? AppColors.black.withValues(alpha: 0.18)
-                    : Colors.transparent,
+                backgroundColor: AppColors.savedBackground,
                 side: BorderSide(
                   color: subdued
                       ? AppColors.primary.withValues(alpha: 0.55)
