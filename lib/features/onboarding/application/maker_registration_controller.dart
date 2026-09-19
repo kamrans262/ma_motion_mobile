@@ -45,6 +45,18 @@ class MakerRegistrationController extends Notifier<MakerRegistrationDraft> {
     state = state.copyWith(clearImage: true);
   }
 
+  void setExistingImageUrl(String value) {
+    state = state.copyWith(existingImageUrl: value);
+  }
+
+  void setTypes(Set<String> values) {
+    state = state.copyWith(types: values);
+  }
+
+  void setStyles(Set<String> values) {
+    state = state.copyWith(styles: values);
+  }
+
   void toggleType(String value) {
     final next = <String>{...state.types};
 
