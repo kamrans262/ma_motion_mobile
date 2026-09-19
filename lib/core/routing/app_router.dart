@@ -201,16 +201,16 @@ GoRouter createAppRouter({
               settingsSemanticsLabel: 'Appreciator settings',
               onSettingsTap: () =>
                   unawaited(openAppreciatorSettings(savedContext)),
-            onArtworkTap: (artwork) {
-              final url = artwork.primaryMedia?.url.trim() ?? '';
-              if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
-                precacheImage(NetworkImage(url), context);
-              }
-              savedContext.push(
-                '/appreciator/discovery/artwork/${artwork.id}',
-                extra: artwork,
-              );
-            },
+              onArtworkTap: (artwork) {
+                final url = artwork.primaryMedia?.url.trim() ?? '';
+                if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
+                  precacheImage(NetworkImage(url), savedContext);
+                }
+                savedContext.push(
+                  '/appreciator/discovery/artwork/${artwork.id}',
+                  extra: artwork,
+                );
+              },
             ),
           ),
         ),
@@ -282,16 +282,16 @@ GoRouter createAppRouter({
             builder: (savedContext) => MakerSavedArtworksScreen(
               onBack: () => savedContext.pop(),
               onSettingsTap: () => savedContext.push('/maker/settings'),
-            onArtworkTap: (artwork) {
-              final url = artwork.primaryMedia?.url.trim() ?? '';
-              if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
-                precacheImage(NetworkImage(url), context);
-              }
-              savedContext.push(
-                '/maker/discovery/artwork/${artwork.id}',
-                extra: artwork,
-              );
-            },
+              onArtworkTap: (artwork) {
+                final url = artwork.primaryMedia?.url.trim() ?? '';
+                if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {
+                  precacheImage(NetworkImage(url), savedContext);
+                }
+                savedContext.push(
+                  '/maker/discovery/artwork/${artwork.id}',
+                  extra: artwork,
+                );
+              },
             ),
           ),
         ),
