@@ -346,14 +346,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
-                      style: AppButtonStyles.outlineAction(borderWidth: 1)
-                          .copyWith(
-                            backgroundColor: WidgetStateProperty.resolveWith(
-                              (states) => states.contains(WidgetState.pressed)
-                                  ? AppColors.primary
-                                  : const Color(0xFF020202),
-                            ),
-                          ),
+                      style: AppButtonStyles.filterAction(),
                       child: _applying
                           ? const SizedBox.square(
                               dimension: 18,
