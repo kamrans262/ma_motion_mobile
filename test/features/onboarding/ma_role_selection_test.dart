@@ -12,7 +12,7 @@ void main() {
     expect(MaDotGridMetrics.rows, 36);
     expect(MaDotGridMetrics.dotRadius, 0.8);
 
-    for (final seconds in <double>[0, 5, 6]) {
+    for (final seconds in <double>[0, 6, 7]) {
       expect(
         MaRoleSelectionDotMotion.displacement(
           row: 0,
@@ -34,22 +34,36 @@ void main() {
     final first = MaRoleSelectionDotMotion.displacement(
       row: 0,
       column: 0,
-      animationSeconds: 2.8,
+      animationSeconds: 2.2,
     );
     final second = MaRoleSelectionDotMotion.displacement(
       row: 0,
       column: 1,
-      animationSeconds: 2.8,
+      animationSeconds: 2.2,
     );
     final third = MaRoleSelectionDotMotion.displacement(
       row: 1,
       column: 0,
-      animationSeconds: 2.8,
+      animationSeconds: 2.2,
     );
     expect(first.distance, greaterThan(3));
     expect(second.distance, greaterThan(3));
     expect(first, isNot(second));
     expect(first, isNot(third));
+
+    // Each dot travels to one point, turns once toward a second point, and
+    // returns to origin; neighboring dots do not share the same direction.
+    final secondPoint = MaRoleSelectionDotMotion.displacement(
+      row: 0,
+      column: 0,
+      animationSeconds: 4.2,
+    );
+    final nextLeg = secondPoint - first;
+    expect(nextLeg.distance, greaterThan(1));
+    expect(
+      (first.dx * nextLeg.dx + first.dy * nextLeg.dy).abs(),
+      lessThan(first.distance * nextLeg.distance * 0.75),
+    );
     expect(
       MaRoleSelectionDotMotion.displacement(
         row: 0,
@@ -62,14 +76,14 @@ void main() {
       MaRoleSelectionDotMotion.displacement(
         row: 0,
         column: 0,
-        animationSeconds: 4.9,
+        animationSeconds: 5.9,
       ).distance,
       lessThan(first.distance),
     );
   });
 
   testWidgets(
-    'Role Selection waits 1s, wanders independently, returns by 6s without moving UI',
+    'Role Selection waits 1s, moves in two directions, returns by 7s without moving UI',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 568));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -110,8 +124,8 @@ void main() {
       expect(animationSeconds(), closeTo(1, 0.02));
       await tester.pump(const Duration(seconds: 2));
       expect(animationSeconds(), closeTo(3, 0.02));
-      await tester.pump(const Duration(seconds: 2));
-      expect(animationSeconds(), closeTo(5, 0.02));
+      await tester.pump(const Duration(seconds: 3));
+      expect(animationSeconds(), closeTo(6, 0.02));
       expect(
         MaRoleSelectionDotMotion.displacement(
           row: 7,
