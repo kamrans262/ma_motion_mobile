@@ -1029,6 +1029,7 @@ class _TaxonomySection extends StatelessWidget {
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
                 selected: selectedIds.contains(option.id),
+                selectedTextColor: AppColors.white,
                 onTap: () => onToggle(option.id),
               ),
           ],
