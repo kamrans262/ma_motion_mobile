@@ -223,19 +223,10 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
 
   final double progress;
 
-  static const double _solidRadius = 0.70710678;
-  static const double _finalDotRadius = 0.038;
-
   @override
   void paint(Canvas canvas, Size size) {
-    if (!size.width.isFinite ||
-        !size.height.isFinite ||
-        size.width <= 0 ||
-        size.height <= 0) {
-      return;
-    }
+    if (!MaDotGridMetrics.hasValidSize(size)) return;
 
-    final spacing = MaDotGridMetrics.spacingForWidth(size.width);
     final paint = Paint()
       ..color = AppColors.primary
       ..style = PaintingStyle.fill
@@ -248,21 +239,13 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
 
     final clamped = progress.clamp(0.0, 1.0).toDouble();
     final smoothProgress = Curves.easeInOutSine.transform(clamped);
-    final radiusFraction =
-        _solidRadius + ((_finalDotRadius - _solidRadius) * smoothProgress);
-    final radius = spacing * radiusFraction;
+    final solidRadius = MaDotGridMetrics.solidCircleRadius(size);
+    final radius = solidRadius +
+        ((MaDotGridMetrics.dotRadius - solidRadius) * smoothProgress);
 
-    final rows = (size.height / spacing).ceil() + 4;
-    final columns = (size.width / spacing).ceil() + 4;
-
-    for (var row = -2; row < rows; row++) {
-      final y = row * spacing;
-
-      for (var column = -2; column < columns; column++) {
-        final x = column * spacing;
-        canvas.drawCircle(Offset(x, y), radius, paint);
-      }
-    }
+    // Use the same 18 × 36 dot centers and final radius as the onboarding
+    // background so transitioning from Splash never shifts the pattern.
+    MaDotGridMetrics.paintDots(canvas, size, paint, radius);
   }
 
   @override
