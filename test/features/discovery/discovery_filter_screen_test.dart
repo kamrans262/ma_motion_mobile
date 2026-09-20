@@ -218,7 +218,7 @@ void main() {
     );
     final sliderTheme = tester.widget<SliderTheme>(sliderThemeFinder.first);
     expect(sliderTheme.data.trackHeight, 1);
-    expect(sliderTheme.data.activeTrackColor, AppColors.darkGray);
+    expect(sliderTheme.data.activeTrackColor, AppColors.white);
     expect(sliderTheme.data.inactiveTrackColor, AppColors.darkGray);
     expect(sliderTheme.data.thumbColor, AppColors.white);
 
