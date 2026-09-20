@@ -62,6 +62,16 @@ void main() {
     expect(paintingText.style?.fontSize, 14);
     expect(abstractText.style?.fontSize, 14);
 
+    for (final choice in <(String, String)>[
+      ('maker_type_Painting', 'Painting'),
+      ('maker_style_Abstract', 'Abstract'),
+    ]) {
+      final buttonCenter = tester.getCenter(find.byKey(Key(choice.$1)));
+      final labelCenter = tester.getCenter(find.text(choice.$2));
+      expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
+      expect(labelCenter.dy, closeTo(buttonCenter.dy, 1));
+    }
+
     final unselected = tester.widget<AnimatedContainer>(
       find
           .ancestor(
