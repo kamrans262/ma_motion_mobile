@@ -82,7 +82,7 @@ void main() {
 
       final dots = find.byKey(const Key('role_selection_wandering_dots'));
       final heading = find.text(
-        'Would you like to\\njoin as a Maker or\\nAppreciator?',
+        'Would you like to\njoin as a Maker or\nAppreciator?',
       );
       final maker = find.byKey(const Key('select_maker_button'));
       final appreciator = find.byKey(
