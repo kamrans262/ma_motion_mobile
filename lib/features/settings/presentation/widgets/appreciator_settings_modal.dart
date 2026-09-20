@@ -308,7 +308,7 @@ class _AppreciatorSettingsModalState
               return Center(
                 child: Material(
                   key: const Key('appreciator_settings_card'),
-                  color: const Color(0xFF050505),
+                  color: AppColors.artworkBackground,
                   elevation: 18,
                   shadowColor: Colors.black,
                   child: ConstrainedBox(
@@ -435,22 +435,12 @@ class _AppreciatorSettingsModalState
             ),
           ],
           const SizedBox(height: 18),
-          Container(
-            height: 46,
-            decoration: const BoxDecoration(color: Color(0xFF000000)),
+          SizedBox(
+            height: 48,
             child: OutlinedButton(
               key: const Key('appreciator_settings_save_close'),
               onPressed: _busy ? null : _saveAndClose,
-              style: AppButtonStyles.outlineAction().copyWith(
-                backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                  (states) => states.contains(WidgetState.pressed)
-                      ? AppColors.primary
-                      : const Color(0xFF000000),
-                ),
-                surfaceTintColor: const WidgetStatePropertyAll<Color>(
-                  Colors.transparent,
-                ),
-              ),
+              style: AppButtonStyles.filterAction(),
               child: _saving
                   ? const SizedBox.square(
                       dimension: 18,
@@ -463,7 +453,7 @@ class _AppreciatorSettingsModalState
                       'Save & Close',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
