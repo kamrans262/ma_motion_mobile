@@ -318,6 +318,28 @@ void main() {
     );
     expect(currentPill.color, const Color(0xFF020202));
 
+    // Selecting Type or Style must not turn the button outline white.
+    await tester.tap(find.byKey(const Key('filter_type_1')));
+    await tester.tap(find.byKey(const Key('filter_style_2')));
+    await tester.pump();
+
+    for (final key in <String>['filter_type_1', 'filter_style_2']) {
+      final pill = find.byKey(Key(key));
+      final borderBox = tester.widget<Container>(
+        find.descendant(of: pill, matching: find.byType(Container)).first,
+      );
+      final border = (borderBox.decoration! as BoxDecoration).border!
+          as Border;
+      expect(border.top.color, AppColors.darkGray);
+    }
+    final slider = tester.widget<SliderTheme>(
+      find.ancestor(
+        of: find.byKey(const Key('filter_radius_slider')),
+        matching: find.byType(SliderTheme),
+      ).first,
+    );
+    expect(slider.data.thumbColor, AppColors.white);
+
     expect(tester.takeException(), isNull);
   });
 
