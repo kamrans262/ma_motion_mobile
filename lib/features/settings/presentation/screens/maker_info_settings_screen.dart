@@ -1277,7 +1277,7 @@ class _AddPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Icon(Icons.add, color: AppColors.mutedText, size: 28),
+      child: Icon(Icons.add, color: AppColors.primary, size: 28),
     );
   }
 }
