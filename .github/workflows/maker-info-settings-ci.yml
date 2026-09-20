@@ -34,16 +34,6 @@ jobs:
       - name: Resolve locked dependencies
         run: flutter pub get
 
-      - name: Sync video-player dependency lockfile
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! git diff --quiet -- pubspec.lock; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add pubspec.lock
-            git commit -m "chore: resolve five-second artwork video dependencies"
-            git push origin HEAD:feature/maker-onboarding-ui-polish
           fi
 
       - name: Generate MA Motion launcher icons
@@ -59,6 +49,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          dart analyze lib/features/auth/domain/current_user.dart
+          dart analyze lib/core/routing/app_router.dart
+          dart analyze lib/features/settings/presentation/widgets/ma_settings_dialogs.dart
+          dart analyze lib/features/settings/presentation/widgets/appreciator_settings_modal.dart
           dart analyze lib/features/settings/data/maker_info_settings_repository.dart
           dart analyze lib/features/settings/domain/maker_info_settings_models.dart
           dart analyze lib/features/settings/presentation/screens/maker_info_settings_screen.dart
@@ -68,7 +62,7 @@ jobs:
           flutter test test/features/settings/maker_info_settings_repository_test.dart
           flutter test test/features/settings/maker_info_settings_screen_test.dart
           flutter test test/features/artwork_viewer/artwork_viewer_screen_test.dart
-          flutter test test/features/discovery/maker_artwork_discovery_screen_test.dart
+          flutter test test/features/settings/ma_settings_dialogs_test.dart
 
       - name: Verify formatting is stable
         run: dart format --output=none --set-exit-if-changed lib test
