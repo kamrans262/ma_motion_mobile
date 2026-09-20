@@ -478,7 +478,7 @@ class _MakerInfoSettingsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       key: const Key('maker_info_settings_screen'),
-      backgroundColor: AppColors.splashBackground,
+      backgroundColor: AppColors.artworkBackground,
       body: SafeArea(
         child: _loading
             ? const Center(
@@ -495,11 +495,11 @@ class _MakerInfoSettingsScreenState
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
                 child: SizedBox(
-                  height: 50,
+                  height: 48,
                   child: OutlinedButton(
                     key: const Key('maker_settings_save_close'),
                     onPressed: _saving ? null : _saveAndClose,
-                    style: AppButtonStyles.outlineAction(),
+                    style: AppButtonStyles.filterAction(),
                     child: _saving
                         ? const SizedBox.square(
                             dimension: 20,
@@ -512,7 +512,7 @@ class _MakerInfoSettingsScreenState
                             'Save & Close',
                             style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
