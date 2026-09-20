@@ -22,10 +22,14 @@ void main() {
       expect(vertical / 2, greaterThan(radius));
       expect(size.width - horizontal / 2, lessThan(size.width - radius));
       expect(size.height - vertical / 2, lessThan(size.height - radius));
-      expect(MaDotGridMetrics.solidCircleRadius(size),
-          greaterThan(horizontal / 2));
-      expect(MaDotGridMetrics.solidCircleRadius(size),
-          greaterThan(vertical / 2));
+      expect(
+        MaDotGridMetrics.solidCircleRadius(size),
+        greaterThan(horizontal / 2),
+      );
+      expect(
+        MaDotGridMetrics.solidCircleRadius(size),
+        greaterThan(vertical / 2),
+      );
     }
   });
 
