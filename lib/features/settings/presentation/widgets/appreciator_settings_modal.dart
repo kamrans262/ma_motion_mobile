@@ -251,6 +251,13 @@ class _AppreciatorSettingsModalState
     Navigator.of(context).pop();
   }
 
+  Future<void> _deleteAccount() async {
+    if (_busy) return;
+    final deleted = await showMaDeleteAccountDialog(context);
+    if (!mounted || !deleted) return;
+    Navigator.of(context).pop(MakerEntryDestination.join);
+  }
+
   Future<void> _switchToMaker() async {
     FocusScope.of(context).unfocus();
 
