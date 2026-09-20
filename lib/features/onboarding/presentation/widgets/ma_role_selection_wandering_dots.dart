@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
 
-/// Role Selection only: animates each existing grid dot without changing the
-/// shared static onboarding background or the Splash animation.
+/// Role Selection only. The shared onboarding dot grid and Splash stay static.
 class MaRoleSelectionWanderingDots extends StatelessWidget {
   const MaRoleSelectionWanderingDots({
     super.key,
     required this.progress,
   });
 
-  /// Runs from 0 to 1 over five seconds, after a one-second stationary delay.
+  /// Runs from 0 to 1 over seven seconds, after one stationary second.
   final Animation<double> progress;
 
   @override
@@ -28,64 +27,87 @@ class MaRoleSelectionWanderingDots extends StatelessWidget {
   }
 }
 
-/// Deterministic, independent paths: every dot returns to its exact cell
-/// center at animation seconds 0 and 5 (screen seconds 1 and 6).
-abstract final class MaRoleSelectionDotMotion {
-  static const double durationSeconds = 5;
-  static const double outwardSeconds = 2;
+class _DotPath {
+  const _DotPath({
+    required this.first,
+    required this.second,
+    required this.firstSecond,
+    required this.secondSecond,
+  });
 
-  static final List<Offset> _wanderVectors = List<Offset>.generate(
+  final Offset first;
+  final Offset second;
+  final double firstSecond;
+  final double secondSecond;
+}
+
+/// Each dot follows its OWN seeded, non-periodic route and timing. No
+/// row/column phase, shared oscillation, ripple, or grid-wide wave.
+abstract final class MaRoleSelectionDotMotion {
+  static const double durationSeconds = 7;
+
+  static Offset _randomTarget(math.Random random, double minimum, double range) {
+    final angle = random.nextDouble() * math.pi * 2;
+    final distance = minimum + random.nextDouble() * range;
+    return Offset(math.cos(angle) * distance, math.sin(angle) * distance);
+  }
+
+  static final List<_DotPath> _paths = List<_DotPath>.generate(
     MaDotGridMetrics.rows * MaDotGridMetrics.columns,
     (index) {
-      final row = index ~/ MaDotGridMetrics.columns;
-      final column = index % MaDotGridMetrics.columns;
-      final angle =
-          ((row * 73 + column * 151 + 31) % 997) / 997 * math.pi * 2;
-      // A few pixels beyond the reference's gentle wandering, while
-      // remaining far smaller than the existing dot-to-dot spacing.
-      final distance =
-          4.0 + ((row * 67 + column * 37 + 17) % 101) / 101 * 3.0;
-      return Offset(
-        math.cos(angle) * distance,
-        math.sin(angle) * distance,
+      final random = math.Random(0x4D41 + index * 7919);
+      return _DotPath(
+        first: _randomTarget(random, 4, 3),
+        second: _randomTarget(random, 2.5, 3.5),
+        // Each dot changes direction at different times; unlike a shared
+        // outward/return envelope, the grid never moves as one wave.
+        firstSecond: 1.6 + random.nextDouble() * 1.2,
+        secondSecond: 3.4 + random.nextDouble() * 1.6,
       );
     },
     growable: false,
   );
 
-  /// Smoothly moves outward for 2 seconds, then returns over 3 seconds.
-  static double envelopeAt(double animationSeconds) {
-    if (animationSeconds <= 0 || animationSeconds >= durationSeconds) {
-      return 0;
-    }
-    if (animationSeconds <= outwardSeconds) {
-      return Curves.easeInOutSine.transform(
-        animationSeconds / outwardSeconds,
-      );
-    }
-    return 1 -
-        Curves.easeInOutSine.transform(
-          (animationSeconds - outwardSeconds) /
-              (durationSeconds - outwardSeconds),
-        );
-  }
+  static double _ease(double fraction) =>
+      Curves.easeInOutSine.transform(fraction);
 
+  /// animationSeconds: 0 at screen second 1; 7 at screen second 8.
+  /// All offsets are EXACTLY zero before and after the seven-second motion.
   static Offset displacement({
     required int row,
     required int column,
     required double animationSeconds,
   }) {
-    final envelope = envelopeAt(animationSeconds);
-    if (envelope == 0) return Offset.zero;
+    if (animationSeconds <= 0 || animationSeconds >= durationSeconds) {
+      return Offset.zero;
+    }
 
-    final target = _wanderVectors[row * MaDotGridMetrics.columns + column];
-    // Small sideways arc makes paths organic without introducing vibration.
-    final arc = math.sin(math.pi * envelope) * 1.0;
-    final magnitude = target.distance;
-    return Offset(
-      target.dx * envelope - target.dy / magnitude * arc,
-      target.dy * envelope + target.dx / magnitude * arc,
-    );
+    final path = _paths[row * MaDotGridMetrics.columns + column];
+    if (animationSeconds < path.firstSecond) {
+      return Offset.lerp(
+        Offset.zero,
+        path.first,
+        _ease(animationSeconds / path.firstSecond),
+      )!;
+    }
+    if (animationSeconds < path.secondSecond) {
+      return Offset.lerp(
+        path.first,
+        path.second,
+        _ease(
+          (animationSeconds - path.firstSecond) /
+              (path.secondSecond - path.firstSecond),
+        ),
+      )!;
+    }
+    return Offset.lerp(
+      path.second,
+      Offset.zero,
+      _ease(
+        (animationSeconds - path.secondSecond) /
+            (durationSeconds - path.secondSecond),
+      ),
+    )!;
   }
 }
 
