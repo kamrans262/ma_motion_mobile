@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/ma_dotted_background.dart';
+import '../widgets/ma_role_selection_wandering_dots.dart';
 
-class MaRoleSelectionScreen extends StatelessWidget {
+class MaRoleSelectionScreen extends StatefulWidget {
   const MaRoleSelectionScreen({
     super.key,
     required this.onMaker,
@@ -15,6 +17,35 @@ class MaRoleSelectionScreen extends StatelessWidget {
 
   final VoidCallback onMaker;
   final VoidCallback onAppreciator;
+
+  @override
+  State<MaRoleSelectionScreen> createState() => _MaRoleSelectionScreenState();
+}
+
+class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _wanderingController;
+  Timer? _startDelay;
+
+  @override
+  void initState() {
+    super.initState();
+    _wanderingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    );
+    // Only the background dots begin moving after one stationary second.
+    _startDelay = Timer(const Duration(seconds: 1), () {
+      if (mounted) _wanderingController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _startDelay?.cancel();
+    _wanderingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +63,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            const MaDottedBackground(),
+            MaRoleSelectionWanderingDots(progress: _wanderingController),
             SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -66,7 +97,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                             children: [
                               OutlinedButton(
                                 key: const Key('select_maker_button'),
-                                onPressed: onMaker,
+                                onPressed: widget.onMaker,
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: AppColors.splashBackground,
                                   foregroundColor: AppColors.primary,
@@ -106,7 +137,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                               ),
                               OutlinedButton(
                                 key: const Key('select_appreciator_button'),
-                                onPressed: onAppreciator,
+                                onPressed: widget.onAppreciator,
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: AppColors.splashBackground,
                                   foregroundColor: AppColors.primary,
