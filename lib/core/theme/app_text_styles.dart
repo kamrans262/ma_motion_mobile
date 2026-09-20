@@ -7,7 +7,8 @@ abstract final class AppTextStyles {
 
   static const TextStyle onboardingHeading = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 30,
+    fontSize: 32,
+    letterSpacing: -0.3,
     height: 1.12,
     fontWeight: FontWeight.w500,
     color: AppColors.primary,
