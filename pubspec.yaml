@@ -67,6 +67,7 @@ dependencies:
   # - show images
   # - Maker media
   image_picker: ^1.2.3
+  video_player: ^2.10.0
 
   # General file/media picker when non-image files are required.
   # ============================================================
