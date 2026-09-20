@@ -658,6 +658,10 @@ class _ChoicePill extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
+              textHeightBehavior: const TextHeightBehavior(
+                applyHeightToFirstAscent: false,
+                applyHeightToLastDescent: false,
+              ),
               style: TextStyle(
                 fontFamily: AppTextStyles.fontFamily,
                 fontSize: fontSize,
