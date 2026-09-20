@@ -207,26 +207,41 @@ class _DeleteAccountConfirmationState
                     fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 14),
-                TextField(
-                  key: const Key('ma_delete_account_password'),
-                  controller: _password,
-                  obscureText: true,
-                  enabled: !_busy,
-                  style: const TextStyle(color: AppColors.white, fontSize: 14),
-                  decoration: const InputDecoration(
-                    labelText: 'Current password',
-                    labelStyle: TextStyle(color: AppColors.mutedText),
-                    filled: true,
-                    fillColor: AppColors.filterInputFill,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.primary),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.primary),
+                if (_checkingPassword) ...[
+                  const SizedBox(height: 14),
+                  const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
                     ),
                   ),
-                ),
+                ],
+                if (_hasPassword && !_checkingPassword) ...[
+                  const SizedBox(height: 14),
+                  TextField(
+                    key: const Key('ma_delete_account_password'),
+                    controller: _password,
+                    obscureText: true,
+                    enabled: !_busy,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 14,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Current password',
+                      labelStyle: TextStyle(color: AppColors.mutedText),
+                      filled: true,
+                      fillColor: AppColors.filterInputFill,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.primary),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+                ],
                 if (_error != null) ...[
                   const SizedBox(height: 10),
                   Text(
@@ -247,7 +262,7 @@ class _DeleteAccountConfirmationState
                         height: 48,
                         child: OutlinedButton(
                           key: const Key('ma_delete_account_confirm'),
-                          onPressed: _busy ? null : _confirm,
+                          onPressed: _busy || _checkingPassword ? null : _confirm,
                           style: AppButtonStyles.filterAction(),
                           child: _busy
                               ? const SizedBox.square(
