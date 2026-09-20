@@ -423,6 +423,28 @@ class _AppreciatorSettingsModalState
               ),
             ),
           ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('appreciator_settings_delete_account'),
+              onPressed: _busy ? null : _deleteAccount,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.error,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 36),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text(
+                'Delete Your Account',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  color: AppColors.error,
+                ),
+              ),
+            ),
+          ),
           if (_errorMessage != null) ...[
             const SizedBox(height: 8),
             Text(
