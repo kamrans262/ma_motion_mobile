@@ -12,7 +12,7 @@ void main() {
     expect(MaDotGridMetrics.rows, 36);
     expect(MaDotGridMetrics.dotRadius, 0.8);
 
-    for (final seconds in <double>[0, 5, 6]) {
+    for (final seconds in <double>[0, 7, 8]) {
       expect(
         MaRoleSelectionDotMotion.displacement(
           row: 0,
@@ -34,17 +34,17 @@ void main() {
     final first = MaRoleSelectionDotMotion.displacement(
       row: 0,
       column: 0,
-      animationSeconds: 2,
+      animationSeconds: 2.8,
     );
     final second = MaRoleSelectionDotMotion.displacement(
       row: 0,
       column: 1,
-      animationSeconds: 2,
+      animationSeconds: 2.8,
     );
     final third = MaRoleSelectionDotMotion.displacement(
       row: 1,
       column: 0,
-      animationSeconds: 2,
+      animationSeconds: 2.8,
     );
     expect(first.distance, greaterThan(3));
     expect(second.distance, greaterThan(3));
@@ -62,14 +62,14 @@ void main() {
       MaRoleSelectionDotMotion.displacement(
         row: 0,
         column: 0,
-        animationSeconds: 3.5,
+        animationSeconds: 6.9,
       ).distance,
       lessThan(first.distance),
     );
   });
 
   testWidgets(
-    'Role Selection waits 1s, wanders for 2s, returns by 6s without moving UI',
+    'Role Selection waits 1s, wanders independently, returns by 8s without moving UI',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 568));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -108,11 +108,18 @@ void main() {
 
       await tester.pump(const Duration(seconds: 1));
       expect(animationSeconds(), closeTo(1, 0.02));
-      await tester.pump(const Duration(seconds: 1));
-      expect(animationSeconds(), closeTo(2, 0.02));
-      await tester.pump(const Duration(seconds: 3));
-      expect(animationSeconds(), closeTo(5, 0.02));
-      expect(MaRoleSelectionDotMotion.envelopeAt(animationSeconds()), 0);
+      await tester.pump(const Duration(seconds: 2));
+      expect(animationSeconds(), closeTo(3, 0.02));
+      await tester.pump(const Duration(seconds: 4));
+      expect(animationSeconds(), closeTo(7, 0.02));
+      expect(
+        MaRoleSelectionDotMotion.displacement(
+          row: 7,
+          column: 5,
+          animationSeconds: animationSeconds(),
+        ),
+        Offset.zero,
+      );
 
       expect(tester.getRect(heading), originalHeading);
       expect(tester.getRect(maker), originalMaker);
