@@ -41,6 +41,14 @@ void main() {
       find.byKey(const Key('maker_info_settings_screen')),
     );
     expect(settings.backgroundColor, AppColors.artworkBackground);
+    for (final fieldKey in <String>[
+      'maker_settings_name',
+      'maker_settings_location',
+      'maker_settings_statement',
+    ]) {
+      final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
+      expect(field.decoration?.fillColor, AppColors.filterInputFill);
+    }
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('maker_settings_save_close')),
     );
@@ -68,6 +76,7 @@ void main() {
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
+      expect(tester.widget<Text>(find.text(choice.$2)).style?.color, AppColors.white);
       expect(
         textCenter.dy,
         closeTo(center.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
