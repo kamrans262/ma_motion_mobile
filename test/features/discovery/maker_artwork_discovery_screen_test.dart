@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_svg_asset.dart';
 import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
@@ -38,6 +40,14 @@ void main() {
       tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
       const Size(24, 24),
     );
+    final filterIcon = tester.widget<MaSvgAsset>(
+      find.descendant(
+        of: find.byKey(const Key('discovery_filter_svg')),
+        matching: find.byType(MaSvgAsset),
+      ),
+    );
+    expect(filterIcon.assetName, 'assets/ma_filter.svg');
+    expect(filterIcon.color, AppColors.primary);
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
       const Size(24, 24),
