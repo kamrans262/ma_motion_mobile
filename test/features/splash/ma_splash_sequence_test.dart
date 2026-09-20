@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
@@ -50,6 +51,13 @@ void main() {
     expect(logoOpacity.opacity, 1);
     expect(welcomeOpacity.opacity, 0);
     expect(background.color, const Color(0xFF0F2419));
+    final welcome = tester.widget<Text>(
+      find.byKey(const Key('ma_splash_welcome_text')),
+    );
+    expect(welcome.style, AppTextStyles.onboardingHeading);
+    expect(welcome.style?.fontSize, 32);
+    expect(welcome.style?.letterSpacing, -0.3);
+    expect(welcome.textAlign, TextAlign.center);
     expect(tester.takeException(), isNull);
   });
 
