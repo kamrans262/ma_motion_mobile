@@ -51,7 +51,8 @@ class MaRoleSelectionScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 30,
+                              fontSize: 32,
+                              letterSpacing: -0.3,
                               height: 1.18,
                               fontWeight: FontWeight.w500,
                               color: AppColors.primary,
