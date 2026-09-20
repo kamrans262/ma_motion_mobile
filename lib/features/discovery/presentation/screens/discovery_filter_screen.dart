@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_centered_taxonomy_label.dart';
 import '../../application/artwork_discovery_controller.dart';
 import '../../data/discovery_filter_repository.dart';
 import '../../domain/discovery_artwork.dart';
@@ -652,23 +653,14 @@ class _ChoicePill extends StatelessWidget {
               width: 0.8,
             ),
           ),
-          child: Center(
-            widthFactor: 1,
-            heightFactor: 1,
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              textHeightBehavior: const TextHeightBehavior(
-                applyHeightToFirstAscent: false,
-                applyHeightToLastDescent: false,
-              ),
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: fontSize,
-                height: 1.1,
-                fontWeight: fontWeight ?? FontWeight.w500,
-                color: AppColors.white,
-              ),
+          child: MaCenteredTaxonomyLabel(
+            label: label,
+            style: TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              fontSize: fontSize,
+              height: 1.1,
+              fontWeight: fontWeight ?? FontWeight.w500,
+              color: AppColors.white,
             ),
           ),
         ),
