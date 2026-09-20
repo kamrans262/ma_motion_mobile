@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_centered_taxonomy_label.dart';
 
 class MaChoiceChip extends StatelessWidget {
   const MaChoiceChip({
@@ -34,18 +35,9 @@ class MaChoiceChip extends StatelessWidget {
             color: selected ? AppColors.primary : AppColors.savedBackground,
             border: Border.all(color: AppColors.primary, width: 1.1),
           ),
-          child: Center(
-            widthFactor: 1,
-            heightFactor: 1,
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              textHeightBehavior: const TextHeightBehavior(
-                applyHeightToFirstAscent: false,
-                applyHeightToLastDescent: false,
-              ),
-              style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
-            ),
+          child: MaCenteredTaxonomyLabel(
+            label: label,
+            style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
           ),
         ),
       ),
