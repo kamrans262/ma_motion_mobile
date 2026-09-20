@@ -638,7 +638,7 @@ class _ChoicePill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: selected
-          ? AppColors.primary
+          ? AppColors.white
           : darkBackground
           ? const Color(0xFF020202)
           : AppColors.savedBackground,
@@ -649,7 +649,7 @@ class _ChoicePill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.darkGray,
+              color: selected ? AppColors.white : AppColors.darkGray,
               width: 0.8,
             ),
           ),
@@ -660,7 +660,7 @@ class _ChoicePill extends StatelessWidget {
               fontSize: fontSize,
               height: 1.1,
               fontWeight: fontWeight ?? FontWeight.w500,
-              color: AppColors.white,
+              color: selected ? AppColors.black : AppColors.white,
             ),
           ),
         ),
