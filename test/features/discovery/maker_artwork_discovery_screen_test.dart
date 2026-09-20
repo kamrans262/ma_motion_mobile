@@ -68,6 +68,20 @@ void main() {
       find.byKey(const Key('maker_artwork_discovery_screen')),
     );
     expect(scaffold.backgroundColor, const Color(0xFF0F2419));
+    final gapBackground = tester.widget<ColoredBox>(
+      find.ancestor(
+        of: find.byKey(const Key('discovery_controls_grid_gap')),
+        matching: find.byType(ColoredBox),
+      ).first,
+    );
+    final gridBackground = tester.widget<ColoredBox>(
+      find.ancestor(
+        of: find.byKey(const Key('discovery_grid_padding')),
+        matching: find.byType(ColoredBox),
+      ).first,
+    );
+    expect(gapBackground.color, scaffold.backgroundColor);
+    expect(gridBackground.color, scaffold.backgroundColor);
 
     final navMaterial = tester.widget<Material>(
       find.byKey(const Key('maker_bottom_navigation_material')),
