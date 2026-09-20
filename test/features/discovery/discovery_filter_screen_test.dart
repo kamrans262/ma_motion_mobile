@@ -318,19 +318,26 @@ void main() {
     );
     expect(currentPill.color, const Color(0xFF020202));
 
-    // Selecting Type or Style must not turn the button outline white.
-    await tester.tap(find.byKey(const Key('filter_type_1')));
-    await tester.tap(find.byKey(const Key('filter_style_2')));
-    await tester.pump();
+    // Selected Type, Style and Show Status buttons are white with black text.
+    for (final choice in <(String, String)>[
+      ('filter_type_1', 'Painting'),
+      ('filter_style_2', 'Minimal'),
+      ('filter_status_current', 'Currently Showing Work'),
+    ]) {
+      final pill = find.byKey(Key(choice.$1));
+      await tester.tap(pill);
+      await tester.pump();
 
-    for (final key in <String>['filter_type_1', 'filter_style_2']) {
-      final pill = find.byKey(Key(key));
+      final material = tester.widget<Material>(
+        find.descendant(of: pill, matching: find.byType(Material)).first,
+      );
+      expect(material.color, AppColors.white);
       final borderBox = tester.widget<Container>(
         find.descendant(of: pill, matching: find.byType(Container)).first,
       );
-      final border = (borderBox.decoration! as BoxDecoration).border!
-          as Border;
-      expect(border.top.color, AppColors.darkGray);
+      final border = (borderBox.decoration! as BoxDecoration).border! as Border;
+      expect(border.top.color, AppColors.white);
+      expect(tester.widget<Text>(find.text(choice.$2)).style?.color, AppColors.black);
     }
     final slider = tester.widget<SliderTheme>(
       find.ancestor(
