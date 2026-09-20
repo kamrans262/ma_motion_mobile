@@ -12,7 +12,7 @@ class MaRoleSelectionWanderingDots extends StatelessWidget {
     required this.progress,
   });
 
-  /// Runs from 0 to 1 over five seconds, after one stationary second.
+  /// Runs from 0 to 1 over six seconds, after one stationary second.
   final Animation<double> progress;
 
   @override
@@ -44,7 +44,7 @@ class _DotPath {
 /// Each dot follows its OWN seeded, non-periodic route and timing. No
 /// row/column phase, shared oscillation, ripple, or grid-wide wave.
 abstract final class MaRoleSelectionDotMotion {
-  static const double durationSeconds = 5;
+  static const double durationSeconds = 6;
 
   static Offset _randomTarget(math.Random random, double minimum, double range) {
     final angle = random.nextDouble() * math.pi * 2;
@@ -56,13 +56,26 @@ abstract final class MaRoleSelectionDotMotion {
     MaDotGridMetrics.rows * MaDotGridMetrics.columns,
     (index) {
       final random = math.Random(0x4D41 + index * 7919);
+      final first = _randomTarget(random, 4, 3);
+      // One straight movement to the first point, then exactly one change
+      // of direction to a second point, then a single return to origin.
+      // The second leg has its own direction, not another radial pulse.
+      final firstAngle = math.atan2(first.dy, first.dx);
+      final turn = (random.nextBool() ? 1 : -1) *
+          (math.pi * (0.45 + random.nextDouble() * 0.3));
+      final secondAngle = firstAngle + turn;
+      final secondDistance = 2.5 + random.nextDouble() * 2;
+      final second = first +
+          Offset(
+            math.cos(secondAngle) * secondDistance,
+            math.sin(secondAngle) * secondDistance,
+          );
       return _DotPath(
-        first: _randomTarget(random, 4, 3),
-        second: _randomTarget(random, 2.5, 3.5),
-        // Each dot changes direction at different times; unlike a shared
-        // outward/return envelope, the grid never moves as one wave.
-        firstSecond: (1.6 + random.nextDouble() * 1.2) * 5 / 7,
-        secondSecond: (3.4 + random.nextDouble() * 1.6) * 5 / 7,
+        first: first,
+        second: second,
+        // Individual timing avoids a coordinated wave across the grid.
+        firstSecond: 1.8 + random.nextDouble() * 0.4,
+        secondSecond: 3.8 + random.nextDouble() * 0.4,
       );
     },
     growable: false,
@@ -71,8 +84,8 @@ abstract final class MaRoleSelectionDotMotion {
   static double _ease(double fraction) =>
       Curves.easeInOutSine.transform(fraction);
 
-  /// animationSeconds: 0 at screen second 1; 5 at screen second 6.
-  /// All offsets are EXACTLY zero before and after the five-second motion.
+  /// animationSeconds: 0 at screen second 1; 6 at screen second 7.
+  /// All offsets are EXACTLY zero before and after the six-second motion.
   static Offset displacement({
     required int row,
     required int column,
