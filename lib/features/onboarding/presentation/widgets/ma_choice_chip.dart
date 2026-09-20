@@ -40,6 +40,10 @@ class MaChoiceChip extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
+              textHeightBehavior: const TextHeightBehavior(
+                applyHeightToFirstAscent: false,
+                applyHeightToLastDescent: false,
+              ),
               style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
             ),
           ),
