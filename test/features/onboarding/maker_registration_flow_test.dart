@@ -99,11 +99,11 @@ void main() {
     );
     expect(
       next.style?.backgroundColor?.resolve(<WidgetState>{}),
-      Colors.transparent,
+      AppColors.splashBackground,
     );
     expect(
       back.style?.backgroundColor?.resolve(<WidgetState>{}),
-      Colors.transparent,
+      AppColors.splashBackground,
     );
     expect(
       next.style?.foregroundColor?.resolve(<WidgetState>{}),
