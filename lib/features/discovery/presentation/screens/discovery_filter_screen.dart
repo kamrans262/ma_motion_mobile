@@ -511,7 +511,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   trackHeight: 1,
-                  activeTrackColor: AppColors.darkGray,
+                  activeTrackColor: AppColors.white,
                   inactiveTrackColor: AppColors.darkGray,
                   thumbColor: AppColors.white,
                   overlayColor: AppColors.primary50,
