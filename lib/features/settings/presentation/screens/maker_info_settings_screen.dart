@@ -15,16 +15,19 @@ import '../../../auth/domain/maker_entry_destination.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
 import '../../data/maker_info_settings_repository.dart';
 import '../../domain/maker_info_settings_models.dart';
+import '../widgets/ma_settings_dialogs.dart';
 
 class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
   const MakerInfoSettingsScreen({
     super.key,
     required this.onClose,
     required this.onSwitchedToAppreciator,
+    this.onAccountDeleted,
   });
 
   final VoidCallback onClose;
   final ValueChanged<MakerEntryDestination> onSwitchedToAppreciator;
+  final VoidCallback? onAccountDeleted;
 
   @override
   ConsumerState<MakerInfoSettingsScreen> createState() =>
@@ -350,6 +353,13 @@ class _MakerInfoSettingsScreenState
     }
   }
 
+  Future<void> _deleteAccount() async {
+    if (_saving) return;
+    final deleted = await showMaDeleteAccountDialog(context);
+    if (!mounted || !deleted) return;
+    widget.onAccountDeleted?.call();
+  }
+
   Future<void> _chooseMedia(int slot) async {
     if (_saving) return;
 
@@ -419,9 +429,7 @@ class _MakerInfoSettingsScreenState
         if (video.value.duration <= Duration.zero ||
             video.value.duration > const Duration(seconds: 5)) {
           if (!mounted) return;
-          setState(() {
-            _errorMessage = 'Video must be 5 seconds or less.';
-          });
+          await showMaVideoTooLongDialog(context);
           return;
         }
       } catch (_) {
