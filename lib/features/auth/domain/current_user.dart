@@ -5,6 +5,7 @@ class CurrentUser {
     required this.email,
     required this.role,
     this.isActive,
+    this.hasPassword = true,
     this.profileImageUrl,
     this.makerRegistered = false,
     this.makerOnboardingCompleted = false,
@@ -21,6 +22,7 @@ class CurrentUser {
   final String email;
   final String role;
   final bool? isActive;
+  final bool hasPassword;
   final String? profileImageUrl;
   final bool makerRegistered;
   final bool makerOnboardingCompleted;
@@ -70,6 +72,7 @@ class CurrentUser {
       email: map['email']?.toString() ?? '',
       role: map['role']?.toString() ?? '',
       isActive: asBool(map['is_active'] ?? map['active']),
+      hasPassword: asBool(map['has_password']) ?? true,
       profileImageUrl:
           map['profile_image_url']?.toString() ??
           map['profile_image']?.toString(),
