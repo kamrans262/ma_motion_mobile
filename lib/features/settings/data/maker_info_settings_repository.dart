@@ -229,7 +229,7 @@ class MakerInfoSettingsRepository
 
     if (existingArtwork == null) {
       if (bytes == null || bytes.isEmpty || fileName == null) {
-        throw ArgumentError('A new artwork requires an image.');
+        throw ArgumentError('A new artwork requires an image or video.');
       }
 
       final formData = _artworkFormData(
@@ -312,32 +312,38 @@ class MakerInfoSettingsRepository
     required Uint8List bytes,
     required String fileName,
   }) {
-    if (bytes.lengthInBytes > 10 * 1024 * 1024) {
-      throw const ApiException(
-        message: 'Artwork image must be 10 MB or smaller.',
-        code: 'artwork_image_too_large',
-      );
-    }
+    final image = _detectArtworkImage(bytes);
+    final extension = fileName.split('.').last.trim().toLowerCase();
+    final video = image == null && bytes.length >= 12 &&
+        ((bytes[4] == 0x66 && bytes[5] == 0x74 &&
+              bytes[6] == 0x79 && bytes[7] == 0x70 &&
+              <String>['mp4', 'mov', 'm4v'].contains(extension)) ||
+            (bytes.length >= 4 && bytes[0] == 0x1A &&
+              bytes[1] == 0x45 && bytes[2] == 0xDF &&
+              bytes[3] == 0xA3 && extension == 'webm'));
 
-    final detected = _detectArtworkImage(bytes);
-    if (detected == null) {
+    if (image == null && !video) {
       throw const ApiException(
-        message: 'Artwork image must be JPG, PNG, or WebP.',
+        message: 'Artwork media must be JPG, PNG, WebP, MP4, MOV, M4V, or WebM.',
         code: 'unsupported_artwork_image',
       );
     }
 
-    final formData = FormData();
+    if (bytes.lengthInBytes > (video ? 25 : 10) * 1024 * 1024) {
+      throw ApiException(
+        message: video
+            ? 'Artwork video must be 25 MB or smaller.'
+            : 'Artwork image must be 10 MB or smaller.',
+        code: 'artwork_media_too_large',
+      );
+    }
 
+    final formData = FormData();
     for (final entry in metadata.entries) {
       final value = entry.value;
-      if (value == null) {
-        continue;
+      if (value != null) {
+        formData.fields.add(MapEntry<String, String>(entry.key, value.toString()));
       }
-
-      formData.fields.add(
-        MapEntry<String, String>(entry.key, value.toString()),
-      );
     }
 
     final originalBase = fileName
@@ -345,14 +351,22 @@ class MakerInfoSettingsRepository
         .replaceFirst(RegExp(r'\.[^.]+$'), '')
         .replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '_');
     final safeBase = originalBase.isEmpty ? 'artwork' : originalBase;
+    final resolvedExtension = image?.extension ?? extension;
+    final contentType = image != null
+        ? DioMediaType('image', image.subtype)
+        : extension == 'mov'
+        ? DioMediaType('video', 'quicktime')
+        : extension == 'm4v'
+        ? DioMediaType('video', 'x-m4v')
+        : DioMediaType('video', extension == 'webm' ? 'webm' : 'mp4');
 
     formData.files.add(
       MapEntry<String, MultipartFile>(
         'media[]',
         MultipartFile.fromBytes(
           bytes,
-          filename: '$safeBase.${detected.extension}',
-          contentType: DioMediaType('image', detected.subtype),
+          filename: '$safeBase.$resolvedExtension',
+          contentType: contentType,
         ),
       ),
     );
