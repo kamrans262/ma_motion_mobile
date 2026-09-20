@@ -805,7 +805,7 @@ class _SalonImagePicker extends StatelessWidget {
           width: 132,
           height: 132,
           decoration: BoxDecoration(
-            color: hasImage ? AppColors.inputFill : Colors.transparent,
+            color: AppColors.splashBackground,
             border: Border.all(color: AppColors.primary50, width: 1.2),
           ),
           clipBehavior: Clip.antiAlias,
