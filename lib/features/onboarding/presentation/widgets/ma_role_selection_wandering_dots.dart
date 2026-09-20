@@ -12,7 +12,7 @@ class MaRoleSelectionWanderingDots extends StatelessWidget {
     required this.progress,
   });
 
-  /// Runs from 0 to 1 over seven seconds, after one stationary second.
+  /// Runs from 0 to 1 over five seconds, after one stationary second.
   final Animation<double> progress;
 
   @override
@@ -44,7 +44,7 @@ class _DotPath {
 /// Each dot follows its OWN seeded, non-periodic route and timing. No
 /// row/column phase, shared oscillation, ripple, or grid-wide wave.
 abstract final class MaRoleSelectionDotMotion {
-  static const double durationSeconds = 7;
+  static const double durationSeconds = 5;
 
   static Offset _randomTarget(math.Random random, double minimum, double range) {
     final angle = random.nextDouble() * math.pi * 2;
@@ -61,8 +61,8 @@ abstract final class MaRoleSelectionDotMotion {
         second: _randomTarget(random, 2.5, 3.5),
         // Each dot changes direction at different times; unlike a shared
         // outward/return envelope, the grid never moves as one wave.
-        firstSecond: 1.6 + random.nextDouble() * 1.2,
-        secondSecond: 3.4 + random.nextDouble() * 1.6,
+        firstSecond: (1.6 + random.nextDouble() * 1.2) * 5 / 7,
+        secondSecond: (3.4 + random.nextDouble() * 1.6) * 5 / 7,
       );
     },
     growable: false,
@@ -71,8 +71,8 @@ abstract final class MaRoleSelectionDotMotion {
   static double _ease(double fraction) =>
       Curves.easeInOutSine.transform(fraction);
 
-  /// animationSeconds: 0 at screen second 1; 7 at screen second 8.
-  /// All offsets are EXACTLY zero before and after the seven-second motion.
+  /// animationSeconds: 0 at screen second 1; 5 at screen second 6.
+  /// All offsets are EXACTLY zero before and after the five-second motion.
   static Offset displacement({
     required int row,
     required int column,
