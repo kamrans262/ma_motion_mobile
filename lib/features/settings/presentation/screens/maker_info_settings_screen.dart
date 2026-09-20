@@ -1030,6 +1030,7 @@ class _TaxonomySection extends StatelessWidget {
                 label: option.name,
                 selected: selectedIds.contains(option.id),
                 selectedTextColor: AppColors.white,
+                unselectedBackgroundColor: const Color(0xFF020202),
                 onTap: () => onToggle(option.id),
               ),
           ],
