@@ -24,10 +24,13 @@ class DiscoveryArtworkTile extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              _ArtworkImage(
-                url: media?.url,
-                altText: media?.altText ?? artwork.title,
-              ),
+              if (media?.isVideo ?? false)
+                const _ArtworkFallback()
+              else
+                _ArtworkImage(
+                  url: media?.url,
+                  altText: media?.altText ?? artwork.title,
+                ),
               if (media?.isVideo ?? false)
                 const Center(child: _VideoPlayIndicator()),
             ],
