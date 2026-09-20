@@ -530,7 +530,7 @@ class _SettingsField extends StatelessWidget {
             errorText: errorText,
             errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
             filled: true,
-            fillColor: const Color(0xFF120A1D),
+            fillColor: AppColors.filterInputFill,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 12,
