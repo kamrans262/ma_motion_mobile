@@ -366,7 +366,7 @@ class _MakerArtworkDiscoveryScreenState
                   ),
                 ),
                 ColoredBox(
-                  color: AppColors.artworkBackground,
+                  color: AppColors.artworkNavBackground,
                   child: SizedBox(
                     key: const Key('discovery_controls_grid_gap'),
                     height: metrics.controlsToGridGap,
@@ -374,7 +374,7 @@ class _MakerArtworkDiscoveryScreenState
                 ),
                 Expanded(
                   child: ColoredBox(
-                    color: AppColors.artworkBackground,
+                    color: AppColors.artworkNavBackground,
                     child: _DiscoveryBody(
                       state: state,
                       scrollController: _scrollController,
