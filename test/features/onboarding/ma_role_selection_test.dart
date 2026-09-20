@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 
 void main() {
-  test('Role Selection dots independently wander and return exactly', () {
+  test('Role Selection dots move in one direction then return on the same line', () {
     expect(MaDotGridMetrics.columns, 18);
     expect(MaDotGridMetrics.rows, 36);
     expect(MaDotGridMetrics.dotRadius, 0.8);
@@ -31,59 +31,57 @@ void main() {
       );
     }
 
-    final first = MaRoleSelectionDotMotion.displacement(
-      row: 0,
-      column: 0,
-      animationSeconds: 2.2,
-    );
-    final second = MaRoleSelectionDotMotion.displacement(
-      row: 0,
-      column: 1,
-      animationSeconds: 2.2,
-    );
-    final third = MaRoleSelectionDotMotion.displacement(
-      row: 1,
-      column: 0,
-      animationSeconds: 2.2,
-    );
-    expect(first.distance, greaterThan(3));
-    expect(second.distance, greaterThan(3));
-    expect(first, isNot(second));
-    expect(first, isNot(third));
+    for (final dot in <(int, int)>[(0, 0), (0, 1), (1, 0), (20, 10)]) {
+      final outgoing = MaRoleSelectionDotMotion.displacement(
+        row: dot.$1,
+        column: dot.$2,
+        animationSeconds: 1.5,
+      );
+      final farthest = MaRoleSelectionDotMotion.displacement(
+        row: dot.$1,
+        column: dot.$2,
+        animationSeconds: 3,
+      );
+      final returning = MaRoleSelectionDotMotion.displacement(
+        row: dot.$1,
+        column: dot.$2,
+        animationSeconds: 4.5,
+      );
 
-    // Each dot travels to one point, turns once toward a second point, and
-    // returns to origin; neighboring dots do not share the same direction.
-    final secondPoint = MaRoleSelectionDotMotion.displacement(
-      row: 0,
-      column: 0,
-      animationSeconds: 4.2,
-    );
-    final nextLeg = secondPoint - first;
-    expect(nextLeg.distance, greaterThan(1));
-    expect(
-      (first.dx * nextLeg.dx + first.dy * nextLeg.dy).abs(),
-      lessThan(first.distance * nextLeg.distance * 0.75),
-    );
-    expect(
-      MaRoleSelectionDotMotion.displacement(
-        row: 0,
-        column: 0,
-        animationSeconds: 0.5,
-      ).distance,
-      lessThan(first.distance),
-    );
+      expect(farthest.distance, greaterThan(3));
+      expect(outgoing.distance, lessThan(farthest.distance));
+      expect(returning.distance, lessThan(farthest.distance));
+
+      // All positions are positive scalings of one vector: no sideways turn
+      // or second outward direction occurs before the return.
+      for (final position in <Offset>[outgoing, returning]) {
+        final crossProduct =
+            farthest.dx * position.dy - farthest.dy * position.dx;
+        final dotProduct =
+            farthest.dx * position.dx + farthest.dy * position.dy;
+        expect(crossProduct.abs(), lessThan(0.000001));
+        expect(dotProduct, greaterThan(0));
+      }
+    }
+
     expect(
       MaRoleSelectionDotMotion.displacement(
         row: 0,
         column: 0,
-        animationSeconds: 5.9,
-      ).distance,
-      lessThan(first.distance),
+        animationSeconds: 3,
+      ),
+      isNot(
+        MaRoleSelectionDotMotion.displacement(
+          row: 0,
+          column: 1,
+          animationSeconds: 3,
+        ),
+      ),
     );
   });
 
   testWidgets(
-    'Role Selection waits 1s, moves in two directions, returns by 7s without moving UI',
+    'Role Selection waits 1s, moves straight out and back by 7s without moving UI',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 568));
       addTearDown(() => tester.binding.setSurfaceSize(null));
