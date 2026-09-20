@@ -32,7 +32,7 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
     super.initState();
     _wanderingController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 6),
     );
     // Only the background dots begin moving after one stationary second.
     _startDelay = Timer(const Duration(seconds: 1), () {
