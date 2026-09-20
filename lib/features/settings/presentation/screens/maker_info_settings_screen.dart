@@ -814,7 +814,7 @@ class _LabeledField extends StatelessWidget {
               hintText: hintText,
               hintStyle: AppTextStyles.fieldHint,
               filled: true,
-              fillColor: AppColors.inputFill,
+              fillColor: AppColors.filterInputFill,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 14,
@@ -1154,7 +1154,7 @@ class _CarouselEditor extends StatelessWidget {
               hintText: 'Artwork title',
               hintStyle: AppTextStyles.fieldHint,
               filled: true,
-              fillColor: AppColors.inputFill,
+              fillColor: AppColors.filterInputFill,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 13,
@@ -1190,7 +1190,7 @@ class _CarouselEditor extends StatelessWidget {
             hintText: 'Optional Caption.',
             hintStyle: AppTextStyles.fieldHint,
             filled: true,
-            fillColor: AppColors.inputFill,
+            fillColor: AppColors.filterInputFill,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 13,
