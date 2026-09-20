@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
 void main() {
@@ -69,7 +70,10 @@ void main() {
       final buttonCenter = tester.getCenter(find.byKey(Key(choice.$1)));
       final labelCenter = tester.getCenter(find.text(choice.$2));
       expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
-      expect(labelCenter.dy, closeTo(buttonCenter.dy, 1));
+      expect(
+        labelCenter.dy,
+        closeTo(buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+      );
     }
 
     final unselected = tester.widget<AnimatedContainer>(
