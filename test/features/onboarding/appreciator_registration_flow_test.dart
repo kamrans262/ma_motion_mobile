@@ -64,7 +64,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Appreciator Next and Back have transparent backgrounds', (
+  testWidgets('Appreciator Next and Back match the onboarding background', (
     tester,
   ) async {
     await tester.pumpWidget(app());
@@ -77,7 +77,7 @@ void main() {
       );
       expect(
         button.style?.backgroundColor?.resolve(<WidgetState>{}),
-        Colors.transparent,
+        AppColors.splashBackground,
       );
     }
     expect(tester.takeException(), isNull);
