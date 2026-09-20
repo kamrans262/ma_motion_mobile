@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/onboarding/application/maker_registration_controller.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
@@ -501,6 +502,13 @@ void main() {
       tester.getSize(find.byKey(const Key('maker_salon_image_picker'))),
       const Size(132, 132),
     );
+    final uploadBox = tester.widget<Container>(
+      find.descendant(
+        of: find.byKey(const Key('maker_salon_image_picker')),
+        matching: find.byType(Container),
+      ).first,
+    );
+    expect((uploadBox.decoration! as BoxDecoration).color, AppColors.splashBackground);
     expect(tester.takeException(), isNull);
   });
 
