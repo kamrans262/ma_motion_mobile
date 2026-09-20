@@ -23,6 +23,17 @@ abstract final class AppButtonStyles {
     );
   }
 
+  /// The existing Filter Apply button treatment, shared with Settings saves.
+  static ButtonStyle filterAction() {
+    return outlineAction(borderWidth: 1).copyWith(
+      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+        (states) => states.contains(WidgetState.pressed)
+            ? AppColors.primary
+            : const Color(0xFF020202),
+      ),
+    );
+  }
+
   static ButtonStyle outlineAction({double borderWidth = 1.2}) {
     return ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
