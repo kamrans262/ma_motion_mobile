@@ -68,7 +68,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                 key: const Key('select_maker_button'),
                                 onPressed: onMaker,
                                 style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppColors.savedBackground,
+                                  backgroundColor: AppColors.splashBackground,
                                   foregroundColor: AppColors.primary,
                                   side: const BorderSide(
                                     color: AppColors.primary,
@@ -84,7 +84,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                 ).copyWith(
                                   backgroundColor:
                                       AppButtonStyles.purpleWhenPressed(
-                                    AppColors.savedBackground,
+                                    AppColors.splashBackground,
                                   ),
                                   foregroundColor:
                                       WidgetStateProperty.resolveWith<Color>(
@@ -108,7 +108,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                 key: const Key('select_appreciator_button'),
                                 onPressed: onAppreciator,
                                 style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppColors.savedBackground,
+                                  backgroundColor: AppColors.splashBackground,
                                   foregroundColor: AppColors.primary,
                                   side: const BorderSide(
                                     color: AppColors.primary,
@@ -124,7 +124,7 @@ class MaRoleSelectionScreen extends StatelessWidget {
                                 ).copyWith(
                                   backgroundColor:
                                       AppButtonStyles.purpleWhenPressed(
-                                    AppColors.savedBackground,
+                                    AppColors.splashBackground,
                                   ),
                                   foregroundColor:
                                       WidgetStateProperty.resolveWith<Color>(
