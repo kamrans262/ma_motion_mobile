@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +9,7 @@ import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/auth_repository.dart';
 
 /// Reuses the existing dark Settings surface, purple outlines and typography.
 Future<void> showMaVideoTooLongDialog(BuildContext context) {
@@ -92,7 +95,32 @@ class _DeleteAccountConfirmationState
     extends ConsumerState<_DeleteAccountConfirmation> {
   final TextEditingController _password = TextEditingController();
   bool _busy = false;
+  bool _checkingPassword = true;
+  bool _hasPassword = true;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_loadPasswordRequirement());
+  }
+
+  Future<void> _loadPasswordRequirement() async {
+    try {
+      final user = await ref.read(authRepositoryProvider).me();
+      if (!mounted) return;
+      setState(() {
+        _hasPassword = user.hasPassword;
+        _checkingPassword = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _checkingPassword = false;
+        _error = 'Could not verify your account. Check your connection and try again.';
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -101,7 +129,7 @@ class _DeleteAccountConfirmationState
   }
 
   Future<void> _confirm() async {
-    if (_busy) return;
+    if (_busy || _checkingPassword) return;
     setState(() {
       _busy = true;
       _error = null;
@@ -111,7 +139,7 @@ class _DeleteAccountConfirmationState
       await ref.read(apiGatewayProvider).delete(
         ApiPaths.account,
         data: <String, String>{
-          'current_password': _password.text,
+          if (_hasPassword) 'current_password': _password.text,
           'confirmation': 'DELETE',
         },
       );
