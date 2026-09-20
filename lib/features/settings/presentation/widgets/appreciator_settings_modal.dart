@@ -11,6 +11,7 @@ import '../../../auth/data/experience_switch_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../../data/appreciator_settings_repository.dart';
 import '../../domain/appreciator_settings_models.dart';
+import 'ma_settings_dialogs.dart';
 
 Future<MakerEntryDestination?> showAppreciatorSettingsModal(
   BuildContext context,
