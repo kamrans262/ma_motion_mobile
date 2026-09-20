@@ -44,7 +44,7 @@ class MaOnboardingButton extends StatelessWidget {
                 foregroundColor: subdued
                     ? AppColors.primary.withValues(alpha: 0.55)
                     : AppColors.primary,
-                backgroundColor: Colors.transparent,
+                backgroundColor: AppColors.splashBackground,
                 side: BorderSide(
                   color: subdued
                       ? AppColors.primary.withValues(alpha: 0.55)
@@ -55,7 +55,7 @@ class MaOnboardingButton extends StatelessWidget {
                 padding: EdgeInsets.zero,
               ).copyWith(
                 backgroundColor: AppButtonStyles.purpleWhenPressed(
-                  Colors.transparent,
+                  AppColors.splashBackground,
                 ),
                 foregroundColor: WidgetStateProperty.resolveWith<Color>(
                   (states) => states.contains(WidgetState.pressed)
