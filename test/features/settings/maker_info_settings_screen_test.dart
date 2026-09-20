@@ -9,6 +9,7 @@ import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
+import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_choice_chip.dart';
 import 'package:ma_motion_mobile/features/settings/presentation/screens/maker_info_settings_screen.dart';
 
 void main() {
@@ -73,6 +74,8 @@ void main() {
       ('maker_settings_type_1', 'Painting'),
       ('maker_settings_style_2', 'Contemporary'),
     ]) {
+      final chip = tester.widget<MaChoiceChip>(find.byKey(Key(choice.$1)));
+      expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
