@@ -59,17 +59,27 @@ class MakerSettingsArtworkMedia {
     required this.id,
     required this.url,
     required this.isPrimary,
+    this.kind = 'image',
+    this.mimeType,
   });
 
   final int id;
   final String url;
   final bool isPrimary;
+  final String kind;
+  final String? mimeType;
+
+  bool get isVideo =>
+      kind.toLowerCase() == 'video' ||
+      (mimeType?.toLowerCase().startsWith('video/') ?? false);
 
   factory MakerSettingsArtworkMedia.fromMap(Map<String, dynamic> map) {
     return MakerSettingsArtworkMedia(
       id: _asInt(map['id']) ?? 0,
       url: map['url']?.toString() ?? '',
       isPrimary: _asBool(map['is_primary']),
+      kind: map['kind']?.toString() ?? 'image',
+      mimeType: _nullableString(map['mime_type']),
     );
   }
 }
