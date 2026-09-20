@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/appreciator_settings_repository.dart';
@@ -31,6 +32,31 @@ void main() {
     expect(find.byKey(const Key('discovery_grid_context')), findsOneWidget);
     expect(find.byType(BackdropFilter), findsOneWidget);
     expect(find.byKey(const Key('appreciator_settings_card')), findsOneWidget);
+    final card = tester.widget<Material>(
+      find.byKey(const Key('appreciator_settings_card')),
+    );
+    expect(card.color, AppColors.artworkBackground);
+    final save = tester.widget<OutlinedButton>(
+      find.byKey(const Key('appreciator_settings_save_close')),
+    );
+    expect(
+      save.style?.backgroundColor?.resolve(<WidgetState>{}),
+      const Color(0xFF020202),
+    );
+    expect(
+      save.style?.backgroundColor?.resolve(<WidgetState>{
+        WidgetState.pressed,
+      }),
+      AppColors.primary,
+    );
+    expect(save.style?.side?.resolve(<WidgetState>{})?.width, 1);
+    expect(
+      tester.getSize(
+        find.byKey(const Key('appreciator_settings_save_close')),
+      ).height,
+      48,
+    );
+    expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
     expect(find.text('Settings'), findsOneWidget);
 
     expect(
