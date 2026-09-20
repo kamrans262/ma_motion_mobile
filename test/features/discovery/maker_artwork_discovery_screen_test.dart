@@ -125,6 +125,15 @@ void main() {
         grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
 
     expect(delegate.crossAxisCount, 2);
+    final gridPadding = tester.widget<Padding>(
+      find.byKey(const Key('discovery_grid_padding')),
+    );
+    expect(gridPadding.padding, EdgeInsets.zero);
+    expect(tester.getRect(find.byKey(const Key('maker_artwork_discovery_grid'))).left, 0);
+    expect(
+      tester.getSize(find.byKey(const Key('maker_artwork_discovery_grid'))).width,
+      430,
+    );
     expect(repository.requestedPages, <int>[1]);
     expect(tester.takeException(), isNull);
   });
