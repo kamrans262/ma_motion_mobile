@@ -55,6 +55,21 @@ jobs:
           set -euo pipefail
           git diff --exit-code -- pubspec.lock android/app/src/main/res ios/Runner/Assets.xcassets/AppIcon.appiconset
 
+      - name: Focused video changes analyzer and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart analyze lib/features/settings/data/maker_info_settings_repository.dart
+          dart analyze lib/features/settings/domain/maker_info_settings_models.dart
+          dart analyze lib/features/settings/presentation/screens/maker_info_settings_screen.dart
+          dart analyze lib/features/artwork_viewer/presentation/widgets/artwork_video_surface.dart
+          dart analyze lib/features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart
+          dart analyze lib/features/discovery/presentation/widgets/discovery_artwork_tile.dart
+          flutter test test/features/settings/maker_info_settings_repository_test.dart
+          flutter test test/features/settings/maker_info_settings_screen_test.dart
+          flutter test test/features/artwork_viewer/artwork_viewer_screen_test.dart
+          flutter test test/features/discovery/maker_artwork_discovery_screen_test.dart
+
       - name: Verify formatting is stable
         run: dart format --output=none --set-exit-if-changed lib test
 
