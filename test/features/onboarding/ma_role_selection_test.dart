@@ -18,6 +18,13 @@ void main() {
     );
 
     expect(find.byKey(const Key('role_selection_screen')), findsOneWidget);
+    final heading = tester.widget<Text>(
+      find.text('Would you like to\njoin as a Maker or\nAppreciator?'),
+    );
+    expect(heading.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(heading.style?.fontSize, 32);
+    expect(heading.style?.fontWeight, FontWeight.w500);
+    expect(heading.style?.letterSpacing, -0.3);
     expect(find.byKey(const Key('select_maker_button')), findsOneWidget);
     expect(find.byKey(const Key('select_appreciator_button')), findsOneWidget);
 
