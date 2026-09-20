@@ -9,7 +9,6 @@ import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../auth/data/auth_repository.dart';
 
 /// Reuses the existing dark Settings surface, purple outlines and typography.
 Future<void> showMaVideoTooLongDialog(BuildContext context) {
