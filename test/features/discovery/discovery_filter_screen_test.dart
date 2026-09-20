@@ -277,6 +277,16 @@ void main() {
     expect(styleText.style?.fontSize, 14);
     expect(styleText.style?.fontWeight, FontWeight.w500);
 
+    for (final choice in <(String, String)>[
+      ('filter_type_1', 'Painting'),
+      ('filter_style_2', 'Minimal'),
+    ]) {
+      final buttonCenter = tester.getCenter(find.byKey(Key(choice.$1)));
+      final labelCenter = tester.getCenter(find.text(choice.$2));
+      expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
+      expect(labelCenter.dy, closeTo(buttonCenter.dy, 1));
+    }
+
     for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
       final widget = tester.widget<Text>(find.text(text));
       expect(widget.style?.fontSize, 14);
