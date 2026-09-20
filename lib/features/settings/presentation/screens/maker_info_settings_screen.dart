@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
@@ -353,7 +355,7 @@ class _MakerInfoSettingsScreenState
 
     _MediaChoice? choice;
 
-    if (slot == 1) {
+    if (slot >= 1 && slot <= 4) {
       choice = await showModalBottomSheet<_MediaChoice>(
         context: context,
         backgroundColor: AppColors.inputFill,
@@ -378,7 +380,7 @@ class _MakerInfoSettingsScreenState
                     color: AppColors.primary,
                   ),
                   title: const Text(
-                    'Choose video (15 seconds max)',
+                    'Choose video (5 seconds max)',
                     style: TextStyle(color: AppColors.white),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.video),
@@ -388,8 +390,6 @@ class _MakerInfoSettingsScreenState
           );
         },
       );
-    } else {
-      choice = _MediaChoice.image;
     }
 
     if (choice == null) return;
@@ -406,11 +406,34 @@ class _MakerInfoSettingsScreenState
     } else {
       file = await _picker.pickVideo(
         source: ImageSource.gallery,
-        maxDuration: const Duration(seconds: 15),
+        maxDuration: const Duration(seconds: 5),
       );
     }
 
     if (file == null) return;
+
+    if (choice == _MediaChoice.video) {
+      final video = VideoPlayerController.file(File(file.path));
+      try {
+        await video.initialize();
+        if (video.value.duration <= Duration.zero ||
+            video.value.duration > const Duration(seconds: 5)) {
+          if (!mounted) return;
+          setState(() {
+            _errorMessage = 'Video must be 5 seconds or less.';
+          });
+          return;
+        }
+      } catch (_) {
+        if (!mounted) return;
+        setState(() {
+          _errorMessage = 'Could not read video duration. Choose another video.';
+        });
+        return;
+      } finally {
+        await video.dispose();
+      }
+    }
 
     final bytes = await file.readAsBytes();
 
@@ -754,8 +777,9 @@ class _MakerInfoSettingsScreenState
     return MakerCarouselItem(
       id: artwork.id,
       slot: slot,
-      kind: 'image',
+      kind: artwork.primaryMedia?.isVideo == true ? 'video' : 'image',
       url: artwork.primaryImageUrl,
+      mimeType: artwork.primaryMedia?.mimeType,
       caption: artwork.description,
     );
   }
@@ -1082,9 +1106,7 @@ class _CarouselEditor extends StatelessWidget {
           ),
         ),
         Text(
-          isArtwork
-              ? 'Artwork image (JPG, PNG or WebP)'
-              : 'image or video (15 seconds or less)',
+          'Image or video (5 seconds or less)',
           style: AppTextStyles.onboardingHelper.copyWith(
             fontSize: 14,
             color: AppColors.mutedText,
