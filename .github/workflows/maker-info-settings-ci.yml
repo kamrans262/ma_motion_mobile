@@ -34,8 +34,6 @@ jobs:
       - name: Resolve locked dependencies
         run: flutter pub get
 
-          fi
-
       - name: Generate MA Motion launcher icons
         run: dart run flutter_launcher_icons
 
