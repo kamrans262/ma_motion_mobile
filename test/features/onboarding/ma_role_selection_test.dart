@@ -12,7 +12,7 @@ void main() {
     expect(MaDotGridMetrics.rows, 36);
     expect(MaDotGridMetrics.dotRadius, 0.8);
 
-    for (final seconds in <double>[0, 7, 8]) {
+    for (final seconds in <double>[0, 5, 6]) {
       expect(
         MaRoleSelectionDotMotion.displacement(
           row: 0,
@@ -62,14 +62,14 @@ void main() {
       MaRoleSelectionDotMotion.displacement(
         row: 0,
         column: 0,
-        animationSeconds: 6.9,
+        animationSeconds: 4.9,
       ).distance,
       lessThan(first.distance),
     );
   });
 
   testWidgets(
-    'Role Selection waits 1s, wanders independently, returns by 8s without moving UI',
+    'Role Selection waits 1s, wanders independently, returns by 6s without moving UI',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 568));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -110,8 +110,8 @@ void main() {
       expect(animationSeconds(), closeTo(1, 0.02));
       await tester.pump(const Duration(seconds: 2));
       expect(animationSeconds(), closeTo(3, 0.02));
-      await tester.pump(const Duration(seconds: 4));
-      expect(animationSeconds(), closeTo(7, 0.02));
+      await tester.pump(const Duration(seconds: 2));
+      expect(animationSeconds(), closeTo(5, 0.02));
       expect(
         MaRoleSelectionDotMotion.displacement(
           row: 7,
