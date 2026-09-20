@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/data/discovery_filter_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
@@ -284,7 +285,10 @@ void main() {
       final buttonCenter = tester.getCenter(find.byKey(Key(choice.$1)));
       final labelCenter = tester.getCenter(find.text(choice.$2));
       expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
-      expect(labelCenter.dy, closeTo(buttonCenter.dy, 1));
+      expect(
+        labelCenter.dy,
+        closeTo(buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+      );
     }
 
     for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
