@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
@@ -67,7 +68,10 @@ void main() {
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
-      expect(textCenter.dy, closeTo(center.dy, 1));
+      expect(
+        textCenter.dy,
+        closeTo(center.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+      );
     }
 
     expect(find.text('Maker Info Setting'), findsOneWidget);
