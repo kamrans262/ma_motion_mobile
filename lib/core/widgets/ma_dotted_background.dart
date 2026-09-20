@@ -4,17 +4,45 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
+/// Shared dot-grid geometry for the animated Splash and all existing
+/// Maker/Appreciator onboarding backgrounds.
 abstract final class MaDotGridMetrics {
-  static double spacingForWidth(double width) {
-    if (!width.isFinite || width <= 0) return 18;
+  static const int columns = 18;
+  static const int rows = 36;
+  static const double dotRadius = 0.8;
 
-    return (width * 0.045).clamp(17.0, 24.0).toDouble();
+  static bool hasValidSize(Size size) =>
+      size.width.isFinite &&
+      size.height.isFinite &&
+      size.width > 0 &&
+      size.height > 0;
+
+  static double horizontalSpacing(Size size) => size.width / columns;
+  static double verticalSpacing(Size size) => size.height / rows;
+
+  /// The dots are centered within each grid cell. This keeps exactly 18
+  /// columns and 36 rows visible, without cropped dots at the outer edges.
+  static void paintDots(Canvas canvas, Size size, Paint paint, double radius) {
+    if (!hasValidSize(size) || !radius.isFinite || radius <= 0) return;
+
+    final horizontal = horizontalSpacing(size);
+    final vertical = verticalSpacing(size);
+
+    for (var row = 0; row < rows; row++) {
+      final y = (row + 0.5) * vertical;
+      for (var column = 0; column < columns; column++) {
+        final x = (column + 0.5) * horizontal;
+        canvas.drawCircle(Offset(x, y), radius, paint);
+      }
+    }
   }
 
-  static double radiusForWidth(double width) {
-    if (!width.isFinite || width <= 0) return 0.8;
-
-    return (spacingForWidth(width) * 0.038).clamp(0.7, 1.2).toDouble();
+  /// The opening circles cover their entire grid cell before shrinking,
+  /// preserving the continuous solid-purple opening of the Splash animation.
+  static double solidCircleRadius(Size size) {
+    final halfWidth = horizontalSpacing(size) / 2;
+    final halfHeight = verticalSpacing(size) / 2;
+    return math.sqrt(halfWidth * halfWidth + halfHeight * halfHeight);
   }
 }
 
@@ -37,38 +65,19 @@ class _MaDotGridPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (!size.width.isFinite ||
-        !size.height.isFinite ||
-        size.width <= 0 ||
-        size.height <= 0) {
-      return;
-    }
-
-    final spacing = MaDotGridMetrics.spacingForWidth(size.width);
-    final radius = MaDotGridMetrics.radiusForWidth(size.width);
-
-    if (!spacing.isFinite || spacing <= 0 || !radius.isFinite || radius <= 0) {
-      return;
-    }
+    if (!MaDotGridMetrics.hasValidSize(size)) return;
 
     final paint = Paint()
       ..color = AppColors.primary
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    final rowCount = math.max(1, (size.height / spacing).ceil() + 2);
-    final columnCount = math.max(1, (size.width / spacing).ceil() + 2);
-
-    // Keep the static screen on exactly the same grid phase as the final
-    // frame of the shrinking-circle splash so there is no dot-grid jump.
-    for (var row = -1; row < rowCount; row++) {
-      final y = row * spacing;
-
-      for (var column = -1; column < columnCount; column++) {
-        final x = column * spacing;
-        canvas.drawCircle(Offset(x, y), radius, paint);
-      }
-    }
+    MaDotGridMetrics.paintDots(
+      canvas,
+      size,
+      paint,
+      MaDotGridMetrics.dotRadius,
+    );
   }
 
   @override
