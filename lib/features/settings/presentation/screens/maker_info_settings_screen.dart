@@ -731,6 +731,25 @@ class _MakerInfoSettingsScreenState
                 ),
               ),
             ),
+            const SizedBox(height: 4),
+            TextButton(
+              key: const Key('maker_settings_delete_account'),
+              onPressed: _saving ? null : _deleteAccount,
+              style: TextButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.zero,
+                foregroundColor: AppColors.error,
+              ),
+              child: const Text(
+                'Delete Your Account',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  color: AppColors.error,
+                ),
+              ),
+            ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 12),
               Text(
