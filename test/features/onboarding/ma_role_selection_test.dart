@@ -1,10 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_dotted_background.dart';
+import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 
 void main() {
+  test('Role Selection dots independently wander and return exactly', () {
+    expect(MaDotGridMetrics.columns, 18);
+    expect(MaDotGridMetrics.rows, 36);
+    expect(MaDotGridMetrics.dotRadius, 0.8);
+
+    for (final seconds in <double>[0, 5, 6]) {
+      expect(
+        MaRoleSelectionDotMotion.displacement(
+          row: 0,
+          column: 0,
+          animationSeconds: seconds,
+        ),
+        Offset.zero,
+      );
+      expect(
+        MaRoleSelectionDotMotion.displacement(
+          row: 20,
+          column: 10,
+          animationSeconds: seconds,
+        ),
+        Offset.zero,
+      );
+    }
+
+    final first = MaRoleSelectionDotMotion.displacement(
+      row: 0,
+      column: 0,
+      animationSeconds: 2,
+    );
+    final second = MaRoleSelectionDotMotion.displacement(
+      row: 0,
+      column: 1,
+      animationSeconds: 2,
+    );
+    final third = MaRoleSelectionDotMotion.displacement(
+      row: 1,
+      column: 0,
+      animationSeconds: 2,
+    );
+    expect(first.distance, greaterThan(3));
+    expect(second.distance, greaterThan(3));
+    expect(first, isNot(second));
+    expect(first, isNot(third));
+    expect(
+      MaRoleSelectionDotMotion.displacement(
+        row: 0,
+        column: 0,
+        animationSeconds: 0.5,
+      ).distance,
+      lessThan(first.distance),
+    );
+    expect(
+      MaRoleSelectionDotMotion.displacement(
+        row: 0,
+        column: 0,
+        animationSeconds: 3.5,
+      ).distance,
+      lessThan(first.distance),
+    );
+  });
+
+  testWidgets(
+    'Role Selection waits 1s, wanders for 2s, returns by 6s without moving UI',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(320, 568));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MaRoleSelectionScreen(onMaker: () {}, onAppreciator: () {}),
+        ),
+      );
+
+      final dots = find.byKey(const Key('role_selection_wandering_dots'));
+      final heading = find.text(
+        'Would you like to\\njoin as a Maker or\\nAppreciator?',
+      );
+      final maker = find.byKey(const Key('select_maker_button'));
+      final appreciator = find.byKey(
+        const Key('select_appreciator_button'),
+      );
+
+      expect(dots, findsOneWidget);
+      expect(find.byType(MaDottedBackground), findsNothing);
+      final originalHeading = tester.getRect(heading);
+      final originalMaker = tester.getRect(maker);
+      final originalAppreciator = tester.getRect(appreciator);
+
+      double animationSeconds() =>
+          (tester.widget<CustomPaint>(dots).painter!
+                  as MaRoleSelectionWanderingDotsPainter)
+              .animationSeconds;
+
+      expect(animationSeconds(), 0);
+      await tester.pump(const Duration(milliseconds: 999));
+      expect(animationSeconds(), 0);
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(animationSeconds(), 0);
+
+      await tester.pump(const Duration(seconds: 1));
+      expect(animationSeconds(), closeTo(1, 0.02));
+      await tester.pump(const Duration(seconds: 1));
+      expect(animationSeconds(), closeTo(2, 0.02));
+      await tester.pump(const Duration(seconds: 3));
+      expect(animationSeconds(), closeTo(5, 0.02));
+      expect(MaRoleSelectionDotMotion.envelopeAt(animationSeconds()), 0);
+
+      expect(tester.getRect(heading), originalHeading);
+      expect(tester.getRect(maker), originalMaker);
+      expect(tester.getRect(appreciator), originalAppreciator);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Maker selection fires maker callback', (tester) async {
     var makerSelected = false;
 
