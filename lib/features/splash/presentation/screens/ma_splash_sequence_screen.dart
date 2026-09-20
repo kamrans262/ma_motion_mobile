@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
 import '../../../auth/data/maker_entry_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
@@ -186,9 +187,6 @@ class _WelcomeMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final fontSize = (constraints.maxWidth * 0.074)
-            .clamp(26.0, 34.0)
-            .toDouble();
         final horizontal = (constraints.maxWidth * 0.12)
             .clamp(24.0, 56.0)
             .toDouble();
@@ -202,13 +200,7 @@ class _WelcomeMessage extends StatelessWidget {
                 'Welcome to MA.\nA place where art &\ndesign live.',
                 key: const Key('ma_splash_welcome_text'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontFamily: 'HelveticaNeueLTStd',
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
-                  height: 1.14,
-                ),
+                style: AppTextStyles.onboardingHeading,
               ),
             ),
           ),
