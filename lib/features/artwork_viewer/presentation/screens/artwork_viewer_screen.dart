@@ -14,6 +14,7 @@ import '../../application/artwork_detail_provider.dart';
 import '../../domain/artwork_detail.dart';
 import '../widgets/artwork_maker_info_page.dart';
 import '../widgets/artwork_viewer_dots.dart';
+import '../widgets/artwork_video_surface.dart';
 
 class ArtworkViewerScreen extends ConsumerStatefulWidget {
   const ArtworkViewerScreen({
@@ -213,12 +214,14 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                     pageKey: Key('artwork_display_artwork_${item.id}'),
                     description: item.description,
                     media: item.primaryMedia,
+                    active: index == _currentPage,
                   );
                 }
 
                 return _ArtworkMediaPage(
                   description: artwork.description,
                   media: legacyMedia[index],
+                  active: index == _currentPage,
                 );
               },
             ),
@@ -270,11 +273,13 @@ class _ArtworkMediaPage extends StatelessWidget {
   const _ArtworkMediaPage({
     required this.description,
     required this.media,
+    required this.active,
     this.pageKey,
   });
 
   final String? description;
   final DiscoveryArtworkMedia? media;
+  final bool active;
   final Key? pageKey;
 
   @override
@@ -295,7 +300,7 @@ class _ArtworkMediaPage extends StatelessWidget {
               child: Center(
                 child: SizedBox.expand(
                   key: const Key('artwork_viewer_media_box'),
-                  child: _MediaSurface(media: media),
+                  child: _MediaSurface(media: media, active: active),
                 ),
               ),
             ),
@@ -328,9 +333,10 @@ class _ArtworkMediaPage extends StatelessWidget {
 }
 
 class _MediaSurface extends StatelessWidget {
-  const _MediaSurface({required this.media});
+  const _MediaSurface({required this.media, required this.active});
 
   final DiscoveryArtworkMedia? media;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
@@ -339,6 +345,14 @@ class _MediaSurface extends StatelessWidget {
     if (url.isEmpty) {
       return const Center(
         child: Icon(Icons.image_outlined, size: 48, color: AppColors.primary),
+      );
+    }
+
+    if (media!.isVideo) {
+      return ArtworkVideoSurface(
+        key: Key('artwork_viewer_media_${media!.id}'),
+        url: url,
+        active: active,
       );
     }
 
@@ -362,18 +376,6 @@ class _MediaSurface extends StatelessWidget {
             );
           },
         ),
-        if (media!.isVideo)
-          const Center(
-            child: CircleAvatar(
-              radius: 22,
-              backgroundColor: Colors.white,
-              child: Icon(
-                Icons.play_arrow_rounded,
-                size: 30,
-                color: Color(0xFFE53935),
-              ),
-            ),
-          ),
       ],
     );
   }
