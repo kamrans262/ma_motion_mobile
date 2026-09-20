@@ -12,12 +12,14 @@ class MaChoiceChip extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.selectedTextColor,
+    this.unselectedBackgroundColor,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
   final Color? selectedTextColor;
+  final Color? unselectedBackgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,9 @@ class MaChoiceChip extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 34),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? AppColors.primary : AppColors.savedBackground,
+            color: selected
+                ? AppColors.primary
+                : unselectedBackgroundColor ?? AppColors.savedBackground,
             border: Border.all(color: AppColors.primary, width: 1.1),
           ),
           child: MaCenteredTaxonomyLabel(
