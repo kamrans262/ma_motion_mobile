@@ -52,11 +52,11 @@ void main() {
 
     expect(
       maker.style?.backgroundColor?.resolve(<WidgetState>{}),
-      AppColors.savedBackground,
+      AppColors.splashBackground,
     );
     expect(
       appreciator.style?.backgroundColor?.resolve(<WidgetState>{}),
-      AppColors.savedBackground,
+      AppColors.splashBackground,
     );
     expect(
       maker.style?.foregroundColor?.resolve(<WidgetState>{}),
