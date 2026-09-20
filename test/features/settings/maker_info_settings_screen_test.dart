@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
@@ -34,6 +35,40 @@ void main() {
     );
 
     await _finishInitialLoad(tester);
+
+    final settings = tester.widget<Scaffold>(
+      find.byKey(const Key('maker_info_settings_screen')),
+    );
+    expect(settings.backgroundColor, AppColors.artworkBackground);
+    final save = tester.widget<OutlinedButton>(
+      find.byKey(const Key('maker_settings_save_close')),
+    );
+    expect(
+      save.style?.backgroundColor?.resolve(<WidgetState>{}),
+      const Color(0xFF020202),
+    );
+    expect(
+      save.style?.backgroundColor?.resolve(<WidgetState>{
+        WidgetState.pressed,
+      }),
+      AppColors.primary,
+    );
+    expect(save.style?.side?.resolve(<WidgetState>{})?.width, 1);
+    expect(
+      tester.getSize(find.byKey(const Key('maker_settings_save_close'))).height,
+      48,
+    );
+    expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
+
+    for (final choice in <(String, String)>[
+      ('maker_settings_type_1', 'Painting'),
+      ('maker_settings_style_2', 'Contemporary'),
+    ]) {
+      final center = tester.getCenter(find.byKey(Key(choice.$1)));
+      final textCenter = tester.getCenter(find.text(choice.$2));
+      expect(textCenter.dx, closeTo(center.dx, 1));
+      expect(textCenter.dy, closeTo(center.dy, 1));
+    }
 
     expect(find.text('Maker Info Setting'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
