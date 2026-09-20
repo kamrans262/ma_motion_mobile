@@ -318,7 +318,7 @@ class _MakerArtworkDiscoveryScreenState
                                       'discovery_filter_button',
                                     ),
                                     iconKey: const Key('discovery_filter_svg'),
-                                    assetName: 'assets/filter2.svg',
+                                    assetName: 'assets/ma_filter.svg',
                                     fallbackAssetName: 'assets/filter.svg',
                                     tooltip: 'Filter artwork',
                                     size: metrics.toolbarIconSize,
@@ -378,7 +378,7 @@ class _MakerArtworkDiscoveryScreenState
                     child: _DiscoveryBody(
                       state: state,
                       scrollController: _scrollController,
-                      horizontalPadding: metrics.gridHorizontalPadding,
+                      horizontalPadding: 0,
                       gridSpacing: metrics.gridSpacing,
                       columnCount: _columnCount,
                       onArtworkTap: widget.onArtworkTap,
