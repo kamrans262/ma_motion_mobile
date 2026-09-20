@@ -11,11 +11,13 @@ class MaChoiceChip extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.selectedTextColor,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final Color? selectedTextColor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,9 @@ class MaChoiceChip extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
-            style: selected ? AppTextStyles.chipSelected : AppTextStyles.chip,
+            style: selected
+                ? AppTextStyles.chipSelected.copyWith(color: selectedTextColor)
+                : AppTextStyles.chip,
           ),
         ),
       ),
