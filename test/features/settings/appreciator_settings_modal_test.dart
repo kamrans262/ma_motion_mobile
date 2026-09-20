@@ -36,6 +36,14 @@ void main() {
       find.byKey(const Key('appreciator_settings_card')),
     );
     expect(card.color, AppColors.artworkBackground);
+    for (final fieldKey in <String>[
+      'appreciator_settings_name',
+      'appreciator_settings_location',
+      'appreciator_settings_email',
+    ]) {
+      final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
+      expect(field.decoration?.fillColor, AppColors.filterInputFill);
+    }
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('appreciator_settings_save_close')),
     );
