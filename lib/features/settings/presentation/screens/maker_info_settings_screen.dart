@@ -733,7 +733,7 @@ class _MakerInfoSettingsScreenState
                 ),
               ),
             ),
-            const SizedBox(height: 11),
+            const SizedBox(height: 8),
             TextButton(
               key: const Key('maker_settings_delete_account'),
               onPressed: _saving ? null : _deleteAccount,
