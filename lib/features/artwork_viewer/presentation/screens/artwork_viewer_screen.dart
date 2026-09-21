@@ -228,10 +228,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
             Positioned(
               top: 0,
               right: 0,
-              child: _ViewerCloseButton(
-                onPressed: widget.onClose,
-                iconSize: _currentPage == visualPageCount ? 24 : 12,
-              ),
+              child: _ViewerCloseButton(onPressed: widget.onClose),
             ),
             Positioned(
               left: 0,
@@ -252,10 +249,9 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
 }
 
 class _ViewerCloseButton extends StatelessWidget {
-  const _ViewerCloseButton({required this.onPressed, this.iconSize = 12});
+  const _ViewerCloseButton({required this.onPressed});
 
   final VoidCallback? onPressed;
-  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +261,13 @@ class _ViewerCloseButton extends StatelessWidget {
         key: const Key('artwork_viewer_close_button'),
         onPressed: onPressed,
         padding: EdgeInsets.zero,
-        iconSize: iconSize,
+        iconSize: 24,
+        style: const ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll<Color>(Colors.transparent),
+          overlayColor: WidgetStatePropertyAll<Color>(Colors.transparent),
+          foregroundColor: WidgetStatePropertyAll<Color>(Color(0xFFF0F0F0)),
+          splashFactory: NoSplash.splashFactory,
+        ),
         color: const Color(0xFFF0F0F0),
         icon: const Icon(Icons.close_rounded),
       ),
