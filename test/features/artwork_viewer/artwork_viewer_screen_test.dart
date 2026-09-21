@@ -95,6 +95,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+      expect(
+        tester.widget<IconButton>(
+          find.byKey(const Key('artwork_viewer_close_button')),
+        ).iconSize,
+        24,
+      );
 
       final closeAfter = tester.getTopLeft(
         find.byKey(const Key('artwork_viewer_close_button')),
@@ -119,7 +125,7 @@ void main() {
       );
       expect(
         (infoCard.decoration! as BoxDecoration).color,
-        const Color(0xFF0A0A0A),
+        const Color(0xFF1C1C1C),
       );
 
       expect(find.text('Tide Register No. 4'), findsOneWidget);
@@ -204,7 +210,7 @@ void main() {
     final card = tester.widget<Container>(
       find.byKey(const Key('artwork_maker_info_card')),
     );
-    expect((card.decoration! as BoxDecoration).color, const Color(0xFF0A0A0A));
+    expect((card.decoration! as BoxDecoration).color, const Color(0xFF1C1C1C));
 
     final divider = tester.widget<Divider>(
       find.byKey(const Key('artwork_maker_info_divider')),
