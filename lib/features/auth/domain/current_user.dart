@@ -82,15 +82,13 @@ class CurrentUser {
       appreciatorRegistered: asBool(map['appreciator_registered']) ?? false,
       appreciatorOnboardingCompleted:
           asBool(map['appreciator_onboarding_completed']) ?? false,
-      makerLocation: (makerProfile['location_text'] ??
-              makerProfile['location'] ??
-              '')
+      makerLocation:
+          (makerProfile['location_text'] ?? makerProfile['location'] ?? '')
+              .toString(),
+      appreciatorLocation: (appreciatorProfile['location_text'] ?? '')
           .toString(),
-      appreciatorLocation:
-          (appreciatorProfile['location_text'] ?? '').toString(),
       makerBio: (makerProfile['bio'] ?? '').toString(),
-      makerProfileImageUrl:
-          makerProfile['profile_image_url']?.toString(),
+      makerProfileImageUrl: makerProfile['profile_image_url']?.toString(),
     );
   }
 }

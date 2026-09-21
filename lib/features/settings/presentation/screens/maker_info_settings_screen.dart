@@ -267,9 +267,11 @@ class _MakerInfoSettingsScreenState
           }
 
           final pending = _pendingMedia[slot];
-          if (saved == null || saved.artwork.primaryImageUrl == null ||
-              (pending != null && saved.artwork.primaryMedia?.isVideo !=
-                  (pending.kind == 'video'))) {
+          if (saved == null ||
+              saved.artwork.primaryImageUrl == null ||
+              (pending != null &&
+                  saved.artwork.primaryMedia?.isVideo !=
+                      (pending.kind == 'video'))) {
             throw ApiException(
               message: 'Content $slot save could not be confirmed.',
               code: 'maker_info_slot_save_unconfirmed',
@@ -337,7 +339,8 @@ class _MakerInfoSettingsScreenState
         if (_existingItem(confirmed, 1) != null ||
             confirmed.profileImageUrl?.isNotEmpty == true) {
           throw const ApiException(
-            message: 'Content 1 removal could not be confirmed. Please try again.',
+            message:
+                'Content 1 removal could not be confirmed. Please try again.',
             code: 'maker_info_content_delete_unconfirmed',
           );
         }
@@ -367,7 +370,8 @@ class _MakerInfoSettingsScreenState
           if (pending != null) {
             final confirmed = await repository.load();
             final saved = _existingItem(confirmed, 1);
-            if (saved == null || saved.url?.isNotEmpty != true ||
+            if (saved == null ||
+                saved.url?.isNotEmpty != true ||
                 saved.isVideo != (pending.kind == 'video')) {
               throw const ApiException(
                 message: 'Content 1 upload could not be confirmed. Please try again.',
@@ -391,7 +395,8 @@ class _MakerInfoSettingsScreenState
       if (!mounted) return;
       setState(() {
         _failedUploadSlot = activeArtworkSlot;
-        final fieldError = error.fieldErrors['media']?.firstOrNull ??
+        final fieldError =
+            error.fieldErrors['media']?.firstOrNull ??
             error.fieldErrors['media.0']?.firstOrNull;
         _errorMessage = activeArtworkSlot == null
             ? error.message
@@ -497,7 +502,8 @@ class _MakerInfoSettingsScreenState
       } catch (_) {
         if (!mounted) return;
         setState(() {
-          _errorMessage = 'Could not read video duration. Choose another video.';
+          _errorMessage =
+              'Could not read video duration. Choose another video.';
         });
         return;
       } finally {
@@ -1210,7 +1216,9 @@ class _CarouselEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasRemovableMedia = pending != null || existing != null ||
+    final hasRemovableMedia =
+        pending != null ||
+        existing != null ||
         (slot == 1 && (fallbackImageUrl?.isNotEmpty ?? false));
 
     return Column(
@@ -1515,8 +1523,11 @@ class _CarouselVideoPreviewState extends State<_CarouselVideoPreview> {
   Widget build(BuildContext context) {
     final controller = _controller;
     final videoSize = controller?.value.size;
-    if (!_ready || controller == null || videoSize == null ||
-        videoSize.width <= 0 || videoSize.height <= 0) {
+    if (!_ready ||
+        controller == null ||
+        videoSize == null ||
+        videoSize.width <= 0 ||
+        videoSize.height <= 0) {
       return const _VideoPlaceholder();
     }
 
@@ -1549,7 +1560,11 @@ class _UnavailableMediaPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Icon(Icons.broken_image_outlined, color: AppColors.primary, size: 28),
+      child: Icon(
+        Icons.broken_image_outlined,
+        color: AppColors.primary,
+        size: 28,
+      ),
     );
   }
 }

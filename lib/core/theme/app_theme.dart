@@ -41,9 +41,7 @@ abstract final class AppTheme {
                 ? AppColors.white
                 : AppColors.primary,
           ),
-          overlayColor: const WidgetStatePropertyAll<Color>(
-            Colors.transparent,
-          ),
+          overlayColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
@@ -53,9 +51,7 @@ abstract final class AppTheme {
                 ? AppColors.primary.withValues(alpha: 0.22)
                 : Colors.transparent,
           ),
-          overlayColor: const WidgetStatePropertyAll<Color>(
-            Colors.transparent,
-          ),
+          overlayColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
         ),
       ),
     );

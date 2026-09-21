@@ -232,7 +232,8 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
     final clamped = progress.clamp(0.0, 1.0).toDouble();
     final smoothProgress = Curves.easeInOutSine.transform(clamped);
     final solidRadius = MaDotGridMetrics.solidCircleRadius(size);
-    final radius = solidRadius +
+    final radius =
+        solidRadius +
         ((MaDotGridMetrics.dotRadius - solidRadius) * smoothProgress);
 
     // Use the same 18 × 36 dot centers and final radius as the onboarding

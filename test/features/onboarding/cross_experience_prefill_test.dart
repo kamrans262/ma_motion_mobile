@@ -10,69 +10,137 @@ import 'package:ma_motion_mobile/features/onboarding/presentation/screens/apprec
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
 void main() {
-  testWidgets('Maker onboarding prefills account fields and persisted Maker work', (tester) async {
-    final gateway = _PrefillGateway(makerIsActive: false);
-    final container = ProviderContainer(overrides: [
-      apiGatewayProvider.overrideWithValue(gateway),
-      authTokenStoreProvider.overrideWithValue(_TokenStore()),
-    ]);
-    addTearDown(container.dispose);
+  testWidgets(
+    'Maker onboarding prefills account fields and persisted Maker work',
+    (tester) async {
+      final gateway = _PrefillGateway(makerIsActive: false);
+      final container = ProviderContainer(
+        overrides: [
+          apiGatewayProvider.overrideWithValue(gateway),
+          authTokenStoreProvider.overrideWithValue(_TokenStore()),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: MaterialApp(home: MakerRegistrationFlowScreen(
-        prefillFromAccount: true,
-        onExit: () {},
-      )),
-    ));
-    await tester.pump();
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: MakerRegistrationFlowScreen(
+              prefillFromAccount: true,
+              onExit: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(tester.widget<TextField>(find.byKey(const Key('maker_name_field'))).controller?.text, 'Existing User');
-    await tester.tap(find.byKey(const Key('maker_next_button')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(find.byKey(const Key('maker_location_field'))).controller?.text, 'Chicago 60601');
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('maker_name_field')))
+            .controller
+            ?.text,
+        'Existing User',
+      );
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('maker_location_field')))
+            .controller
+            ?.text,
+        'Chicago 60601',
+      );
 
-    await tester.tap(find.byKey(const Key('maker_next_button')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(find.byKey(const Key('maker_about_field'))).controller?.text, 'Previously saved statement');
-    expect(container.read(makerRegistrationProvider).email, 'same@example.com');
-    expect(container.read(makerRegistrationProvider).types, contains('Painting'));
-    expect(container.read(makerRegistrationProvider).styles, contains('Contemporary'));
-    expect(container.read(makerRegistrationProvider).existingImageUrl, 'https://example.test/salon.jpg');
-    expect(gateway.makerProfileReads, 1);
-    expect(tester.takeException(), isNull);
-  });
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('maker_about_field')))
+            .controller
+            ?.text,
+        'Previously saved statement',
+      );
+      expect(
+        container.read(makerRegistrationProvider).email,
+        'same@example.com',
+      );
+      expect(
+        container.read(makerRegistrationProvider).types,
+        contains('Painting'),
+      );
+      expect(
+        container.read(makerRegistrationProvider).styles,
+        contains('Contemporary'),
+      );
+      expect(
+        container.read(makerRegistrationProvider).existingImageUrl,
+        'https://example.test/salon.jpg',
+      );
+      expect(gateway.makerProfileReads, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('Appreciator onboarding prefills shared data from existing Maker', (tester) async {
-    final gateway = _PrefillGateway(makerIsActive: true);
-    final container = ProviderContainer(overrides: [
-      apiGatewayProvider.overrideWithValue(gateway),
-      authTokenStoreProvider.overrideWithValue(_TokenStore()),
-    ]);
-    addTearDown(container.dispose);
+  testWidgets(
+    'Appreciator onboarding prefills shared data from existing Maker',
+    (tester) async {
+      final gateway = _PrefillGateway(makerIsActive: true);
+      final container = ProviderContainer(
+        overrides: [
+          apiGatewayProvider.overrideWithValue(gateway),
+          authTokenStoreProvider.overrideWithValue(_TokenStore()),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: MaterialApp(home: AppreciatorRegistrationFlowScreen(
-        prefillFromAccount: true,
-        onExit: () {},
-      )),
-    ));
-    await tester.pump();
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: AppreciatorRegistrationFlowScreen(
+              prefillFromAccount: true,
+              onExit: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(tester.widget<TextField>(find.byKey(const Key('appreciator_name_field'))).controller?.text, 'Existing User');
-    await tester.tap(find.byKey(const Key('maker_next_button')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(find.byKey(const Key('appreciator_location_field'))).controller?.text, 'Brooklyn 11201');
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('appreciator_name_field')))
+            .controller
+            ?.text,
+        'Existing User',
+      );
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const Key('appreciator_location_field')),
+            )
+            .controller
+            ?.text,
+        'Brooklyn 11201',
+      );
 
-    await tester.tap(find.byKey(const Key('maker_next_button')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(find.byKey(const Key('appreciator_email_field'))).controller?.text, 'same@example.com');
-    expect(gateway.makerProfileReads, 0);
-    expect(tester.takeException(), isNull);
-  });
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('appreciator_email_field')))
+            .controller
+            ?.text,
+        'same@example.com',
+      );
+      expect(gateway.makerProfileReads, 0);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
 
 class _TokenStore implements AuthTokenStore {
@@ -93,7 +161,8 @@ class _PrefillGateway implements ApiGateway {
   int makerProfileReads = 0;
 
   @override
-  Future<Map<String, dynamic>> get(String path, {
+  Future<Map<String, dynamic>> get(
+    String path, {
     Map<String, dynamic>? queryParameters,
     bool requiresAuth = true,
   }) async {
@@ -140,28 +209,32 @@ class _PrefillGateway implements ApiGateway {
   }
 
   @override
-  Future<Map<String, dynamic>> post(String path, {
+  Future<Map<String, dynamic>> post(
+    String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     bool requiresAuth = true,
   }) => throw UnimplementedError();
 
   @override
-  Future<Map<String, dynamic>> patch(String path, {
+  Future<Map<String, dynamic>> patch(
+    String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     bool requiresAuth = true,
   }) => throw UnimplementedError();
 
   @override
-  Future<Map<String, dynamic>> put(String path, {
+  Future<Map<String, dynamic>> put(
+    String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     bool requiresAuth = true,
   }) => throw UnimplementedError();
 
   @override
-  Future<Map<String, dynamic>> delete(String path, {
+  Future<Map<String, dynamic>> delete(
+    String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     bool requiresAuth = true,

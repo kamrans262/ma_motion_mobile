@@ -98,34 +98,39 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                               OutlinedButton(
                                 key: const Key('select_maker_button'),
                                 onPressed: widget.onMaker,
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppColors.splashBackground,
-                                  foregroundColor: AppColors.primary,
-                                  side: const BorderSide(
-                                    color: AppColors.primary,
-                                    width: 1.2,
-                                  ),
-                                  padding: const EdgeInsets.fromLTRB(
-                                    32,
-                                    18,
-                                    32,
-                                    14,
-                                  ),
-                                  shape: const RoundedRectangleBorder(),
-                                ).copyWith(
-                                  backgroundColor:
-                                      AppButtonStyles.purpleWhenPressed(
-                                    AppColors.splashBackground,
-                                  ),
-                                  foregroundColor:
-                                      WidgetStateProperty.resolveWith<Color>(
-                                    (states) => states.contains(
-                                      WidgetState.pressed,
-                                    )
-                                        ? AppColors.white
-                                        : AppColors.primary,
-                                  ),
-                                ),
+                                style:
+                                    OutlinedButton.styleFrom(
+                                      backgroundColor:
+                                          AppColors.splashBackground,
+                                      foregroundColor: AppColors.primary,
+                                      side: const BorderSide(
+                                        color: AppColors.primary,
+                                        width: 1.2,
+                                      ),
+                                      padding: const EdgeInsets.fromLTRB(
+                                        32,
+                                        18,
+                                        32,
+                                        14,
+                                      ),
+                                      shape: const RoundedRectangleBorder(),
+                                    ).copyWith(
+                                      backgroundColor:
+                                          AppButtonStyles.purpleWhenPressed(
+                                            AppColors.splashBackground,
+                                          ),
+                                      foregroundColor:
+                                          WidgetStateProperty.resolveWith<
+                                            Color
+                                          >(
+                                            (states) =>
+                                                states.contains(
+                                                  WidgetState.pressed,
+                                                )
+                                                ? AppColors.white
+                                                : AppColors.primary,
+                                          ),
+                                    ),
                                 child: const Text(
                                   'Maker',
                                   style: TextStyle(
@@ -138,34 +143,39 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                               OutlinedButton(
                                 key: const Key('select_appreciator_button'),
                                 onPressed: widget.onAppreciator,
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppColors.splashBackground,
-                                  foregroundColor: AppColors.primary,
-                                  side: const BorderSide(
-                                    color: AppColors.primary,
-                                    width: 1.2,
-                                  ),
-                                  padding: const EdgeInsets.fromLTRB(
-                                    32,
-                                    18,
-                                    32,
-                                    14,
-                                  ),
-                                  shape: const RoundedRectangleBorder(),
-                                ).copyWith(
-                                  backgroundColor:
-                                      AppButtonStyles.purpleWhenPressed(
-                                    AppColors.splashBackground,
-                                  ),
-                                  foregroundColor:
-                                      WidgetStateProperty.resolveWith<Color>(
-                                    (states) => states.contains(
-                                      WidgetState.pressed,
-                                    )
-                                        ? AppColors.white
-                                        : AppColors.primary,
-                                  ),
-                                ),
+                                style:
+                                    OutlinedButton.styleFrom(
+                                      backgroundColor:
+                                          AppColors.splashBackground,
+                                      foregroundColor: AppColors.primary,
+                                      side: const BorderSide(
+                                        color: AppColors.primary,
+                                        width: 1.2,
+                                      ),
+                                      padding: const EdgeInsets.fromLTRB(
+                                        32,
+                                        18,
+                                        32,
+                                        14,
+                                      ),
+                                      shape: const RoundedRectangleBorder(),
+                                    ).copyWith(
+                                      backgroundColor:
+                                          AppButtonStyles.purpleWhenPressed(
+                                            AppColors.splashBackground,
+                                          ),
+                                      foregroundColor:
+                                          WidgetStateProperty.resolveWith<
+                                            Color
+                                          >(
+                                            (states) =>
+                                                states.contains(
+                                                  WidgetState.pressed,
+                                                )
+                                                ? AppColors.white
+                                                : AppColors.primary,
+                                          ),
+                                    ),
                                 child: const Text(
                                   'Appreciator',
                                   style: TextStyle(

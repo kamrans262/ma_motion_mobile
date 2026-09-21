@@ -98,13 +98,19 @@ void main() {
   testWidgets('Settings remains tappable when Saved is empty', (tester) async {
     final repository = _FakeSavedRepository()..saved = false;
     var settingsTapped = 0;
-    await tester.pumpWidget(ProviderScope(
-      overrides: [savedArtworksRepositoryProvider.overrideWithValue(repository)],
-      child: MaterialApp(home: MakerSavedArtworksScreen(
-        settingsSemanticsLabel: 'Appreciator settings',
-        onSettingsTap: () => settingsTapped++,
-      )),
-    ));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          savedArtworksRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerSavedArtworksScreen(
+            settingsSemanticsLabel: 'Appreciator settings',
+            onSettingsTap: () => settingsTapped++,
+          ),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('saved_artworks_empty')), findsOneWidget);
     expect(find.bySemanticsLabel('Appreciator settings'), findsOneWidget);

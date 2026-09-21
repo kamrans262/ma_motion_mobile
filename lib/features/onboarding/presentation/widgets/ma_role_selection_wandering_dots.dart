@@ -7,10 +7,7 @@ import '../../../../core/widgets/ma_dotted_background.dart';
 
 /// Role Selection only. The shared onboarding dot grid and Splash stay static.
 class MaRoleSelectionWanderingDots extends StatelessWidget {
-  const MaRoleSelectionWanderingDots({
-    super.key,
-    required this.progress,
-  });
+  const MaRoleSelectionWanderingDots({super.key, required this.progress});
 
   /// Runs from 0 to 1 over six seconds, after one stationary second.
   final Animation<double> progress;
@@ -71,17 +68,17 @@ abstract final class MaRoleSelectionDotMotion {
     final distanceFraction = animationSeconds <= turnaround
         ? _ease(animationSeconds / turnaround)
         : 1 -
-            _ease(
-              (animationSeconds - turnaround) /
-                  (durationSeconds - turnaround),
-            );
+              _ease(
+                (animationSeconds - turnaround) /
+                    (durationSeconds - turnaround),
+              );
     return _targets[index] * distanceFraction;
   }
 }
 
 class MaRoleSelectionWanderingDotsPainter extends CustomPainter {
   MaRoleSelectionWanderingDotsPainter({required this.progress})
-      : super(repaint: progress);
+    : super(repaint: progress);
 
   final Animation<double> progress;
 
@@ -122,6 +119,7 @@ class MaRoleSelectionWanderingDotsPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant MaRoleSelectionWanderingDotsPainter oldDelegate) =>
-      oldDelegate.progress != progress;
+  bool shouldRepaint(
+    covariant MaRoleSelectionWanderingDotsPainter oldDelegate,
+  ) => oldDelegate.progress != progress;
 }

@@ -7,9 +7,8 @@ abstract final class AppButtonStyles {
   /// while an action button is pressed.
   static WidgetStateProperty<Color> purpleWhenPressed(Color idleColor) {
     return WidgetStateProperty.resolveWith<Color>(
-      (states) => states.contains(WidgetState.pressed)
-          ? AppColors.primary
-          : idleColor,
+      (states) =>
+          states.contains(WidgetState.pressed) ? AppColors.primary : idleColor,
     );
   }
 

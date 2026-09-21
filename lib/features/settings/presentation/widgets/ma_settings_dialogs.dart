@@ -34,7 +34,11 @@ Future<void> showMaVideoTooLongDialog(BuildContext context) {
                   key: const Key('ma_video_duration_close'),
                   tooltip: 'Close',
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: AppColors.white, size: 18),
+                  icon: const Icon(
+                    Icons.close,
+                    color: AppColors.white,
+                    size: 18,
+                  ),
                 ),
               ),
               const Icon(
@@ -135,20 +139,23 @@ class _DeleteAccountConfirmationState
     });
 
     try {
-      await ref.read(apiGatewayProvider).delete(
-        ApiPaths.account,
-        data: <String, String>{
-          if (_hasPassword) 'current_password': _password.text,
-          'confirmation': 'DELETE',
-        },
-      );
+      await ref
+          .read(apiGatewayProvider)
+          .delete(
+            ApiPaths.account,
+            data: <String, String>{
+              if (_hasPassword) 'current_password': _password.text,
+              'confirmation': 'DELETE',
+            },
+          );
       await ref.read(authTokenStoreProvider).clear();
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } on ApiException catch (exception) {
       if (!mounted) return;
       setState(() {
-        _error = exception.fieldErrors['current_password']?.firstOrNull ??
+        _error =
+            exception.fieldErrors['current_password']?.firstOrNull ??
             exception.message;
       });
     } catch (_) {
@@ -262,7 +269,9 @@ class _DeleteAccountConfirmationState
                         height: 48,
                         child: OutlinedButton(
                           key: const Key('ma_delete_account_confirm'),
-                          onPressed: _busy || _checkingPassword ? null : _confirm,
+                          onPressed: _busy || _checkingPassword
+                              ? null
+                              : _confirm,
                           style: AppButtonStyles.filterAction(),
                           child: _busy
                               ? const SizedBox.square(

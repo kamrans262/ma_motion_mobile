@@ -69,16 +69,20 @@ void main() {
     );
     expect(scaffold.backgroundColor, const Color(0xFF0F2419));
     final gapBackground = tester.widget<ColoredBox>(
-      find.ancestor(
-        of: find.byKey(const Key('discovery_controls_grid_gap')),
-        matching: find.byType(ColoredBox),
-      ).first,
+      find
+          .ancestor(
+            of: find.byKey(const Key('discovery_controls_grid_gap')),
+            matching: find.byType(ColoredBox),
+          )
+          .first,
     );
     final gridBackground = tester.widget<ColoredBox>(
-      find.ancestor(
-        of: find.byKey(const Key('discovery_grid_padding')),
-        matching: find.byType(ColoredBox),
-      ).first,
+      find
+          .ancestor(
+            of: find.byKey(const Key('discovery_grid_padding')),
+            matching: find.byType(ColoredBox),
+          )
+          .first,
     );
     expect(gapBackground.color, scaffold.backgroundColor);
     expect(gridBackground.color, scaffold.backgroundColor);
@@ -114,7 +118,10 @@ void main() {
     );
     final transparentInset = searchIcon.height / 8;
     expect(searchIcon.top + transparentInset, closeTo(topBar.top + 20, 0.1));
-    expect(searchIcon.bottom - transparentInset, closeTo(topBar.bottom - 10, 0.1));
+    expect(
+      searchIcon.bottom - transparentInset,
+      closeTo(topBar.bottom - 10, 0.1),
+    );
     expect(filterIconBounds.center.dy, closeTo(searchIcon.center.dy, 1));
 
     expect(
@@ -154,9 +161,16 @@ void main() {
       find.byKey(const Key('discovery_grid_padding')),
     );
     expect(gridPadding.padding, EdgeInsets.zero);
-    expect(tester.getRect(find.byKey(const Key('maker_artwork_discovery_grid'))).left, 0);
     expect(
-      tester.getSize(find.byKey(const Key('maker_artwork_discovery_grid'))).width,
+      tester
+          .getRect(find.byKey(const Key('maker_artwork_discovery_grid')))
+          .left,
+      0,
+    );
+    expect(
+      tester
+          .getSize(find.byKey(const Key('maker_artwork_discovery_grid')))
+          .width,
       430,
     );
     expect(repository.requestedPages, <int>[1]);

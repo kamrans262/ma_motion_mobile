@@ -503,12 +503,17 @@ void main() {
       const Size(132, 132),
     );
     final uploadBox = tester.widget<Container>(
-      find.descendant(
-        of: find.byKey(const Key('maker_salon_image_picker')),
-        matching: find.byType(Container),
-      ).first,
+      find
+          .descendant(
+            of: find.byKey(const Key('maker_salon_image_picker')),
+            matching: find.byType(Container),
+          )
+          .first,
     );
-    expect((uploadBox.decoration! as BoxDecoration).color, AppColors.splashBackground);
+    expect(
+      (uploadBox.decoration! as BoxDecoration).color,
+      AppColors.splashBackground,
+    );
     expect(tester.takeException(), isNull);
   });
 

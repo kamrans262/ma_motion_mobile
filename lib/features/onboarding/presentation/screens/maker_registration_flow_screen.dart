@@ -85,18 +85,20 @@ class _MakerRegistrationFlowScreenState
     return '';
   }
 
-  static Set<String> _selectedNames(
-    Object? data,
-    List<String> available,
-  ) {
+  static Set<String> _selectedNames(Object? data, List<String> available) {
     if (data is! List) return const <String>{};
-    final labels = data.whereType<Map>().map(
-      (item) => item['name']?.toString().trim().toLowerCase() ?? '',
-    ).toSet();
-    return available.where(
-      (candidate) => labels.contains(candidate.toLowerCase()) ||
-          (candidate == 'Graphic Designer' && labels.contains('graphic design')),
-    ).toSet();
+    final labels = data
+        .whereType<Map>()
+        .map((item) => item['name']?.toString().trim().toLowerCase() ?? '')
+        .toSet();
+    return available
+        .where(
+          (candidate) =>
+              labels.contains(candidate.toLowerCase()) ||
+              (candidate == 'Graphic Designer' &&
+                  labels.contains('graphic design')),
+        )
+        .toSet();
   }
 
   Future<void> _prefillFromAccount() async {
@@ -838,12 +840,11 @@ class _SalonImagePicker extends StatelessWidget {
                   existingImageUrl!,
                   key: const Key('maker_salon_image_preview'),
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(
-                        Icons.image_not_supported_outlined,
-                        color: AppColors.primary,
-                        size: 36,
-                      ),
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.image_not_supported_outlined,
+                    color: AppColors.primary,
+                    size: 36,
+                  ),
                 ),
         ),
       ),

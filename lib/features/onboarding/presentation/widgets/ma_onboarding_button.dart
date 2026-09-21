@@ -40,31 +40,32 @@ class MaOnboardingButton extends StatelessWidget {
             )
           : OutlinedButton(
               onPressed: onPressed,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: subdued
-                    ? AppColors.primary.withValues(alpha: 0.55)
-                    : AppColors.primary,
-                backgroundColor: AppColors.splashBackground,
-                side: BorderSide(
-                  color: subdued
-                      ? AppColors.primary.withValues(alpha: 0.55)
-                      : AppColors.primary,
-                  width: 1.2,
-                ),
-                shape: const RoundedRectangleBorder(),
-                padding: EdgeInsets.zero,
-              ).copyWith(
-                backgroundColor: AppButtonStyles.purpleWhenPressed(
-                  AppColors.splashBackground,
-                ),
-                foregroundColor: WidgetStateProperty.resolveWith<Color>(
-                  (states) => states.contains(WidgetState.pressed)
-                      ? AppColors.white
-                      : subdued
-                      ? AppColors.primary.withValues(alpha: 0.55)
-                      : AppColors.primary,
-                ),
-              ),
+              style:
+                  OutlinedButton.styleFrom(
+                    foregroundColor: subdued
+                        ? AppColors.primary.withValues(alpha: 0.55)
+                        : AppColors.primary,
+                    backgroundColor: AppColors.splashBackground,
+                    side: BorderSide(
+                      color: subdued
+                          ? AppColors.primary.withValues(alpha: 0.55)
+                          : AppColors.primary,
+                      width: 1.2,
+                    ),
+                    shape: const RoundedRectangleBorder(),
+                    padding: EdgeInsets.zero,
+                  ).copyWith(
+                    backgroundColor: AppButtonStyles.purpleWhenPressed(
+                      AppColors.splashBackground,
+                    ),
+                    foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                      (states) => states.contains(WidgetState.pressed)
+                          ? AppColors.white
+                          : subdued
+                          ? AppColors.primary.withValues(alpha: 0.55)
+                          : AppColors.primary,
+                    ),
+                  ),
               child: Text(
                 label,
                 style: const TextStyle(

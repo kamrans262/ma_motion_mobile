@@ -73,7 +73,9 @@ class _AppreciatorRegistrationFlowScreenState
 
   Future<void> _prefillFromAccount() async {
     try {
-      final user = await ref.read(onboardingPrefillRepositoryProvider).account();
+      final user = await ref
+          .read(onboardingPrefillRepositoryProvider)
+          .account();
       if (!mounted || user == null) return;
 
       final draft = ref.read(appreciatorRegistrationProvider);

@@ -58,9 +58,7 @@ void main() {
       const Color(0xFF020202),
     );
     expect(
-      save.style?.backgroundColor?.resolve(<WidgetState>{
-        WidgetState.pressed,
-      }),
+      save.style?.backgroundColor?.resolve(<WidgetState>{WidgetState.pressed}),
       AppColors.primary,
     );
     expect(save.style?.side?.resolve(<WidgetState>{})?.width, 1);
@@ -79,7 +77,10 @@ void main() {
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
-      expect(tester.widget<Text>(find.text(choice.$2)).style?.color, AppColors.white);
+      expect(
+        tester.widget<Text>(find.text(choice.$2)).style?.color,
+        AppColors.white,
+      );
       expect(
         textCenter.dy,
         closeTo(center.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
@@ -291,11 +292,7 @@ void main() {
 
     final list = find.byKey(const Key('maker_settings_scroll'));
     final mediaBox = find.byKey(const Key('maker_settings_carousel_pick_2'));
-    await _scrollIntoSafeTapRegion(
-      tester,
-      target: mediaBox,
-      scrollView: list,
-    );
+    await _scrollIntoSafeTapRegion(tester, target: mediaBox, scrollView: list);
 
     final remove = find.byKey(const Key('maker_settings_carousel_remove_2'));
     expect(remove, findsOneWidget);

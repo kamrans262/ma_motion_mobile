@@ -51,7 +51,9 @@ void main() {
       );
       expect(close.iconSize, 24);
       expect(
-        close.style?.backgroundColor?.resolve(<WidgetState>{WidgetState.pressed}),
+        close.style?.backgroundColor?.resolve(<WidgetState>{
+          WidgetState.pressed,
+        }),
         Colors.transparent,
       );
       expect(
@@ -59,7 +61,9 @@ void main() {
         Colors.transparent,
       );
       expect(
-        close.style?.foregroundColor?.resolve(<WidgetState>{WidgetState.pressed}),
+        close.style?.foregroundColor?.resolve(<WidgetState>{
+          WidgetState.pressed,
+        }),
         const Color(0xFFF0F0F0),
       );
 
@@ -108,9 +112,11 @@ void main() {
 
       expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
       expect(
-        tester.widget<IconButton>(
-          find.byKey(const Key('artwork_viewer_close_button')),
-        ).iconSize,
+        tester
+            .widget<IconButton>(
+              find.byKey(const Key('artwork_viewer_close_button')),
+            )
+            .iconSize,
         24,
       );
 

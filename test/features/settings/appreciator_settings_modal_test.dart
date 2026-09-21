@@ -52,16 +52,14 @@ void main() {
       const Color(0xFF020202),
     );
     expect(
-      save.style?.backgroundColor?.resolve(<WidgetState>{
-        WidgetState.pressed,
-      }),
+      save.style?.backgroundColor?.resolve(<WidgetState>{WidgetState.pressed}),
       AppColors.primary,
     );
     expect(save.style?.side?.resolve(<WidgetState>{})?.width, 1);
     expect(
-      tester.getSize(
-        find.byKey(const Key('appreciator_settings_save_close')),
-      ).height,
+      tester
+          .getSize(find.byKey(const Key('appreciator_settings_save_close')))
+          .height,
       48,
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);

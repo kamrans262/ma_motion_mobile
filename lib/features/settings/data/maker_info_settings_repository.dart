@@ -332,17 +332,25 @@ class MakerInfoSettingsRepository
   }) {
     final image = _detectArtworkImage(bytes);
     final extension = fileName.split('.').last.trim().toLowerCase();
-    final video = image == null && bytes.length >= 12 &&
-        ((bytes[4] == 0x66 && bytes[5] == 0x74 &&
-              bytes[6] == 0x79 && bytes[7] == 0x70 &&
-              <String>['mp4', 'mov', 'm4v'].contains(extension)) ||
-            (bytes.length >= 4 && bytes[0] == 0x1A &&
-              bytes[1] == 0x45 && bytes[2] == 0xDF &&
-              bytes[3] == 0xA3 && extension == 'webm'));
+    final video =
+        image == null &&
+        bytes.length >= 12 &&
+        ((bytes[4] == 0x66 &&
+                bytes[5] == 0x74 &&
+                bytes[6] == 0x79 &&
+                bytes[7] == 0x70 &&
+                <String>['mp4', 'mov', 'm4v'].contains(extension)) ||
+            (bytes.length >= 4 &&
+                bytes[0] == 0x1A &&
+                bytes[1] == 0x45 &&
+                bytes[2] == 0xDF &&
+                bytes[3] == 0xA3 &&
+                extension == 'webm'));
 
     if (image == null && !video) {
       throw const ApiException(
-        message: 'Artwork media must be JPG, PNG, WebP, MP4, MOV, M4V, or WebM.',
+        message:
+            'Artwork media must be JPG, PNG, WebP, MP4, MOV, M4V, or WebM.',
         code: 'unsupported_artwork_image',
       );
     }
@@ -360,7 +368,9 @@ class MakerInfoSettingsRepository
     for (final entry in metadata.entries) {
       final value = entry.value;
       if (value != null) {
-        formData.fields.add(MapEntry<String, String>(entry.key, value.toString()));
+        formData.fields.add(
+          MapEntry<String, String>(entry.key, value.toString()),
+        );
       }
     }
 

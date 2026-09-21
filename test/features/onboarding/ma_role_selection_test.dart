@@ -7,78 +7,81 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 
 void main() {
-  test('Role Selection dots move in one direction then return on the same line', () {
-    expect(MaDotGridMetrics.columns, 18);
-    expect(MaDotGridMetrics.rows, 36);
-    expect(MaDotGridMetrics.dotRadius, 0.8);
+  test(
+    'Role Selection dots move in one direction then return on the same line',
+    () {
+      expect(MaDotGridMetrics.columns, 18);
+      expect(MaDotGridMetrics.rows, 36);
+      expect(MaDotGridMetrics.dotRadius, 0.8);
 
-    for (final seconds in <double>[0, 6, 7]) {
+      for (final seconds in <double>[0, 6, 7]) {
+        expect(
+          MaRoleSelectionDotMotion.displacement(
+            row: 0,
+            column: 0,
+            animationSeconds: seconds,
+          ),
+          Offset.zero,
+        );
+        expect(
+          MaRoleSelectionDotMotion.displacement(
+            row: 20,
+            column: 10,
+            animationSeconds: seconds,
+          ),
+          Offset.zero,
+        );
+      }
+
+      for (final dot in <(int, int)>[(0, 0), (0, 1), (1, 0), (20, 10)]) {
+        final outgoing = MaRoleSelectionDotMotion.displacement(
+          row: dot.$1,
+          column: dot.$2,
+          animationSeconds: 1.5,
+        );
+        final farthest = MaRoleSelectionDotMotion.displacement(
+          row: dot.$1,
+          column: dot.$2,
+          animationSeconds: 3,
+        );
+        final returning = MaRoleSelectionDotMotion.displacement(
+          row: dot.$1,
+          column: dot.$2,
+          animationSeconds: 4.5,
+        );
+
+        expect(farthest.distance, greaterThan(3));
+        expect(outgoing.distance, lessThan(farthest.distance));
+        expect(returning.distance, lessThan(farthest.distance));
+
+        // All positions are positive scalings of one vector: no sideways turn
+        // or second outward direction occurs before the return.
+        for (final position in <Offset>[outgoing, returning]) {
+          final crossProduct =
+              farthest.dx * position.dy - farthest.dy * position.dx;
+          final dotProduct =
+              farthest.dx * position.dx + farthest.dy * position.dy;
+          expect(crossProduct.abs(), lessThan(0.000001));
+          expect(dotProduct, greaterThan(0));
+        }
+      }
+
       expect(
         MaRoleSelectionDotMotion.displacement(
           row: 0,
           column: 0,
-          animationSeconds: seconds,
-        ),
-        Offset.zero,
-      );
-      expect(
-        MaRoleSelectionDotMotion.displacement(
-          row: 20,
-          column: 10,
-          animationSeconds: seconds,
-        ),
-        Offset.zero,
-      );
-    }
-
-    for (final dot in <(int, int)>[(0, 0), (0, 1), (1, 0), (20, 10)]) {
-      final outgoing = MaRoleSelectionDotMotion.displacement(
-        row: dot.$1,
-        column: dot.$2,
-        animationSeconds: 1.5,
-      );
-      final farthest = MaRoleSelectionDotMotion.displacement(
-        row: dot.$1,
-        column: dot.$2,
-        animationSeconds: 3,
-      );
-      final returning = MaRoleSelectionDotMotion.displacement(
-        row: dot.$1,
-        column: dot.$2,
-        animationSeconds: 4.5,
-      );
-
-      expect(farthest.distance, greaterThan(3));
-      expect(outgoing.distance, lessThan(farthest.distance));
-      expect(returning.distance, lessThan(farthest.distance));
-
-      // All positions are positive scalings of one vector: no sideways turn
-      // or second outward direction occurs before the return.
-      for (final position in <Offset>[outgoing, returning]) {
-        final crossProduct =
-            farthest.dx * position.dy - farthest.dy * position.dx;
-        final dotProduct =
-            farthest.dx * position.dx + farthest.dy * position.dy;
-        expect(crossProduct.abs(), lessThan(0.000001));
-        expect(dotProduct, greaterThan(0));
-      }
-    }
-
-    expect(
-      MaRoleSelectionDotMotion.displacement(
-        row: 0,
-        column: 0,
-        animationSeconds: 3,
-      ),
-      isNot(
-        MaRoleSelectionDotMotion.displacement(
-          row: 0,
-          column: 1,
           animationSeconds: 3,
         ),
-      ),
-    );
-  });
+        isNot(
+          MaRoleSelectionDotMotion.displacement(
+            row: 0,
+            column: 1,
+            animationSeconds: 3,
+          ),
+        ),
+      );
+    },
+  );
 
   testWidgets(
     'Role Selection waits 1s, moves straight out and back by 7s without moving UI',
@@ -97,9 +100,7 @@ void main() {
         'Would you like to\njoin as a Maker or\nAppreciator?',
       );
       final maker = find.byKey(const Key('select_maker_button'));
-      final appreciator = find.byKey(
-        const Key('select_appreciator_button'),
-      );
+      final appreciator = find.byKey(const Key('select_appreciator_button'));
 
       expect(dots, findsOneWidget);
       expect(find.byType(MaDottedBackground), findsNothing);

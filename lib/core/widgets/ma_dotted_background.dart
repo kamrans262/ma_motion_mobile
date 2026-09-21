@@ -72,12 +72,7 @@ class _MaDotGridPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    MaDotGridMetrics.paintDots(
-      canvas,
-      size,
-      paint,
-      MaDotGridMetrics.dotRadius,
-    );
+    MaDotGridMetrics.paintDots(canvas, size, paint, MaDotGridMetrics.dotRadius);
   }
 
   @override

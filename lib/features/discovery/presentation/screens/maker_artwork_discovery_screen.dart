@@ -458,10 +458,7 @@ class _ToolbarSvgButton extends StatelessWidget {
               // the same vertical center. Only the SVG artwork needs
               // compensation for its transparent viewBox margins.
               padding: materialIcon == null
-                  ? EdgeInsets.only(
-                      top: 20 - size / 8,
-                      bottom: 4 - size / 8,
-                    )
+                  ? EdgeInsets.only(top: 20 - size / 8, bottom: 4 - size / 8)
                   : EdgeInsets.zero,
               child: Align(
                 alignment: alignment,

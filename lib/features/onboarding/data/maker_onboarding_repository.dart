@@ -1,4 +1,4 @@
-﻿import 'dart:typed_data';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,8 +98,7 @@ class MakerOnboardingRepository {
         ApiPaths.makerProfile,
         data: <String, dynamic>{
           'name': draft.name.trim(),
-          if (draft.aboutWork.trim().isNotEmpty)
-            'bio': draft.aboutWork.trim(),
+          if (draft.aboutWork.trim().isNotEmpty) 'bio': draft.aboutWork.trim(),
           'location_text': draft.location.trim(),
           if (locationId != null) 'location_id': locationId,
           if (draft.website.trim().isNotEmpty)

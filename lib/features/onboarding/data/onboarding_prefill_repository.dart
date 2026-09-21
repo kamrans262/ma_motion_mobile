@@ -7,12 +7,13 @@ import '../../../core/providers/core_providers.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../auth/domain/current_user.dart';
 
-final onboardingPrefillRepositoryProvider = Provider<OnboardingPrefillRepository>(
-  (ref) => OnboardingPrefillRepository(
-    auth: ref.watch(authRepositoryProvider),
-    api: ref.watch(apiGatewayProvider),
-  ),
-);
+final onboardingPrefillRepositoryProvider =
+    Provider<OnboardingPrefillRepository>(
+      (ref) => OnboardingPrefillRepository(
+        auth: ref.watch(authRepositoryProvider),
+        api: ref.watch(apiGatewayProvider),
+      ),
+    );
 
 /// Loads only the signed-in user's persisted profile data. Never creates an
 /// account or switches experiences when prefilling an onboarding screen.

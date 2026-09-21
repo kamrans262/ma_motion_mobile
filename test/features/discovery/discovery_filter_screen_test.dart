@@ -337,13 +337,18 @@ void main() {
       );
       final border = (borderBox.decoration! as BoxDecoration).border! as Border;
       expect(border.top.color, AppColors.white);
-      expect(tester.widget<Text>(find.text(choice.$2)).style?.color, AppColors.black);
+      expect(
+        tester.widget<Text>(find.text(choice.$2)).style?.color,
+        AppColors.black,
+      );
     }
     final slider = tester.widget<SliderTheme>(
-      find.ancestor(
-        of: find.byKey(const Key('filter_radius_slider')),
-        matching: find.byType(SliderTheme),
-      ).first,
+      find
+          .ancestor(
+            of: find.byKey(const Key('filter_radius_slider')),
+            matching: find.byType(SliderTheme),
+          )
+          .first,
     );
     expect(slider.data.thumbColor, AppColors.white);
 

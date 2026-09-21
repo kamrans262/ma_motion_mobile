@@ -29,6 +29,7 @@ class MakerRegistrationDraft {
 
   /// Native image path retained for later multipart-upload optimization.
   final String? imagePath;
+
   /// A previously uploaded image can be reused when finishing onboarding.
   final String? existingImageUrl;
 
