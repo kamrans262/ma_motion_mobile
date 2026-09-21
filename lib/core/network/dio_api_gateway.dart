@@ -144,6 +144,10 @@ class DioApiGateway implements ApiGateway {
         options: Options(
           method: method,
           extra: <String, Object>{'requiresAuth': requiresAuth},
+          // Short videos may take longer than ordinary JSON requests on
+          // mobile networks; keep the existing timeouts for non-media calls.
+          sendTimeout: data is FormData ? const Duration(minutes: 2) : null,
+          receiveTimeout: data is FormData ? const Duration(minutes: 2) : null,
         ),
       );
 
