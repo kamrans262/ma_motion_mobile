@@ -76,17 +76,43 @@ void main() {
     final item = await repository.saveCarouselSlot(
       slot: 1,
       caption: 'Salon view',
-      bytes: Uint8List.fromList(<int>[1, 2, 3]),
+      bytes: Uint8List.fromList(<int>[0xFF, 0xD8, 0xFF, 0x00]),
       fileName: 'salon.jpg',
     );
 
     expect(api.lastPostPath, '${ApiPaths.makerProfile}/carousel/1');
     expect(api.lastPostData, isA<FormData>());
+    final salonMedia = (api.lastPostData! as FormData).files.single;
+    expect(salonMedia.key, 'media');
+    expect(salonMedia.value.contentType.toString(), 'image/jpeg');
     expect(item.slot, 1);
     expect(item.caption, 'Salon view');
 
     await repository.deleteCarouselSlot(1);
     expect(api.lastDeletePath, '${ApiPaths.makerProfile}/carousel/1');
+  });
+
+  test('uploads Content 1 video with an explicit video MIME type', () async {
+    final api = _FakeApiGateway();
+    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
+    final mp4 = Uint8List.fromList(
+      <int>[0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d],
+    );
+
+    await repository.saveCarouselSlot(
+      slot: 1,
+      caption: 'Salon video',
+      bytes: mp4,
+      fileName: 'salon.mp4',
+    );
+
+    final uploaded = (api.lastPostData! as FormData).files.single;
+    expect(uploaded.key, 'media');
+    expect(uploaded.value.contentType.toString(), 'video/mp4');
+
+    await repository.deleteProfileImage();
+    expect(api.lastDeletePath, ApiPaths.profileImage);
   });
 
   test('creates a real artwork and assigns it to Content 2', () async {
