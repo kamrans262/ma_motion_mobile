@@ -38,7 +38,7 @@ void main() {
     );
     expect(
       tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
-      const Size(24, 24),
+      const Size(22, 22),
     );
     final filterIcon = tester.widget<MaSvgAsset>(
       find.descendant(
@@ -98,23 +98,24 @@ void main() {
     expect(topIcon.height, bottomIcon.height);
     expect(
       tester.getRect(find.byKey(const Key('discovery_filter_svg'))).height,
-      bottomIcon.height,
+      22,
     );
 
-    // Search and Filter SVGs draw from y=3 to y=21 inside their 24px
-    // canvas. Verify the visible glyph bounds, not just the outer SVG box.
+    // Keep the original search-icon positioning while sizing only the
+    // filter icon to 22px. The filter must remain vertically aligned.
     final topBar = tester.getRect(
       find.byKey(const Key('discovery_top_bar_visibility')),
     );
-    for (final iconKey in <Key>[
-      const Key('discovery_search_svg'),
-      const Key('discovery_filter_svg'),
-    ]) {
-      final icon = tester.getRect(find.byKey(iconKey));
-      final transparentInset = icon.height / 8;
-      expect(icon.top + transparentInset, closeTo(topBar.top + 20, 0.1));
-      expect(icon.bottom - transparentInset, closeTo(topBar.bottom - 10, 0.1));
-    }
+    final searchIcon = tester.getRect(
+      find.byKey(const Key('discovery_search_svg')),
+    );
+    final filterIconBounds = tester.getRect(
+      find.byKey(const Key('discovery_filter_svg')),
+    );
+    final transparentInset = searchIcon.height / 8;
+    expect(searchIcon.top + transparentInset, closeTo(topBar.top + 20, 0.1));
+    expect(searchIcon.bottom - transparentInset, closeTo(topBar.bottom - 10, 0.1));
+    expect(filterIconBounds.center.dy, closeTo(searchIcon.center.dy, 1));
 
     expect(
       tester
