@@ -1220,39 +1220,82 @@ class _CarouselEditor extends StatelessWidget {
           ),
         ],
         const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              key: Key('maker_settings_carousel_pick_$slot'),
-              onTap: onChoose,
-              overlayColor: AppButtonStyles.purpleInkOverlay,
-              child: Container(
-                width: 98,
-                height: 98,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.primary50),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: _CarouselPreview(
-                  pending: pending,
-                  existing: existing,
-                  fallbackImageUrl: fallbackImageUrl,
+        SizedBox.square(
+          dimension: 98,
+          child: Stack(
+            children: [
+              InkWell(
+                key: Key('maker_settings_carousel_pick_$slot'),
+                onTap: isUploading ? null : onChoose,
+                overlayColor: AppButtonStyles.purpleInkOverlay,
+                child: Container(
+                  width: 98,
+                  height: 98,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.primary50),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: _CarouselPreview(
+                    pending: pending,
+                    existing: existing,
+                    fallbackImageUrl: fallbackImageUrl,
+                  ),
                 ),
               ),
-            ),
-            if (hasRemovableMedia) ...[
-              const SizedBox(width: 10),
-              IconButton(
-                key: Key('maker_settings_carousel_remove_$slot'),
-                onPressed: onRemove,
-                tooltip: 'Remove content $slot',
-                color: AppColors.mutedText,
-                icon: const Icon(Icons.delete_outline_rounded),
-              ),
+              if (hasRemovableMedia && !isUploading)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: SizedBox.square(
+                    dimension: 40,
+                    child: IconButton(
+                      key: Key('maker_settings_carousel_remove_$slot'),
+                      onPressed: onRemove,
+                      tooltip: 'Remove content $slot',
+                      padding: EdgeInsets.zero,
+                      iconSize: 16,
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll<Color>(
+                          AppColors.artworkBackground,
+                        ),
+                        overlayColor: WidgetStatePropertyAll<Color>(
+                          Colors.transparent,
+                        ),
+                      ),
+                      color: AppColors.primary,
+                      icon: const Icon(Icons.delete_outline_rounded, size: 16),
+                    ),
+                  ),
+                ),
+              if (isUploading)
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: Color(0x99020101),
+                    child: Center(
+                      child: SizedBox.square(
+                        dimension: 24,
+                        child: CircularProgressIndicator(
+                          key: Key('maker_settings_carousel_upload_$slot'),
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
-          ],
+          ),
         ),
+        if (errorMessage != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            errorMessage!,
+            key: Key('maker_settings_carousel_error_$slot'),
+            style: AppTextStyles.onboardingError.copyWith(
+              color: AppColors.white,
+            ),
+          ),
+        ],
         const SizedBox(height: 10),
         if (isArtwork && titleController != null) ...[
           Text(
