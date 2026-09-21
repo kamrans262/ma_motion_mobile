@@ -683,9 +683,14 @@ class _MakerInfoSettingsScreenState
                       });
                     },
             ),
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: Colors.white.withValues(alpha: 0.4),
+            ),
             const SizedBox(height: 24),
             Text(
-              'Maker Info Content',
+              'Carousel Images',
               style: AppTextStyles.onboardingHelper.copyWith(
                 color: AppColors.primary,
                 fontSize: 17,
@@ -1147,7 +1152,7 @@ class _CarouselEditor extends StatelessWidget {
           'Image or video (5 seconds or less)',
           style: AppTextStyles.onboardingHelper.copyWith(
             fontSize: 14,
-            color: AppColors.mutedText,
+            color: Colors.white.withValues(alpha: 0.4),
           ),
         ),
         if (isArtwork && moderationStatus != null) ...[
