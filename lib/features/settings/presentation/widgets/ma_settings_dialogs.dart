@@ -169,7 +169,10 @@ class _DeleteAccountConfirmationState
         key: const Key('ma_delete_account_dialog'),
         backgroundColor: AppColors.artworkBackground,
         insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: AppColors.primary, width: 1),
+        ),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 360),
           child: SingleChildScrollView(
