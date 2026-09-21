@@ -321,7 +321,7 @@ class _MakerArtworkDiscoveryScreenState
                                     assetName: 'assets/ma_filter.svg',
                                     fallbackAssetName: 'assets/filter.svg',
                                     tooltip: 'Filter artwork',
-                                    size: metrics.toolbarIconSize,
+                                    size: 22,
                                     barHeight: metrics.toolbarHeight,
                                     alignment: Alignment.center,
                                     onPressed: widget.onFilterTap ?? () {},
