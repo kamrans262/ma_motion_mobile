@@ -73,6 +73,8 @@ class _MakerInfoSettingsScreenState
   bool _showShows = true;
   bool _loading = true;
   bool _saving = false;
+  int? _activeUploadSlot;
+  int? _failedUploadSlot;
   String? _errorMessage;
 
   @override
@@ -180,6 +182,7 @@ class _MakerInfoSettingsScreenState
 
     setState(() {
       _saving = true;
+      _failedUploadSlot = null;
       _errorMessage = null;
     });
 
@@ -221,6 +224,9 @@ class _MakerInfoSettingsScreenState
             ? _managedLocationId
             : null;
 
+        if (pending != null) {
+          setState(() => _activeUploadSlot = slot);
+        }
         await repository.saveArtworkSlot(
           slot: slot,
           existingArtwork: existing,
@@ -235,6 +241,9 @@ class _MakerInfoSettingsScreenState
           bytes: pending?.bytes,
           fileName: pending?.name,
         );
+        if (pending != null) {
+          setState(() => _activeUploadSlot = null);
+        }
       }
 
       activeArtworkSlot = null;
@@ -311,7 +320,13 @@ class _MakerInfoSettingsScreenState
       );
 
       if (_deletedSlots.contains(1)) {
-        await repository.deleteCarouselSlot(1);
+        activeArtworkSlot = 1;
+        if (_existingItem(_data, 1) != null) {
+          await repository.deleteCarouselSlot(1);
+        } else if (_data?.profileImageUrl?.isNotEmpty == true) {
+          await repository.deleteProfileImage();
+        }
+        activeArtworkSlot = null;
       } else {
         final pending = _pendingMedia[1];
         final existing = _existingItem(_data, 1);
@@ -319,12 +334,34 @@ class _MakerInfoSettingsScreenState
         final captionChanged = caption != (existing?.caption ?? '');
 
         if (pending != null || (existing != null && captionChanged)) {
+          activeArtworkSlot = 1;
+          if (pending != null) {
+            setState(() => _activeUploadSlot = 1);
+          }
           await repository.saveCarouselSlot(
             slot: 1,
             caption: caption,
             bytes: pending?.bytes,
             fileName: pending?.name,
           );
+          if (pending != null) {
+            final confirmed = await repository.load();
+            final saved = _existingItem(confirmed, 1);
+            if (saved == null || saved.url?.isNotEmpty != true ||
+                saved.isVideo != (pending.kind == 'video')) {
+              throw const ApiException(
+                message: 'Content 1 upload could not be confirmed. Please try again.',
+                code: 'maker_info_content_unconfirmed',
+              );
+            }
+            if (!mounted) return;
+            setState(() {
+              _data = confirmed;
+              _pendingMedia.remove(1);
+              _activeUploadSlot = null;
+            });
+          }
+          activeArtworkSlot = null;
         }
       }
 
@@ -333,6 +370,7 @@ class _MakerInfoSettingsScreenState
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() {
+        _failedUploadSlot = activeArtworkSlot;
         _errorMessage = activeArtworkSlot == null
             ? error.message
             : 'Content $activeArtworkSlot: ${error.message}';
@@ -340,6 +378,7 @@ class _MakerInfoSettingsScreenState
     } catch (_) {
       if (!mounted) return;
       setState(() {
+        _failedUploadSlot = activeArtworkSlot;
         _errorMessage = activeArtworkSlot == null
             ? 'We could not save your Maker settings. Please try again.'
             : 'We could not save Content $activeArtworkSlot. Please try again.';
@@ -348,6 +387,7 @@ class _MakerInfoSettingsScreenState
       if (mounted) {
         setState(() {
           _saving = false;
+          _activeUploadSlot = null;
         });
       }
     }
@@ -453,6 +493,7 @@ class _MakerInfoSettingsScreenState
         slot: slot,
         bytes: bytes,
         name: file!.name,
+        localPath: file.path,
         kind: choice == _MediaChoice.video ? 'video' : 'image',
         caption: _captionControllers[slot]!.text,
       );
@@ -467,7 +508,9 @@ class _MakerInfoSettingsScreenState
   }
 
   void _removeSlot(int slot) {
+    if (_saving) return;
     setState(() {
+      _failedUploadSlot = null;
       _pendingMedia.remove(slot);
       _deletedSlots.add(slot);
       _captionControllers[slot]!.clear();
@@ -707,8 +750,12 @@ class _MakerInfoSettingsScreenState
                 existing: _deletedSlots.contains(slot)
                     ? null
                     : _displayItem(data, slot),
-                fallbackImageUrl: slot == 1 ? data.profileImageUrl : null,
+                fallbackImageUrl: slot == 1 && !_deletedSlots.contains(1)
+                    ? data.profileImageUrl
+                    : null,
                 pending: _pendingMedia[slot],
+                isUploading: _activeUploadSlot == slot,
+                errorMessage: _failedUploadSlot == slot ? _errorMessage : null,
                 titleController: _artworkTitleControllers[slot],
                 captionController: _captionControllers[slot]!,
                 isArtwork: slot >= 2,
@@ -1115,6 +1162,8 @@ class _CarouselEditor extends StatelessWidget {
     required this.existing,
     required this.fallbackImageUrl,
     required this.pending,
+    required this.isUploading,
+    required this.errorMessage,
     required this.titleController,
     required this.captionController,
     required this.isArtwork,
@@ -1128,6 +1177,8 @@ class _CarouselEditor extends StatelessWidget {
   final MakerCarouselItem? existing;
   final String? fallbackImageUrl;
   final PendingCarouselMedia? pending;
+  final bool isUploading;
+  final String? errorMessage;
   final TextEditingController? titleController;
   final TextEditingController captionController;
   final bool isArtwork;
@@ -1137,7 +1188,8 @@ class _CarouselEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasRemovableMedia = pending != null || existing != null;
+    final hasRemovableMedia = pending != null || existing != null ||
+        (slot == 1 && (fallbackImageUrl?.isNotEmpty ?? false));
 
     return Column(
       key: Key('maker_settings_carousel_$slot'),
