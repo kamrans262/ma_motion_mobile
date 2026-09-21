@@ -683,6 +683,7 @@ class _MakerInfoSettingsScreenState
                       });
                     },
             ),
+            const SizedBox(height: 24),
             Divider(
               height: 1,
               thickness: 1,
