@@ -1388,7 +1388,10 @@ class _CarouselPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     if (pending != null) {
       if (pending!.kind == 'video') {
-        return const _VideoPlaceholder();
+        return _CarouselVideoPreview(
+          key: ValueKey('pending-video-${pending!.localPath ?? pending!.name}'),
+          localPath: pending!.localPath,
+        );
       }
 
       return Image.memory(
@@ -1402,7 +1405,10 @@ class _CarouselPreview extends StatelessWidget {
 
     if (existing != null) {
       if (existing!.isVideo) {
-        return const _VideoPlaceholder();
+        return _CarouselVideoPreview(
+          key: ValueKey('saved-video-${existing!.url}'),
+          url: existing!.url,
+        );
       }
 
       final url = existing!.url ?? '';
@@ -1411,10 +1417,11 @@ class _CarouselPreview extends StatelessWidget {
           url,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return const _AddPlaceholder();
+            return const _UnavailableMediaPreview();
           },
         );
       }
+      return const _UnavailableMediaPreview();
     }
 
     final fallback = fallbackImageUrl ?? '';
@@ -1423,12 +1430,105 @@ class _CarouselPreview extends StatelessWidget {
         fallback,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
-          return const _AddPlaceholder();
+          return const _UnavailableMediaPreview();
         },
       );
     }
 
     return const _AddPlaceholder();
+  }
+}
+
+class _CarouselVideoPreview extends StatefulWidget {
+  const _CarouselVideoPreview({super.key, this.localPath, this.url});
+
+  final String? localPath;
+  final String? url;
+
+  @override
+  State<_CarouselVideoPreview> createState() => _CarouselVideoPreviewState();
+}
+
+class _CarouselVideoPreviewState extends State<_CarouselVideoPreview> {
+  VideoPlayerController? _controller;
+  bool _ready = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final localPath = widget.localPath;
+    final url = widget.url;
+    final uri = url == null ? null : Uri.tryParse(url);
+    if ((localPath == null || localPath.isEmpty) &&
+        (uri == null || !uri.hasScheme || !uri.hasAuthority)) {
+      return;
+    }
+
+    final controller = localPath != null && localPath.isNotEmpty
+        ? VideoPlayerController.file(File(localPath))
+        : VideoPlayerController.networkUrl(uri!);
+    _controller = controller;
+    try {
+      await controller.initialize();
+      if (!mounted || _controller != controller) return;
+      setState(() => _ready = true);
+    } catch (_) {
+      if (mounted && _controller == controller) {
+        setState(() => _ready = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = _controller;
+    final videoSize = controller?.value.size;
+    if (!_ready || controller == null || videoSize == null ||
+        videoSize.width <= 0 || videoSize.height <= 0) {
+      return const _VideoPlaceholder();
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        FittedBox(
+          fit: BoxFit.cover,
+          child: SizedBox(
+            width: videoSize.width,
+            height: videoSize.height,
+            child: VideoPlayer(controller),
+          ),
+        ),
+        const Center(
+          child: Icon(
+            Icons.play_circle_outline_rounded,
+            color: AppColors.primary,
+            size: 36,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _UnavailableMediaPreview extends StatelessWidget {
+  const _UnavailableMediaPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Icon(Icons.broken_image_outlined, color: AppColors.primary, size: 28),
+    );
   }
 }
 
