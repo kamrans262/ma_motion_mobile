@@ -270,6 +270,47 @@ void main() {
     },
   );
 
+  testWidgets('uploaded artwork has a purple 16px delete icon inside its box', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeSettingsRepository()..confirmedSlots.add(2);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(
+          home: MakerInfoSettingsScreen(
+            onClose: _noop,
+            onSwitchedToAppreciator: _noopDestination,
+          ),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final list = find.byKey(const Key('maker_settings_scroll'));
+    final mediaBox = find.byKey(const Key('maker_settings_carousel_pick_2'));
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: mediaBox,
+      scrollView: list,
+    );
+
+    final remove = find.byKey(const Key('maker_settings_carousel_remove_2'));
+    expect(remove, findsOneWidget);
+    final iconButton = tester.widget<IconButton>(remove);
+    expect(iconButton.iconSize, 16);
+    expect(iconButton.color, AppColors.primary);
+    final icon = iconButton.icon as Icon;
+    expect(icon.size, 16);
+    final boxRect = tester.getRect(mediaBox);
+    final removeRect = tester.getRect(remove);
+    expect(removeRect.top, boxRect.top);
+    expect(removeRect.right, boxRect.right);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'caption text alone does not create an empty carousel media slot',
     (WidgetTester tester) async {
