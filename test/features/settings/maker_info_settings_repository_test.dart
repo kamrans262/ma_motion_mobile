@@ -155,6 +155,35 @@ void main() {
     expect(api.lastDeletePath, '${ApiPaths.makerProfile}/artwork-slots/2');
   });
 
+  test('creates Content 4 video with multipart media and assigns its slot', () async {
+    final api = _FakeApiGateway();
+    final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
+    final repository = MakerInfoSettingsRepository(api: api, auth: auth);
+    final mp4 = Uint8List.fromList(
+      <int>[0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d],
+    );
+
+    await repository.saveArtworkSlot(
+      slot: 4,
+      existingArtwork: null,
+      title: 'Video artwork',
+      description: 'Five seconds',
+      typeId: 1,
+      styleId: 2,
+      locationId: 3,
+      locationText: 'Chicago, IL',
+      bytes: mp4,
+      fileName: 'short.mp4',
+    );
+
+    expect(api.lastPostPath, ApiPaths.myArtworks);
+    final upload = (api.lastPostData! as FormData).files.single;
+    expect(upload.key, 'media[]');
+    expect(upload.value.filename, 'short.mp4');
+    expect(upload.value.contentType.toString(), 'video/mp4');
+    expect(api.lastPutPath, '${ApiPaths.makerProfile}/artwork-slots/4');
+  });
+
   test('rejects unsupported artwork bytes before hitting the API', () async {
     final api = _FakeApiGateway();
     final auth = AuthRepository(api: api, tokenStore: _MemoryTokenStore());
