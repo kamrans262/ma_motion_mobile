@@ -718,6 +718,8 @@ class _MakerInfoSettingsScreenState
               key: const Key('maker_settings_switch_appreciator'),
               onPressed: _saving ? null : _switchToAppreciator,
               style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 foregroundColor: AppColors.mutedText,
@@ -738,6 +740,8 @@ class _MakerInfoSettingsScreenState
               key: const Key('maker_settings_delete_account'),
               onPressed: _saving ? null : _deleteAccount,
               style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 foregroundColor: AppColors.error,
