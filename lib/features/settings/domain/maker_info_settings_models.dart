@@ -234,6 +234,7 @@ class PendingCarouselMedia {
     required this.name,
     required this.kind,
     this.caption,
+    this.localPath,
   });
 
   final int slot;
@@ -241,6 +242,7 @@ class PendingCarouselMedia {
   final String name;
   final String kind;
   final String? caption;
+  final String? localPath;
 }
 
 Map<String, dynamic>? _mapOrNull(Object? value) {
