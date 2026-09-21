@@ -38,7 +38,7 @@ void main() {
     );
     expect(
       tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
-      const Size(22, 22),
+      const Size(20, 20),
     );
     final filterIcon = tester.widget<MaSvgAsset>(
       find.descendant(
@@ -98,11 +98,11 @@ void main() {
     expect(topIcon.height, bottomIcon.height);
     expect(
       tester.getRect(find.byKey(const Key('discovery_filter_svg'))).height,
-      22,
+      20,
     );
 
     // Keep the original search-icon positioning while sizing only the
-    // filter icon to 22px. The filter must remain vertically aligned.
+    // filter icon to 20px. The filter must remain vertically aligned.
     final topBar = tester.getRect(
       find.byKey(const Key('discovery_top_bar_visibility')),
     );
