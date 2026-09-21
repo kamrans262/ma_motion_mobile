@@ -100,7 +100,7 @@ class MakerOnboardingRepository {
           'name': draft.name.trim(),
           if (draft.aboutWork.trim().isNotEmpty) 'bio': draft.aboutWork.trim(),
           'location_text': draft.location.trim(),
-          if (locationId != null) 'location_id': locationId,
+          'location_id': ?locationId,
           if (draft.website.trim().isNotEmpty)
             'website_url': _normalizeWebsite(draft.website),
           'contact_email': draft.email.trim(),
