@@ -441,6 +441,11 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   }
 
   @override
+  Future<void> deleteProfileImage() async {
+    deleteCarouselCalls++;
+  }
+
+  @override
   Future<MakerInfoArtworkSlot> saveArtworkSlot({
     required int slot,
     required MakerSettingsArtwork? existingArtwork,
