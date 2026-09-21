@@ -423,6 +423,7 @@ class _AppreciatorSettingsModalState
               ),
             ),
           ),
+          const SizedBox(height: 11),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
