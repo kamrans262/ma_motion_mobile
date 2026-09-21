@@ -242,6 +242,7 @@ class _MakerInfoSettingsScreenState
           fileName: pending?.name,
         );
         if (pending != null) {
+          if (!mounted) return;
           setState(() => _activeUploadSlot = null);
         }
       }
@@ -252,6 +253,7 @@ class _MakerInfoSettingsScreenState
         final confirmed = await repository.load();
 
         for (final slot in touchedArtworkSlots) {
+          activeArtworkSlot = slot;
           final saved = _existingArtworkSlot(confirmed, slot);
 
           if (_deletedSlots.contains(slot)) {
@@ -264,7 +266,10 @@ class _MakerInfoSettingsScreenState
             continue;
           }
 
-          if (saved == null || saved.artwork.primaryImageUrl == null) {
+          final pending = _pendingMedia[slot];
+          if (saved == null || saved.artwork.primaryImageUrl == null ||
+              (pending != null && saved.artwork.primaryMedia?.isVideo !=
+                  (pending.kind == 'video'))) {
             throw ApiException(
               message: 'Content $slot save could not be confirmed.',
               code: 'maker_info_slot_save_unconfirmed',
@@ -272,6 +277,7 @@ class _MakerInfoSettingsScreenState
           }
         }
 
+        activeArtworkSlot = null;
         if (!mounted) return;
 
         setState(() {
@@ -323,9 +329,23 @@ class _MakerInfoSettingsScreenState
         activeArtworkSlot = 1;
         if (_existingItem(_data, 1) != null) {
           await repository.deleteCarouselSlot(1);
-        } else if (_data?.profileImageUrl?.isNotEmpty == true) {
+        }
+        if (_data?.profileImageUrl?.isNotEmpty == true) {
           await repository.deleteProfileImage();
         }
+        final confirmed = await repository.load();
+        if (_existingItem(confirmed, 1) != null ||
+            confirmed.profileImageUrl?.isNotEmpty == true) {
+          throw const ApiException(
+            message: 'Content 1 removal could not be confirmed. Please try again.',
+            code: 'maker_info_content_delete_unconfirmed',
+          );
+        }
+        if (!mounted) return;
+        setState(() {
+          _data = confirmed;
+          _deletedSlots.remove(1);
+        });
         activeArtworkSlot = null;
       } else {
         final pending = _pendingMedia[1];
@@ -371,9 +391,11 @@ class _MakerInfoSettingsScreenState
       if (!mounted) return;
       setState(() {
         _failedUploadSlot = activeArtworkSlot;
+        final fieldError = error.fieldErrors['media']?.firstOrNull ??
+            error.fieldErrors['media.0']?.firstOrNull;
         _errorMessage = activeArtworkSlot == null
             ? error.message
-            : 'Content $activeArtworkSlot: ${error.message}';
+            : 'Content $activeArtworkSlot: ${fieldError ?? error.message}';
       });
     } catch (_) {
       if (!mounted) return;
