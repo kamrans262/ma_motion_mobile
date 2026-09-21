@@ -409,7 +409,7 @@ class _AppreciatorSettingsModalState
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.mutedText,
                 padding: EdgeInsets.zero,
-                minimumSize: const Size(44, 36),
+                minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
@@ -432,7 +432,7 @@ class _AppreciatorSettingsModalState
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.error,
                 padding: EdgeInsets.zero,
-                minimumSize: const Size(44, 36),
+                minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
