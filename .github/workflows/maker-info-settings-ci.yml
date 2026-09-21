@@ -62,19 +62,6 @@ jobs:
           flutter test test/features/artwork_viewer/artwork_viewer_screen_test.dart
           flutter test test/features/settings/ma_settings_dialogs_test.dart
 
-      - name: One-time Dart formatting cleanup
-        shell: bash
-        run: |
-          set -euo pipefail
-          dart format lib test
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add lib test
-          if ! git diff --cached --quiet; then
-            git commit -m 'style: format Dart sources for stable CI'
-            git push origin HEAD:feature/maker-onboarding-ui-polish
-          fi
-
       - name: Verify formatting is stable
         run: dart format --output=none --set-exit-if-changed lib test
 
