@@ -49,7 +49,19 @@ void main() {
       final close = tester.widget<IconButton>(
         find.byKey(const Key('artwork_viewer_close_button')),
       );
-      expect(close.iconSize, 12);
+      expect(close.iconSize, 24);
+      expect(
+        close.style?.backgroundColor?.resolve(<WidgetState>{WidgetState.pressed}),
+        Colors.transparent,
+      );
+      expect(
+        close.style?.overlayColor?.resolve(<WidgetState>{WidgetState.pressed}),
+        Colors.transparent,
+      );
+      expect(
+        close.style?.foregroundColor?.resolve(<WidgetState>{WidgetState.pressed}),
+        const Color(0xFFF0F0F0),
+      );
 
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
