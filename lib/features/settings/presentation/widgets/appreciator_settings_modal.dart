@@ -407,6 +407,8 @@ class _AppreciatorSettingsModalState
               key: const Key('appreciator_settings_switch_to_maker'),
               onPressed: _busy ? null : _switchToMaker,
               style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
                 foregroundColor: AppColors.mutedText,
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(44, 20),
@@ -430,6 +432,8 @@ class _AppreciatorSettingsModalState
               key: const Key('appreciator_settings_delete_account'),
               onPressed: _busy ? null : _deleteAccount,
               style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
                 foregroundColor: AppColors.error,
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(44, 20),
