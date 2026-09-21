@@ -33,6 +33,8 @@ abstract interface class MakerInfoSettingsRepositoryContract {
 
   Future<void> deleteCarouselSlot(int slot);
 
+  Future<void> deleteProfileImage();
+
   Future<MakerInfoArtworkSlot> saveArtworkSlot({
     required int slot,
     required MakerSettingsArtwork? existingArtwork,
@@ -165,10 +167,15 @@ class MakerInfoSettingsRepository
     );
 
     if (bytes != null && bytes.isNotEmpty && fileName != null) {
+      final detected = _detectMedia(bytes, fileName);
       formData.files.add(
         MapEntry<String, MultipartFile>(
           'media',
-          MultipartFile.fromBytes(bytes, filename: fileName),
+          MultipartFile.fromBytes(
+            bytes,
+            filename: detected.fileName,
+            contentType: detected.contentType,
+          ),
         ),
       );
     }
@@ -193,6 +200,9 @@ class MakerInfoSettingsRepository
 
     await api.delete('${ApiPaths.makerProfile}/carousel/$slot');
   }
+
+  @override
+  Future<void> deleteProfileImage() => api.delete(ApiPaths.profileImage).then((_) {});
 
   @override
   Future<MakerInfoArtworkSlot> saveArtworkSlot({
@@ -304,6 +314,222 @@ class MakerInfoSettingsRepository
 
     return MakerInfoArtworkSlot.fromMap(
       ApiEnvelope(raw: assignmentResponse).dataMap,
+    );
+  }
+
+  static ({String fileName, DioMediaType contentType}) _detectMedia(
+    Uint8List bytes,
+    String fileName,
+  ) {
+    final image = _detectArtworkImage(bytes);
+    final extension = fileName.split('.').last.trim().toLowerCase();
+    final isMp4Family = bytes.length >= 12 &&
+        bytes[4] == 0x66 && bytes[5] == 0x74 &&
+        bytes[6] == 0x79 && bytes[7] == 0x70 &&
+        <String>['mp4', 'mov', 'm4v'].contains(extension);
+    final isWebm = bytes.length >= 4 &&
+        bytes[0] == 0x1A && bytes[1] == 0x45 &&
+        bytes[2] == 0xDF && bytes[3] == 0xA3 &&
+        extension == 'webm';
+    if (image == null && !isMp4Family && !isWebm) {
+      throw const ApiException(
+        message: 'Media must be JPG, PNG, WebP, MP4, MOV, M4V, or WebM.',
+        code: 'unsupported_media',
+      );
+    }
+    final isVideo = image == null;
+    if (bytes.lengthInBytes > (isVideo ? 25 : 10) * 1024 * 1024) {
+      throw ApiException(
+        message: isVideo
+            ? 'Video must be 25 MB or smaller.'
+            : 'Image must be 10 MB or smaller.',
+        code: 'media_too_large',
+      );
+    }
+    final subtype = extension == 'mov'
+        ? 'quicktime'
+        : extension == 'm4v'
+        ? 'x-m4v'
+        : extension == 'webm'
+        ? 'webm'
+        : 'mp4';
+    final contentType = image != null
+        ? DioMediaType('image', image.subtype)
+        : DioMediaType('video', subtype);
+    final base = fileName.trim().replaceFirst(RegExp(r'\.[^.]+
+    required Map<String, dynamic> metadata,
+    required Uint8List bytes,
+    required String fileName,
+  }) {
+    final image = _detectArtworkImage(bytes);
+    final extension = fileName.split('.').last.trim().toLowerCase();
+    final video = image == null && bytes.length >= 12 &&
+        ((bytes[4] == 0x66 && bytes[5] == 0x74 &&
+              bytes[6] == 0x79 && bytes[7] == 0x70 &&
+              <String>['mp4', 'mov', 'm4v'].contains(extension)) ||
+            (bytes.length >= 4 && bytes[0] == 0x1A &&
+              bytes[1] == 0x45 && bytes[2] == 0xDF &&
+              bytes[3] == 0xA3 && extension == 'webm'));
+
+    if (image == null && !video) {
+      throw const ApiException(
+        message: 'Artwork media must be JPG, PNG, WebP, MP4, MOV, M4V, or WebM.',
+        code: 'unsupported_artwork_image',
+      );
+    }
+
+    if (bytes.lengthInBytes > (video ? 25 : 10) * 1024 * 1024) {
+      throw ApiException(
+        message: video
+            ? 'Artwork video must be 25 MB or smaller.'
+            : 'Artwork image must be 10 MB or smaller.',
+        code: 'artwork_media_too_large',
+      );
+    }
+
+    final formData = FormData();
+    for (final entry in metadata.entries) {
+      final value = entry.value;
+      if (value != null) {
+        formData.fields.add(MapEntry<String, String>(entry.key, value.toString()));
+      }
+    }
+
+    final originalBase = fileName
+        .trim()
+        .replaceFirst(RegExp(r'\.[^.]+$'), '')
+        .replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '_');
+    final safeBase = originalBase.isEmpty ? 'artwork' : originalBase;
+    final resolvedExtension = image?.extension ?? extension;
+    final contentType = image != null
+        ? DioMediaType('image', image.subtype)
+        : extension == 'mov'
+        ? DioMediaType('video', 'quicktime')
+        : extension == 'm4v'
+        ? DioMediaType('video', 'x-m4v')
+        : DioMediaType('video', extension == 'webm' ? 'webm' : 'mp4');
+
+    formData.files.add(
+      MapEntry<String, MultipartFile>(
+        'media[]',
+        MultipartFile.fromBytes(
+          bytes,
+          filename: '$safeBase.$resolvedExtension',
+          contentType: contentType,
+        ),
+      ),
+    );
+
+    return formData;
+  }
+
+  static ({String extension, String subtype})? _detectArtworkImage(
+    Uint8List bytes,
+  ) {
+    if (bytes.length >= 3 &&
+        bytes[0] == 0xFF &&
+        bytes[1] == 0xD8 &&
+        bytes[2] == 0xFF) {
+      return (extension: 'jpg', subtype: 'jpeg');
+    }
+
+    if (bytes.length >= 8 &&
+        bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47 &&
+        bytes[4] == 0x0D &&
+        bytes[5] == 0x0A &&
+        bytes[6] == 0x1A &&
+        bytes[7] == 0x0A) {
+      return (extension: 'png', subtype: 'png');
+    }
+
+    if (bytes.length >= 12 &&
+        bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46 &&
+        bytes[8] == 0x57 &&
+        bytes[9] == 0x45 &&
+        bytes[10] == 0x42 &&
+        bytes[11] == 0x50) {
+      return (extension: 'webp', subtype: 'webp');
+    }
+
+    return null;
+  }
+
+  @override
+  Future<void> deleteArtworkSlot(int slot) async {
+    if (slot < 2 || slot > 4) {
+      throw ArgumentError.value(slot, 'slot', 'Artwork slots are Content 2-4.');
+    }
+
+    await api.delete('${ApiPaths.makerProfile}/artwork-slots/$slot');
+  }
+
+  @override
+  Future<void> logout() => auth.logout();
+
+  static Map<String, dynamic>? _mapOrNull(Object? value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+
+    if (value is Map) {
+      return Map<String, dynamic>.from(value);
+    }
+
+    return null;
+  }
+
+  static List<Map<String, dynamic>> _mapList(Object? value) {
+    if (value is! List) {
+      return const <Map<String, dynamic>>[];
+    }
+
+    return value
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList(growable: false);
+  }
+
+  static int? _asInt(Object? value) {
+    if (value is int) {
+      return value;
+    }
+
+    return int.tryParse(value?.toString() ?? '');
+  }
+
+  static bool _asBool(Object? value, {bool fallback = false}) {
+    if (value == null) {
+      return fallback;
+    }
+
+    if (value is bool) {
+      return value;
+    }
+
+    return value == 1 || value == '1' || value == 'true';
+  }
+
+  static String? _nullableString(Object? value) {
+    final text = value?.toString().trim() ?? '';
+    return text.isEmpty ? null : text;
+  }
+
+  static String? _emptyToNull(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+}
+), '')
+        .replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '_');
+    return (
+      fileName: '${base.isEmpty ? 'media' : base}.${image?.extension ?? extension}',
+      contentType: contentType,
     );
   }
 
