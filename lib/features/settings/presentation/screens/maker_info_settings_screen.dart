@@ -721,7 +721,7 @@ class _MakerInfoSettingsScreenState
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 foregroundColor: AppColors.mutedText,
-                minimumSize: const Size(44, 36),
+                minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
@@ -741,7 +741,7 @@ class _MakerInfoSettingsScreenState
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 foregroundColor: AppColors.error,
-                minimumSize: const Size(44, 36),
+                minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
