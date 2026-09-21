@@ -712,7 +712,7 @@ class _MakerInfoSettingsScreenState
                 onChoose: () => _chooseMedia(slot),
                 onRemove: () => _removeSlot(slot),
               ),
-              const SizedBox(height: 22),
+              SizedBox(height: slot == 4 ? 11 : 22),
             ],
             TextButton(
               key: const Key('maker_settings_switch_appreciator'),
@@ -721,6 +721,8 @@ class _MakerInfoSettingsScreenState
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 foregroundColor: AppColors.mutedText,
+                minimumSize: const Size(44, 36),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
                 'Switch to Appreciator',
@@ -731,7 +733,7 @@ class _MakerInfoSettingsScreenState
                 ),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 11),
             TextButton(
               key: const Key('maker_settings_delete_account'),
               onPressed: _saving ? null : _deleteAccount,
@@ -739,6 +741,8 @@ class _MakerInfoSettingsScreenState
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 foregroundColor: AppColors.error,
+                minimumSize: const Size(44, 36),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
                 'Delete Your Account',
