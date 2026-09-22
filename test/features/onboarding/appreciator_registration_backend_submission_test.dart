@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/api_exception.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
 import 'package:ma_motion_mobile/core/providers/core_providers.dart';
@@ -155,6 +156,76 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'incorrect OTP shows an animated failure result and stays on OTP screen',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final api = _AppreciatorGateway()..rejectOtp = true;
+      final tokenStore = _MemoryTokenStore();
+      final container = ProviderContainer(
+        overrides: [
+          appreciatorOnboardingRepositoryProvider.overrideWithValue(
+            AppreciatorOnboardingRepository(
+              api: api,
+              tokenStore: tokenStore,
+            ),
+          ),
+          apiGatewayProvider.overrideWithValue(api),
+          authTokenStoreProvider.overrideWithValue(tokenStore),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final draft = container.read(appreciatorRegistrationProvider.notifier);
+      draft.setName('Art Lover');
+      draft.setLocation('Chicago 60601');
+      draft.setEmail('lover@example.com');
+
+      var completed = false;
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: AppreciatorRegistrationFlowScreen(
+              initialStep: 2,
+              onExit: () {},
+              onCompleted: () => completed = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const Key('email_otp_code_field')),
+        '123456',
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 850));
+      expect(find.text('Verification Failed.'), findsOneWidget);
+      expect(
+        find.byKey(const Key('email_otp_failure_reason')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('email_otp_success_continue')), findsNothing);
+
+      await tester.pump(const Duration(milliseconds: 1200));
+      await tester.pump();
+      expect(find.byKey(const Key('email_otp_screen')), findsOneWidget);
+      expect(find.byKey(const Key('email_otp_result_dialog')), findsNothing);
+      expect(completed, isFalse);
+      expect(tokenStore.value, isNull);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
@@ -171,6 +242,7 @@ class _MemoryTokenStore implements AuthTokenStore {
 }
 
 class _AppreciatorGateway implements ApiGateway {
+  bool rejectOtp = false;
   String? lastPostedPath;
   Map<String, dynamic>? lastPostedData;
   bool? lastPostRequiresAuth;
@@ -219,6 +291,14 @@ class _AppreciatorGateway implements ApiGateway {
     }
 
     if (path == ApiPaths.verifyEmailOtp) {
+      if (rejectOtp) {
+        throw const ApiException(
+          message: 'The code is incorrect or expired.',
+          fieldErrors: <String, List<String>>{
+            'code': <String>['The code is incorrect or expired.'],
+          },
+        );
+      }
       return <String, dynamic>{
         'success': true,
         'data': <String, dynamic>{'verified': true},
