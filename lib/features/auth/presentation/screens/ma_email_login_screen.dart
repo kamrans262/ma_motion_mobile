@@ -125,7 +125,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       return MaEmailOtpScreen(
         challenge: challenge,
         onBack: () => setState(() => _challenge = null),
-        onVerified: (verifiedChallenge, result) {
+        onVerified: (_, result) {
           if (result.isAuthenticated) {
             unawaited(_finishLogin());
           }
