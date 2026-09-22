@@ -27,8 +27,9 @@ class AppreciatorOnboardingRepository {
   final AuthTokenStore tokenStore;
 
   Future<void> completeAppreciatorOnboarding(
-    AppreciatorRegistrationDraft draft,
-  ) async {
+    AppreciatorRegistrationDraft draft, {
+    String? otpChallengeId,
+  }) async {
     final locationId = await resolveLocationId(draft.location);
 
     final existingToken = await tokenStore.read();
@@ -44,6 +45,8 @@ class AppreciatorOnboardingRepository {
         'location_text': draft.location.trim(),
         'location_id': locationId,
         'email': draft.email.trim(),
+        if (!hasSession && otpChallengeId != null)
+          'otp_challenge_id': otpChallengeId,
         if (!hasSession) 'device_name': 'MA Motion Mobile',
       },
     );
