@@ -7,6 +7,7 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/auth_repository.dart';
 import '../../../auth/data/experience_switch_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../../data/appreciator_settings_repository.dart';
@@ -251,6 +252,25 @@ class _AppreciatorSettingsModalState
     Navigator.of(context).pop();
   }
 
+  Future<void> _logout() async {
+    if (_busy) return;
+
+    setState(() {
+      _switching = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await ref.read(authRepositoryProvider).logout();
+    } catch (_) {
+      // The existing logout repository clears the local token even if the
+      // logout request fails. Return to Login after local sign-out.
+    }
+
+    if (!mounted) return;
+    Navigator.of(context).pop(MakerEntryDestination.join);
+  }
+
   Future<void> _deleteAccount() async {
     if (_busy) return;
     final deleted = await showMaDeleteAccountDialog(context);
@@ -361,16 +381,40 @@ class _AppreciatorSettingsModalState
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Settings',
-            key: Key('appreciator_settings_heading'),
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 22,
-              height: 1.15,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primary,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Settings',
+                key: Key('appreciator_settings_heading'),
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 22,
+                  height: 1.15,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primary,
+                ),
+              ),
+              TextButton(
+                key: const Key('appreciator_settings_logout'),
+                onPressed: _busy ? null : _logout,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.darkGray,
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Logout',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.darkGray,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 18),
           _SettingsField(
