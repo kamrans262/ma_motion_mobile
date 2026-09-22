@@ -148,9 +148,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
     if (_isVerifying) return;
     final code = _digits.join();
     if (code.length != 6) {
-      if (code.length != 6) {
-        setState(() => _error = 'Please enter the 6-digit code.');
-      }
+      setState(() => _error = 'Please enter the 6-digit code.');
       return;
     }
 
@@ -160,59 +158,68 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       _error = null;
     });
 
-    unawaited(
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const _OtpLoadingDialog(),
+    final loadingDialog = showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const PopScope(
+        canPop: false,
+        child: _OtpLoadingDialog(),
       ),
     );
 
+    EmailOtpVerificationResult? result;
+    String? failureMessage;
+    var clearInvalidCode = false;
+
     try {
-      final result = await ref
+      result = await ref
           .read(emailOtpRepositoryProvider)
           .verify(challenge: _challenge, code: code);
-
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
-
-      await showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const _OtpSuccessDialog(),
-      );
-
-      if (!mounted) return;
-      widget.onVerified(_challenge, result);
     } on ApiException catch (error) {
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
       final codeError = error.fieldErrors['code'];
-      if (codeError?.isNotEmpty == true) {
+      clearInvalidCode = codeError?.isNotEmpty == true;
+      failureMessage = clearInvalidCode ? codeError!.first : error.message;
+    } catch (_) {
+      failureMessage = 'We could not verify the code. Please try again.';
+    }
+
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    await loadingDialog;
+    if (!mounted) return;
+
+    if (failureMessage != null) {
+      if (clearInvalidCode) {
         for (var index = 0; index < 6; index++) {
           _digits[index] = '';
           _digitControllers[index].clear();
         }
         _digitFocus.first.requestFocus();
       }
-      setState(() {
-        _error = codeError?.isNotEmpty == true ? codeError!.first : error.message;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
-      setState(() {
-        _error = 'We could not verify the code. Please try again.';
-      });
-    } finally {
-      if (mounted) {
-        setState(() => _isVerifying = false);
-      }
+      setState(() => _error = failureMessage);
     }
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PopScope(
+        canPop: false,
+        child: _OtpResultDialog(
+          success: result != null,
+          errorMessage: failureMessage,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+    if (result != null) {
+      widget.onVerified(_challenge, result);
+    }
+    if (mounted) setState(() => _isVerifying = false);
   }
 
   Future<void> _resend() async {
-    if (_isResending || _resendSeconds > 0) return;
+    if (_isVerifying || _isResending || _resendSeconds > 0) return;
 
     setState(() {
       _isResending = true;
@@ -254,9 +261,15 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       background: const MaDottedBackground(),
       heading: 'Verify your email',
       subtitle: 'Enter the 6-digit code sent to ${_challenge.email}',
-      primaryKey: const Key('email_otp_verify_button'),
-      primaryLabel: 'Verify OTP',
-      onPrimary: _isVerifying ? null : _verify,
+      primaryKey: const Key('email_otp_resend_button'),
+      primaryLabel: _isResending
+          ? 'Sending...'
+          : _resendSeconds > 0
+          ? 'Resend OTP (${_resendSeconds}s)'
+          : 'Resend OTP',
+      onPrimary: _isVerifying || _isResending || _resendSeconds > 0
+          ? null
+          : _resend,
       secondaryKey: const Key('email_otp_back_button'),
       secondaryLabel: 'Back',
       onSecondary: _isVerifying ? null : widget.onBack,
@@ -339,31 +352,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
               style: AppTextStyles.onboardingError,
             ),
           ],
-          const SizedBox(height: 12),
-          TextButton(
-            key: const Key('email_otp_resend_button'),
-            onPressed: _isVerifying || _isResending || _resendSeconds > 0
-                ? null
-                : _resend,
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              minimumSize: Size.zero,
-              padding: EdgeInsets.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              _resendSeconds > 0
-                  ? 'Resend OTP in ${_resendSeconds}s'
-                  : _isResending
-                  ? 'Sending...'
-                  : 'Resend OTP',
-              style: const TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+
         ],
       ),
     );
@@ -410,64 +399,99 @@ class _OtpLoadingDialog extends StatelessWidget {
   }
 }
 
-class _OtpSuccessDialog extends StatelessWidget {
-  const _OtpSuccessDialog();
+class _OtpResultDialog extends StatefulWidget {
+  const _OtpResultDialog({required this.success, this.errorMessage});
+
+  final bool success;
+  final String? errorMessage;
+
+  @override
+  State<_OtpResultDialog> createState() => _OtpResultDialogState();
+}
+
+class _OtpResultDialogState extends State<_OtpResultDialog> {
+  Timer? _textTimer;
+  Timer? _dismissTimer;
+  bool _showText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _textTimer = Timer(const Duration(milliseconds: 650), () {
+      if (mounted) setState(() => _showText = true);
+    });
+    _dismissTimer = Timer(const Duration(milliseconds: 1800), () {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    _textTimer?.cancel();
+    _dismissTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final color = widget.success ? AppColors.primary : AppColors.error;
+
     return AlertDialog(
+      key: const Key('email_otp_result_dialog'),
       backgroundColor: AppColors.splashBackground,
       shape: const RoundedRectangleBorder(),
-      content: SizedBox(
-        height: 80,
-        child: Center(
-          child: TweenAnimationBuilder<double>(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TweenAnimationBuilder<double>(
             duration: const Duration(milliseconds: 650),
             curve: Curves.easeOutCubic,
             tween: Tween<double>(begin: 0, end: 1),
             builder: (context, progress, child) => CustomPaint(
               size: const Size(68, 68),
-              painter: _OtpPurpleCheckPainter(progress),
+              painter: _OtpResultPainter(progress, color, widget.success),
             ),
           ),
-        ),
-      ),
-      title: const Text(
-        'Email verified successfully.',
-        style: TextStyle(
-          fontFamily: AppTextStyles.fontFamily,
-          fontSize: 22,
-          fontWeight: FontWeight.w500,
-          color: AppColors.primary,
-        ),
-      ),
-      actions: [
-        TextButton(
-          key: const Key('email_otp_success_continue'),
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(
-            'Continue',
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              color: AppColors.primary,
-              fontWeight: FontWeight.w500,
+          if (_showText) ...[
+            const SizedBox(height: 16),
+            Text(
+              widget.success ? 'Email Verified.' : 'Verification Failed.',
+              key: const Key('email_otp_result_text'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: color,
+              ),
             ),
-          ),
-        ),
-      ],
+            if (!widget.success && widget.errorMessage != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                widget.errorMessage!,
+                key: const Key('email_otp_failure_reason'),
+                textAlign: TextAlign.center,
+                style: AppTextStyles.onboardingHelper,
+              ),
+            ],
+          ],
+        ],
+      ),
     );
   }
 }
 
-class _OtpPurpleCheckPainter extends CustomPainter {
-  const _OtpPurpleCheckPainter(this.progress);
+class _OtpResultPainter extends CustomPainter {
+  const _OtpResultPainter(this.progress, this.color, this.success);
 
   final double progress;
+  final Color color;
+  final bool success;
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.primary
+      ..color = color
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
@@ -484,21 +508,42 @@ class _OtpPurpleCheckPainter extends CustomPainter {
       paint,
     );
 
-    final checkProgress = ((progress - 0.4) / 0.6).clamp(0.0, 1.0);
-    if (checkProgress <= 0) return;
+    final markProgress = ((progress - 0.4) / 0.6).clamp(0.0, 1.0);
+    if (markProgress <= 0) return;
 
-    final path = Path()
-      ..moveTo(18, 35)
-      ..lineTo(29, 45)
-      ..lineTo(50, 23);
-    final metric = path.computeMetrics().first;
-    canvas.drawPath(
-      metric.extractPath(0, metric.length * checkProgress),
-      paint,
-    );
+    if (success) {
+      final check = Path()
+        ..moveTo(18, 35)
+        ..lineTo(29, 45)
+        ..lineTo(50, 23);
+      final metric = check.computeMetrics().first;
+      canvas.drawPath(
+        metric.extractPath(0, metric.length * markProgress),
+        paint,
+      );
+    } else {
+      final first = Path()
+        ..moveTo(24, 24)
+        ..lineTo(44, 44);
+      final second = Path()
+        ..moveTo(44, 24)
+        ..lineTo(24, 44);
+      final firstMetric = first.computeMetrics().first;
+      final secondMetric = second.computeMetrics().first;
+      canvas.drawPath(
+        firstMetric.extractPath(0, firstMetric.length * markProgress),
+        paint,
+      );
+      canvas.drawPath(
+        secondMetric.extractPath(0, secondMetric.length * markProgress),
+        paint,
+      );
+    }
   }
 
   @override
-  bool shouldRepaint(covariant _OtpPurpleCheckPainter oldDelegate) =>
-      oldDelegate.progress != progress;
+  bool shouldRepaint(covariant _OtpResultPainter oldDelegate) =>
+      oldDelegate.progress != progress ||
+      oldDelegate.color != color ||
+      oldDelegate.success != success;
 }
