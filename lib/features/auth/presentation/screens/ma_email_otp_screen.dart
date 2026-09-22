@@ -99,6 +99,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
         _digitControllers[index].clear();
       }
       if (_error != null) setState(() => _error = null);
+      if (index > 0) _digitFocus[index - 1].requestFocus();
       return;
     }
 
@@ -187,6 +188,13 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
       final codeError = error.fieldErrors['code'];
+      if (codeError?.isNotEmpty == true) {
+        for (var index = 0; index < 6; index++) {
+          _digits[index] = '';
+          _digitControllers[index].clear();
+        }
+        _digitFocus.first.requestFocus();
+      }
       setState(() {
         _error = codeError?.isNotEmpty == true ? codeError!.first : error.message;
       });
@@ -295,10 +303,10 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 14,
                         ),
-                        border: const OutlineInputBorder(
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.zero,
                           borderSide: BorderSide(
-                            color: AppColors.primary,
+                            color: AppColors.primary50,
                             width: 1.2,
                           ),
                         ),
