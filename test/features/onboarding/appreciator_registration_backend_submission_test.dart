@@ -22,6 +22,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           appreciatorOnboardingRepositoryProvider.overrideWithValue(repository),
+          apiGatewayProvider.overrideWithValue(api),
           authTokenStoreProvider.overrideWithValue(tokenStore),
         ],
       );
@@ -48,7 +49,19 @@ void main() {
       );
 
       await tester.tap(find.byKey(const Key('maker_next_button')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+
+      expect(find.byKey(const Key('email_otp_screen')), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('email_otp_code_field')),
+        '123456',
+      );
+      await tester.tap(find.byKey(const Key('email_otp_verify_button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.tap(find.byKey(const Key('email_otp_success_continue')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 20));
 
       expect(completed, isTrue);
       expect(api.lastPostedPath, ApiPaths.appreciatorOnboarding);
@@ -74,6 +87,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           appreciatorOnboardingRepositoryProvider.overrideWithValue(repository),
+          apiGatewayProvider.overrideWithValue(api),
           authTokenStoreProvider.overrideWithValue(tokenStore),
         ],
       );
@@ -100,7 +114,19 @@ void main() {
       );
 
       await tester.tap(find.byKey(const Key('maker_next_button')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+
+      expect(find.byKey(const Key('email_otp_screen')), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('email_otp_code_field')),
+        '123456',
+      );
+      await tester.tap(find.byKey(const Key('email_otp_verify_button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.tap(find.byKey(const Key('email_otp_success_continue')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 20));
 
       expect(completed, isTrue);
       expect(api.lastPostedPath, ApiPaths.appreciatorExperienceOnboarding);
@@ -159,6 +185,25 @@ class _AppreciatorGateway implements ApiGateway {
 
     if (data is Map) {
       lastPostedData = Map<String, dynamic>.from(data);
+    }
+
+    if (path == ApiPaths.requestEmailOtp) {
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{
+          'challenge_id': '11111111-1111-4111-8111-111111111111',
+          'expires_in_seconds': 600,
+          'resend_after_seconds': 60,
+        },
+      };
+    }
+
+    if (path == ApiPaths.verifyEmailOtp) {
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{'verified': true},
+        'message': 'Email verified successfully.',
+      };
     }
 
     if (path == ApiPaths.appreciatorOnboarding) {
