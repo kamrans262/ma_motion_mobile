@@ -225,7 +225,6 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
-
 }
 
 class _MemoryTokenStore implements AuthTokenStore {
