@@ -159,7 +159,7 @@ class MakerOnboardingRepository {
       data: <String, dynamic>{
         'name': draft.name.trim(),
         'email': draft.email.trim(),
-        if (otpChallengeId != null) 'otp_challenge_id': otpChallengeId,
+        'otp_challenge_id': ?otpChallengeId,
         'device_name': 'MA Motion Mobile',
       },
     );
