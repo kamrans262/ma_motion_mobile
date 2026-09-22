@@ -326,6 +326,7 @@ GoRouter createAppRouter({
           child: MakerInfoSettingsScreen(
             onClose: () => context.pop(),
             onAccountDeleted: () => context.go('/login'),
+            onLoggedOut: () => context.go('/login'),
             onSwitchedToAppreciator: (destination) {
               goForMakerEntry(context, destination);
             },
