@@ -75,8 +75,11 @@ class MakerOnboardingRepository {
     return int.tryParse(id?.toString() ?? '');
   }
 
-  Future<void> completeMakerProfile(MakerRegistrationDraft draft) async {
-    await _ensureMakerSession(draft);
+  Future<void> completeMakerProfile(
+    MakerRegistrationDraft draft, {
+    String? otpChallengeId,
+  }) async {
+    await _ensureMakerSession(draft, otpChallengeId);
 
     final options = await loadOptions();
     final locationId = await resolveLocationId(draft.location);
@@ -139,7 +142,10 @@ class MakerOnboardingRepository {
     }
   }
 
-  Future<void> _ensureMakerSession(MakerRegistrationDraft draft) async {
+  Future<void> _ensureMakerSession(
+    MakerRegistrationDraft draft,
+    String? otpChallengeId,
+  ) async {
     final existingToken = await tokenStore.read();
 
     if (existingToken != null && existingToken.trim().isNotEmpty) {
@@ -153,6 +159,7 @@ class MakerOnboardingRepository {
       data: <String, dynamic>{
         'name': draft.name.trim(),
         'email': draft.email.trim(),
+        if (otpChallengeId != null) 'otp_challenge_id': otpChallengeId,
         'device_name': 'MA Motion Mobile',
       },
     );
