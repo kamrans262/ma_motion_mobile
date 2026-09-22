@@ -10,6 +10,7 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/auth_repository.dart';
 import '../../../auth/data/experience_switch_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
@@ -23,11 +24,13 @@ class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
     required this.onClose,
     required this.onSwitchedToAppreciator,
     this.onAccountDeleted,
+    this.onLoggedOut,
   });
 
   final VoidCallback onClose;
   final ValueChanged<MakerEntryDestination> onSwitchedToAppreciator;
   final VoidCallback? onAccountDeleted;
+  final VoidCallback? onLoggedOut;
 
   @override
   ConsumerState<MakerInfoSettingsScreen> createState() =>
@@ -420,6 +423,25 @@ class _MakerInfoSettingsScreenState
     }
   }
 
+  Future<void> _logout() async {
+    if (_saving) return;
+
+    setState(() {
+      _saving = true;
+      _errorMessage = null;
+    });
+    try {
+      await ref.read(authRepositoryProvider).logout();
+    } catch (_) {
+      // AuthRepository.logout always clears the local token, even when the
+      // server cannot be reached. Complete the local sign-out as well.
+    }
+
+    if (!mounted) return;
+    widget.onLoggedOut?.call();
+    if (mounted) setState(() => _saving = false);
+  }
+
   Future<void> _deleteAccount() async {
     if (_saving) return;
     final deleted = await showMaDeleteAccountDialog(context);
@@ -636,12 +658,36 @@ class _MakerInfoSettingsScreenState
           key: const Key('maker_settings_scroll'),
           padding: EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
           children: [
-            Text(
-              'Maker Info Setting',
-              style: AppTextStyles.onboardingHeading.copyWith(
-                fontSize: 22,
-                fontWeight: FontWeight.w500,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Maker Info Setting',
+                  style: AppTextStyles.onboardingHeading.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextButton(
+                  key: const Key('maker_settings_logout'),
+                  onPressed: _saving ? null : _logout,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.darkGray,
+                    minimumSize: Size.zero,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.darkGray,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 28),
             _LabeledField(
