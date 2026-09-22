@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -15,6 +16,9 @@ class MaOnboardingTextField extends StatelessWidget {
     this.onChanged,
     this.autofillHints,
     this.errorText,
+    this.inputFormatters,
+    this.maxLength,
+    this.onSubmitted,
   });
 
   final TextEditingController controller;
@@ -26,6 +30,9 @@ class MaOnboardingTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final Iterable<String>? autofillHints;
   final String? errorText;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +48,9 @@ class MaOnboardingTextField extends StatelessWidget {
           minLines: minLines,
           onChanged: onChanged,
           autofillHints: autofillHints,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
+          onSubmitted: onSubmitted,
           cursorColor: AppColors.primary,
           style: AppTextStyles.field,
           decoration: InputDecoration(
@@ -49,6 +59,7 @@ class MaOnboardingTextField extends StatelessWidget {
             fillColor: AppColors.inputFill,
             hintText: hintText,
             hintStyle: AppTextStyles.fieldHint,
+            counterText: '',
             contentPadding: EdgeInsets.symmetric(
               horizontal: 20,
               vertical: maxLines > 1 ? 16 : 14,
