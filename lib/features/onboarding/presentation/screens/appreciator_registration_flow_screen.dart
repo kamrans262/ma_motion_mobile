@@ -417,7 +417,7 @@ class _AppreciatorRegistrationFlowScreenState
         onBack: () {
           setState(() => _emailChallenge = null);
         },
-        onVerified: (challenge, result) {
+        onVerified: (challenge, _) {
           setState(() {
             _verifiedRegistrationChallengeId =
                 challenge.purpose == EmailOtpPurpose.register
