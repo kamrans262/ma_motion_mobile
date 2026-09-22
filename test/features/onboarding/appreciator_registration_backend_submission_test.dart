@@ -13,6 +13,11 @@ void main() {
   testWidgets(
     'final Appreciator step creates backend session and completes flow',
     (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       final api = _AppreciatorGateway();
       final tokenStore = _MemoryTokenStore();
       final repository = AppreciatorOnboardingRepository(
@@ -52,16 +57,19 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('email_otp_screen')), findsOneWidget);
+      // A complete pasted OTP distributes across all six inputs and
+      // automatically verifies without tapping the Verify OTP button.
       await tester.enterText(
         find.byKey(const Key('email_otp_code_field')),
         '123456',
       );
-      await tester.tap(find.byKey(const Key('email_otp_verify_button')));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 320));
+      expect(find.byKey(const Key('email_otp_six_digit_row')), findsOneWidget);
+      expect(find.byKey(const Key('email_otp_success_continue')), findsOneWidget);
       await tester.tap(find.byKey(const Key('email_otp_success_continue')));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 320));
 
       expect(completed, isTrue);
       expect(api.lastPostedPath, ApiPaths.appreciatorOnboarding);
@@ -78,6 +86,11 @@ void main() {
   testWidgets(
     'authenticated Maker completes Appreciator onboarding on same token',
     (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       final api = _AppreciatorGateway();
       final tokenStore = _MemoryTokenStore()..value = 'existing-token';
       final repository = AppreciatorOnboardingRepository(
@@ -117,16 +130,19 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('email_otp_screen')), findsOneWidget);
+      // A complete pasted OTP distributes across all six inputs and
+      // automatically verifies without tapping the Verify OTP button.
       await tester.enterText(
         find.byKey(const Key('email_otp_code_field')),
         '123456',
       );
-      await tester.tap(find.byKey(const Key('email_otp_verify_button')));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 320));
+      expect(find.byKey(const Key('email_otp_six_digit_row')), findsOneWidget);
+      expect(find.byKey(const Key('email_otp_success_continue')), findsOneWidget);
       await tester.tap(find.byKey(const Key('email_otp_success_continue')));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 320));
 
       expect(completed, isTrue);
       expect(api.lastPostedPath, ApiPaths.appreciatorExperienceOnboarding);
