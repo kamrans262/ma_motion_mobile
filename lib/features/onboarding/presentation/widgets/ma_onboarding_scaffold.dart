@@ -22,6 +22,8 @@ class MaOnboardingScaffold extends StatelessWidget {
     this.validationMessage,
     this.headingStyle,
     this.isBusy = false,
+    this.nextLabel = 'Next',
+    this.busyLabel = 'Saving...',
     this.contentTopWidthFactor = 0.555,
     this.childGap = 20,
     this.contentBottom = 36,
@@ -37,6 +39,8 @@ class MaOnboardingScaffold extends StatelessWidget {
   final String? validationMessage;
   final TextStyle? headingStyle;
   final bool isBusy;
+  final String nextLabel;
+  final String busyLabel;
   final double contentTopWidthFactor;
   final double childGap;
   final double contentBottom;
@@ -140,7 +144,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                           children: [
                             MaOnboardingButton(
                               key: const Key('maker_next_button'),
-                              label: isBusy ? 'Saving...' : 'Next',
+                              label: isBusy ? busyLabel : nextLabel,
                               onPressed: isBusy ? null : onNext,
                               filled: false,
                               height: 53,
