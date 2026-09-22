@@ -9,6 +9,8 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/email_otp_repository.dart';
+import '../../../auth/presentation/screens/ma_email_otp_screen.dart';
 import '../../application/maker_registration_controller.dart';
 import '../../data/maker_onboarding_repository.dart';
 import '../../data/onboarding_prefill_repository.dart';
@@ -53,8 +55,11 @@ class _MakerRegistrationFlowScreenState
   String? _validationMessage;
   final Map<String, String> _fieldErrors = <String, String>{};
   bool _isSubmitting = false;
+  bool _isRequestingOtp = false;
   bool _submissionCompleted = false;
   bool _prefilling = false;
+  EmailOtpChallenge? _emailChallenge;
+  String? _verifiedRegistrationChallengeId;
 
   @override
   void initState() {
@@ -343,6 +348,7 @@ class _MakerRegistrationFlowScreenState
       'website_url': (step: 4, field: 'website'),
       'email': (step: 5, field: 'email'),
       'contact_email': (step: 5, field: 'email'),
+      'otp_challenge_id': (step: 5, field: 'email'),
       'image': (step: 6, field: 'image'),
     };
 
@@ -379,11 +385,50 @@ class _MakerRegistrationFlowScreenState
     unawaited(_handleNext());
   }
 
+  Future<void> _beginEmailVerification() async {
+    if (_isRequestingOtp) return;
+
+    setState(() {
+      _isRequestingOtp = true;
+      _validationMessage = null;
+    });
+
+    try {
+      final email = ref.read(makerRegistrationProvider).email;
+      final challenge = await ref
+          .read(emailOtpRepositoryProvider)
+          .requestOnboarding(email);
+      if (!mounted) return;
+
+      setState(() {
+        _emailChallenge = challenge;
+        _verifiedRegistrationChallengeId = null;
+      });
+    } on ApiException catch (error) {
+      if (mounted) setState(() => _validationMessage = error.message);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _validationMessage =
+              'We could not send the verification code. Please try again.';
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _isRequestingOtp = false);
+    }
+  }
+
   Future<void> _handleNext() async {
     if (_isSubmitting ||
+        _isRequestingOtp ||
         _prefilling ||
         _submissionCompleted ||
         !_validateCurrentStep()) {
+      return;
+    }
+
+    if (_step == 5) {
+      await _beginEmailVerification();
       return;
     }
 
@@ -403,7 +448,10 @@ class _MakerRegistrationFlowScreenState
       final draft = ref.read(makerRegistrationProvider);
       await ref
           .read(makerOnboardingRepositoryProvider)
-          .completeMakerProfile(draft);
+          .completeMakerProfile(
+            draft,
+            otpChallengeId: _verifiedRegistrationChallengeId,
+          );
 
       if (!mounted) {
         return;
@@ -483,6 +531,26 @@ class _MakerRegistrationFlowScreenState
 
   @override
   Widget build(BuildContext context) {
+    final emailChallenge = _emailChallenge;
+    if (emailChallenge != null) {
+      return MaEmailOtpScreen(
+        challenge: emailChallenge,
+        onBack: () {
+          setState(() => _emailChallenge = null);
+        },
+        onVerified: (challenge, result) {
+          setState(() {
+            _verifiedRegistrationChallengeId =
+                challenge.purpose == EmailOtpPurpose.register
+                ? challenge.id
+                : null;
+            _emailChallenge = null;
+          });
+          _goToStep(6);
+        },
+      );
+    }
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 220),
       switchInCurve: Curves.easeOut,
@@ -610,6 +678,8 @@ class _MakerRegistrationFlowScreenState
           onNext: _next,
           onBack: _back,
           validationMessage: _validationMessage,
+          isBusy: _isRequestingOtp,
+          busyLabel: 'Sending...',
           child: MaOnboardingTextField(
             key: const Key('maker_email_field'),
             controller: _emailController,
@@ -620,6 +690,8 @@ class _MakerRegistrationFlowScreenState
             errorText: _fieldErrors['email'],
             onChanged: (value) {
               ref.read(makerRegistrationProvider.notifier).setEmail(value);
+              _emailChallenge = null;
+              _verifiedRegistrationChallengeId = null;
               _clearFieldError('email');
             },
           ),
