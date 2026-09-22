@@ -93,7 +93,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (dialogContext) => const _OtpLoadingDialog(),
+        builder: (_) => const _OtpLoadingDialog(),
       ),
     );
 
@@ -108,7 +108,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       await showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (dialogContext) => const _OtpSuccessDialog(),
+        builder: (_) => const _OtpSuccessDialog(),
       );
 
       if (!mounted) return;
