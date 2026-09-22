@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +9,7 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
-import '../../../onboarding/presentation/widgets/ma_onboarding_button.dart';
-import '../../../onboarding/presentation/widgets/ma_onboarding_text_field.dart';
+import '../widgets/ma_email_auth_layout.dart';
 import '../../data/email_otp_repository.dart';
 
 class MaEmailOtpScreen extends ConsumerStatefulWidget {
@@ -33,7 +33,16 @@ class MaEmailOtpScreen extends ConsumerStatefulWidget {
 }
 
 class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
-  final TextEditingController _codeController = TextEditingController();
+  final List<TextEditingController> _digitControllers =
+      List<TextEditingController>.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _digitFocus = List<FocusNode>.generate(
+    6,
+    (_) => FocusNode(),
+  );
+  final List<String> _digits = List<String>.filled(6, '');
   Timer? _resendTimer;
   late EmailOtpChallenge _challenge;
   late int _resendSeconds;
@@ -51,7 +60,12 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
   @override
   void dispose() {
     _resendTimer?.cancel();
-    _codeController.dispose();
+    for (final controller in _digitControllers) {
+      controller.dispose();
+    }
+    for (final node in _digitFocus) {
+      node.dispose();
+    }
     super.dispose();
   }
 
@@ -74,9 +88,65 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
     });
   }
 
+  void _onDigitChanged(int index, String raw) {
+    if (_isVerifying) return;
+
+    final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
+    final previousDigit = _digits[index];
+    if (digits.isEmpty) {
+      _digits[index] = '';
+      if (_digitControllers[index].text.isNotEmpty) {
+        _digitControllers[index].clear();
+      }
+      if (_error != null) setState(() => _error = null);
+      return;
+    }
+
+    // Typing over a populated box replaces it; pasting a complete code
+    // distributes all six digits even when another box has focus.
+    final replacing = digits.length == 2 &&
+        previousDigit.isNotEmpty &&
+        digits.startsWith(previousDigit);
+    final incoming = replacing ? digits.substring(1) : digits;
+    final start = incoming.length == 6 ? 0 : index;
+
+    for (var offset = 0; offset < incoming.length; offset++) {
+      final target = start + offset;
+      if (target >= 6) break;
+      final digit = incoming[offset];
+      _digits[target] = digit;
+      _digitControllers[target].value = TextEditingValue(
+        text: digit,
+        selection: const TextSelection.collapsed(offset: 1),
+      );
+    }
+    if (_error != null) setState(() => _error = null);
+
+    if (_digits.every((digit) => digit.isNotEmpty)) {
+      unawaited(_verify());
+    } else {
+      final next = math.min(start + incoming.length, 5);
+      _digitFocus[next].requestFocus();
+    }
+  }
+
+  KeyEventResult _onDigitKey(int index, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.backspace &&
+        index > 0 &&
+        _digitControllers[index].text.isEmpty) {
+      _digitFocus[index - 1].requestFocus();
+      _digits[index - 1] = '';
+      _digitControllers[index - 1].clear();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
   Future<void> _verify() async {
-    final code = _codeController.text.trim();
-    if (_isVerifying || code.length != 6) {
+    if (_isVerifying) return;
+    final code = _digits.join();
+    if (code.length != 6) {
       if (code.length != 6) {
         setState(() => _error = 'Please enter the 6-digit code.');
       }
@@ -149,7 +219,11 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
 
       setState(() {
         _challenge = challenge;
-        _codeController.clear();
+        for (var index = 0; index < 6; index++) {
+          _digits[index] = '';
+          _digitControllers[index].clear();
+        }
+        _digitFocus.first.requestFocus();
       });
       _restartResendCountdown();
     } on ApiException catch (error) {
@@ -167,125 +241,122 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardBottom = MediaQuery.viewInsetsOf(context).bottom;
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: AppColors.splashBackground,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-      child: Scaffold(
-        key: const Key('email_otp_screen'),
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppColors.splashBackground,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            const MaDottedBackground(),
-            SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      20,
-                      72,
-                      20,
-                      keyboardBottom + 32,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight - 104,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Verify your email',
-                            style: AppTextStyles.onboardingHeading.copyWith(
-                              fontSize: 32,
-                              letterSpacing: -0.3,
-                              fontWeight: FontWeight.w500,
-                            ),
+    return MaEmailAuthLayout(
+      screenKey: const Key('email_otp_screen'),
+      background: const MaDottedBackground(),
+      heading: 'Verify your email',
+      subtitle: 'Enter the 6-digit code sent to ${_challenge.email}',
+      primaryKey: const Key('email_otp_verify_button'),
+      primaryLabel: 'Verify OTP',
+      onPrimary: _isVerifying ? null : _verify,
+      secondaryKey: const Key('email_otp_back_button'),
+      secondaryLabel: 'Back',
+      onSecondary: _isVerifying ? null : widget.onBack,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            key: const Key('email_otp_six_digit_row'),
+            children: [
+              for (var index = 0; index < 6; index++) ...[
+                if (index > 0) const SizedBox(width: 8),
+                Expanded(
+                  child: Focus(
+                    onKeyEvent: (_, event) => _onDigitKey(index, event),
+                    child: TextField(
+                      key: index == 0
+                          ? const Key('email_otp_code_field')
+                          : Key('email_otp_code_field_$index'),
+                      controller: _digitControllers[index],
+                      focusNode: _digitFocus[index],
+                      enabled: !_isVerifying,
+                      keyboardType: TextInputType.number,
+                      textInputAction: index == 5
+                          ? TextInputAction.done
+                          : TextInputAction.next,
+                      autofillHints: index == 0
+                          ? const [AutofillHints.oneTimeCode]
+                          : null,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      onChanged: (value) => _onDigitChanged(index, value),
+                      onSubmitted: (_) {
+                        if (index == 5) unawaited(_verify());
+                      },
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.field,
+                      cursorColor: AppColors.primary,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        filled: true,
+                        fillColor: AppColors.inputFill,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(
+                            color: AppColors.primary,
+                            width: 1.2,
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Enter the 6-digit code sent to ${_challenge.email}',
-                            style: AppTextStyles.onboardingHelper,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(
+                            color: AppColors.primary50,
+                            width: 1.2,
                           ),
-                          const SizedBox(height: 20),
-                          MaOnboardingTextField(
-                            key: const Key('email_otp_code_field'),
-                            controller: _codeController,
-                            hintText: '000000',
-                            keyboardType: TextInputType.number,
-                            textInputAction: TextInputAction.done,
-                            maxLength: 6,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            errorText: _error,
-                            onChanged: (_) {
-                              if (_error != null) {
-                                setState(() => _error = null);
-                              }
-                            },
-                            onSubmitted: (_) => unawaited(_verify()),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(
+                            color: AppColors.primary,
+                            width: 1.4,
                           ),
-                          const SizedBox(height: 12),
-                          TextButton(
-                            key: const Key('email_otp_resend_button'),
-                            onPressed:
-                                _isResending || _resendSeconds > 0
-                                ? null
-                                : _resend,
-                            style: TextButton.styleFrom(
-                              foregroundColor: AppColors.primary,
-                              minimumSize: Size.zero,
-                              padding: EdgeInsets.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              _resendSeconds > 0
-                                  ? 'Resend OTP in ${_resendSeconds}s'
-                                  : _isResending
-                                  ? 'Sending...'
-                                  : 'Resend OTP',
-                              style: const TextStyle(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          MaOnboardingButton(
-                            key: const Key('email_otp_verify_button'),
-                            label: 'Verify OTP',
-                            onPressed: _isVerifying ? null : _verify,
-                            filled: false,
-                            height: 53,
-                          ),
-                          const SizedBox(height: 13),
-                          MaOnboardingButton(
-                            key: const Key('email_otp_back_button'),
-                            label: 'Back',
-                            onPressed: _isVerifying ? null : widget.onBack,
-                            filled: false,
-                            subdued: true,
-                            height: 53,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              key: const Key('onboarding_field_error'),
+              style: AppTextStyles.onboardingError,
             ),
           ],
-        ),
+          const SizedBox(height: 12),
+          TextButton(
+            key: const Key('email_otp_resend_button'),
+            onPressed: _isVerifying || _isResending || _resendSeconds > 0
+                ? null
+                : _resend,
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              minimumSize: Size.zero,
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              _resendSeconds > 0
+                  ? 'Resend OTP in ${_resendSeconds}s'
+                  : _isResending
+                  ? 'Sending...'
+                  : 'Resend OTP',
+              style: const TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
