@@ -68,6 +68,7 @@ void main() {
       expect(find.byKey(const Key('email_otp_six_digit_row')), findsOneWidget);
       expect(find.byKey(const Key('email_otp_resend_button')), findsOneWidget);
       expect(find.byKey(const Key('email_otp_success_continue')), findsNothing);
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.pump(const Duration(milliseconds: 850));
       expect(find.text('Email Verified.'), findsOneWidget);
       await tester.pump(const Duration(milliseconds: 1200));
@@ -143,6 +144,7 @@ void main() {
       expect(find.byKey(const Key('email_otp_six_digit_row')), findsOneWidget);
       expect(find.byKey(const Key('email_otp_resend_button')), findsOneWidget);
       expect(find.byKey(const Key('email_otp_success_continue')), findsNothing);
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.pump(const Duration(milliseconds: 850));
       expect(find.text('Email Verified.'), findsOneWidget);
       await tester.pump(const Duration(milliseconds: 1200));
@@ -207,6 +209,7 @@ void main() {
         '123456',
       );
       await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.pump(const Duration(milliseconds: 850));
       expect(find.text('Verification Failed.'), findsOneWidget);
       expect(
