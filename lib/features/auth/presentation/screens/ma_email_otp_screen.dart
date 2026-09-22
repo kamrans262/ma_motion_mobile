@@ -410,6 +410,20 @@ class _OtpSuccessDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: AppColors.splashBackground,
       shape: const RoundedRectangleBorder(),
+      content: SizedBox(
+        height: 80,
+        child: Center(
+          child: TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 650),
+            curve: Curves.easeOutCubic,
+            tween: Tween<double>(begin: 0, end: 1),
+            builder: (context, progress, child) => CustomPaint(
+              size: const Size(68, 68),
+              painter: _OtpPurpleCheckPainter(progress),
+            ),
+          ),
+        ),
+      ),
       title: const Text(
         'Email verified successfully.',
         style: TextStyle(
@@ -435,4 +449,48 @@ class _OtpSuccessDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+class _OtpPurpleCheckPainter extends CustomPainter {
+  const _OtpPurpleCheckPainter(this.progress);
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.primary
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke
+      ..isAntiAlias = true;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final circleProgress = (progress / 0.6).clamp(0.0, 1.0);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: 29),
+      -math.pi / 2,
+      2 * math.pi * circleProgress,
+      false,
+      paint,
+    );
+
+    final checkProgress = ((progress - 0.4) / 0.6).clamp(0.0, 1.0);
+    if (checkProgress <= 0) return;
+
+    final path = Path()
+      ..moveTo(18, 35)
+      ..lineTo(29, 45)
+      ..lineTo(50, 23);
+    final metric = path.computeMetrics().first;
+    canvas.drawPath(
+      metric.extractPath(0, metric.length * checkProgress),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _OtpPurpleCheckPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }
