@@ -223,7 +223,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.done,
                             maxLength: 6,
-                            inputFormatters: const [
+                            inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                             ],
                             errorText: _error,
