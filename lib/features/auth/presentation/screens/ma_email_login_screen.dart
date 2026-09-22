@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/domain/onboarding_validators.dart';
-import '../../../onboarding/presentation/widgets/ma_onboarding_button.dart';
 import '../../../onboarding/presentation/widgets/ma_onboarding_text_field.dart';
+import '../widgets/ma_email_auth_layout.dart';
 import '../../../onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 import '../../data/email_otp_repository.dart';
 import '../../data/maker_entry_repository.dart';
@@ -133,112 +131,50 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       );
     }
 
-    final keyboardBottom = MediaQuery.viewInsetsOf(context).bottom;
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: AppColors.splashBackground,
-        systemNavigationBarIconBrightness: Brightness.light,
+    return MaEmailAuthLayout(
+      screenKey: const Key('email_login_screen'),
+      background: MaRoleSelectionWanderingDots(
+        progress: _wanderingController,
       ),
-      child: Scaffold(
-        key: const Key('email_login_screen'),
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppColors.splashBackground,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            MaRoleSelectionWanderingDots(progress: _wanderingController),
-            SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: EdgeInsets.fromLTRB(
-                      20,
-                      72,
-                      20,
-                      keyboardBottom + 32,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight - 104,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Login',
-                            key: const Key('email_login_heading'),
-                            style: AppTextStyles.onboardingHeading.copyWith(
-                              fontSize: 32,
-                              letterSpacing: -0.3,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Enter your email address to continue',
-                            style: AppTextStyles.onboardingHelper,
-                          ),
-                          const SizedBox(height: 20),
-                          MaOnboardingTextField(
-                            key: const Key('email_login_field'),
-                            controller: _emailController,
-                            hintText: 'your@gmail.com',
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.done,
-                            autofillHints: const [AutofillHints.email],
-                            errorText: _emailError,
-                            onChanged: (_) {
-                              if (_emailError != null ||
-                                  _generalError != null) {
-                                setState(() {
-                                  _emailError = null;
-                                  _generalError = null;
-                                });
-                              }
-                            },
-                            onSubmitted: (_) => unawaited(_login()),
-                          ),
-                          if (_generalError != null) ...[
-                            const SizedBox(height: 10),
-                            Text(
-                              _generalError!,
-                              key: const Key('email_login_error'),
-                              style: AppTextStyles.onboardingError,
-                            ),
-                          ],
-                          const SizedBox(height: 30),
-                          MaOnboardingButton(
-                            key: const Key('email_login_button'),
-                            label: _isSending ? 'Sending...' : 'Login',
-                            onPressed: _isSending ? null : _login,
-                            filled: false,
-                            height: 53,
-                          ),
-                          const SizedBox(height: 13),
-                          MaOnboardingButton(
-                            key: const Key('email_create_account_button'),
-                            label: 'Create Account',
-                            onPressed:
-                                _isSending ? null : widget.onCreateAccount,
-                            filled: false,
-                            subdued: true,
-                            height: 53,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+      heading: 'Login',
+      headingKey: const Key('email_login_heading'),
+      subtitle: 'Enter your email address to continue',
+      primaryKey: const Key('email_login_button'),
+      primaryLabel: _isSending ? 'Sending...' : 'Login',
+      onPrimary: _isSending ? null : _login,
+      secondaryKey: const Key('email_create_account_button'),
+      secondaryLabel: 'Create Account',
+      onSecondary: _isSending ? null : widget.onCreateAccount,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MaOnboardingTextField(
+            key: const Key('email_login_field'),
+            controller: _emailController,
+            hintText: 'your@gmail.com',
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.email],
+            errorText: _emailError,
+            onChanged: (_) {
+              if (_emailError != null || _generalError != null) {
+                setState(() {
+                  _emailError = null;
+                  _generalError = null;
+                });
+              }
+            },
+            onSubmitted: (_) => unawaited(_login()),
+          ),
+          if (_generalError != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              _generalError!,
+              key: const Key('email_login_error'),
+              style: AppTextStyles.onboardingError,
             ),
           ],
-        ),
+        ],
       ),
     );
   }
