@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/data/email_otp_repository.dart';
+import '../../../auth/presentation/screens/ma_email_otp_screen.dart';
 import '../../../auth/data/experience_switch_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
 import '../../application/appreciator_registration_controller.dart';
@@ -48,9 +50,12 @@ class _AppreciatorRegistrationFlowScreenState
   String? _validationMessage;
   final Map<String, String> _fieldErrors = <String, String>{};
   bool _isSubmitting = false;
+  bool _isRequestingOtp = false;
   bool _isSwitchingExperience = false;
   bool _submissionCompleted = false;
   bool _prefilling = false;
+  EmailOtpChallenge? _emailChallenge;
+  String? _verifiedRegistrationChallengeId;
 
   @override
   void initState() {
@@ -214,6 +219,7 @@ class _AppreciatorRegistrationFlowScreenState
       'location_text': (step: 1, field: 'location'),
       'location_id': (step: 1, field: 'location'),
       'email': (step: 2, field: 'email'),
+      'otp_challenge_id': (step: 2, field: 'email'),
     };
 
     final mapped = <String, String>{};
@@ -247,6 +253,39 @@ class _AppreciatorRegistrationFlowScreenState
 
   void _next() {
     unawaited(_handleNext());
+  }
+
+  Future<void> _beginEmailVerification() async {
+    if (_isRequestingOtp) return;
+
+    setState(() {
+      _isRequestingOtp = true;
+      _validationMessage = null;
+    });
+
+    try {
+      final email = ref.read(appreciatorRegistrationProvider).email;
+      final challenge = await ref
+          .read(emailOtpRepositoryProvider)
+          .requestOnboarding(email);
+      if (!mounted) return;
+
+      setState(() {
+        _emailChallenge = challenge;
+        _verifiedRegistrationChallengeId = null;
+      });
+    } on ApiException catch (error) {
+      if (mounted) setState(() => _validationMessage = error.message);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _validationMessage =
+              'We could not send the verification code. Please try again.';
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _isRequestingOtp = false);
+    }
   }
 
   Future<void> _switchToMaker() async {
@@ -297,6 +336,7 @@ class _AppreciatorRegistrationFlowScreenState
 
   Future<void> _handleNext() async {
     if (_isSubmitting ||
+        _isRequestingOtp ||
         _prefilling ||
         _submissionCompleted ||
         !_validateCurrentStep()) {
@@ -308,6 +348,10 @@ class _AppreciatorRegistrationFlowScreenState
       return;
     }
 
+    await _beginEmailVerification();
+  }
+
+  Future<void> _completeOnboarding() async {
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -320,7 +364,10 @@ class _AppreciatorRegistrationFlowScreenState
 
       await ref
           .read(appreciatorOnboardingRepositoryProvider)
-          .completeAppreciatorOnboarding(draft);
+          .completeAppreciatorOnboarding(
+            draft,
+            otpChallengeId: _verifiedRegistrationChallengeId,
+          );
 
       if (!mounted) {
         return;
@@ -363,6 +410,26 @@ class _AppreciatorRegistrationFlowScreenState
 
   @override
   Widget build(BuildContext context) {
+    final emailChallenge = _emailChallenge;
+    if (emailChallenge != null) {
+      return MaEmailOtpScreen(
+        challenge: emailChallenge,
+        onBack: () {
+          setState(() => _emailChallenge = null);
+        },
+        onVerified: (challenge, result) {
+          setState(() {
+            _verifiedRegistrationChallengeId =
+                challenge.purpose == EmailOtpPurpose.register
+                ? challenge.id
+                : null;
+            _emailChallenge = null;
+          });
+          unawaited(_completeOnboarding());
+        },
+      );
+    }
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 220),
       switchInCurve: Curves.easeOut,
@@ -432,7 +499,8 @@ class _AppreciatorRegistrationFlowScreenState
           onNext: _next,
           onBack: _back,
           validationMessage: _validationMessage,
-          isBusy: _isSubmitting,
+          isBusy: _isSubmitting || _isRequestingOtp,
+          busyLabel: _isSubmitting ? 'Saving...' : 'Sending...',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -448,6 +516,8 @@ class _AppreciatorRegistrationFlowScreenState
                   ref
                       .read(appreciatorRegistrationProvider.notifier)
                       .setEmail(value);
+                  _emailChallenge = null;
+                  _verifiedRegistrationChallengeId = null;
                   _clearFieldError('email');
                 },
               ),
