@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
+import '../../features/auth/presentation/screens/ma_email_login_screen.dart';
 import '../../features/discovery/domain/discovery_artwork.dart';
 import '../../features/discovery/presentation/screens/appreciator_artwork_discovery_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
@@ -96,7 +97,7 @@ GoRouter createAppRouter({
   ) {
     switch (destination) {
       case MakerEntryDestination.join:
-        context.go('/join');
+        context.go('/login');
       case MakerEntryDestination.profileSetup:
         context.go('/maker-registration');
       case MakerEntryDestination.discovery:
@@ -131,6 +132,18 @@ GoRouter createAppRouter({
               goForMakerEntry(context, destination);
             }
           },
+        ),
+      ),
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: MaEmailLoginScreen(
+            onCreateAccount: () => context.go('/join'),
+            onAuthenticated: (destination) {
+              goForMakerEntry(context, destination);
+            },
+          ),
         ),
       ),
       GoRoute(
@@ -312,7 +325,7 @@ GoRouter createAppRouter({
           state: state,
           child: MakerInfoSettingsScreen(
             onClose: () => context.pop(),
-            onAccountDeleted: () => context.go('/join'),
+            onAccountDeleted: () => context.go('/login'),
             onSwitchedToAppreciator: (destination) {
               goForMakerEntry(context, destination);
             },
