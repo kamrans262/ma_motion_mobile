@@ -5,6 +5,8 @@ abstract final class ApiPaths {
   static const String makerOnboarding = '/auth/maker-onboarding';
   static const String appreciatorOnboarding = '/auth/appreciator-onboarding';
   static const String login = '/auth/login';
+  static const String requestEmailOtp = '/auth/email-otp/request';
+  static const String verifyEmailOtp = '/auth/email-otp/verify';
   static const String logout = '/auth/logout';
   static const String forgotPassword = '/auth/forgot-password';
   static const String resetPassword = '/auth/reset-password';
