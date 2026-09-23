@@ -13,10 +13,12 @@ class MaRoleSelectionScreen extends StatefulWidget {
     super.key,
     required this.onMaker,
     required this.onAppreciator,
+    this.onBack,
   });
 
   final VoidCallback onMaker;
   final VoidCallback onAppreciator;
+  final VoidCallback? onBack;
 
   @override
   State<MaRoleSelectionScreen> createState() => _MaRoleSelectionScreenState();
@@ -65,7 +67,10 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
           children: [
             MaRoleSelectionWanderingDots(progress: _wanderingController),
             SafeArea(
-              child: LayoutBuilder(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  LayoutBuilder(
                 builder: (context, constraints) {
                   final horizontal = constraints.maxWidth < 360 ? 20.0 : 28.0;
                   final buttonGap = constraints.maxWidth < 360 ? 12.0 : 16.0;
@@ -192,6 +197,23 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                     ),
                   );
                 },
+                  ),
+                  Positioned(
+                    top: 8,
+                    left: 20,
+                    child: IconButton(
+                      key: const Key('role_selection_back_button'),
+                      tooltip: 'Back',
+                      onPressed: widget.onBack ??
+                          () => Navigator.of(context).maybePop(),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        size: 24,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
