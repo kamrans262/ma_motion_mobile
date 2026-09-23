@@ -25,7 +25,7 @@ abstract final class AppTheme {
       highlightColor: Colors.transparent,
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: AppColors.primary,
-        selectionColor: Color(0x66904AFF),
+        selectionColor: Color(0x669F67FF),
         selectionHandleColor: AppColors.primary,
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
