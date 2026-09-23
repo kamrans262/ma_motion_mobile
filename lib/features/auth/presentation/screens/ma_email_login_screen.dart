@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/domain/onboarding_validators.dart';
 import '../../../onboarding/presentation/widgets/ma_onboarding_text_field.dart';
@@ -145,6 +146,35 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       secondaryKey: const Key('email_create_account_button'),
       secondaryLabel: 'Create Account',
       onSecondary: _isSending ? null : widget.onCreateAccount,
+      belowSecondary: const Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Terms & Conditions',
+                key: Key('email_login_terms_text'),
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  color: AppColors.mutedText,
+                ),
+              ),
+              SizedBox(width: 12),
+              Text(
+                'Privacy Policy',
+                key: Key('email_login_privacy_text'),
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  color: AppColors.mutedText,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
