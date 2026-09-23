@@ -141,13 +141,13 @@ void main() {
     expect(selected.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(selected.style?.fontSize, 16);
     expect(selected.style?.fontWeight, FontWeight.w500);
-    expect(selected.style?.color, const Color(0xFF904AFF));
+    expect(selected.style?.color, const Color(0xFF9F67FF));
     expect(unselected.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(unselected.style?.fontSize, 14);
     expect(unselected.style?.fontWeight, FontWeight.w500);
     expect(
       unselected.style?.color,
-      const Color(0xFF904AFF).withValues(alpha: 0.50),
+      const Color(0xFF9F67FF).withValues(alpha: 0.50),
     );
 
     final grid = tester.widget<GridView>(
