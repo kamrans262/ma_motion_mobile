@@ -67,6 +67,8 @@ void main() {
       48,
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
+    expect(find.byKey(const Key('maker_settings_terms_text')), findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_privacy_text')), findsOneWidget);
 
     for (final choice in <(String, String)>[
       ('maker_settings_type_1', 'Painting'),
