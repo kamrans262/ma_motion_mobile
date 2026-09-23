@@ -108,11 +108,11 @@ void main() {
     );
     expect(
       next.style?.foregroundColor?.resolve(<WidgetState>{}),
-      const Color(0xFF904AFF),
+      const Color(0xFF9F67FF),
     );
     expect(
       back.style?.foregroundColor?.resolve(<WidgetState>{}),
-      const Color(0xFF904AFF).withValues(alpha: 0.55),
+      const Color(0xFF9F67FF).withValues(alpha: 0.55),
     );
     expect(tester.takeException(), isNull);
   });
