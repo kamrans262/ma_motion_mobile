@@ -141,13 +141,17 @@ class MaEmailAuthLayout extends StatelessWidget {
                               height: 53,
                             ),
                             if (belowSecondary != null) ...[
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 20),
                               belowSecondary!,
                             ],
-                            // Matches the existing onboarding footer's 30px
-                            // gap, 8px dots row and lower safe-area spacing.
+                            // Keep the OTP footer unchanged; the Login screen
+                            // has legal copy and needs less empty space below it.
                             const SizedBox(height: 38),
-                            SizedBox(height: dotsBottomGap),
+                            SizedBox(
+                              height: belowSecondary == null
+                                  ? dotsBottomGap
+                                  : math.max(24.0, media.padding.bottom + 12),
+                            ),
                           ],
                         ),
                       ),
