@@ -137,7 +137,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       background: MaRoleSelectionWanderingDots(
         progress: _wanderingController,
       ),
-      heading: 'Your Creative Space Awaits',
+      heading: 'Your creative space awaits',
       headingKey: const Key('email_login_heading'),
       subtitle: 'Enter your email address to continue',
       primaryKey: const Key('email_login_button'),
