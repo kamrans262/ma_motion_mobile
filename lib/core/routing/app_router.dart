@@ -153,6 +153,7 @@ GoRouter createAppRouter({
           child: MaRoleSelectionScreen(
             onMaker: () => context.go('/maker-registration'),
             onAppreciator: () => context.go('/appreciator-registration'),
+            onBack: () => context.go('/login'),
           ),
         ),
       ),
