@@ -158,15 +158,6 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       _error = null;
     });
 
-    final loadingDialog = showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const PopScope(
-        canPop: false,
-        child: _OtpLoadingDialog(),
-      ),
-    );
-
     EmailOtpVerificationResult? result;
     String? failureMessage;
     var clearInvalidCode = false;
@@ -183,9 +174,6 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       failureMessage = 'We could not verify the code. Please try again.';
     }
 
-    if (!mounted) return;
-    Navigator.of(context, rootNavigator: true).pop();
-    await loadingDialog;
     if (!mounted) return;
 
     if (failureMessage != null) {
@@ -354,46 +342,6 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
           ],
 
         ],
-      ),
-    );
-  }
-}
-
-class _OtpLoadingDialog extends StatelessWidget {
-  const _OtpLoadingDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: AppColors.splashBackground,
-      shape: const RoundedRectangleBorder(),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 26),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.4,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(width: 18),
-            Flexible(
-              child: Text(
-                'Verifying OTP...',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
