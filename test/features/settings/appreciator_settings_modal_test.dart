@@ -64,6 +64,8 @@ void main() {
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
     expect(find.text('Settings'), findsOneWidget);
+    expect(find.byKey(const Key('appreciator_settings_terms_text')), findsOneWidget);
+    expect(find.byKey(const Key('appreciator_settings_privacy_text')), findsOneWidget);
 
     expect(
       tester
