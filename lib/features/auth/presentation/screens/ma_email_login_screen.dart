@@ -147,32 +147,61 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       secondaryLabel: 'Create Account',
       onSecondary: _isSending ? null : widget.onCreateAccount,
       belowSecondary: const Center(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Terms & Conditions',
-                key: Key('email_login_terms_text'),
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
-                  color: AppColors.mutedText,
-                ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'By continuing, you agree to our',
+              key: Key('email_login_legal_intro'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12,
+                color: AppColors.mutedText,
               ),
-              SizedBox(width: 12),
-              Text(
-                'Privacy Policy',
-                key: Key('email_login_privacy_text'),
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
-                  color: AppColors.mutedText,
-                ),
+            ),
+            SizedBox(height: 6),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Terms & Conditions',
+                    key: Key('email_login_terms_text'),
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      color: AppColors.primary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    '·',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      color: AppColors.mutedText,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'Privacy Policy',
+                    key: Key('email_login_privacy_text'),
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 12,
+                      color: AppColors.primary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.primary,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       content: Column(
