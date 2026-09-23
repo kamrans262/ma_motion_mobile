@@ -497,6 +497,38 @@ class _AppreciatorSettingsModalState
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Terms & Conditions',
+                    key: Key('appreciator_settings_terms_text'),
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 14,
+                      color: AppColors.mutedText,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    'Privacy Policy',
+                    key: Key('appreciator_settings_privacy_text'),
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.fontFamily,
+                      fontSize: 14,
+                      color: AppColors.mutedText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           if (_errorMessage != null) ...[
             const SizedBox(height: 8),
             Text(
