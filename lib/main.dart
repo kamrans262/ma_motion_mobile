@@ -69,7 +69,7 @@ class _MaMotionAppState extends State<MaMotionApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'MA Motion',
+      title: 'MA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       routerConfig: _router,
