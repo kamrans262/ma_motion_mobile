@@ -24,6 +24,7 @@ class MaEmailAuthLayout extends StatelessWidget {
     required this.primaryKey,
     required this.secondaryKey,
     this.headingKey,
+    this.belowSecondary,
   });
 
   final Key screenKey;
@@ -38,6 +39,7 @@ class MaEmailAuthLayout extends StatelessWidget {
   final Key primaryKey;
   final Key secondaryKey;
   final Key? headingKey;
+  final Widget? belowSecondary;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +140,10 @@ class MaEmailAuthLayout extends StatelessWidget {
                               subdued: true,
                               height: 53,
                             ),
+                            if (belowSecondary != null) ...[
+                              const SizedBox(height: 8),
+                              belowSecondary!,
+                            ],
                             // Matches the existing onboarding footer's 30px
                             // gap, 8px dots row and lower safe-area spacing.
                             const SizedBox(height: 38),
