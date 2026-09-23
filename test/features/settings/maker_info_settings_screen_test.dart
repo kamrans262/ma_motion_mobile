@@ -67,8 +67,6 @@ void main() {
       48,
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
-    expect(find.byKey(const Key('maker_settings_terms_text')), findsOneWidget);
-    expect(find.byKey(const Key('maker_settings_privacy_text')), findsOneWidget);
 
     for (final choice in <(String, String)>[
       ('maker_settings_type_1', 'Painting'),
@@ -108,6 +106,16 @@ void main() {
 
     final settingsList = find.byKey(const Key('maker_settings_scroll'));
     expect(settingsList, findsOneWidget);
+
+    final legalTerms = find.byKey(const Key('maker_settings_terms_text'));
+    await tester.dragUntilVisible(
+      legalTerms,
+      settingsList,
+      const Offset(0, -240),
+    );
+    await tester.pump();
+    expect(legalTerms, findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_privacy_text')), findsOneWidget);
 
     final emailSwitch = find.byKey(
       const Key('maker_settings_email_visibility'),
