@@ -107,16 +107,6 @@ void main() {
     final settingsList = find.byKey(const Key('maker_settings_scroll'));
     expect(settingsList, findsOneWidget);
 
-    final legalTerms = find.byKey(const Key('maker_settings_terms_text'));
-    await tester.dragUntilVisible(
-      legalTerms,
-      settingsList,
-      const Offset(0, -240),
-    );
-    await tester.pump();
-    expect(legalTerms, findsOneWidget);
-    expect(find.byKey(const Key('maker_settings_privacy_text')), findsOneWidget);
-
     final emailSwitch = find.byKey(
       const Key('maker_settings_email_visibility'),
     );
@@ -128,6 +118,16 @@ void main() {
 
     await tester.tap(emailSwitch.hitTestable());
     await tester.pump();
+
+    final legalTerms = find.byKey(const Key('maker_settings_terms_text'));
+    await tester.dragUntilVisible(
+      legalTerms,
+      settingsList,
+      const Offset(0, -240),
+    );
+    await tester.pump();
+    expect(legalTerms, findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_privacy_text')), findsOneWidget);
 
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
 
