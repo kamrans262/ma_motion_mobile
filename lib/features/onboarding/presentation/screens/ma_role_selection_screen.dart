@@ -71,132 +71,132 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                 fit: StackFit.expand,
                 children: [
                   LayoutBuilder(
-                builder: (context, constraints) {
-                  final horizontal = constraints.maxWidth < 360 ? 20.0 : 28.0;
-                  final buttonGap = constraints.maxWidth < 360 ? 12.0 : 16.0;
-                  const roleFontSize = 22.0;
+                    builder: (context, constraints) {
+                      final horizontal = constraints.maxWidth < 360 ? 20.0 : 28.0;
+                      final buttonGap = constraints.maxWidth < 360 ? 12.0 : 16.0;
+                      const roleFontSize = 22.0;
 
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: horizontal),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Would you like to\njoin as a Maker or\nAppreciator?',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 32,
-                              letterSpacing: -0.3,
-                              height: 1.18,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: buttonGap,
-                            runSpacing: buttonGap,
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: horizontal),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              OutlinedButton(
-                                key: const Key('select_maker_button'),
-                                onPressed: widget.onMaker,
-                                style:
-                                    OutlinedButton.styleFrom(
-                                      backgroundColor:
-                                          AppColors.splashBackground,
-                                      foregroundColor: AppColors.primary,
-                                      side: const BorderSide(
-                                        color: AppColors.primary,
-                                        width: 1.2,
-                                      ),
-                                      padding: const EdgeInsets.fromLTRB(
-                                        32,
-                                        18,
-                                        32,
-                                        14,
-                                      ),
-                                      shape: const RoundedRectangleBorder(),
-                                    ).copyWith(
-                                      backgroundColor:
-                                          AppButtonStyles.purpleWhenPressed(
-                                            AppColors.splashBackground,
-                                          ),
-                                      foregroundColor:
-                                          WidgetStateProperty.resolveWith<
-                                            Color
-                                          >(
-                                            (states) =>
-                                                states.contains(
-                                                  WidgetState.pressed,
-                                                )
-                                                ? AppColors.white
-                                                : AppColors.primary,
-                                          ),
-                                    ),
-                                child: const Text(
-                                  'Maker',
-                                  style: TextStyle(
-                                    fontFamily: AppTextStyles.fontFamily,
-                                    fontSize: roleFontSize,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              Text(
+                                'Would you like to\njoin as a Maker or\nAppreciator?',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 32,
+                                  letterSpacing: -0.3,
+                                  height: 1.18,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.primary,
                                 ),
                               ),
-                              OutlinedButton(
-                                key: const Key('select_appreciator_button'),
-                                onPressed: widget.onAppreciator,
-                                style:
-                                    OutlinedButton.styleFrom(
-                                      backgroundColor:
-                                          AppColors.splashBackground,
-                                      foregroundColor: AppColors.primary,
-                                      side: const BorderSide(
-                                        color: AppColors.primary,
-                                        width: 1.2,
-                                      ),
-                                      padding: const EdgeInsets.fromLTRB(
-                                        32,
-                                        18,
-                                        32,
-                                        14,
-                                      ),
-                                      shape: const RoundedRectangleBorder(),
-                                    ).copyWith(
-                                      backgroundColor:
-                                          AppButtonStyles.purpleWhenPressed(
-                                            AppColors.splashBackground,
+                              const SizedBox(height: 32),
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: buttonGap,
+                                runSpacing: buttonGap,
+                                children: [
+                                  OutlinedButton(
+                                    key: const Key('select_maker_button'),
+                                    onPressed: widget.onMaker,
+                                    style:
+                                        OutlinedButton.styleFrom(
+                                          backgroundColor:
+                                              AppColors.splashBackground,
+                                          foregroundColor: AppColors.primary,
+                                          side: const BorderSide(
+                                            color: AppColors.primary,
+                                            width: 1.2,
                                           ),
-                                      foregroundColor:
-                                          WidgetStateProperty.resolveWith<
-                                            Color
-                                          >(
-                                            (states) =>
-                                                states.contains(
-                                                  WidgetState.pressed,
-                                                )
-                                                ? AppColors.white
-                                                : AppColors.primary,
+                                          padding: const EdgeInsets.fromLTRB(
+                                            32,
+                                            18,
+                                            32,
+                                            14,
                                           ),
+                                          shape: const RoundedRectangleBorder(),
+                                        ).copyWith(
+                                          backgroundColor:
+                                              AppButtonStyles.purpleWhenPressed(
+                                                AppColors.splashBackground,
+                                              ),
+                                          foregroundColor:
+                                              WidgetStateProperty.resolveWith<
+                                                Color
+                                              >(
+                                                (states) =>
+                                                    states.contains(
+                                                      WidgetState.pressed,
+                                                    )
+                                                    ? AppColors.white
+                                                    : AppColors.primary,
+                                              ),
+                                        ),
+                                    child: const Text(
+                                      'Maker',
+                                      style: TextStyle(
+                                        fontFamily: AppTextStyles.fontFamily,
+                                        fontSize: roleFontSize,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                child: const Text(
-                                  'Appreciator',
-                                  style: TextStyle(
-                                    fontFamily: AppTextStyles.fontFamily,
-                                    fontSize: roleFontSize,
-                                    fontWeight: FontWeight.w500,
                                   ),
-                                ),
+                                  OutlinedButton(
+                                    key: const Key('select_appreciator_button'),
+                                    onPressed: widget.onAppreciator,
+                                    style:
+                                        OutlinedButton.styleFrom(
+                                          backgroundColor:
+                                              AppColors.splashBackground,
+                                          foregroundColor: AppColors.primary,
+                                          side: const BorderSide(
+                                            color: AppColors.primary,
+                                            width: 1.2,
+                                          ),
+                                          padding: const EdgeInsets.fromLTRB(
+                                            32,
+                                            18,
+                                            32,
+                                            14,
+                                          ),
+                                          shape: const RoundedRectangleBorder(),
+                                        ).copyWith(
+                                          backgroundColor:
+                                              AppButtonStyles.purpleWhenPressed(
+                                                AppColors.splashBackground,
+                                              ),
+                                          foregroundColor:
+                                              WidgetStateProperty.resolveWith<
+                                                Color
+                                              >(
+                                                (states) =>
+                                                    states.contains(
+                                                      WidgetState.pressed,
+                                                    )
+                                                    ? AppColors.white
+                                                    : AppColors.primary,
+                                              ),
+                                        ),
+                                    child: const Text(
+                                      'Appreciator',
+                                      style: TextStyle(
+                                        fontFamily: AppTextStyles.fontFamily,
+                                        fontSize: roleFontSize,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                        ),
+                      );
+                    },
                   ),
                   Positioned(
                     top: 8,
