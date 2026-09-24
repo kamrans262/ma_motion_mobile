@@ -69,7 +69,7 @@ class MaOnboardingTextField extends StatelessWidget {
             // Keep the original multiline inset for the first text line.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 21 : 14,
+              maxLines > 1 ? 21 : 16,
               20,
               maxLines > 1 ? 11 : 14,
             ),
