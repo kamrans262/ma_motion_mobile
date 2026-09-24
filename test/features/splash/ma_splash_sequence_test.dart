@@ -56,7 +56,7 @@ void main() {
     );
     expect(welcome.style, AppTextStyles.onboardingHeading);
     expect(welcome.style?.fontSize, 32);
-    expect(welcome.style?.letterSpacing, -0.3);
+    expect(welcome.style?.letterSpacing, 0);
     expect(welcome.textAlign, TextAlign.center);
     expect(tester.takeException(), isNull);
   });

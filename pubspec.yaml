@@ -123,7 +123,7 @@ flutter:
   fonts:
     - family: HelveticaNeueLTStd
       fonts:
-        - asset: assets/fonts/Helvetica Neue LT Std 65 Medium.otf
+        - asset: assets/fonts/HelveticaNeueLTStd-Md.otf
           weight: 500
     - family: Fraunces
       fonts:

@@ -88,8 +88,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                 style: const TextStyle(
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 32,
-                                  letterSpacing: -0.3,
-                                  height: 1.18,
+                                  letterSpacing: 0,
+                                  height: 1.22,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.primary,
                                 ),
@@ -141,6 +141,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                       style: TextStyle(
                                         fontFamily: AppTextStyles.fontFamily,
                                         fontSize: roleFontSize,
+                                        letterSpacing: AppTextStyles.bodyTracking,
+                                        height: 1.2,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -186,6 +188,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                       style: TextStyle(
                                         fontFamily: AppTextStyles.fontFamily,
                                         fontSize: roleFontSize,
+                                        letterSpacing: AppTextStyles.bodyTracking,
+                                        height: 1.2,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

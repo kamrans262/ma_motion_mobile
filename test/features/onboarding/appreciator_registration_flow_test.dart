@@ -53,7 +53,7 @@ void main() {
       find.byKey(const Key('maker_step_heading')),
     );
     expect(heading.style?.fontSize, 32);
-    expect(heading.style?.letterSpacing, -0.3);
+    expect(heading.style?.letterSpacing, 0);
     expect(heading.style?.fontWeight, FontWeight.w500);
 
     for (var index = 0; index < 3; index++) {

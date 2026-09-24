@@ -110,7 +110,7 @@ class MaOnboardingScaffold extends StatelessWidget {
                                     headingStyle ??
                                     AppTextStyles.onboardingHeading.copyWith(
                                       fontSize: 32,
-                                      letterSpacing: -0.3,
+                                      letterSpacing: 0,
                                       fontWeight: FontWeight.w500,
                                     ),
                               ),

@@ -4,12 +4,14 @@ import 'app_colors.dart';
 
 abstract final class AppTextStyles {
   static const String fontFamily = 'HelveticaNeueLTStd';
+  // Slightly looser typography for the new font asset across shared styles.
+  static const double bodyTracking = 0.2;
 
   static const TextStyle onboardingHeading = TextStyle(
     fontFamily: fontFamily,
     fontSize: 32,
-    letterSpacing: -0.3,
-    height: 1.12,
+    letterSpacing: 0,
+    height: 1.18,
     fontWeight: FontWeight.w500,
     color: AppColors.primary,
   );
@@ -17,7 +19,8 @@ abstract final class AppTextStyles {
   static const TextStyle onboardingHelper = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
-    height: 1.35,
+    letterSpacing: bodyTracking,
+    height: 1.4,
     fontWeight: FontWeight.w500,
     color: AppColors.mutedText,
   );
@@ -25,7 +28,8 @@ abstract final class AppTextStyles {
   static const TextStyle field = TextStyle(
     fontFamily: fontFamily,
     fontSize: 18,
-    height: 1.2,
+    letterSpacing: bodyTracking,
+    height: 1.25,
     fontWeight: FontWeight.w500,
     color: AppColors.white,
   );
@@ -33,7 +37,8 @@ abstract final class AppTextStyles {
   static const TextStyle fieldHint = TextStyle(
     fontFamily: fontFamily,
     fontSize: 18,
-    height: 1.2,
+    letterSpacing: bodyTracking,
+    height: 1.25,
     fontWeight: FontWeight.w500,
     color: AppColors.mutedText,
   );
@@ -41,6 +46,8 @@ abstract final class AppTextStyles {
   static const TextStyle buttonDark = TextStyle(
     fontFamily: fontFamily,
     fontSize: 16,
+    letterSpacing: bodyTracking,
+    height: 1.2,
     fontWeight: FontWeight.w500,
     color: AppColors.black,
   );
@@ -48,6 +55,8 @@ abstract final class AppTextStyles {
   static const TextStyle buttonPurple = TextStyle(
     fontFamily: fontFamily,
     fontSize: 16,
+    letterSpacing: bodyTracking,
+    height: 1.2,
     fontWeight: FontWeight.w500,
     color: AppColors.primary,
   );
@@ -56,7 +65,8 @@ abstract final class AppTextStyles {
   static const TextStyle chip = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
-    height: 1.2,
+    letterSpacing: bodyTracking,
+    height: 1.25,
     fontWeight: FontWeight.w500,
     color: AppColors.primary,
   );
@@ -64,7 +74,8 @@ abstract final class AppTextStyles {
   static const TextStyle chipSelected = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
-    height: 1.2,
+    letterSpacing: bodyTracking,
+    height: 1.25,
     fontWeight: FontWeight.w500,
     color: AppColors.black,
   );
@@ -72,7 +83,8 @@ abstract final class AppTextStyles {
   static const TextStyle onboardingError = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
-    height: 1.25,
+    letterSpacing: bodyTracking,
+    height: 1.3,
     fontWeight: FontWeight.w500,
     color: AppColors.white,
   );
@@ -80,7 +92,8 @@ abstract final class AppTextStyles {
   static const TextStyle error = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
-    height: 1.25,
+    letterSpacing: bodyTracking,
+    height: 1.3,
     fontWeight: FontWeight.w500,
     color: AppColors.error,
   );
