@@ -152,7 +152,23 @@ void main() {
     final deleteText = tester.widget<Text>(
       find.descendant(of: deleteAccount, matching: find.byType(Text)),
     );
-    expect(deleteText.style?.color, AppColors.mutedText);
+    expect(deleteText.style?.color, AppColors.darkGray);
+    expect(deleteText.style?.decorationColor, AppColors.darkGray);
+    expect(tester.widget<Text>(legalTerms).style?.decoration, TextDecoration.underline);
+    expect(tester.widget<Text>(legalPrivacy).style?.decoration, TextDecoration.underline);
+    final switchText = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('maker_settings_switch_appreciator')),
+        matching: find.byType(Text),
+      ),
+    );
+    expect(switchText.style?.decoration, TextDecoration.underline);
+    expect(
+      tester.widget<TextButton>(
+        find.byKey(const Key('maker_settings_switch_appreciator')),
+      ).style?.foregroundColor?.resolve(<WidgetState>{}),
+      AppColors.darkGray,
+    );
 
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
 
