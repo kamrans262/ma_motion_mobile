@@ -46,6 +46,9 @@ jobs:
       - name: Non-OTP input vertical alignment tests
         run: flutter test test/features/onboarding/ma_onboarding_text_field_vertical_alignment_test.dart
 
+      - name: Bottom navigation fixed-size regression
+        run: flutter test test/features/discovery/maker_artwork_discovery_screen_test.dart
+
       - name: Focused video changes analyzer and tests
         shell: bash
         run: |
