@@ -7,6 +7,10 @@ void main() {
     expect(MaDotGridMetrics.columns, 18);
     expect(MaDotGridMetrics.rows, 36);
     expect(MaDotGridMetrics.columns * MaDotGridMetrics.rows, 648);
+    // 1 logical pixel larger diameter, shared by Splash, Login, both
+    // onboarding flows, and the animated Role Selection background.
+    expect(MaDotGridMetrics.dotRadius, 1.3);
+    expect(MaDotGridMetrics.dotRadius * 2, 2.6);
 
     for (final size in <Size>[
       const Size(320, 568),
