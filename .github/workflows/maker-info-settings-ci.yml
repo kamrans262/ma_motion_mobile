@@ -49,6 +49,11 @@ jobs:
       - name: Bottom navigation fixed-size regression
         run: flutter test test/features/discovery/maker_bottom_navigation_font_size_test.dart
 
+      - name: Client login copy and filter icon UI regression
+        run: |
+          flutter test test/features/auth/ma_email_login_screen_ui_test.dart
+          flutter test test/features/discovery/ma_filter_icon_asset_test.dart
+
       - name: Focused video changes analyzer and tests
         shell: bash
         run: |
