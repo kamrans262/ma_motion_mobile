@@ -127,7 +127,32 @@ void main() {
     );
     await tester.pump();
     expect(legalTerms, findsOneWidget);
-    expect(find.byKey(const Key('maker_settings_privacy_text')), findsOneWidget);
+    final legalPrivacy = find.byKey(const Key('maker_settings_privacy_text'));
+    final deleteAccount = find.byKey(
+      const Key('maker_settings_delete_account'),
+    );
+    expect(legalPrivacy, findsOneWidget);
+    expect(deleteAccount, findsOneWidget);
+    expect(
+      tester.widget<Text>(legalTerms).style?.color,
+      AppColors.darkGray,
+    );
+    expect(
+      tester.widget<Text>(legalPrivacy).style?.color,
+      AppColors.darkGray,
+    );
+    expect(
+      tester.getTopLeft(legalPrivacy).dy,
+      greaterThan(tester.getTopLeft(legalTerms).dy),
+    );
+    expect(
+      tester.getTopLeft(deleteAccount).dy,
+      greaterThan(tester.getTopLeft(legalPrivacy).dy),
+    );
+    final deleteText = tester.widget<Text>(
+      find.descendant(of: deleteAccount, matching: find.byType(Text)),
+    );
+    expect(deleteText.style?.color, AppColors.mutedText);
 
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
 
