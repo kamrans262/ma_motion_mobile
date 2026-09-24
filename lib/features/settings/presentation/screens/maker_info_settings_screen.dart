@@ -863,6 +863,32 @@ class _MakerInfoSettingsScreenState
               ),
             ),
             const SizedBox(height: 8),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Terms & Conditions',
+                key: Key('maker_settings_terms_text'),
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  color: AppColors.darkGray,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Privacy Policy',
+                key: Key('maker_settings_privacy_text'),
+                style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  color: AppColors.darkGray,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
             TextButton(
               key: const Key('maker_settings_delete_account'),
               onPressed: _saving ? null : _deleteAccount,
@@ -871,7 +897,7 @@ class _MakerInfoSettingsScreenState
                 overlayColor: Colors.transparent,
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
-                foregroundColor: AppColors.error,
+                foregroundColor: AppColors.mutedText,
                 minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -881,42 +907,10 @@ class _MakerInfoSettingsScreenState
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
-                  decorationColor: AppColors.error,
+                  decorationColor: AppColors.mutedText,
                   decorationStyle: TextDecorationStyle.solid,
                   decorationThickness: 1.5,
-                  color: AppColors.error,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Terms & Conditions',
-                      key: Key('maker_settings_terms_text'),
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 14,
-                        color: AppColors.mutedText,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      'Privacy Policy',
-                      key: Key('maker_settings_privacy_text'),
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 14,
-                        color: AppColors.mutedText,
-                      ),
-                    ),
-                  ],
+                  color: AppColors.mutedText,
                 ),
               ),
             ),
@@ -1308,7 +1302,7 @@ class _CarouselEditor extends StatelessWidget {
           ),
         ),
         Text(
-          'Image or video (5 seconds or less)',
+          'Image or Video (5 sec. or less) JPEG, PNG, MP4, MOV, GIF',
           style: AppTextStyles.onboardingHelper.copyWith(
             fontSize: 14,
             color: Colors.white.withValues(alpha: 0.4),
