@@ -25,6 +25,7 @@ class MaEmailAuthLayout extends StatelessWidget {
     required this.secondaryKey,
     this.headingKey,
     this.belowSecondary,
+    this.secondaryFilled = false,
   });
 
   final Key screenKey;
@@ -40,6 +41,7 @@ class MaEmailAuthLayout extends StatelessWidget {
   final Key secondaryKey;
   final Key? headingKey;
   final Widget? belowSecondary;
+  final bool secondaryFilled;
 
   @override
   Widget build(BuildContext context) {
@@ -136,8 +138,8 @@ class MaEmailAuthLayout extends StatelessWidget {
                               key: secondaryKey,
                               label: secondaryLabel,
                               onPressed: onSecondary,
-                              filled: false,
-                              subdued: true,
+                              filled: secondaryFilled,
+                              subdued: !secondaryFilled,
                               height: 53,
                             ),
                             if (belowSecondary != null) ...[
