@@ -62,6 +62,12 @@ jobs:
           flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "renders Maker Info Setting and saves profile changes"
           flutter test test/features/settings/appreciator_settings_modal_test.dart --plain-name "modal overlays and blurs current grid context"
 
+      - name: Diagnose narrow Maker Settings layout
+        shell: bash
+        run: |
+          dart format test/features/settings/maker_info_settings_screen_test.dart
+          flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "Maker settings has no overflow on 320x520 viewport"
+
       - name: Helvetica typography formatting and focused checks
         shell: bash
         run: |
