@@ -1029,6 +1029,7 @@ class _LabeledField extends StatelessWidget {
             keyboardType: keyboardType,
             minLines: minLines,
             maxLines: maxLines,
+            textAlignVertical: TextAlignVertical.center,
             style: AppTextStyles.field,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
@@ -1418,6 +1419,7 @@ class _CarouselEditor extends StatelessWidget {
             key: Key('maker_settings_artwork_title_$slot'),
             controller: titleController,
             maxLength: 180,
+            textAlignVertical: TextAlignVertical.center,
             style: AppTextStyles.field,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
@@ -1454,6 +1456,7 @@ class _CarouselEditor extends StatelessWidget {
           key: Key('maker_settings_carousel_caption_$slot'),
           controller: captionController,
           maxLength: 280,
+          textAlignVertical: TextAlignVertical.center,
           style: AppTextStyles.field,
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
