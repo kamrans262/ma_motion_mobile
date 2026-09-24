@@ -154,8 +154,14 @@ void main() {
     );
     expect(deleteText.style?.color, AppColors.darkGray);
     expect(deleteText.style?.decorationColor, AppColors.darkGray);
-    expect(tester.widget<Text>(legalTerms).style?.decoration, TextDecoration.underline);
-    expect(tester.widget<Text>(legalPrivacy).style?.decoration, TextDecoration.underline);
+    expect(
+      tester.widget<Text>(legalTerms).style?.decoration,
+      TextDecoration.underline,
+    );
+    expect(
+      tester.widget<Text>(legalPrivacy).style?.decoration,
+      TextDecoration.underline,
+    );
     final switchText = tester.widget<Text>(
       find.descendant(
         of: find.byKey(const Key('maker_settings_switch_appreciator')),
