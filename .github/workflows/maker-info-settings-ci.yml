@@ -46,6 +46,9 @@ jobs:
       - name: Helvetica asset and increased typography regression
         run: flutter test test/core/theme/app_text_styles_test.dart
 
+      - name: Shared dot grid size and geometry regression
+        run: flutter test test/core/widgets/ma_dotted_background_test.dart
+
       - name: Non-OTP input vertical alignment tests
         run: flutter test test/features/onboarding/ma_onboarding_text_field_vertical_alignment_test.dart
 
@@ -61,12 +64,6 @@ jobs:
         run: |
           flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "renders Maker Info Setting and saves profile changes"
           flutter test test/features/settings/appreciator_settings_modal_test.dart --plain-name "modal overlays and blurs current grid context"
-
-      - name: Diagnose narrow Maker Settings layout
-        shell: bash
-        run: |
-          dart format test/features/settings/maker_info_settings_screen_test.dart
-          flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "Maker settings has no overflow on 320x520 viewport"
 
       - name: Helvetica typography formatting and focused checks
         shell: bash
