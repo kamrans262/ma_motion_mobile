@@ -683,7 +683,7 @@ class _MakerRegistrationFlowScreenState
           child: MaOnboardingTextField(
             key: const Key('maker_email_field'),
             controller: _emailController,
-            hintText: 'your@gmail.com',
+            hintText: 'you@email.com',
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.email],
