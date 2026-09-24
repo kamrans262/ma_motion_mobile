@@ -64,8 +64,30 @@ void main() {
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.byKey(const Key('appreciator_settings_terms_text')), findsOneWidget);
-    expect(find.byKey(const Key('appreciator_settings_privacy_text')), findsOneWidget);
+    final terms = find.byKey(const Key('appreciator_settings_terms_text'));
+    final privacy = find.byKey(const Key('appreciator_settings_privacy_text'));
+    final deleteAccount = find.byKey(
+      const Key('appreciator_settings_delete_account'),
+    );
+    expect(terms, findsOneWidget);
+    expect(privacy, findsOneWidget);
+    expect(deleteAccount, findsOneWidget);
+    expect(tester.widget<Text>(terms).style?.color, AppColors.darkGray);
+    expect(tester.widget<Text>(privacy).style?.color, AppColors.darkGray);
+    expect(
+      tester.getTopLeft(privacy).dy,
+      greaterThan(tester.getTopLeft(terms).dy),
+    );
+    expect(
+      tester.getTopLeft(deleteAccount).dy,
+      greaterThan(tester.getTopLeft(privacy).dy),
+    );
+    expect(
+      tester.widget<Text>(
+        find.descendant(of: deleteAccount, matching: find.byType(Text)),
+      ).style?.color,
+      AppColors.mutedText,
+    );
 
     expect(
       tester
