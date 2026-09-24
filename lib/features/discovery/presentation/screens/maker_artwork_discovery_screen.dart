@@ -318,7 +318,7 @@ class _MakerArtworkDiscoveryScreenState
                                       'discovery_filter_button',
                                     ),
                                     iconKey: const Key('discovery_filter_svg'),
-                                    assetName: 'assets/ma_filter.svg',
+                                    assetName: 'assets/MA_FilterIcon_2.svg',
                                     fallbackAssetName: 'assets/filter.svg',
                                     tooltip: 'Filter artwork',
                                     size: 20,
