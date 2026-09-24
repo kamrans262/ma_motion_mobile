@@ -22,11 +22,18 @@ void main() {
 
     final fieldFinder = find.byType(TextField);
     final field = tester.widget<TextField>(fieldFinder);
-    expect(field.textAlignVertical, TextAlignVertical.center);
+    expect(field.textAlignVertical, TextAlignVertical.top);
     expect(field.decoration?.hintText, 'Your name');
     expect(
       field.decoration?.contentPadding,
       const EdgeInsets.fromLTRB(20, 17, 20, 11),
+    );
+    // Check actual hint layout, not only the TextField's alignment property.
+    final fieldBounds = tester.getRect(fieldFinder);
+    final hintBounds = tester.getRect(find.text('Your name'));
+    expect(
+      hintBounds.center.dy - fieldBounds.center.dy,
+      inInclusiveRange(0.0, 5.0),
     );
 
     await tester.enterText(fieldFinder, 'Example Maker');
@@ -34,7 +41,7 @@ void main() {
     expect(controller.text, 'Example Maker');
     expect(
       tester.widget<TextField>(fieldFinder).textAlignVertical,
-      TextAlignVertical.center,
+      TextAlignVertical.top,
     );
   });
 
@@ -59,7 +66,7 @@ void main() {
     final fieldFinder = find.byType(TextField);
     expect(
       tester.widget<TextField>(fieldFinder).textAlignVertical,
-      TextAlignVertical.center,
+      TextAlignVertical.top,
     );
     expect(
       tester.widget<TextField>(fieldFinder).decoration?.contentPadding,
@@ -70,7 +77,7 @@ void main() {
     expect(controller.text, 'I make colorful work.');
     expect(
       tester.widget<TextField>(fieldFinder).textAlignVertical,
-      TextAlignVertical.center,
+      TextAlignVertical.top,
     );
   });
 }
