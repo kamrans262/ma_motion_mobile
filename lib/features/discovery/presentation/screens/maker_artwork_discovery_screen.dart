@@ -283,8 +283,8 @@ class _MakerArtworkDiscoveryScreenState
                                       contentPadding: const EdgeInsets.only(
                                         left: 0,
                                         right: 4,
-                                        top: 10,
-                                        bottom: 8,
+                                        top: 9,
+                                        bottom: 9,
                                       ),
                                       border: const UnderlineInputBorder(
                                         borderSide: BorderSide(
