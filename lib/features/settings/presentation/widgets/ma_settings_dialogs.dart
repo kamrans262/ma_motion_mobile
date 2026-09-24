@@ -239,6 +239,8 @@ class _DeleteAccountConfirmationState
                     decoration: const InputDecoration(
                       labelText: 'Current password',
                       labelStyle: TextStyle(color: AppColors.mutedText),
+                      // Keep the floating label; lower the entered text optically.
+                      contentPadding: EdgeInsets.fromLTRB(12, 23, 12, 9),
                       filled: true,
                       fillColor: AppColors.filterInputFill,
                       enabledBorder: OutlineInputBorder(
