@@ -47,7 +47,7 @@ jobs:
         run: flutter test test/features/onboarding/ma_onboarding_text_field_vertical_alignment_test.dart
 
       - name: Bottom navigation fixed-size regression
-        run: flutter test test/features/discovery/maker_artwork_discovery_screen_test.dart
+        run: flutter test test/features/discovery/maker_bottom_navigation_font_size_test.dart
 
       - name: Focused video changes analyzer and tests
         shell: bash
