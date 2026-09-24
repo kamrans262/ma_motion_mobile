@@ -143,7 +143,7 @@ void main() {
     expect(selected.style?.fontWeight, FontWeight.w500);
     expect(selected.style?.color, const Color(0xFF9F67FF));
     expect(unselected.style?.fontFamily, 'HelveticaNeueLTStd');
-    expect(unselected.style?.fontSize, 14);
+    expect(unselected.style?.fontSize, 16);
     expect(unselected.style?.fontWeight, FontWeight.w500);
     expect(
       unselected.style?.color,
@@ -204,6 +204,19 @@ void main() {
         grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
 
     expect(delegate.crossAxisCount, 4);
+    for (var column = 1; column <= 4; column++) {
+      final number = tester.widget<Text>(
+        find.byKey(Key('maker_nav_column_text_$column')),
+      );
+      expect(number.style?.fontSize, 16);
+      expect(number.style?.fontWeight, FontWeight.w500);
+      expect(
+        number.style?.color,
+        column == 4
+            ? AppColors.primary
+            : AppColors.primary.withValues(alpha: 0.50),
+      );
+    }
     expect(repository.requestedPages.length, requestsBefore);
     expect(find.byKey(const Key('artwork_tile_100')), findsOneWidget);
     expect(tester.takeException(), isNull);
