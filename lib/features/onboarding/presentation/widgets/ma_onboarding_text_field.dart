@@ -51,9 +51,11 @@ class MaOnboardingTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           maxLength: maxLength,
           onSubmitted: onSubmitted,
-          // Outlined center alignment ignores uneven padding. Anchor the
-          // baseline to top padding so optical correction affects actual glyphs.
-          textAlignVertical: TextAlignVertical.top,
+          // Center single-line input and hint text within the field.
+          // Multiline input remains top-aligned so typing starts at the top.
+          textAlignVertical: maxLines > 1
+              ? TextAlignVertical.top
+              : TextAlignVertical.center,
           cursorColor: AppColors.primary,
           style: AppTextStyles.field,
           decoration: InputDecoration(
@@ -63,13 +65,13 @@ class MaOnboardingTextField extends StatelessWidget {
             hintText: hintText,
             hintStyle: AppTextStyles.fieldHint,
             counterText: '',
-            // The font's visible glyphs sit slightly high in a centered line.
-            // Shift hint and entered text down without changing field height.
+            // Symmetric vertical padding centers single-line text and hints.
+            // Keep the original multiline inset for the first text line.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 21 : 19,
+              maxLines > 1 ? 21 : 14,
               20,
-              maxLines > 1 ? 11 : 9,
+              maxLines > 1 ? 11 : 14,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
