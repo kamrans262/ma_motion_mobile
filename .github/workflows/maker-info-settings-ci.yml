@@ -62,19 +62,13 @@ jobs:
           flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "renders Maker Info Setting and saves profile changes"
           flutter test test/features/settings/appreciator_settings_modal_test.dart --plain-name "modal overlays and blurs current grid context"
 
-      - name: Preview formatter changes for Helvetica update
-        shell: bash
-        run: |
-          dart format lib/features/onboarding/presentation/screens/ma_role_selection_screen.dart test/core/theme/app_text_styles_test.dart test/features/settings/maker_info_settings_screen_test.dart
-          git diff -- lib/features/onboarding/presentation/screens/ma_role_selection_screen.dart test/core/theme/app_text_styles_test.dart test/features/settings/maker_info_settings_screen_test.dart
-
       - name: Helvetica typography formatting and focused checks
         shell: bash
         run: |
           set -euo pipefail
           dart format --output=none --set-exit-if-changed lib/core/theme/app_text_styles.dart lib/features/onboarding/presentation/widgets/ma_onboarding_scaffold.dart lib/features/auth/presentation/widgets/ma_email_auth_layout.dart lib/features/onboarding/presentation/screens/ma_role_selection_screen.dart lib/features/onboarding/presentation/widgets/ma_onboarding_button.dart test/core/theme/app_text_styles_test.dart test/features/onboarding/maker_registration_flow_test.dart test/features/onboarding/appreciator_registration_flow_test.dart test/features/onboarding/ma_role_selection_test.dart test/features/splash/ma_splash_sequence_test.dart test/features/settings/maker_info_settings_screen_test.dart
           flutter analyze --no-pub
-          flutter test test/features/onboarding/ma_role_selection_test.dart
+          flutter test test/features/onboarding/ma_role_selection_test.dart --plain-name "role selection does not overflow at 320px width"
           flutter test test/features/splash/ma_splash_sequence_test.dart
 
       - name: Focused video changes analyzer and tests
