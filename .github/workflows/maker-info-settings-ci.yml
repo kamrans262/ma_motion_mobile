@@ -43,6 +43,9 @@ jobs:
           set -euo pipefail
           git diff --exit-code -- pubspec.lock android/app/src/main/res ios/Runner/Assets.xcassets/AppIcon.appiconset
 
+      - name: Non-OTP input vertical alignment tests
+        run: flutter test test/features/onboarding/ma_onboarding_text_field_vertical_alignment_test.dart
+
       - name: Focused video changes analyzer and tests
         shell: bash
         run: |
