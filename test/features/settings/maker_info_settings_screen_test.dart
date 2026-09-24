@@ -226,7 +226,11 @@ void main() {
 
     expect(find.text('Maker Info Setting'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    final initialLayoutError = tester.takeException();
+    if (initialLayoutError is FlutterError) {
+      debugPrint(initialLayoutError.toStringDeep());
+    }
+    expect(initialLayoutError, isNull);
 
     final settingsList = find.byKey(const Key('maker_settings_scroll'));
     expect(settingsList, findsOneWidget);
