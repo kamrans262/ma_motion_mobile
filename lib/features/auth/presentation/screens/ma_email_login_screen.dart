@@ -86,7 +86,11 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       if (!mounted) return;
       setState(() => _challenge = challenge);
     } on ApiException catch (error) {
-      if (mounted) setState(() => _generalError = error.message);
+      if (mounted) {
+        setState(() {
+          _generalError = error.fieldErrors['email']?.firstOrNull ?? error.message;
+        });
+      }
     } catch (_) {
       if (mounted) {
         setState(() {
