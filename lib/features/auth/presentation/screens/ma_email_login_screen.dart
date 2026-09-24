@@ -141,7 +141,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       background: MaRoleSelectionWanderingDots(
         progress: _wanderingController,
       ),
-      heading: 'Your creative space awaits',
+      heading: 'Welcome to the space between.',
       headingKey: const Key('email_login_heading'),
       subtitle: 'Enter your email address to continue',
       primaryKey: const Key('email_login_button'),
@@ -149,6 +149,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       onPrimary: _isSending ? null : _login,
       secondaryKey: const Key('email_create_account_button'),
       secondaryLabel: 'Create Account',
+      secondaryFilled: true,
       onSecondary: _isSending ? null : widget.onCreateAccount,
       belowSecondary: const Center(
         child: Column(
@@ -165,44 +166,27 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
               ),
             ),
             SizedBox(height: 6),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Terms & Conditions',
-                    key: Key('email_login_terms_text'),
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primary,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    '·',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      color: AppColors.mutedText,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Privacy Policy',
-                    key: Key('email_login_privacy_text'),
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primary,
-                    ),
-                  ),
-                ],
+            Text(
+              'Terms & Conditions',
+              key: Key('email_login_terms_text'),
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12,
+                color: AppColors.darkGray,
+                decoration: TextDecoration.underline,
+                decorationColor: AppColors.darkGray,
+              ),
+            ),
+            SizedBox(height: 6),
+            Text(
+              'Privacy Policy',
+              key: Key('email_login_privacy_text'),
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 12,
+                color: AppColors.darkGray,
+                decoration: TextDecoration.underline,
+                decorationColor: AppColors.darkGray,
               ),
             ),
           ],
@@ -214,7 +198,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
           MaOnboardingTextField(
             key: const Key('email_login_field'),
             controller: _emailController,
-            hintText: 'your@gmail.com',
+            hintText: 'you@email.com',
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.email],
