@@ -86,7 +86,24 @@ void main() {
       tester.widget<Text>(
         find.descendant(of: deleteAccount, matching: find.byType(Text)),
       ).style?.color,
-      AppColors.mutedText,
+      AppColors.darkGray,
+    );
+    expect(tester.widget<Text>(terms).style?.decoration, TextDecoration.underline);
+    expect(tester.widget<Text>(privacy).style?.decoration, TextDecoration.underline);
+    expect(
+      tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(const Key('appreciator_settings_switch_to_maker')),
+          matching: find.byType(Text),
+        ),
+      ).style?.color,
+      AppColors.darkGray,
+    );
+    expect(
+      tester.widget<TextButton>(
+        find.byKey(const Key('appreciator_settings_delete_account')),
+      ).style?.foregroundColor?.resolve(<WidgetState>{}),
+      AppColors.darkGray,
     );
 
     expect(
