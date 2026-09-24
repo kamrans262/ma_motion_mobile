@@ -1044,7 +1044,7 @@ class _LabeledField extends StatelessWidget {
               fillColor: AppColors.filterInputFill,
               contentPadding: maxLines > 1
                   ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
-                  : const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                  : const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1432,7 +1432,10 @@ class _CarouselEditor extends StatelessWidget {
               hintStyle: AppTextStyles.fieldHint,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: const EdgeInsets.fromLTRB(16, 13, 16, 11),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 13,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1466,7 +1469,10 @@ class _CarouselEditor extends StatelessWidget {
             hintStyle: AppTextStyles.fieldHint,
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(16, 13, 16, 11),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 13,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
