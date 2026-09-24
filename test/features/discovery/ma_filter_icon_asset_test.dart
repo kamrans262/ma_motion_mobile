@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 void main() {
   testWidgets('client filter SVG can load and render at 20px', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: Center(
             child: SizedBox(
