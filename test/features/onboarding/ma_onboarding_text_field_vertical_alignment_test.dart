@@ -24,6 +24,10 @@ void main() {
     final field = tester.widget<TextField>(fieldFinder);
     expect(field.textAlignVertical, TextAlignVertical.center);
     expect(field.decoration?.hintText, 'Your name');
+    expect(
+      field.decoration?.contentPadding,
+      const EdgeInsets.fromLTRB(20, 17, 20, 11),
+    );
 
     await tester.enterText(fieldFinder, 'Example Maker');
     await tester.pump();
@@ -56,6 +60,10 @@ void main() {
     expect(
       tester.widget<TextField>(fieldFinder).textAlignVertical,
       TextAlignVertical.center,
+    );
+    expect(
+      tester.widget<TextField>(fieldFinder).decoration?.contentPadding,
+      const EdgeInsets.fromLTRB(20, 19, 20, 13),
     );
     await tester.enterText(fieldFinder, 'I make colorful work.');
     await tester.pump();
