@@ -65,11 +65,11 @@ class MaOnboardingTextField extends StatelessWidget {
             hintText: hintText,
             hintStyle: AppTextStyles.fieldHint,
             counterText: '',
-            // Symmetric vertical padding centers single-line text and hints.
+            // Add 4px above single-line hints and entered text.
             // Keep the original multiline inset for the first text line.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 21 : 14,
+              maxLines > 1 ? 21 : 18,
               20,
               maxLines > 1 ? 11 : 14,
             ),
