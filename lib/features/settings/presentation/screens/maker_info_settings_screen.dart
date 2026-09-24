@@ -661,13 +661,16 @@ class _MakerInfoSettingsScreenState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Maker Info Setting',
-                  style: AppTextStyles.onboardingHeading.copyWith(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  child: Text(
+                    'Maker Info Setting',
+                    style: AppTextStyles.onboardingHeading.copyWith(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 TextButton(
                   key: const Key('maker_settings_logout'),
                   onPressed: _saving ? null : _logout,
