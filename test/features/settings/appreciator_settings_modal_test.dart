@@ -88,8 +88,14 @@ void main() {
       ).style?.color,
       AppColors.darkGray,
     );
-    expect(tester.widget<Text>(terms).style?.decoration, TextDecoration.underline);
-    expect(tester.widget<Text>(privacy).style?.decoration, TextDecoration.underline);
+    expect(
+      tester.widget<Text>(terms).style?.decoration,
+      TextDecoration.underline,
+    );
+    expect(
+      tester.widget<Text>(privacy).style?.decoration,
+      TextDecoration.underline,
+    );
     expect(
       tester.widget<Text>(
         find.descendant(
