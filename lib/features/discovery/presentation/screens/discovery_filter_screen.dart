@@ -445,7 +445,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           key: const Key('filter_location_search'),
           controller: _locationSearchController,
           onChanged: _searchLocations,
-          textAlignVertical: TextAlignVertical.center,
+          textAlignVertical: TextAlignVertical.top,
           style: AppTextStyles.field.copyWith(fontSize: 16),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
