@@ -89,14 +89,7 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                               Text(
                                 'Would you like to\njoin as a Maker or\nAppreciator?',
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontFamily: AppTextStyles.fontFamily,
-                                  fontSize: 32,
-                                  letterSpacing: 0,
-                                  height: 1.22,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.primary,
-                                ),
+                                style: AppTextStyles.onboardingHeading,
                               ),
                               const SizedBox(height: 32),
                               Wrap(

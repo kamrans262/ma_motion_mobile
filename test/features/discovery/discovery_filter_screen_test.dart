@@ -43,6 +43,10 @@ void main() {
     await tester.tap(find.byKey(const Key('filter_status_current')));
 
     final locationSearch = find.byKey(const Key('filter_location_search'));
+    expect(
+      tester.widget<TextField>(locationSearch).decoration?.contentPadding,
+      const EdgeInsets.fromLTRB(14, 20, 14, 6),
+    );
     await tester.scrollUntilVisible(
       locationSearch,
       220,

@@ -49,6 +49,12 @@ void main() {
     ]) {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       expect(field.decoration?.fillColor, AppColors.filterInputFill);
+      expect(
+        field.decoration?.contentPadding,
+        fieldKey == 'maker_settings_statement'
+            ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
+            : const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      );
     }
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('maker_settings_save_close')),

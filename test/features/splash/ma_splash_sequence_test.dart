@@ -55,8 +55,9 @@ void main() {
       find.byKey(const Key('ma_splash_welcome_text')),
     );
     expect(welcome.style, AppTextStyles.onboardingHeading);
-    expect(welcome.style?.fontSize, 32);
-    expect(welcome.style?.letterSpacing, 0);
+    expect(welcome.style?.fontSize, 34);
+    expect(welcome.style?.letterSpacing, -0.5);
+    expect(welcome.style?.height, 1.22);
     expect(welcome.textAlign, TextAlign.center);
     expect(tester.takeException(), isNull);
   });

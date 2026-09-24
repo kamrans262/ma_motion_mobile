@@ -13,8 +13,10 @@ void main() {
       );
       expect(font.lengthInBytes, 28260);
 
-      expect(AppTextStyles.onboardingHeading.height, 1.18);
-      expect(AppTextStyles.onboardingHeading.letterSpacing, 0);
+      expect(AppTextStyles.onboardingHeading.height, 1.22);
+      expect(AppTextStyles.onboardingHeading.letterSpacing, -0.5);
+      expect(AppTextStyles.onboardingHeading.fontSize, 34);
+      expect(AppTextStyles.onboardingHeading.fontFamily, 'HelveticaNeueLTStd');
       expect(AppTextStyles.onboardingHelper.height, 1.4);
       expect(AppTextStyles.onboardingHelper.letterSpacing, 0.2);
       expect(AppTextStyles.field.height, 1.25);

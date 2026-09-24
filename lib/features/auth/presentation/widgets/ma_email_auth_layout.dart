@@ -102,11 +102,7 @@ class MaEmailAuthLayout extends StatelessWidget {
                               Text(
                                 heading,
                                 key: headingKey,
-                                style: AppTextStyles.onboardingHeading.copyWith(
-                                  fontSize: 32,
-                                  letterSpacing: 0,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: AppTextStyles.onboardingHeading,
                               ),
                               const SizedBox(height: 6),
                               Text(

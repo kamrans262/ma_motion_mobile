@@ -166,28 +166,34 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
               ),
             ),
             SizedBox(height: 6),
-            Text(
-              'Terms & Conditions',
-              key: Key('email_login_terms_text'),
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12,
-                color: AppColors.darkGray,
-                decoration: TextDecoration.underline,
-                decorationColor: AppColors.darkGray,
-              ),
-            ),
-            SizedBox(height: 6),
-            Text(
-              'Privacy Policy',
-              key: Key('email_login_privacy_text'),
-              style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 12,
-                color: AppColors.darkGray,
-                decoration: TextDecoration.underline,
-                decorationColor: AppColors.darkGray,
-              ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 16,
+              runSpacing: 6,
+              children: [
+                Text(
+                  'Terms & Conditions',
+                  key: Key('email_login_terms_text'),
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primary,
+                  ),
+                ),
+                Text(
+                  'Privacy Policy',
+                  key: Key('email_login_privacy_text'),
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primary,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

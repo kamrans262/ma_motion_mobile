@@ -26,6 +26,11 @@ void main() {
       find.byKey(const Key('email_login_heading')),
     );
     expect(heading.data, 'Welcome to the space between.');
+    expect(heading.style?.fontFamily, 'HelveticaNeueLTStd');
+    expect(heading.style?.fontSize, 34);
+    expect(heading.style?.fontWeight, FontWeight.w500);
+    expect(heading.style?.letterSpacing, -0.5);
+    expect(heading.style?.height, 1.22);
 
     final email = tester.widget<TextField>(
       find.descendant(
@@ -34,6 +39,10 @@ void main() {
       ),
     );
     expect(email.decoration?.hintText, 'you@email.com');
+    expect(
+      email.decoration?.contentPadding,
+      const EdgeInsets.fromLTRB(20, 16, 20, 12),
+    );
 
     final create = tester.widget<FilledButton>(
       find.descendant(
@@ -52,12 +61,17 @@ void main() {
     final privacy = tester.widget<Text>(
       find.byKey(const Key('email_login_privacy_text')),
     );
-    expect(terms.style?.color, AppColors.darkGray);
-    expect(privacy.style?.color, AppColors.darkGray);
+    expect(terms.style?.color, AppColors.primary);
+    expect(privacy.style?.color, AppColors.primary);
+    expect(terms.style?.decoration, TextDecoration.underline);
+    expect(privacy.style?.decoration, TextDecoration.underline);
+    expect(terms.style?.decorationColor, AppColors.primary);
+    expect(privacy.style?.decorationColor, AppColors.primary);
     expect(
       tester.getTopLeft(find.byKey(const Key('email_login_privacy_text'))).dy,
-      greaterThan(
+      closeTo(
         tester.getTopLeft(find.byKey(const Key('email_login_terms_text'))).dy,
+        1,
       ),
     );
     expect(tester.takeException(), isNull);

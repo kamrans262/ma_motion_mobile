@@ -44,8 +44,9 @@ void main() {
     final heading = tester.widget<Text>(
       find.byKey(const Key('maker_step_heading')),
     );
-    expect(heading.style?.fontSize, 32);
-    expect(heading.style?.letterSpacing, 0);
+    expect(heading.style?.fontSize, 34);
+    expect(heading.style?.letterSpacing, -0.5);
+    expect(heading.style?.height, 1.22);
     expect(heading.style?.fontWeight, FontWeight.w500);
 
     for (var index = 0; index < 7; index++) {
@@ -152,8 +153,9 @@ void main() {
     final heading = tester.widget<Text>(
       find.byKey(const Key('maker_step_heading')),
     );
-    expect(heading.style?.fontSize, 32);
-    expect(heading.style?.letterSpacing, 0);
+    expect(heading.style?.fontSize, 34);
+    expect(heading.style?.letterSpacing, -0.5);
+    expect(heading.style?.height, 1.22);
     expect(
       find.text('A few sentences about your practice (optional)'),
       findsOneWidget,

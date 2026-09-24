@@ -43,6 +43,10 @@ void main() {
     ]) {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       expect(field.decoration?.fillColor, AppColors.filterInputFill);
+      expect(
+        field.decoration?.contentPadding,
+        const EdgeInsets.fromLTRB(12, 14, 12, 10),
+      );
     }
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('appreciator_settings_save_close')),
