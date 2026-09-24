@@ -46,7 +46,7 @@ void main() {
         matching: find.byType(MaSvgAsset),
       ),
     );
-    expect(filterIcon.assetName, 'assets/ma_filter.svg');
+    expect(filterIcon.assetName, 'assets/MA_FilterIcon_2.svg');
     expect(filterIcon.color, AppColors.primary);
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
