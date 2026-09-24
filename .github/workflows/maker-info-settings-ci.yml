@@ -54,6 +54,11 @@ jobs:
           flutter test test/features/auth/ma_email_login_screen_ui_test.dart
           flutter test test/features/discovery/ma_filter_icon_asset_test.dart
 
+      - name: Client Maker and Appreciator Settings UI regression
+        run: |
+          flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "renders Maker Info Setting and saves profile changes"
+          flutter test test/features/settings/appreciator_settings_modal_test.dart --plain-name "modal overlays and blurs current grid context"
+
       - name: Focused video changes analyzer and tests
         shell: bash
         run: |
