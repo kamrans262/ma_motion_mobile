@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
@@ -227,26 +226,7 @@ void main() {
 
     expect(find.text('Maker Info Setting'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
-    final initialLayoutError = tester.takeException();
-    if (initialLayoutError is FlutterError) {
-      debugPrint(initialLayoutError.toStringDeep());
-      for (final element in find.byType(Row).evaluate()) {
-        final flex = element.renderObject;
-        if (flex is! RenderFlex || !flex.hasSize) continue;
-        double maximumRight = 0;
-        for (var child = flex.firstChild; child != null; child = flex.childAfter(child)) {
-          final offset = (child.parentData! as FlexParentData).offset;
-          maximumRight = maximumRight > offset.dx + child.size.width
-              ? maximumRight
-              : offset.dx + child.size.width;
-        }
-        if (maximumRight > flex.size.width + 1) {
-          debugPrint('Overfull row: width=${flex.size.width}, maxRight=$maximumRight, children=${(element.widget as Row).children}');
-          debugPrint(flex.toStringDeep());
-        }
-      }
-    }
-    expect(initialLayoutError, isNull);
+    expect(tester.takeException(), isNull);
 
     final settingsList = find.byKey(const Key('maker_settings_scroll'));
     expect(settingsList, findsOneWidget);
@@ -258,12 +238,7 @@ void main() {
     );
 
     expect(find.byKey(const Key('maker_settings_carousel_4')), findsOneWidget);
-    final layoutError = tester.takeException();
-    if (layoutError is FlutterError) {
-      // Include the render object's creation path for responsive regressions.
-      debugPrint(layoutError.toStringDeep());
-    }
-    expect(layoutError, isNull);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets(
