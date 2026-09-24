@@ -74,7 +74,11 @@ void main() {
       ('maker_settings_style_2', 'Contemporary'),
     ]) {
       final target = find.byKey(Key(choice.$1));
-      await tester.dragUntilVisible(target, settingsList, const Offset(0, -160));
+      await tester.dragUntilVisible(
+        target,
+        settingsList,
+        const Offset(0, -160),
+      );
       await tester.pump();
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
@@ -142,14 +146,8 @@ void main() {
     );
     expect(legalPrivacy, findsOneWidget);
     expect(deleteAccount, findsOneWidget);
-    expect(
-      tester.widget<Text>(legalTerms).style?.color,
-      AppColors.darkGray,
-    );
-    expect(
-      tester.widget<Text>(legalPrivacy).style?.color,
-      AppColors.darkGray,
-    );
+    expect(tester.widget<Text>(legalTerms).style?.color, AppColors.darkGray);
+    expect(tester.widget<Text>(legalPrivacy).style?.color, AppColors.darkGray);
     expect(
       tester.getTopLeft(legalPrivacy).dy,
       greaterThan(tester.getTopLeft(legalTerms).dy),
@@ -179,9 +177,13 @@ void main() {
     );
     expect(switchText.style?.decoration, TextDecoration.underline);
     expect(
-      tester.widget<TextButton>(
-        find.byKey(const Key('maker_settings_switch_appreciator')),
-      ).style?.foregroundColor?.resolve(<WidgetState>{}),
+      tester
+          .widget<TextButton>(
+            find.byKey(const Key('maker_settings_switch_appreciator')),
+          )
+          .style
+          ?.foregroundColor
+          ?.resolve(<WidgetState>{}),
       AppColors.darkGray,
     );
 
