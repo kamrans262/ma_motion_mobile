@@ -231,6 +231,7 @@ class _DeleteAccountConfirmationState
                     controller: _password,
                     obscureText: true,
                     enabled: !_busy,
+                    textAlignVertical: TextAlignVertical.center,
                     style: const TextStyle(
                       color: AppColors.white,
                       fontSize: 14,
