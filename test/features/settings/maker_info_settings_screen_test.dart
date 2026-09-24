@@ -229,6 +229,21 @@ void main() {
     final initialLayoutError = tester.takeException();
     if (initialLayoutError is FlutterError) {
       debugPrint(initialLayoutError.toStringDeep());
+      for (final element in find.byType(Row).evaluate()) {
+        final flex = element.renderObject;
+        if (flex is! RenderFlex || !flex.hasSize) continue;
+        double maximumRight = 0;
+        for (var child = flex.firstChild; child != null; child = flex.childAfter(child)) {
+          final offset = (child.parentData! as FlexParentData).offset;
+          maximumRight = maximumRight > offset.dx + child.size.width
+              ? maximumRight
+              : offset.dx + child.size.width;
+        }
+        if (maximumRight > flex.size.width + 1) {
+          debugPrint('Overfull row: width=${flex.size.width}, maxRight=$maximumRight, children=${(element.widget as Row).children}');
+          debugPrint(flex.toStringDeep());
+        }
+      }
     }
     expect(initialLayoutError, isNull);
 
