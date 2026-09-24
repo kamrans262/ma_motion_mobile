@@ -4,7 +4,7 @@ import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/widgets/maker_bottom_navigation.dart';
 
 void main() {
-  testWidgets('all four grid numbers stay 16px and only color changes on selection', (
+  testWidgets('grid numbers stay 16px; selection changes only color', (
     tester,
   ) async {
     var selectedColumn = 2;
