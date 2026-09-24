@@ -51,7 +51,9 @@ class MaOnboardingTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           maxLength: maxLength,
           onSubmitted: onSubmitted,
-          textAlignVertical: TextAlignVertical.center,
+          // Outlined center alignment ignores uneven padding. Anchor the
+          // baseline to top padding so optical correction affects actual glyphs.
+          textAlignVertical: TextAlignVertical.top,
           cursorColor: AppColors.primary,
           style: AppTextStyles.field,
           decoration: InputDecoration(
