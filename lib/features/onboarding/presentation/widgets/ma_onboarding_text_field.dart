@@ -51,6 +51,7 @@ class MaOnboardingTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           maxLength: maxLength,
           onSubmitted: onSubmitted,
+          textAlignVertical: TextAlignVertical.center,
           cursorColor: AppColors.primary,
           style: AppTextStyles.field,
           decoration: InputDecoration(
