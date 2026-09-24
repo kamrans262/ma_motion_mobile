@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_onboarding_text_field.dart';
 
 void main() {
-  testWidgets('single-line placeholder and entered text are vertically centered', (
-    tester,
-  ) async {
+  testWidgets(
+    'single-line placeholder and entered text are vertically centered',
+    (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
 
@@ -31,10 +31,7 @@ void main() {
     // Check actual hint layout, not only the TextField's alignment property.
     final fieldBounds = tester.getRect(fieldFinder);
     final hintBounds = tester.getRect(find.text('Your name'));
-    expect(
-      hintBounds.center.dy - fieldBounds.center.dy,
-      closeTo(0, 3),
-    );
+    expect(hintBounds.center.dy - fieldBounds.center.dy, closeTo(0, 3));
 
     await tester.enterText(fieldFinder, 'Example Maker');
     await tester.pump();
@@ -46,11 +43,12 @@ void main() {
     // Entered text remains centered after replacing the placeholder.
     final editableBounds = tester.getRect(find.byType(EditableText));
     expect(editableBounds.center.dy - fieldBounds.center.dy, closeTo(0, 3));
-  });
+    },
+  );
 
-  testWidgets('multiline placeholder and entered text are vertically centered', (
-    tester,
-  ) async {
+  testWidgets(
+    'multiline placeholder and entered text are vertically centered',
+    (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
 
@@ -82,5 +80,6 @@ void main() {
       tester.widget<TextField>(fieldFinder).textAlignVertical,
       TextAlignVertical.top,
     );
-  });
+    },
+  );
 }
