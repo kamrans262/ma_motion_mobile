@@ -631,7 +631,7 @@ class _SettingsField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           onChanged: onChanged,
-          textAlignVertical: TextAlignVertical.top,
+          textAlignVertical: TextAlignVertical.center,
           style: const TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 14,
@@ -644,7 +644,10 @@ class _SettingsField extends StatelessWidget {
             errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(12, 17, 12, 7),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
