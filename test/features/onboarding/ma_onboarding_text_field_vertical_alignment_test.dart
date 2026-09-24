@@ -22,18 +22,18 @@ void main() {
 
     final fieldFinder = find.byType(TextField);
     final field = tester.widget<TextField>(fieldFinder);
-    expect(field.textAlignVertical, TextAlignVertical.top);
+    expect(field.textAlignVertical, TextAlignVertical.center);
     expect(field.decoration?.hintText, 'Your name');
     expect(
       field.decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 19, 20, 9),
+      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
     );
     // Check actual hint layout, not only the TextField's alignment property.
     final fieldBounds = tester.getRect(fieldFinder);
     final hintBounds = tester.getRect(find.text('Your name'));
     expect(
       hintBounds.center.dy - fieldBounds.center.dy,
-      inInclusiveRange(0.0, 5.0),
+      closeTo(0, 3),
     );
 
     await tester.enterText(fieldFinder, 'Example Maker');
@@ -41,8 +41,11 @@ void main() {
     expect(controller.text, 'Example Maker');
     expect(
       tester.widget<TextField>(fieldFinder).textAlignVertical,
-      TextAlignVertical.top,
+      TextAlignVertical.center,
     );
+    // Entered text remains centered after replacing the placeholder.
+    final editableBounds = tester.getRect(find.byType(EditableText));
+    expect(editableBounds.center.dy - fieldBounds.center.dy, closeTo(0, 3));
   });
 
   testWidgets('multiline placeholder and entered text are vertically centered', (
