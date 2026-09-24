@@ -3,9 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_onboarding_text_field.dart';
 
 void main() {
-  testWidgets(
-    'single-line placeholder and entered text are vertically centered',
-    (tester) async {
+  testWidgets('single-line hint and entered text are centered', (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
 
@@ -43,12 +41,9 @@ void main() {
     // Entered text remains centered after replacing the placeholder.
     final editableBounds = tester.getRect(find.byType(EditableText));
     expect(editableBounds.center.dy - fieldBounds.center.dy, closeTo(0, 3));
-    },
-  );
+  });
 
-  testWidgets(
-    'multiline placeholder and entered text are vertically centered',
-    (tester) async {
+  testWidgets('multiline fields keep text top-aligned', (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
 
@@ -80,6 +75,5 @@ void main() {
       tester.widget<TextField>(fieldFinder).textAlignVertical,
       TextAlignVertical.top,
     );
-    },
-  );
+  });
 }
