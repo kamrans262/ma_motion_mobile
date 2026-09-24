@@ -176,6 +176,8 @@ void main() {
       ),
     );
     expect(switchText.style?.decoration, TextDecoration.underline);
+    expect(switchText.style?.color, AppColors.darkGray);
+    expect(switchText.style?.decorationColor, AppColors.darkGray);
     expect(
       tester
           .widget<TextButton>(

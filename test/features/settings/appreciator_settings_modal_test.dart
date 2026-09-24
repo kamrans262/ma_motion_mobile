@@ -105,6 +105,14 @@ void main() {
       ).style?.color,
       AppColors.darkGray,
     );
+    final switchText = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('appreciator_settings_switch_to_maker')),
+        matching: find.byType(Text),
+      ),
+    );
+    expect(switchText.style?.decoration, TextDecoration.underline);
+    expect(switchText.style?.decorationColor, AppColors.darkGray);
     expect(
       tester.widget<TextButton>(
         find.byKey(const Key('appreciator_settings_delete_account')),

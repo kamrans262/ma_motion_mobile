@@ -464,6 +464,7 @@ class _AppreciatorSettingsModalState
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
+                  decorationColor: AppColors.darkGray,
                   color: AppColors.darkGray,
                 ),
               ),
