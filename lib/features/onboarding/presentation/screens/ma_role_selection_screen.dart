@@ -72,8 +72,12 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                 children: [
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final horizontal = constraints.maxWidth < 360 ? 20.0 : 28.0;
-                      final buttonGap = constraints.maxWidth < 360 ? 12.0 : 16.0;
+                      final horizontal = constraints.maxWidth < 360
+                          ? 20.0
+                          : 28.0;
+                      final buttonGap = constraints.maxWidth < 360
+                          ? 12.0
+                          : 16.0;
                       const roleFontSize = 22.0;
 
                       return Center(
@@ -141,7 +145,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                       style: TextStyle(
                                         fontFamily: AppTextStyles.fontFamily,
                                         fontSize: roleFontSize,
-                                        letterSpacing: AppTextStyles.bodyTracking,
+                                        letterSpacing:
+                                            AppTextStyles.bodyTracking,
                                         height: 1.2,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -188,7 +193,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                       style: TextStyle(
                                         fontFamily: AppTextStyles.fontFamily,
                                         fontSize: roleFontSize,
-                                        letterSpacing: AppTextStyles.bodyTracking,
+                                        letterSpacing:
+                                            AppTextStyles.bodyTracking,
                                         height: 1.2,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -208,7 +214,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                     child: IconButton(
                       key: const Key('role_selection_back_button'),
                       tooltip: 'Back',
-                      onPressed: widget.onBack ??
+                      onPressed:
+                          widget.onBack ??
                           () => Navigator.of(context).maybePop(),
                       icon: const Icon(
                         Icons.arrow_back,
