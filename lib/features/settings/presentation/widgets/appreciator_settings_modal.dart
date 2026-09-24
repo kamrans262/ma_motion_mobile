@@ -470,6 +470,32 @@ class _AppreciatorSettingsModalState
             ),
           ),
           const SizedBox(height: 8),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Terms & Conditions',
+              key: Key('appreciator_settings_terms_text'),
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 14,
+                color: AppColors.darkGray,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Privacy Policy',
+              key: Key('appreciator_settings_privacy_text'),
+              style: TextStyle(
+                fontFamily: AppTextStyles.fontFamily,
+                fontSize: 14,
+                color: AppColors.darkGray,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
@@ -478,7 +504,7 @@ class _AppreciatorSettingsModalState
               style: TextButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 overlayColor: Colors.transparent,
-                foregroundColor: AppColors.error,
+                foregroundColor: AppColors.mutedText,
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -489,43 +515,11 @@ class _AppreciatorSettingsModalState
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
-                  decorationColor: AppColors.error,
+                  decorationColor: AppColors.mutedText,
                   decorationStyle: TextDecorationStyle.solid,
                   decorationThickness: 1.5,
-                  color: AppColors.error,
+                  color: AppColors.mutedText,
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Terms & Conditions',
-                    key: Key('appreciator_settings_terms_text'),
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 14,
-                      color: AppColors.mutedText,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Privacy Policy',
-                    key: Key('appreciator_settings_privacy_text'),
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 14,
-                      color: AppColors.mutedText,
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
