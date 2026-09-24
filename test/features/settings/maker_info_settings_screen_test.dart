@@ -68,11 +68,15 @@ void main() {
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
 
+    final settingsList = find.byKey(const Key('maker_settings_scroll'));
     for (final choice in <(String, String)>[
       ('maker_settings_type_1', 'Painting'),
       ('maker_settings_style_2', 'Contemporary'),
     ]) {
-      final chip = tester.widget<MaChoiceChip>(find.byKey(Key(choice.$1)));
+      final target = find.byKey(Key(choice.$1));
+      await tester.dragUntilVisible(target, settingsList, const Offset(0, -160));
+      await tester.pump();
+      final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
@@ -87,6 +91,12 @@ void main() {
       );
     }
 
+    await tester.dragUntilVisible(
+      find.text('Maker Info Setting'),
+      settingsList,
+      const Offset(0, 160),
+    );
+    await tester.pump();
     expect(find.text('Maker Info Setting'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
     final savedCount = tester.widget<Text>(
@@ -104,7 +114,6 @@ void main() {
     expect(keyword.style?.fontSize, nameLabel.style?.fontSize);
     expect(keyword.style?.fontWeight, nameLabel.style?.fontWeight);
 
-    final settingsList = find.byKey(const Key('maker_settings_scroll'));
     expect(settingsList, findsOneWidget);
 
     final emailSwitch = find.byKey(
