@@ -67,9 +67,9 @@ class MaOnboardingTextField extends StatelessWidget {
             // Shift hint and entered text down without changing field height.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 19 : 17,
+              maxLines > 1 ? 21 : 19,
               20,
-              maxLines > 1 ? 13 : 11,
+              maxLines > 1 ? 11 : 9,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
