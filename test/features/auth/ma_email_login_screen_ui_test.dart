@@ -76,4 +76,32 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('policy links remain on one line on a compact phone', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          home: MaEmailLoginScreen(
+            onCreateAccount: () {},
+            onAuthenticated: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    final terms = find.byKey(const Key('email_login_terms_text'));
+    final privacy = find.byKey(const Key('email_login_privacy_text'));
+    expect(terms, findsOneWidget);
+    expect(privacy, findsOneWidget);
+    expect(
+      tester.getTopLeft(terms).dy,
+      closeTo(tester.getTopLeft(privacy).dy, 1),
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
