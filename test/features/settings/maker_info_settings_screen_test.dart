@@ -238,7 +238,12 @@ void main() {
     );
 
     expect(find.byKey(const Key('maker_settings_carousel_4')), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    final layoutError = tester.takeException();
+    if (layoutError is FlutterError) {
+      // Include the render object's creation path for responsive regressions.
+      debugPrint(layoutError.toStringDeep());
+    }
+    expect(layoutError, isNull);
   });
 
   testWidgets(
