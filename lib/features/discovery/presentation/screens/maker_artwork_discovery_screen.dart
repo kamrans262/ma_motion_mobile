@@ -260,7 +260,7 @@ class _MakerArtworkDiscoveryScreenState
                                     focusNode: _searchFocusNode,
                                     onChanged: _onSearchChanged,
                                     textInputAction: TextInputAction.search,
-                                    textAlignVertical: TextAlignVertical.center,
+                                    textAlignVertical: TextAlignVertical.top,
                                     style: const TextStyle(
                                       fontFamily: AppTextStyles.fontFamily,
                                       fontSize: 14,
