@@ -26,7 +26,7 @@ void main() {
     expect(field.decoration?.hintText, 'Your name');
     expect(
       field.decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 17, 20, 11),
+      const EdgeInsets.fromLTRB(20, 19, 20, 9),
     );
     // Check actual hint layout, not only the TextField's alignment property.
     final fieldBounds = tester.getRect(fieldFinder);
@@ -70,7 +70,7 @@ void main() {
     );
     expect(
       tester.widget<TextField>(fieldFinder).decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 19, 20, 13),
+      const EdgeInsets.fromLTRB(20, 21, 20, 11),
     );
     await tester.enterText(fieldFinder, 'I make colorful work.');
     await tester.pump();
