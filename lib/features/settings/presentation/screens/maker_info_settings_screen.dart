@@ -1027,7 +1027,9 @@ class _LabeledField extends StatelessWidget {
             keyboardType: keyboardType,
             minLines: minLines,
             maxLines: maxLines,
-            textAlignVertical: TextAlignVertical.top,
+            textAlignVertical: maxLines > 1
+                ? TextAlignVertical.top
+                : TextAlignVertical.center,
             style: AppTextStyles.field,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
@@ -1035,7 +1037,9 @@ class _LabeledField extends StatelessWidget {
               hintStyle: AppTextStyles.fieldHint,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: const EdgeInsets.fromLTRB(16, 19, 16, 9),
+              contentPadding: maxLines > 1
+                  ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
+                  : const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1414,7 +1418,7 @@ class _CarouselEditor extends StatelessWidget {
             key: Key('maker_settings_artwork_title_$slot'),
             controller: titleController,
             maxLength: 180,
-            textAlignVertical: TextAlignVertical.top,
+            textAlignVertical: TextAlignVertical.center,
             style: AppTextStyles.field,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
@@ -1423,7 +1427,10 @@ class _CarouselEditor extends StatelessWidget {
               hintStyle: AppTextStyles.fieldHint,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 13,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1448,7 +1455,7 @@ class _CarouselEditor extends StatelessWidget {
           key: Key('maker_settings_carousel_caption_$slot'),
           controller: captionController,
           maxLength: 280,
-          textAlignVertical: TextAlignVertical.top,
+          textAlignVertical: TextAlignVertical.center,
           style: AppTextStyles.field,
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
@@ -1457,7 +1464,10 @@ class _CarouselEditor extends StatelessWidget {
             hintStyle: AppTextStyles.fieldHint,
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 13,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
