@@ -61,9 +61,13 @@ class MaOnboardingTextField extends StatelessWidget {
             hintText: hintText,
             hintStyle: AppTextStyles.fieldHint,
             counterText: '',
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: maxLines > 1 ? 16 : 14,
+            // The font's visible glyphs sit slightly high in a centered line.
+            // Shift hint and entered text down without changing field height.
+            contentPadding: EdgeInsets.fromLTRB(
+              20,
+              maxLines > 1 ? 19 : 17,
+              20,
+              maxLines > 1 ? 13 : 11,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
