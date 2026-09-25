@@ -16,6 +16,7 @@ void main() {
 
     final image = tester.widget<Image>(find.byKey(const Key('ma_splash_logo')));
 
+    expect((image.image as AssetImage).assetName, 'assets/MA_Logo_4.png');
     expect(image.fit, BoxFit.contain);
     expect(image.alignment, Alignment.center);
     expect(tester.takeException(), isNull);

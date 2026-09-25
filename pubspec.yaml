@@ -135,7 +135,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/app_icon.png
+  image_path: assets/MA_App_Icon.jpg
   min_sdk_android: 21
   remove_alpha_ios: true
   background_color_ios: "#9F67FF"

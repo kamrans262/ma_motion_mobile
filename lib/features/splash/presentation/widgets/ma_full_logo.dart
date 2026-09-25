@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MaFullLogo extends StatelessWidget {
-  const MaFullLogo({super.key, this.assetPath = 'assets/logo.png'});
+  const MaFullLogo({super.key, this.assetPath = 'assets/MA_Logo_4.png'});
 
   final String assetPath;
 
