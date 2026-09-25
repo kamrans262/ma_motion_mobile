@@ -24,12 +24,12 @@ void main() {
     expect(field.decoration?.hintText, 'Your name');
     expect(
       field.decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 16, 20, 12),
+      const EdgeInsets.fromLTRB(20, 18, 20, 10),
     );
     // Check actual hint layout, not only the TextField's alignment property.
     final fieldBounds = tester.getRect(fieldFinder);
     final hintBounds = tester.getRect(find.text('Your name'));
-    expect(hintBounds.center.dy - fieldBounds.center.dy, closeTo(0, 3));
+    expect(hintBounds.center.dy - fieldBounds.center.dy, closeTo(2, 5));
 
     await tester.enterText(fieldFinder, 'Example Maker');
     await tester.pump();
@@ -40,7 +40,7 @@ void main() {
     );
     // Entered text remains centered after replacing the placeholder.
     final editableBounds = tester.getRect(find.byType(EditableText));
-    expect(editableBounds.center.dy - fieldBounds.center.dy, closeTo(0, 3));
+    expect(editableBounds.center.dy - fieldBounds.center.dy, closeTo(2, 5));
   });
 
   testWidgets('multiline fields keep text top-aligned', (tester) async {

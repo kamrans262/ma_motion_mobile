@@ -149,7 +149,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       onPrimary: _isSending ? null : _login,
       secondaryKey: const Key('email_create_account_button'),
       secondaryLabel: 'Create Account',
-      secondaryFilled: true,
+      secondarySubdued: false,
       onSecondary: _isSending ? null : widget.onCreateAccount,
       belowSecondary: const Center(
         child: Column(

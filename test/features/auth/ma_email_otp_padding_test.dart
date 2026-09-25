@@ -5,7 +5,7 @@ import 'package:ma_motion_mobile/features/auth/data/email_otp_repository.dart';
 import 'package:ma_motion_mobile/features/auth/presentation/screens/ma_email_otp_screen.dart';
 
 void main() {
-  testWidgets('OTP input boxes retain top inset and reduce bottom by 2px', (
+  testWidgets('OTP input boxes shift text down without changing total padding', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(430, 932));
@@ -37,7 +37,7 @@ void main() {
       final field = tester.widget<TextField>(find.byKey(key));
       expect(
         field.decoration?.contentPadding,
-        const EdgeInsets.fromLTRB(0, 16, 0, 12),
+        const EdgeInsets.fromLTRB(0, 18, 0, 10),
       );
     }
     expect(tester.takeException(), isNull);

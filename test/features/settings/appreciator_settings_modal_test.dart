@@ -45,7 +45,7 @@ void main() {
       expect(field.decoration?.fillColor, AppColors.filterInputFill);
       expect(
         field.decoration?.contentPadding,
-        const EdgeInsets.fromLTRB(12, 14, 12, 10),
+        const EdgeInsets.fromLTRB(12, 16, 12, 8),
       );
     }
     final save = tester.widget<OutlinedButton>(

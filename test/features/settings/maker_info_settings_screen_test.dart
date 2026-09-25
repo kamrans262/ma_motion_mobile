@@ -53,7 +53,7 @@ void main() {
         field.decoration?.contentPadding,
         fieldKey == 'maker_settings_statement'
             ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
-            : const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            : const EdgeInsets.fromLTRB(16, 18, 16, 10),
       );
     }
     final save = tester.widget<OutlinedButton>(
