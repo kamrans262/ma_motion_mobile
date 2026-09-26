@@ -238,8 +238,8 @@ class _ShrinkingDotFieldPainter extends CustomPainter {
         solidRadius +
         ((MaDotGridMetrics.dotRadius - solidRadius) * smoothProgress);
 
-    // Use the same 18 × 36 dot centers and final radius as the onboarding
-    // background so transitioning from Splash never shifts the pattern.
+    // Use the same adaptive full-bleed square grid and final radius as the
+    // onboarding background so transitioning from Splash never shifts it.
     MaDotGridMetrics.paintDots(canvas, size, paint, radius);
   }
 
