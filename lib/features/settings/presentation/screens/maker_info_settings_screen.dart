@@ -632,13 +632,16 @@ class _MakerInfoSettingsScreenState
                               color: AppColors.darkGray,
                             ),
                           )
-                        : const Text(
-                            'Save & Close',
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 16,
-                              height: 1.0,
-                              fontWeight: FontWeight.w500,
+                        : Transform.translate(
+                            offset: const Offset(0, 1),
+                            child: const Text(
+                              'Save & Close',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.fontFamily,
+                                fontSize: 16,
+                                height: 1.0,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                   ),
@@ -698,13 +701,13 @@ class _MakerInfoSettingsScreenState
               label: 'Name',
               keyName: 'maker_settings_name',
               controller: _nameController,
-              hintText: 'Artist name',
+              hintText: 'Artist Name',
             ),
             _LabeledField(
               label: 'Location',
               keyName: 'maker_settings_location',
               controller: _locationController,
-              hintText: 'City/Zip code',
+              hintText: 'City/ZIP Code',
             ),
             _LabeledField(
               label: 'Statement',
@@ -1042,7 +1045,7 @@ class _LabeledField extends StatelessWidget {
               fillColor: AppColors.filterInputFill,
               contentPadding: maxLines > 1
                   ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
-                  : const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                  : const EdgeInsets.fromLTRB(16, 21, 16, 7),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1104,7 +1107,7 @@ class _VisibilityField extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'Show on info page',
+                        'Show on Info Page',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.right,
@@ -1410,7 +1413,7 @@ class _CarouselEditor extends StatelessWidget {
         const SizedBox(height: 10),
         if (isArtwork && titleController != null) ...[
           Text(
-            'Artwork title:',
+            'Artwork Title:',
             style: AppTextStyles.onboardingHelper.copyWith(
               color: AppColors.primary,
               fontSize: 14,
@@ -1425,11 +1428,11 @@ class _CarouselEditor extends StatelessWidget {
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               counterText: '',
-              hintText: 'Artwork title',
+              hintText: 'Artwork Title',
               hintStyle: AppTextStyles.fieldHint,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+              contentPadding: const EdgeInsets.fromLTRB(16, 21, 16, 7),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1443,7 +1446,7 @@ class _CarouselEditor extends StatelessWidget {
           const SizedBox(height: 10),
         ],
         Text(
-          isArtwork ? 'Artwork description:' : 'A sentence about the content:',
+          isArtwork ? 'Artwork Description:' : 'A Sentence About the Content:',
           style: AppTextStyles.onboardingHelper.copyWith(
             color: AppColors.primary,
             fontSize: 14,
@@ -1458,11 +1461,11 @@ class _CarouselEditor extends StatelessWidget {
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             counterText: '',
-            hintText: 'Optional Caption.',
+            hintText: 'Optional Caption',
             hintStyle: AppTextStyles.fieldHint,
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+            contentPadding: const EdgeInsets.fromLTRB(16, 21, 16, 7),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
