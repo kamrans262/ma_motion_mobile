@@ -107,7 +107,7 @@ void main() {
     // reveals it through its expanding holes rather than fading it in.
     expect(logoOpacity.opacity, 1);
     expect(welcomeOpacity.opacity, 0);
-    expect(background.color, const Color(0xFF0F2419));
+    expect(background.color, const Color(0xFF0B1A12));
     final welcome = tester.widget<Text>(
       find.byKey(const Key('ma_splash_welcome_text')),
     );
