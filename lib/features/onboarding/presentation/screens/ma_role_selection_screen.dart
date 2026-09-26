@@ -87,7 +87,7 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Would you like to\njoin as a Maker or\nAppreciator?',
+                                'Would You Like to\nJoin as a Maker or\nAppreciator?',
                                 textAlign: TextAlign.center,
                                 style: AppTextStyles.onboardingHeading,
                               ),
@@ -133,15 +133,18 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                                     : AppColors.primary,
                                               ),
                                         ),
-                                    child: const Text(
-                                      'Maker',
-                                      style: TextStyle(
-                                        fontFamily: AppTextStyles.fontFamily,
-                                        fontSize: roleFontSize,
-                                        letterSpacing:
-                                            AppTextStyles.bodyTracking,
-                                        height: 1.2,
-                                        fontWeight: FontWeight.w500,
+                                    child: Transform.translate(
+                                      offset: const Offset(0, 1),
+                                      child: const Text(
+                                        'Maker',
+                                        style: TextStyle(
+                                          fontFamily: AppTextStyles.fontFamily,
+                                          fontSize: roleFontSize,
+                                          letterSpacing:
+                                              AppTextStyles.bodyTracking,
+                                          height: 1.2,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -181,15 +184,18 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                                                     : AppColors.primary,
                                               ),
                                         ),
-                                    child: const Text(
-                                      'Appreciator',
-                                      style: TextStyle(
-                                        fontFamily: AppTextStyles.fontFamily,
-                                        fontSize: roleFontSize,
-                                        letterSpacing:
-                                            AppTextStyles.bodyTracking,
-                                        height: 1.2,
-                                        fontWeight: FontWeight.w500,
+                                    child: Transform.translate(
+                                      offset: const Offset(0, 1),
+                                      child: const Text(
+                                        'Appreciator',
+                                        style: TextStyle(
+                                          fontFamily: AppTextStyles.fontFamily,
+                                          fontSize: roleFontSize,
+                                          letterSpacing:
+                                              AppTextStyles.bodyTracking,
+                                          height: 1.2,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   ),
