@@ -301,7 +301,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                         filled: true,
                         fillColor: AppColors.inputFill,
                         counterText: '',
-                        contentPadding: const EdgeInsets.fromLTRB(0, 20, 0, 8),
+                        contentPadding: const EdgeInsets.fromLTRB(0, 21, 0, 7),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.zero,
                           borderSide: BorderSide(
