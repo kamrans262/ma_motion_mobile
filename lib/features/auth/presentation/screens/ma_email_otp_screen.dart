@@ -269,12 +269,12 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
             children: [
               for (var index = 0; index < 6; index++) ...[
                 if (index > 0) const SizedBox(width: 8),
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Focus(
-                      onKeyEvent: (_, event) => _onDigitKey(index, event),
-                      child: TextField(
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Focus(
+                    onKeyEvent: (_, event) => _onDigitKey(index, event),
+                    child: TextField(
                       key: index == 0
                           ? const Key('email_otp_code_field')
                           : Key('email_otp_code_field_$index'),
@@ -328,7 +328,6 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                       ),
                     ),
                   ),
-                ),
                 ),
               ],
             ],
