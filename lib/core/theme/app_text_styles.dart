@@ -29,7 +29,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 18,
     letterSpacing: bodyTracking,
-    height: 1.25,
+    height: 1.0,
     fontWeight: FontWeight.w500,
     color: AppColors.white,
   );
@@ -38,7 +38,7 @@ abstract final class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 18,
     letterSpacing: bodyTracking,
-    height: 1.25,
+    height: 1.0,
     fontWeight: FontWeight.w500,
     color: AppColors.mutedText,
   );
