@@ -698,7 +698,10 @@ class _LoadFailure extends StatelessWidget {
               key: const Key('appreciator_settings_retry'),
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: const Text('Try again'),
+              child: Transform.translate(
+                offset: const Offset(0, 1),
+                child: const Text('Try Again'),
+              ),
             ),
           ],
         ),
