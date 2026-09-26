@@ -71,7 +71,7 @@ class MaOnboardingTextField extends StatelessWidget {
               20,
               maxLines > 1 ? 21 : 18,
               20,
-              maxLines > 1 ? 11 : 10,
+              maxLines > 1 ? 11 : 0,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
