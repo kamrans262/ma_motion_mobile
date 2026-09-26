@@ -269,10 +269,6 @@ class _FakeExperienceSwitchRepository
   int makerCalls = 0;
 
   @override
-  Future<MakerEntryDestination> switchToAppreciator() async =>
-      MakerEntryDestination.appreciatorDiscovery;
-
-  @override
   Future<MakerEntryDestination> switchToMaker() async {
     makerCalls++;
     return destination;
