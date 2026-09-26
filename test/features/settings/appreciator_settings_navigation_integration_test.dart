@@ -106,11 +106,6 @@ class _FakeAppreciatorSettingsRepository
 class _FakeExperienceSwitchRepository
     implements ExperienceSwitchRepositoryContract {
   @override
-  Future<MakerEntryDestination> switchToAppreciator() async {
-    return MakerEntryDestination.appreciatorDiscovery;
-  }
-
-  @override
   Future<MakerEntryDestination> switchToMaker() async {
     return MakerEntryDestination.discovery;
   }
