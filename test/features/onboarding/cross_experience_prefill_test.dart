@@ -6,14 +6,13 @@ import 'package:ma_motion_mobile/core/network/api_paths.dart';
 import 'package:ma_motion_mobile/core/providers/core_providers.dart';
 import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
 import 'package:ma_motion_mobile/features/onboarding/application/maker_registration_controller.dart';
-import 'package:ma_motion_mobile/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
 
 void main() {
   testWidgets(
-    'Maker onboarding prefills account fields and persisted Maker work',
+    'Maker onboarding prefills converted account data and persisted Maker work',
     (tester) async {
-      final gateway = _PrefillGateway(makerIsActive: false);
+      final gateway = _PrefillGateway();
       final container = ProviderContainer(
         overrides: [
           apiGatewayProvider.overrideWithValue(gateway),
@@ -43,6 +42,7 @@ void main() {
             ?.text,
         'Existing User',
       );
+
       await tester.tap(find.byKey(const Key('maker_next_button')));
       await tester.pumpAndSettle();
       expect(
@@ -82,65 +82,6 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-
-  testWidgets(
-    'Appreciator onboarding prefills shared data from existing Maker',
-    (tester) async {
-      final gateway = _PrefillGateway(makerIsActive: true);
-      final container = ProviderContainer(
-        overrides: [
-          apiGatewayProvider.overrideWithValue(gateway),
-          authTokenStoreProvider.overrideWithValue(_TokenStore()),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: MaterialApp(
-            home: AppreciatorRegistrationFlowScreen(
-              prefillFromAccount: true,
-              onExit: () {},
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      expect(
-        tester
-            .widget<TextField>(find.byKey(const Key('appreciator_name_field')))
-            .controller
-            ?.text,
-        'Existing User',
-      );
-      await tester.tap(find.byKey(const Key('maker_next_button')));
-      await tester.pumpAndSettle();
-      expect(
-        tester
-            .widget<TextField>(
-              find.byKey(const Key('appreciator_location_field')),
-            )
-            .controller
-            ?.text,
-        'Brooklyn 11201',
-      );
-
-      await tester.tap(find.byKey(const Key('maker_next_button')));
-      await tester.pumpAndSettle();
-      expect(
-        tester
-            .widget<TextField>(find.byKey(const Key('appreciator_email_field')))
-            .controller
-            ?.text,
-        'same@example.com',
-      );
-      expect(gateway.makerProfileReads, 0);
-      expect(tester.takeException(), isNull);
-    },
-  );
 }
 
 class _TokenStore implements AuthTokenStore {
@@ -155,9 +96,6 @@ class _TokenStore implements AuthTokenStore {
 }
 
 class _PrefillGateway implements ApiGateway {
-  _PrefillGateway({required this.makerIsActive});
-
-  final bool makerIsActive;
   int makerProfileReads = 0;
 
   @override
@@ -176,23 +114,24 @@ class _PrefillGateway implements ApiGateway {
           'role': 'maker',
           'maker_registered': true,
           'maker_onboarding_completed': false,
-          'appreciator_registered': true,
-          'appreciator_onboarding_completed': true,
+          'appreciator_registered': false,
+          'appreciator_onboarding_completed': false,
           'maker_profile': <String, dynamic>{
-            'location_text': makerIsActive ? 'Brooklyn 11201' : null,
-          },
-          'appreciator_profile': <String, dynamic>{
+            // The backend copies the former Appreciator location into the
+            // new Maker profile before deleting the Appreciator profile.
             'location_text': 'Chicago 60601',
           },
+          'appreciator_profile': null,
         },
       };
     }
+
     if (path == ApiPaths.makerProfile) {
       makerProfileReads++;
       return <String, dynamic>{
         'success': true,
         'data': <String, dynamic>{
-          'location_text': null,
+          'location_text': 'Chicago 60601',
           'bio': 'Previously saved statement',
           'website_url': 'https://studio.example',
           'profile_image_url': 'https://example.test/salon.jpg',
@@ -205,6 +144,7 @@ class _PrefillGateway implements ApiGateway {
         },
       };
     }
+
     throw StateError('Unexpected GET $path');
   }
 
