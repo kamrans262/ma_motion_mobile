@@ -94,15 +94,15 @@ class MaRoleSelectionWanderingDotsPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    final xSpacing = MaDotGridMetrics.horizontalSpacing(size);
-    final ySpacing = MaDotGridMetrics.verticalSpacing(size);
+    final spacing = MaDotGridMetrics.spacing(size);
+    final gridOrigin = MaDotGridMetrics.gridOrigin(size);
     final seconds = animationSeconds;
 
     for (var row = 0; row < MaDotGridMetrics.rows; row++) {
       for (var column = 0; column < MaDotGridMetrics.columns; column++) {
         final origin = Offset(
-          (column + 0.5) * xSpacing,
-          (row + 0.5) * ySpacing,
+          gridOrigin.dx + ((column + 0.5) * spacing),
+          gridOrigin.dy + ((row + 0.5) * spacing),
         );
         canvas.drawCircle(
           origin +
