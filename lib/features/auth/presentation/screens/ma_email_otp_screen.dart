@@ -264,15 +264,20 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            key: const Key('email_otp_six_digit_row'),
-            children: [
-              for (var index = 0; index < 6; index++) ...[
-                if (index > 0) const SizedBox(width: 8),
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Focus(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const gap = 8.0;
+              final boxSize = (constraints.maxWidth - (gap * 5)) / 6;
+
+              return Row(
+                key: const Key('email_otp_six_digit_row'),
+                children: [
+                  for (var index = 0; index < 6; index++) ...[
+                    if (index > 0) const SizedBox(width: gap),
+                    SizedBox(
+                      width: boxSize,
+                      height: boxSize,
+                      child: Focus(
                     onKeyEvent: (_, event) => _onDigitKey(index, event),
                     child: TextField(
                       key: index == 0
@@ -328,10 +333,11 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                       ),
                     ),
                   ),
-                ),
-              ],
-            ],
-          ),
+                    ),
+                  ],
+                );
+              },
+            ),
           if (_error != null) ...[
             const SizedBox(height: 8),
             Text(
