@@ -238,7 +238,7 @@ class _DeleteAccountConfirmationState
                       fontSize: 14,
                     ),
                     decoration: const InputDecoration(
-                      labelText: 'Current password',
+                      labelText: 'Current Password',
                       labelStyle: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         color: AppColors.mutedText,
