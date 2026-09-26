@@ -9,8 +9,7 @@ import '../theme/app_colors.dart';
 abstract final class MaDotGridMetrics {
   static const int columns = 18;
   static const int rows = 36;
-  // Increase each dot's diameter by 1 logical pixel (1.6 -> 2.6).
-  static const double dotRadius = 1.3;
+  static const double dotRadius = 0.8;
 
   static bool hasValidSize(Size size) =>
       size.width.isFinite &&
