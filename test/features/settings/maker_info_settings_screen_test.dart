@@ -5,8 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
-import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
-import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_choice_chip.dart';
@@ -30,7 +28,6 @@ void main() {
             onClose: () {
               repository.closeCalls++;
             },
-            onSwitchedToAppreciator: _noopDestination,
           ),
         ),
       ),
@@ -175,24 +172,9 @@ void main() {
       tester.widget<Text>(legalPrivacy).style?.decoration,
       TextDecoration.underline,
     );
-    final switchText = tester.widget<Text>(
-      find.descendant(
-        of: find.byKey(const Key('maker_settings_switch_appreciator')),
-        matching: find.byType(Text),
-      ),
-    );
-    expect(switchText.style?.decoration, TextDecoration.underline);
-    expect(switchText.style?.color, AppColors.darkGray);
-    expect(switchText.style?.decorationColor, AppColors.darkGray);
     expect(
-      tester
-          .widget<TextButton>(
-            find.byKey(const Key('maker_settings_switch_appreciator')),
-          )
-          .style
-          ?.foregroundColor
-          ?.resolve(<WidgetState>{}),
-      AppColors.darkGray,
+      find.byKey(const Key('maker_settings_switch_appreciator')),
+      findsNothing,
     );
 
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
@@ -224,7 +206,6 @@ void main() {
         child: const MaterialApp(
           home: MakerInfoSettingsScreen(
             onClose: _noop,
-            onSwitchedToAppreciator: _noopDestination,
           ),
         ),
       ),
@@ -250,58 +231,6 @@ void main() {
   });
 
   testWidgets(
-    'Switch to Appreciator preserves session and emits resolved destination',
-    (WidgetTester tester) async {
-      final repository = _FakeSettingsRepository();
-      final switchRepository = _FakeExperienceSwitchRepository(
-        MakerEntryDestination.appreciatorDiscovery,
-      );
-      MakerEntryDestination? switchedTo;
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
-            experienceSwitchRepositoryProvider.overrideWithValue(
-              switchRepository,
-            ),
-          ],
-          child: MaterialApp(
-            home: MakerInfoSettingsScreen(
-              onClose: _noop,
-              onSwitchedToAppreciator: (destination) {
-                switchedTo = destination;
-              },
-            ),
-          ),
-        ),
-      );
-
-      await _finishInitialLoad(tester);
-
-      final settingsList = find.byKey(const Key('maker_settings_scroll'));
-
-      final switchRole = find.byKey(
-        const Key('maker_settings_switch_appreciator'),
-      );
-      await _scrollIntoSafeTapRegion(
-        tester,
-        target: switchRole,
-        scrollView: settingsList,
-      );
-
-      await tester.tap(switchRole.hitTestable());
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      expect(repository.logoutCalls, 0);
-      expect(switchRepository.appreciatorCalls, 1);
-      expect(switchedTo, MakerEntryDestination.appreciatorDiscovery);
-      expect(tester.takeException(), isNull);
-    },
-  );
-
-  testWidgets(
     'Content 2 update is confirmed from backend before settings closes',
     (WidgetTester tester) async {
       final repository = _FakeSettingsRepository()..confirmedSlots.add(2);
@@ -316,8 +245,7 @@ void main() {
               onClose: () {
                 repository.closeCalls++;
               },
-              onSwitchedToAppreciator: _noopDestination,
-            ),
+              ),
           ),
         ),
       );
@@ -359,7 +287,6 @@ void main() {
         child: const MaterialApp(
           home: MakerInfoSettingsScreen(
             onClose: _noop,
-            onSwitchedToAppreciator: _noopDestination,
           ),
         ),
       ),
@@ -399,8 +326,7 @@ void main() {
               onClose: () {
                 repository.closeCalls++;
               },
-              onSwitchedToAppreciator: _noopDestination,
-            ),
+              ),
           ),
         ),
       );
@@ -460,8 +386,6 @@ Future<void> _finishInitialLoad(WidgetTester tester) async {
 }
 
 void _noop() {}
-
-void _noopDestination(MakerEntryDestination destination) {}
 
 class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int saveCalls = 0;
@@ -600,22 +524,4 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   Future<void> logout() async {
     logoutCalls++;
   }
-}
-
-class _FakeExperienceSwitchRepository
-    implements ExperienceSwitchRepositoryContract {
-  _FakeExperienceSwitchRepository(this.destination);
-
-  final MakerEntryDestination destination;
-  int appreciatorCalls = 0;
-
-  @override
-  Future<MakerEntryDestination> switchToAppreciator() async {
-    appreciatorCalls++;
-    return destination;
-  }
-
-  @override
-  Future<MakerEntryDestination> switchToMaker() async =>
-      MakerEntryDestination.discovery;
 }
