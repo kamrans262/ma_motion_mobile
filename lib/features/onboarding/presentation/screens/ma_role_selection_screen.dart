@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,24 +25,18 @@ class MaRoleSelectionScreen extends StatefulWidget {
 class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _wanderingController;
-  Timer? _startDelay;
 
   @override
   void initState() {
     super.initState();
     _wanderingController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 6),
-    );
-    // Only the background dots begin moving after one stationary second.
-    _startDelay = Timer(const Duration(seconds: 1), () {
-      if (mounted) _wanderingController.forward();
-    });
+      duration: const Duration(seconds: 12),
+    )..forward();
   }
 
   @override
   void dispose() {
-    _startDelay?.cancel();
     _wanderingController.dispose();
     super.dispose();
   }
