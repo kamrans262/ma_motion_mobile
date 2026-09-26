@@ -319,7 +319,6 @@ class _MakerArtworkDiscoveryScreenState
                                     ),
                                     iconKey: const Key('discovery_filter_svg'),
                                     assetName: 'assets/MA_FilterIcon_2.svg',
-                                    fallbackAssetName: 'assets/filter.svg',
                                     tooltip: 'Filter artwork',
                                     size: 20,
                                     barHeight: metrics.toolbarHeight,
@@ -414,7 +413,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     required this.buttonKey,
     required this.iconKey,
     required this.assetName,
-    required this.fallbackAssetName,
+    this.fallbackAssetName,
     required this.tooltip,
     required this.size,
     required this.barHeight,
@@ -426,7 +425,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final Key buttonKey;
   final Key iconKey;
   final String assetName;
-  final String fallbackAssetName;
+  final String? fallbackAssetName;
   final String tooltip;
   final double size;
   final double barHeight;
