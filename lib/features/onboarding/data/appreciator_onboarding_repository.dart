@@ -33,26 +33,31 @@ class AppreciatorOnboardingRepository {
     final locationId = await resolveLocationId(draft.location);
 
     final existingToken = await tokenStore.read();
-    final hasSession = existingToken != null && existingToken.trim().isNotEmpty;
+    if (existingToken != null && existingToken.trim().isNotEmpty) {
+      throw const ApiException(
+        message:
+            'An existing account cannot create an Appreciator profile. '
+            'Maker accounts already include Appreciator functionality.',
+        statusCode: 403,
+        code: 'single_role_account_required',
+      );
+    }
 
     final response = await api.post(
-      hasSession
-          ? ApiPaths.appreciatorExperienceOnboarding
-          : ApiPaths.appreciatorOnboarding,
-      requiresAuth: hasSession,
+      ApiPaths.appreciatorOnboarding,
+      requiresAuth: false,
       data: <String, dynamic>{
         'name': draft.name.trim(),
         'location_text': draft.location.trim(),
         'location_id': locationId,
         'email': draft.email.trim(),
-        if (!hasSession && otpChallengeId != null)
-          'otp_challenge_id': otpChallengeId,
-        if (!hasSession) 'device_name': 'MA Motion Mobile',
+        if (otpChallengeId != null) 'otp_challenge_id': otpChallengeId,
+        'device_name': 'MA Motion Mobile',
       },
     );
 
     final data = ApiEnvelope(raw: response).dataMap;
-    final userData = hasSession ? data : data['user'];
+    final userData = data['user'];
 
     if (userData is! Map) {
       throw const ApiException(
@@ -69,10 +74,6 @@ class AppreciatorOnboardingRepository {
         statusCode: 403,
         code: 'appreciator_role_required',
       );
-    }
-
-    if (hasSession) {
-      return;
     }
 
     final token = data['token']?.toString().trim() ?? '';
