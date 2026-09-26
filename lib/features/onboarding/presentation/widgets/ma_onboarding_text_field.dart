@@ -64,9 +64,9 @@ class MaOnboardingTextField extends StatelessWidget {
             // single-line inputs; multiline fields stay unchanged.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 21 : 0,
+              maxLines > 1 ? 21 : 16,
               20,
-              maxLines > 1 ? 11 : 0,
+              maxLines > 1 ? 11 : 12,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
