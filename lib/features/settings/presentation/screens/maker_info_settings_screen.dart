@@ -11,8 +11,6 @@ import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../auth/data/experience_switch_repository.dart';
-import '../../../auth/domain/maker_entry_destination.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
 import '../../data/maker_info_settings_repository.dart';
 import '../../domain/maker_info_settings_models.dart';
@@ -22,13 +20,11 @@ class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
   const MakerInfoSettingsScreen({
     super.key,
     required this.onClose,
-    required this.onSwitchedToAppreciator,
     this.onAccountDeleted,
     this.onLoggedOut,
   });
 
   final VoidCallback onClose;
-  final ValueChanged<MakerEntryDestination> onSwitchedToAppreciator;
   final VoidCallback? onAccountDeleted;
   final VoidCallback? onLoggedOut;
 
@@ -568,35 +564,6 @@ class _MakerInfoSettingsScreenState
     });
   }
 
-  Future<void> _switchToAppreciator() async {
-    if (_saving) return;
-
-    setState(() {
-      _saving = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final destination = await ref
-          .read(experienceSwitchRepositoryProvider)
-          .switchToAppreciator();
-
-      if (!mounted) return;
-
-      setState(() {
-        _saving = false;
-      });
-
-      widget.onSwitchedToAppreciator(destination);
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _saving = false;
-        _errorMessage =
-            'We could not switch experiences right now. Please try again.';
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -848,30 +815,6 @@ class _MakerInfoSettingsScreenState
               ),
               SizedBox(height: slot == 4 ? 11 : 22),
             ],
-            TextButton(
-              key: const Key('maker_settings_switch_appreciator'),
-              onPressed: _saving ? null : _switchToAppreciator,
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                overlayColor: Colors.transparent,
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.zero,
-                foregroundColor: AppColors.mutedText,
-                minimumSize: const Size(44, 20),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: const Text(
-                'Switch to Appreciator',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.mutedText,
-                  color: AppColors.mutedText,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
