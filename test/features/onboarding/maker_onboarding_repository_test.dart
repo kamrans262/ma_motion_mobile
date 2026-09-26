@@ -90,7 +90,7 @@ void main() {
   });
 
   test(
-    'authenticated Appreciator starts Maker onboarding on same token',
+    'authenticated Appreciator conversion starts Maker onboarding on same token',
     () async {
       final api = _FakeApiGateway();
       final tokenStore = _MemoryTokenStore()..value = 'existing-token';
@@ -101,13 +101,13 @@ void main() {
 
       await repository.completeMakerProfile(
         MakerRegistrationDraft(
-          name: 'Dual User',
+          name: 'Converted User',
           location: 'Chicago 60601',
           aboutWork: 'Contemporary work.',
           types: const <String>{'Painting'},
           styles: const <String>{'Contemporary'},
           website: 'www.artist.com',
-          email: 'dual@example.com',
+          email: 'converted@example.com',
           imageBytes: Uint8List.fromList(<int>[1, 2, 3]),
           imageName: 'salon.jpg',
         ),
