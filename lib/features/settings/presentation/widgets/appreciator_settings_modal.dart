@@ -567,6 +567,7 @@ class _AppreciatorSettingsModalState
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontSize: 16,
+                        height: 1.0,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
