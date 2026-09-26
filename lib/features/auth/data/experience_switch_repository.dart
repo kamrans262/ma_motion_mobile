@@ -16,8 +16,6 @@ final experienceSwitchRepositoryProvider =
     });
 
 abstract interface class ExperienceSwitchRepositoryContract {
-  Future<MakerEntryDestination> switchToAppreciator();
-
   Future<MakerEntryDestination> switchToMaker();
 }
 
@@ -26,31 +24,6 @@ class ExperienceSwitchRepository implements ExperienceSwitchRepositoryContract {
 
   final AuthRepository auth;
   final ApiGateway api;
-
-  @override
-  Future<MakerEntryDestination> switchToAppreciator() async {
-    final session = await auth.restoreSession();
-
-    if (session == null) {
-      throw const ApiException(
-        message: 'Your session has expired. Please sign in again.',
-        statusCode: 401,
-      );
-    }
-
-    if (!session.user.appreciatorOnboardingCompleted) {
-      return MakerEntryDestination.appreciatorProfileSetup;
-    }
-
-    if (!session.user.isAppreciator) {
-      await api.patch(
-        ApiPaths.experience,
-        data: const <String, dynamic>{'experience': 'appreciator'},
-      );
-    }
-
-    return MakerEntryDestination.appreciatorDiscovery;
-  }
 
   @override
   Future<MakerEntryDestination> switchToMaker() async {
@@ -63,20 +36,18 @@ class ExperienceSwitchRepository implements ExperienceSwitchRepositoryContract {
       );
     }
 
-    if (session.user.makerOnboardingCompleted) {
-      if (!session.user.isMaker) {
-        await api.patch(
-          ApiPaths.experience,
-          data: const <String, dynamic>{'experience': 'maker'},
-        );
-      }
-
-      return MakerEntryDestination.discovery;
+    if (!session.user.isAppreciator) {
+      throw const ApiException(
+        message: 'Only Appreciator accounts can convert to Maker.',
+        statusCode: 403,
+        code: 'appreciator_role_required',
+      );
     }
 
-    if (!session.user.isMaker) {
-      await api.post(ApiPaths.makerExperienceOnboarding);
-    }
+    // This is a one-way account conversion, not a second profile. The backend
+    // removes the Appreciator profile, activates Maker, and starts fresh Maker
+    // onboarding while preserving shared account data such as name/email.
+    await api.post(ApiPaths.makerExperienceOnboarding);
 
     return MakerEntryDestination.profileSetup;
   }
