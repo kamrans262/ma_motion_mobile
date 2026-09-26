@@ -171,6 +171,7 @@ class MakerInfoSettingsData {
     required this.showWebsite,
     required this.showEmail,
     required this.showShows,
+    this.isHidden = false,
     required this.selectedTypeIds,
     required this.selectedStyleIds,
     required this.carousel,
@@ -190,6 +191,7 @@ class MakerInfoSettingsData {
   final bool showWebsite;
   final bool showEmail;
   final bool showShows;
+  final bool isHidden;
   final Set<int> selectedTypeIds;
   final Set<int> selectedStyleIds;
   final List<MakerCarouselItem> carousel;
@@ -210,6 +212,7 @@ class MakerInfoSettingsDraft {
     required this.showWebsite,
     required this.showEmail,
     required this.showShows,
+    this.isHidden = false,
     required this.typeIds,
     required this.styleIds,
   });
@@ -223,6 +226,7 @@ class MakerInfoSettingsDraft {
   final bool showWebsite;
   final bool showEmail;
   final bool showShows;
+  final bool isHidden;
   final Set<int> typeIds;
   final Set<int> styleIds;
 }
