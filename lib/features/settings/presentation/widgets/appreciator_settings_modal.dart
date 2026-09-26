@@ -633,7 +633,7 @@ class _SettingsField extends StatelessWidget {
           textInputAction: textInputAction,
           onChanged: onChanged,
           style: const TextStyle(
-            fontFamily: AppTextStyles.inputFontFamily,
+            fontFamily: AppTextStyles.fontFamily,
             fontSize: 14,
             color: AppColors.white,
           ),
