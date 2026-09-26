@@ -274,66 +274,63 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                 children: [
                   for (var index = 0; index < 6; index++) ...[
                     if (index > 0) const SizedBox(width: gap),
-                    SizedBox(
-                      width: boxSize,
-                      height: boxSize,
-                      child: Focus(
-                        onKeyEvent: (_, event) => _onDigitKey(index, event),
-                        child: TextField(
-                          key: index == 0
-                              ? const Key('email_otp_code_field')
-                              : Key('email_otp_code_field_$index'),
-                          controller: _digitControllers[index],
-                          focusNode: _digitFocus[index],
-                          enabled: !_isVerifying,
-                          keyboardType: TextInputType.number,
-                          textInputAction: index == 5
-                              ? TextInputAction.done
-                              : TextInputAction.next,
-                          autofillHints: index == 0
-                              ? const [AutofillHints.oneTimeCode]
-                              : null,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          onChanged: (value) => _onDigitChanged(index, value),
-                          onSubmitted: (_) {
-                            if (index == 5) unawaited(_verify());
-                          },
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.field,
-                          cursorColor: AppColors.primary,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            filled: true,
-                            fillColor: AppColors.inputFill,
-                            counterText: '',
-                            contentPadding: const EdgeInsets.fromLTRB(
-                              0,
-                              21,
-                              0,
-                              7,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: AppColors.primary50,
-                                width: 1.2,
+                    SizedBox.square(
+                      dimension: boxSize,
+                      child: AnimatedBuilder(
+                        animation: _digitFocus[index],
+                        builder: (context, child) {
+                          final focused = _digitFocus[index].hasFocus;
+
+                          return DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColors.inputFill,
+                              border: Border.all(
+                                color: focused
+                                    ? AppColors.primary
+                                    : AppColors.primary50,
+                                width: focused ? 1.4 : 1.2,
                               ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: AppColors.primary50,
-                                width: 1.2,
-                              ),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: AppColors.primary,
-                                width: 1.4,
-                              ),
+                            child: child,
+                          );
+                        },
+                        child: Focus(
+                          onKeyEvent: (_, event) => _onDigitKey(index, event),
+                          child: TextField(
+                            key: index == 0
+                                ? const Key('email_otp_code_field')
+                                : Key('email_otp_code_field_$index'),
+                            controller: _digitControllers[index],
+                            focusNode: _digitFocus[index],
+                            enabled: !_isVerifying,
+                            keyboardType: TextInputType.number,
+                            textInputAction: index == 5
+                                ? TextInputAction.done
+                                : TextInputAction.next,
+                            autofillHints: index == 0
+                                ? const [AutofillHints.oneTimeCode]
+                                : null,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onChanged: (value) =>
+                                _onDigitChanged(index, value),
+                            onSubmitted: (_) {
+                              if (index == 5) unawaited(_verify());
+                            },
+                            textAlign: TextAlign.center,
+                            textAlignVertical: TextAlignVertical.center,
+                            style: AppTextStyles.field,
+                            cursorColor: AppColors.primary,
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              filled: false,
+                              counterText: '',
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
                             ),
                           ),
                         ),
