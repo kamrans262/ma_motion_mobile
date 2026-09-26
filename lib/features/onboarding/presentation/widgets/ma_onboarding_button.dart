@@ -37,7 +37,7 @@ class MaOnboardingButton extends StatelessWidget {
                 padding: EdgeInsets.zero,
               ),
               child: Transform.translate(
-                offset: const Offset(0, 3),
+                offset: const Offset(0, 2),
                 child: Text(label, style: AppTextStyles.buttonDark),
               ),
             )
@@ -70,7 +70,7 @@ class MaOnboardingButton extends StatelessWidget {
                     ),
                   ),
               child: Transform.translate(
-                offset: const Offset(0, 3),
+                offset: const Offset(0, 2),
                 child: Text(
                   label,
                   style: const TextStyle(
