@@ -9,7 +9,7 @@ import '../../../../core/widgets/ma_dotted_background.dart';
 class MaRoleSelectionWanderingDots extends StatelessWidget {
   const MaRoleSelectionWanderingDots({super.key, required this.progress});
 
-  /// Runs from 0 to 1 over six seconds, after one stationary second.
+  /// Runs from 0 to 1 over twelve seconds with no start delay.
   final Animation<double> progress;
 
   @override
@@ -28,7 +28,7 @@ class MaRoleSelectionWanderingDots extends StatelessWidget {
 /// then reverses along that SAME line to its exact starting position.
 /// There is no second destination, turn, oscillation, or shared grid motion.
 abstract final class MaRoleSelectionDotMotion {
-  static const double durationSeconds = 6;
+  static const double durationSeconds = 12;
 
   static Offset _targetFor(int index) {
     final random = math.Random(0x4D41 + index * 7919);
@@ -40,12 +40,12 @@ abstract final class MaRoleSelectionDotMotion {
   // Slightly different turnaround times keep neighboring dots independent,
   // rather than making an outward-and-return wave across the grid.
   static double _turnaroundFor(int index) =>
-      2.7 + math.Random(0x524F + index * 104729).nextDouble() * 0.6;
+      5.4 + math.Random(0x524F + index * 104729).nextDouble() * 1.2;
 
   static double _ease(double fraction) =>
       Curves.easeInOutSine.transform(fraction);
 
-  /// Motion seconds 0–6 correspond to screen seconds 1–7. Only the distance
+  /// Motion seconds 0–12 start immediately. Only the distance
   /// changes: the direction is fixed for each dot until it reverses home.
   static Offset displacement({
     required int row,
