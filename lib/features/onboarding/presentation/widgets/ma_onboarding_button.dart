@@ -72,7 +72,7 @@ class MaOnboardingButton extends StatelessWidget {
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 16,
                   letterSpacing: AppTextStyles.bodyTracking,
-                  height: 1.2,
+                  height: 1.0,
                   fontWeight: FontWeight.w500,
                 ),
               ),
