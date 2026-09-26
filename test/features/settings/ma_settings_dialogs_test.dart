@@ -79,9 +79,16 @@ void main() {
 
       await open();
       expect(
-        find.text('Please confirm to delete your account'),
+        find.text('Are you sure you want to delete your MA account?'),
         findsOneWidget,
       );
+      expect(
+        find.text(
+          'This will permanently delete your account, including all associated content.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.delete_forever_outlined), findsNothing);
       expect(find.byKey(const Key('ma_delete_account_password')), findsNothing);
       await tester.tap(find.byKey(const Key('ma_delete_account_close')));
       await tester.pumpAndSettle();
