@@ -33,7 +33,6 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _emailController = TextEditingController();
   late final AnimationController _wanderingController;
-  Timer? _startDelay;
   EmailOtpChallenge? _challenge;
   String? _emailError;
   String? _generalError;
@@ -44,16 +43,12 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
     super.initState();
     _wanderingController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 6),
-    );
-    _startDelay = Timer(const Duration(seconds: 1), () {
-      if (mounted) _wanderingController.forward();
-    });
+      duration: const Duration(seconds: 12),
+    )..forward();
   }
 
   @override
   void dispose() {
-    _startDelay?.cancel();
     _wanderingController.dispose();
     _emailController.dispose();
     super.dispose();
