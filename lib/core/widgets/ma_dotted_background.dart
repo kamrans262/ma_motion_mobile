@@ -8,7 +8,7 @@ import '../theme/app_colors.dart';
 /// Maker/Appreciator onboarding backgrounds.
 abstract final class MaDotGridMetrics {
   static const int columns = 18;
-  static const int rows = 36;
+  static const int minimumRows = 36;
   static const double dotRadius = 0.8;
 
   static bool hasValidSize(Size size) =>
@@ -17,17 +17,26 @@ abstract final class MaDotGridMetrics {
       size.width > 0 &&
       size.height > 0;
 
-  /// Use one shared center-to-center distance on both axes so every dot sits
-  /// inside a true square grid cell. The complete 18 × 36 grid is then
-  /// centered inside the available surface.
-  static double spacing(Size size) =>
-      math.min(size.width / columns, size.height / rows);
+  /// Keep the established 18 columns across the full screen width. That
+  /// width-derived cell size is reused vertically, so X/Y spacing is exactly
+  /// equal and every grid cell is square.
+  static double spacing(Size size) => size.width / columns;
 
   static double horizontalSpacing(Size size) => spacing(size);
   static double verticalSpacing(Size size) => spacing(size);
 
+  /// Add as many rows as needed to cover the full screen height. Two extra
+  /// rows keep the lattice extending past the top/bottom edges, so tall phones
+  /// never show an empty band.
+  static int rowCount(Size size) {
+    if (!hasValidSize(size)) return minimumRows;
+    final needed = (size.height / spacing(size)).ceil() + 2;
+    return math.max(minimumRows, needed);
+  }
+
   static Offset gridOrigin(Size size) {
     final cell = spacing(size);
+    final rows = rowCount(size);
     return Offset(
       (size.width - (cell * columns)) / 2,
       (size.height - (cell * rows)) / 2,
@@ -35,12 +44,14 @@ abstract final class MaDotGridMetrics {
   }
 
   /// The dots are centered within square grid cells. Horizontal and vertical
-  /// center-to-center spacing are therefore always identical.
+  /// center-to-center spacing are identical, and the dynamically extended row
+  /// count makes the pattern full-bleed on every supported screen.
   static void paintDots(Canvas canvas, Size size, Paint paint, double radius) {
     if (!hasValidSize(size) || !radius.isFinite || radius <= 0) return;
 
     final cell = spacing(size);
     final origin = gridOrigin(size);
+    final rows = rowCount(size);
 
     for (var row = 0; row < rows; row++) {
       final y = origin.dy + ((row + 0.5) * cell);
@@ -51,14 +62,11 @@ abstract final class MaDotGridMetrics {
     }
   }
 
-  /// The opening circles cover the square grid cells plus any centered outer
-  /// margin, preserving the continuous solid-purple Splash opening.
+  /// A square lattice needs a half-cell diagonal radius to cover every point
+  /// during the solid-purple opening before the circles shrink into dots.
   static double solidCircleRadius(Size size) {
-    final cell = spacing(size);
-    final origin = gridOrigin(size);
-    final halfWidth = origin.dx + (cell / 2);
-    final halfHeight = origin.dy + (cell / 2);
-    return math.sqrt(halfWidth * halfWidth + halfHeight * halfHeight);
+    final halfCell = spacing(size) / 2;
+    return math.sqrt((halfCell * halfCell) * 2);
   }
 }
 
