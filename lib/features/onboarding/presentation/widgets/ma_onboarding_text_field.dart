@@ -69,7 +69,7 @@ class MaOnboardingTextField extends StatelessWidget {
             // placeholders and entered text; multiline fields stay unchanged.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 21 : 18,
+              maxLines > 1 ? 21 : 0,
               20,
               maxLines > 1 ? 11 : 0,
             ),
