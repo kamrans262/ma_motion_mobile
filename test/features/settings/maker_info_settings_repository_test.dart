@@ -30,6 +30,7 @@ void main() {
       expect(data.showWebsite, isTrue);
       expect(data.showEmail, isFalse);
       expect(data.showShows, isTrue);
+      expect(data.isHidden, isFalse);
       expect(data.carousel.single.slot, 1);
       expect(data.artworkSlots.single.slot, 2);
       expect(data.artworkSlots.single.artwork.title, 'Real Artwork');
@@ -54,6 +55,7 @@ void main() {
           showWebsite: true,
           showEmail: true,
           showShows: false,
+          isHidden: true,
           typeIds: <int>{1},
           styleIds: <int>{2},
         ),
@@ -63,6 +65,7 @@ void main() {
       expect(api.lastPatchData?['location_id'], 3);
       expect(api.lastPatchData?['show_email_on_info_page'], isTrue);
       expect(api.lastPatchData?['show_shows_on_info_page'], isFalse);
+      expect(api.lastPatchData?['is_hidden'], isTrue);
       expect(api.lastPatchData?['type_ids'], <int>[1]);
       expect(api.lastPatchData?['style_ids'], <int>[2]);
     },
@@ -312,6 +315,7 @@ class _FakeApiGateway implements ApiGateway {
           'show_website_on_info_page': true,
           'show_email_on_info_page': false,
           'show_shows_on_info_page': true,
+          'is_hidden': false,
           'types': <dynamic>[
             <String, dynamic>{'id': 1, 'name': 'Painting', 'slug': 'painting'},
           ],
