@@ -6,13 +6,13 @@ class MaSvgAsset extends StatefulWidget {
   const MaSvgAsset({
     super.key,
     required this.assetName,
-    required this.fallbackAssetName,
+    this.fallbackAssetName,
     this.fit = BoxFit.contain,
     this.color,
   });
 
   final String assetName;
-  final String fallbackAssetName;
+  final String? fallbackAssetName;
   final BoxFit fit;
   final Color? color;
 
@@ -83,8 +83,13 @@ class _MaSvgAssetState extends State<MaSvgAsset> {
           );
         }
 
+        final fallbackAssetName = widget.fallbackAssetName;
+        if (fallbackAssetName == null) {
+          return const SizedBox.shrink();
+        }
+
         return SvgPicture.asset(
-          widget.fallbackAssetName,
+          fallbackAssetName,
           fit: widget.fit,
           colorFilter: colorFilter,
         );
