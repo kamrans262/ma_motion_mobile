@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/auth/presentation/screens/ma_email_login_screen.dart';
+import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 
 void main() {
   testWidgets('Login and Create Account use matching outlined buttons', (
@@ -22,6 +23,14 @@ void main() {
       ),
     );
 
+    final dots = tester.widget<MaRoleSelectionWanderingDots>(
+      find.byType(MaRoleSelectionWanderingDots),
+    );
+    final dotAnimation = dots.progress as AnimationController;
+    expect(dotAnimation.duration, const Duration(seconds: 12));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(dotAnimation.value, greaterThan(0));
+
     final heading = tester.widget<Text>(
       find.byKey(const Key('email_login_heading')),
     );
@@ -29,7 +38,7 @@ void main() {
     expect(heading.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(heading.style?.fontSize, 34);
     expect(heading.style?.fontWeight, FontWeight.w500);
-    expect(heading.style?.letterSpacing, -0.5);
+    expect(heading.style?.letterSpacing, -0.8);
     expect(heading.style?.height, 1.22);
 
     final email = tester.widget<TextField>(
@@ -41,7 +50,7 @@ void main() {
     expect(email.decoration?.hintText, 'you@email.com');
     expect(
       email.decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 18, 20, 10),
+      const EdgeInsets.fromLTRB(20, 21, 20, 7),
     );
 
     final login = tester.widget<OutlinedButton>(
