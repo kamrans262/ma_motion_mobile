@@ -30,24 +30,17 @@ class MaRoleSelectionWanderingDots extends StatelessWidget {
 abstract final class MaRoleSelectionDotMotion {
   static const double durationSeconds = 6;
 
-  static final List<Offset> _targets = List<Offset>.generate(
-    MaDotGridMetrics.rows * MaDotGridMetrics.columns,
-    (index) {
-      final random = math.Random(0x4D41 + index * 7919);
-      final angle = random.nextDouble() * math.pi * 2;
-      final distance = 4.0 + random.nextDouble() * 3.0;
-      return Offset(math.cos(angle) * distance, math.sin(angle) * distance);
-    },
-    growable: false,
-  );
+  static Offset _targetFor(int index) {
+    final random = math.Random(0x4D41 + index * 7919);
+    final angle = random.nextDouble() * math.pi * 2;
+    final distance = 4.0 + random.nextDouble() * 3.0;
+    return Offset(math.cos(angle) * distance, math.sin(angle) * distance);
+  }
 
   // Slightly different turnaround times keep neighboring dots independent,
   // rather than making an outward-and-return wave across the grid.
-  static final List<double> _turnaroundSeconds = List<double>.generate(
-    MaDotGridMetrics.rows * MaDotGridMetrics.columns,
-    (index) => 2.7 + math.Random(0x524F + index * 104729).nextDouble() * 0.6,
-    growable: false,
-  );
+  static double _turnaroundFor(int index) =>
+      2.7 + math.Random(0x524F + index * 104729).nextDouble() * 0.6;
 
   static double _ease(double fraction) =>
       Curves.easeInOutSine.transform(fraction);
@@ -64,7 +57,7 @@ abstract final class MaRoleSelectionDotMotion {
     }
 
     final index = row * MaDotGridMetrics.columns + column;
-    final turnaround = _turnaroundSeconds[index];
+    final turnaround = _turnaroundFor(index);
     final distanceFraction = animationSeconds <= turnaround
         ? _ease(animationSeconds / turnaround)
         : 1 -
@@ -72,7 +65,7 @@ abstract final class MaRoleSelectionDotMotion {
                 (animationSeconds - turnaround) /
                     (durationSeconds - turnaround),
               );
-    return _targets[index] * distanceFraction;
+    return _targetFor(index) * distanceFraction;
   }
 }
 
@@ -98,7 +91,7 @@ class MaRoleSelectionWanderingDotsPainter extends CustomPainter {
     final gridOrigin = MaDotGridMetrics.gridOrigin(size);
     final seconds = animationSeconds;
 
-    for (var row = 0; row < MaDotGridMetrics.rows; row++) {
+    for (var row = 0; row < MaDotGridMetrics.rowCount(size); row++) {
       for (var column = 0; column < MaDotGridMetrics.columns; column++) {
         final origin = Offset(
           gridOrigin.dx + ((column + 0.5) * spacing),
