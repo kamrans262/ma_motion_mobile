@@ -294,6 +294,7 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                         if (index == 5) unawaited(_verify());
                       },
                       textAlign: TextAlign.center,
+                      textAlignVertical: TextAlignVertical.bottom,
                       style: AppTextStyles.field,
                       cursorColor: AppColors.primary,
                       decoration: InputDecoration(
