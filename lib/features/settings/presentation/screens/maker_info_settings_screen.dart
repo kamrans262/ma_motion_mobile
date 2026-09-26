@@ -70,6 +70,7 @@ class _MakerInfoSettingsScreenState
   bool _showWebsite = true;
   bool _showEmail = false;
   bool _showShows = true;
+  bool _hideMakerPage = false;
   bool _loading = true;
   bool _saving = false;
   int? _activeUploadSlot;
@@ -132,6 +133,7 @@ class _MakerInfoSettingsScreenState
       _showWebsite = data.showWebsite;
       _showEmail = data.showEmail;
       _showShows = data.showShows;
+      _hideMakerPage = data.isHidden;
 
       final salon = _existingItem(data, 1);
       _captionControllers[1]!.text = salon?.caption ?? '';
@@ -321,6 +323,7 @@ class _MakerInfoSettingsScreenState
           showWebsite: _showWebsite,
           showEmail: _showEmail,
           showShows: _showShows,
+          isHidden: _hideMakerPage,
           typeIds: Set<int>.from(_selectedTypes),
           styleIds: Set<int>.from(_selectedStyles),
         ),
@@ -771,6 +774,18 @@ class _MakerInfoSettingsScreenState
                   : (value) {
                       setState(() {
                         _showShows = value;
+                      });
+                    },
+            ),
+            _VisibilityOnlyRow(
+              key: const Key('maker_settings_hide_page'),
+              label: 'Hide Maker Page',
+              value: _hideMakerPage,
+              onChanged: _saving
+                  ? null
+                  : (value) {
+                      setState(() {
+                        _hideMakerPage = value;
                       });
                     },
             ),
