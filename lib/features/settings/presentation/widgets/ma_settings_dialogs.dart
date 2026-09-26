@@ -187,14 +187,8 @@ class _DeleteAccountConfirmationState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.delete_forever_outlined,
-                  size: 44,
-                  color: AppColors.error,
-                ),
-                const SizedBox(height: 14),
                 const Text(
-                  'Please confirm to delete your account',
+                  'Are you sure you want to delete your MA account?',
                   key: Key('ma_delete_account_prompt'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -206,7 +200,7 @@ class _DeleteAccountConfirmationState
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'This permanently deletes your account, including both Maker and Appreciator profiles if you use both.',
+                  'This will permanently delete your account, including all associated content.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.mutedText,
