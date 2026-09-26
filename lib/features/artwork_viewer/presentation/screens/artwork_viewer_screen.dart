@@ -293,16 +293,14 @@ class _ArtworkMediaPage extends StatelessWidget {
     final description = this.description?.trim() ?? '';
     final hasDescription = description.isNotEmpty;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final bottomReserve = hasDescription ? 76.0 : 28.0;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bottomReserve = hasDescription ? 76.0 : 28.0;
 
-          return Stack(
-            key: pageKey,
-            fit: StackFit.expand,
-            children: [
+        return Stack(
+          key: pageKey,
+          fit: StackFit.expand,
+          children: [
             Positioned.fill(
               bottom: bottomReserve,
               child: Center(
@@ -333,10 +331,9 @@ class _ArtworkMediaPage extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
-          );
-        },
-      ),
+          ],
+        );
+      },
     );
   }
 }
