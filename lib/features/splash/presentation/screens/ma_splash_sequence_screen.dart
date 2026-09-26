@@ -6,6 +6,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
 import '../../../auth/data/maker_entry_repository.dart';
 import '../../../auth/domain/maker_entry_destination.dart';
+import '../../../onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 import '../widgets/ma_full_logo.dart';
 
 class MaSplashSequenceScreen extends ConsumerStatefulWidget {
@@ -14,7 +15,7 @@ class MaSplashSequenceScreen extends ConsumerStatefulWidget {
     this.onResolved,
     this.entryResolver,
     this.autoPlay = true,
-    this.duration = const Duration(milliseconds: 12200),
+    this.duration = const Duration(milliseconds: 12000),
   });
 
   final ValueChanged<MakerEntryDestination>? onResolved;
@@ -31,6 +32,7 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _openingProgress;
+  late final Animation<double> _wanderingProgress;
 
   MakerEntryDestination? _resolvedDestination;
   bool _animationCompleted = false;
@@ -45,9 +47,15 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     // The supplied reference is one continuous purple circle field:
     // initially the circles overlap enough to look like a solid screen, then
     // those same circles shrink until they become the final dot grid.
+    // Preserve the existing 7.5-second opening/logo/text timing, then use
+    // the remaining time for the Login-style 1s static + 6s disperse cycle.
     _openingProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.081967, 0.327869, curve: Curves.linear),
+      curve: const Interval(0.051229, 0.204918, curve: Curves.linear),
+    );
+    _wanderingProgress = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.5, 1, curve: Curves.linear),
     );
 
     _controller.addStatusListener(_handleAnimationStatus);
@@ -94,9 +102,9 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
   }
 
   double _logoOpacity(double value) {
-    if (value < 0.588) return 1;
-    if (value < 0.625) {
-      final t = (value - 0.588) / (0.625 - 0.588);
+    if (value < 0.3675) return 1;
+    if (value < 0.390625) {
+      final t = (value - 0.3675) / (0.390625 - 0.3675);
       return 1 - Curves.easeInOutCubic.transform(t);
     }
 
@@ -104,19 +112,19 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
   }
 
   double _welcomeOpacity(double value) {
-    if (value < 0.618) return 0;
+    if (value < 0.38625) return 0;
 
-    if (value < 0.668) {
-      final t = (value - 0.618) / (0.668 - 0.618);
+    if (value < 0.4175) {
+      final t = (value - 0.38625) / (0.4175 - 0.38625);
       return Curves.easeOutCubic.transform(t);
     }
 
-    if (value < 0.949 || _resolvedDestination == null) {
+    if (value < 0.966667 || _resolvedDestination == null) {
       return 1;
     }
 
-    if (value < 0.988) {
-      final t = (value - 0.949) / (0.988 - 0.949);
+    if (value < 0.991667) {
+      final t = (value - 0.966667) / (0.991667 - 0.966667);
       return 1 - Curves.easeInCubic.transform(t);
     }
 
@@ -154,14 +162,24 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
                     ),
                   ),
                 ),
-                RepaintBoundary(
-                  child: CustomPaint(
-                    key: const Key('ma_splash_dot_pattern'),
-                    painter: _ShrinkingDotFieldPainter(
-                      progress: _openingProgress.value,
+                if (_controller.value < 0.5)
+                  RepaintBoundary(
+                    child: CustomPaint(
+                      key: const Key('ma_splash_dot_pattern'),
+                      painter: _ShrinkingDotFieldPainter(
+                        progress: _openingProgress.value,
+                      ),
+                    ),
+                  )
+                else
+                  RepaintBoundary(
+                    child: CustomPaint(
+                      key: const Key('ma_splash_wandering_dot_pattern'),
+                      painter: MaRoleSelectionWanderingDotsPainter(
+                        progress: _wanderingProgress,
+                      ),
                     ),
                   ),
-                ),
                 SafeArea(
                   child: IgnorePointer(
                     child: Opacity(
