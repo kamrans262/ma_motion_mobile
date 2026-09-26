@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
-import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 import 'package:ma_motion_mobile/features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
 void main() {
@@ -28,58 +27,26 @@ void main() {
     );
   }
 
-  test('default Splash duration is 12 seconds', () {
+  test('default Splash duration is 7.5 seconds', () {
     expect(
       const MaSplashSequenceScreen().duration,
-      const Duration(seconds: 12),
+      const Duration(milliseconds: 7500),
     );
   });
 
-  testWidgets('Splash text waits 1s then uses the Login 6s disperse cycle', (
+  testWidgets('Splash dot grid stays static after the opening shrink', (
     tester,
   ) async {
     await tester.pumpWidget(
-      app(autoPlay: true, duration: const Duration(seconds: 12)),
+      app(autoPlay: true, duration: const Duration(milliseconds: 7500)),
     );
 
-    await tester.pump(const Duration(milliseconds: 5999));
+    await tester.pump(const Duration(seconds: 6));
+
     expect(find.byKey(const Key('ma_splash_dot_pattern')), findsOneWidget);
     expect(
       find.byKey(const Key('ma_splash_wandering_dot_pattern')),
       findsNothing,
-    );
-
-    await tester.pump(const Duration(milliseconds: 1));
-    final wandering = find.byKey(const Key('ma_splash_wandering_dot_pattern'));
-    expect(wandering, findsOneWidget);
-
-    double animationSeconds() =>
-        (tester.widget<CustomPaint>(wandering).painter!
-                as MaRoleSelectionWanderingDotsPainter)
-            .animationSeconds;
-
-    expect(animationSeconds(), closeTo(0, 0.02));
-
-    await tester.pump(const Duration(seconds: 3));
-    expect(animationSeconds(), closeTo(3, 0.02));
-    expect(
-      MaRoleSelectionDotMotion.displacement(
-        row: 7,
-        column: 5,
-        animationSeconds: animationSeconds(),
-      ),
-      isNot(Offset.zero),
-    );
-
-    await tester.pump(const Duration(seconds: 3));
-    expect(animationSeconds(), closeTo(6, 0.02));
-    expect(
-      MaRoleSelectionDotMotion.displacement(
-        row: 7,
-        column: 5,
-        animationSeconds: animationSeconds(),
-      ),
-      Offset.zero,
     );
     expect(tester.takeException(), isNull);
   });
@@ -123,7 +90,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      app(autoPlay: true, duration: const Duration(seconds: 12)),
+      app(autoPlay: true, duration: const Duration(milliseconds: 7500)),
     );
 
     await tester.pump(const Duration(milliseconds: 4200));
@@ -149,7 +116,7 @@ void main() {
     await tester.pumpWidget(
       app(
         autoPlay: true,
-        duration: const Duration(seconds: 12),
+        duration: const Duration(milliseconds: 7500),
         onResolved: (_) {},
       ),
     );
@@ -161,7 +128,7 @@ void main() {
     );
     expect(welcomeOpacity.opacity, 1);
 
-    await tester.pump(const Duration(milliseconds: 6550));
+    await tester.pump(const Duration(milliseconds: 2050));
 
     welcomeOpacity = tester.widget<Opacity>(
       find.byKey(const Key('ma_splash_welcome_opacity')),
@@ -169,7 +136,7 @@ void main() {
     expect(welcomeOpacity.opacity, greaterThan(0));
     expect(welcomeOpacity.opacity, lessThan(1));
 
-    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump(const Duration(milliseconds: 200));
 
     welcomeOpacity = tester.widget<Opacity>(
       find.byKey(const Key('ma_splash_welcome_opacity')),
