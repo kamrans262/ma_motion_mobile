@@ -288,7 +288,10 @@ class _DeleteAccountConfirmationState
                                     color: AppColors.primary,
                                   ),
                                 )
-                              : const Text('Confirm'),
+                              : Transform.translate(
+                                  offset: const Offset(0, 1),
+                                  child: const Text('Confirm'),
+                                ),
                         ),
                       ),
                     ),
@@ -302,7 +305,10 @@ class _DeleteAccountConfirmationState
                               ? null
                               : () => Navigator.of(context).pop(false),
                           style: AppButtonStyles.filterAction(),
-                          child: const Text('Close'),
+                          child: Transform.translate(
+                            offset: const Offset(0, 1),
+                            child: const Text('Close'),
+                          ),
                         ),
                       ),
                     ),
