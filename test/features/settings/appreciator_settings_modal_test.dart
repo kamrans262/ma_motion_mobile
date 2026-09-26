@@ -107,7 +107,7 @@ void main() {
           matching: find.byType(Text),
         ),
       ).style?.color,
-      AppColors.darkGray,
+      AppColors.mutedText,
     );
     final switchText = tester.widget<Text>(
       find.descendant(
@@ -192,7 +192,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Switch to Maker saves then uses same-account switch flow', (
+  testWidgets('Switch to Maker saves then starts one-way Maker onboarding', (
     tester,
   ) async {
     final repository = _FakeAppreciatorSettingsRepository();
@@ -348,11 +348,6 @@ class _FakeAppreciatorSettingsRepository
 class _FakeExperienceSwitchRepository
     implements ExperienceSwitchRepositoryContract {
   int switchToMakerCount = 0;
-
-  @override
-  Future<MakerEntryDestination> switchToAppreciator() async {
-    return MakerEntryDestination.appreciatorDiscovery;
-  }
 
   @override
   Future<MakerEntryDestination> switchToMaker() async {
