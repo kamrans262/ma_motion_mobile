@@ -50,7 +50,7 @@ void main() {
         field.decoration?.contentPadding,
         fieldKey == 'maker_settings_statement'
             ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
-            : const EdgeInsets.fromLTRB(16, 18, 16, 10),
+            : const EdgeInsets.fromLTRB(16, 21, 16, 7),
       );
     }
     final save = tester.widget<OutlinedButton>(
@@ -135,6 +135,15 @@ void main() {
     await tester.tap(emailSwitch.hitTestable());
     await tester.pump();
 
+    final hidePage = find.byKey(const Key('maker_settings_hide_page'));
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: hidePage,
+      scrollView: settingsList,
+    );
+    await tester.tap(hidePage.hitTestable());
+    await tester.pump();
+
     final legalTerms = find.byKey(const Key('maker_settings_terms_text'));
     await tester.dragUntilVisible(
       legalTerms,
@@ -186,6 +195,7 @@ void main() {
     expect(repository.saveCalls, 1);
     expect(repository.lastDraft?.locationId, 3);
     expect(repository.lastDraft?.showEmail, isTrue);
+    expect(repository.lastDraft?.isHidden, isTrue);
     expect(repository.closeCalls, 1);
     expect(tester.takeException(), isNull);
   });
