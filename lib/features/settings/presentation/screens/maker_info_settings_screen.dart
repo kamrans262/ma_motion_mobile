@@ -603,7 +603,7 @@ class _MakerInfoSettingsScreenState
                             ),
                           )
                         : Transform.translate(
-                            offset: const Offset(0, 1),
+                            offset: const Offset(0, 2),
                             child: const Text(
                               'Save & Close',
                               style: TextStyle(
