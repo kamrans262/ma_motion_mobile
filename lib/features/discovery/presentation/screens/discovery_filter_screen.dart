@@ -696,7 +696,10 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: const Text('Try again'),
+              child: Transform.translate(
+                offset: const Offset(0, 1),
+                child: const Text('Try Again'),
+              ),
             ),
           ],
         ),
