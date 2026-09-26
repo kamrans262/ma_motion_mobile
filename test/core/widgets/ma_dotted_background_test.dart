@@ -3,10 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_dotted_background.dart';
 
 void main() {
-  test('Splash and onboarding share a centered square 18 by 36 grid', () {
+  test('Splash and onboarding use a full-bleed square dot grid', () {
     expect(MaDotGridMetrics.columns, 18);
-    expect(MaDotGridMetrics.rows, 36);
-    expect(MaDotGridMetrics.columns * MaDotGridMetrics.rows, 648);
+    expect(MaDotGridMetrics.minimumRows, 36);
     expect(MaDotGridMetrics.dotRadius, 0.8);
     expect(MaDotGridMetrics.dotRadius * 2, 1.6);
 
@@ -19,14 +18,16 @@ void main() {
       final vertical = MaDotGridMetrics.verticalSpacing(size);
       final origin = MaDotGridMetrics.gridOrigin(size);
       final radius = MaDotGridMetrics.dotRadius;
+      final rows = MaDotGridMetrics.rowCount(size);
       final gridWidth = horizontal * MaDotGridMetrics.columns;
-      final gridHeight = vertical * MaDotGridMetrics.rows;
+      final gridHeight = vertical * rows;
 
       expect(horizontal, closeTo(vertical, 0.001));
-      expect(gridWidth, lessThanOrEqualTo(size.width));
-      expect(gridHeight, lessThanOrEqualTo(size.height));
-      expect(origin.dx, closeTo((size.width - gridWidth) / 2, 0.001));
-      expect(origin.dy, closeTo((size.height - gridHeight) / 2, 0.001));
+      expect(gridWidth, closeTo(size.width, 0.001));
+      expect(rows, greaterThanOrEqualTo(MaDotGridMetrics.minimumRows));
+      expect(gridHeight, greaterThan(size.height));
+      expect(origin.dx, closeTo(0, 0.001));
+      expect(origin.dy, lessThanOrEqualTo(0));
       expect(horizontal / 2, greaterThan(radius));
       expect(vertical / 2, greaterThan(radius));
       expect(
