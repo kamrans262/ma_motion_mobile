@@ -4,6 +4,7 @@ import 'app_colors.dart';
 
 abstract final class AppTextStyles {
   static const String fontFamily = 'HelveticaNeueLTStd';
+  static const String inputFontFamily = 'Instrument Sans';
   // Slightly looser typography for the new font asset across shared styles.
   static const double bodyTracking = 0.2;
 
@@ -26,7 +27,7 @@ abstract final class AppTextStyles {
   );
 
   static const TextStyle field = TextStyle(
-    fontFamily: fontFamily,
+    fontFamily: inputFontFamily,
     fontSize: 18,
     letterSpacing: bodyTracking,
     height: 1.25,
@@ -35,7 +36,7 @@ abstract final class AppTextStyles {
   );
 
   static const TextStyle fieldHint = TextStyle(
-    fontFamily: fontFamily,
+    fontFamily: inputFontFamily,
     fontSize: 18,
     letterSpacing: bodyTracking,
     height: 1.25,
