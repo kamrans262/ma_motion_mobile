@@ -51,11 +51,6 @@ class MaOnboardingTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           maxLength: maxLength,
           onSubmitted: onSubmitted,
-          // Keep multiline input top-aligned; single-line fields use
-          // Flutter's default vertical text alignment for this visual test.
-          textAlignVertical: maxLines > 1
-              ? TextAlignVertical.top
-              : TextAlignVertical.bottom,
           cursorColor: AppColors.primary,
           style: AppTextStyles.field,
           decoration: InputDecoration(
