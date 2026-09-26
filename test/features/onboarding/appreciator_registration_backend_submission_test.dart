@@ -8,6 +8,7 @@ import 'package:ma_motion_mobile/core/providers/core_providers.dart';
 import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
 import 'package:ma_motion_mobile/features/onboarding/application/appreciator_registration_controller.dart';
 import 'package:ma_motion_mobile/features/onboarding/data/appreciator_onboarding_repository.dart';
+import 'package:ma_motion_mobile/features/onboarding/domain/appreciator_registration_draft.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 
 void main() {
@@ -87,75 +88,38 @@ void main() {
     },
   );
 
-  testWidgets(
-    'authenticated Maker completes Appreciator onboarding on same token',
-    (tester) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
+  test(
+    'existing signed-in account cannot create a second Appreciator profile',
+    () async {
       final api = _AppreciatorGateway();
       final tokenStore = _MemoryTokenStore()..value = 'existing-token';
       final repository = AppreciatorOnboardingRepository(
         api: api,
         tokenStore: tokenStore,
       );
-      final container = ProviderContainer(
-        overrides: [
-          appreciatorOnboardingRepositoryProvider.overrideWithValue(repository),
-          apiGatewayProvider.overrideWithValue(api),
-          authTokenStoreProvider.overrideWithValue(tokenStore),
-        ],
-      );
-      addTearDown(container.dispose);
 
-      final draft = container.read(appreciatorRegistrationProvider.notifier);
-      draft.setName('Existing Maker');
-      draft.setLocation('Chicago 60601');
-      draft.setEmail('maker@example.com');
-
-      var completed = false;
-
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: MaterialApp(
-            home: AppreciatorRegistrationFlowScreen(
-              initialStep: 2,
-              onExit: () {},
-              onCompleted: () => completed = true,
-            ),
+      await expectLater(
+        repository.completeAppreciatorOnboarding(
+          const AppreciatorRegistrationDraft(
+            name: 'Existing Maker',
+            location: 'Chicago 60601',
+            email: 'maker@example.com',
           ),
+          otpChallengeId: 'verified-challenge',
+        ),
+        throwsA(
+          isA<ApiException>()
+              .having((error) => error.statusCode, 'statusCode', 403)
+              .having(
+                (error) => error.code,
+                'code',
+                'single_role_account_required',
+              ),
         ),
       );
 
-      await tester.tap(find.byKey(const Key('maker_next_button')));
-      await tester.pump();
-
-      expect(find.byKey(const Key('email_otp_screen')), findsOneWidget);
-      // A complete pasted OTP distributes across all six inputs and
-      // automatically verifies without tapping the Verify OTP button.
-      await tester.enterText(
-        find.byKey(const Key('email_otp_code_field')),
-        '123456',
-      );
-      await tester.pump();
-      expect(find.byKey(const Key('email_otp_six_digit_row')), findsOneWidget);
-      expect(find.byKey(const Key('email_otp_resend_button')), findsOneWidget);
-      expect(find.byKey(const Key('email_otp_success_continue')), findsNothing);
-      await tester.pump(const Duration(milliseconds: 400));
-      await tester.pump(const Duration(milliseconds: 850));
-      expect(find.text('Email Verified.'), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 1200));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 320));
-
-      expect(completed, isTrue);
-      expect(api.lastPostedPath, ApiPaths.appreciatorExperienceOnboarding);
-      expect(api.lastPostRequiresAuth, isTrue);
+      expect(api.lastPostedPath, isNull);
       expect(tokenStore.value, 'existing-token');
-      expect(tester.takeException(), isNull);
     },
   );
 
@@ -320,23 +284,6 @@ class _AppreciatorGateway implements ApiGateway {
             'role': 'appreciator',
             'is_active': true,
           },
-        },
-      };
-    }
-
-    if (path == ApiPaths.appreciatorExperienceOnboarding) {
-      return <String, dynamic>{
-        'success': true,
-        'data': <String, dynamic>{
-          'id': 9,
-          'name': 'Existing Maker',
-          'email': 'maker@example.com',
-          'role': 'appreciator',
-          'is_active': true,
-          'maker_registered': true,
-          'maker_onboarding_completed': true,
-          'appreciator_registered': true,
-          'appreciator_onboarding_completed': true,
         },
       };
     }
