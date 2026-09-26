@@ -19,11 +19,11 @@ void main() {
       expect(AppTextStyles.onboardingHeading.fontFamily, 'HelveticaNeueLTStd');
       expect(AppTextStyles.onboardingHelper.height, 1.4);
       expect(AppTextStyles.onboardingHelper.letterSpacing, 0.2);
-      expect(AppTextStyles.field.height, 1.25);
+      expect(AppTextStyles.field.height, 1.0);
       expect(AppTextStyles.field.letterSpacing, 0.2);
-      expect(AppTextStyles.fieldHint.height, 1.25);
+      expect(AppTextStyles.fieldHint.height, 1.0);
       expect(AppTextStyles.fieldHint.letterSpacing, 0.2);
-      expect(AppTextStyles.buttonDark.height, 1.2);
+      expect(AppTextStyles.buttonDark.height, 1.0);
       expect(AppTextStyles.buttonPurple.letterSpacing, 0.2);
       expect(AppTextStyles.chip.height, 1.25);
       expect(AppTextStyles.error.height, 1.3);
