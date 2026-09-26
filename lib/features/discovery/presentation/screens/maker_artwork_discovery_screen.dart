@@ -378,7 +378,7 @@ class _MakerArtworkDiscoveryScreenState
                     child: _DiscoveryBody(
                       state: state,
                       scrollController: _scrollController,
-                      horizontalPadding: 0,
+                      horizontalPadding: 20,
                       gridSpacing: metrics.gridSpacing,
                       columnCount: _columnCount,
                       onArtworkTap: widget.onArtworkTap,
