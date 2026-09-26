@@ -320,6 +320,9 @@ class _MaEmailOtpScreenState extends ConsumerState<MaEmailOtpScreen> {
                             },
                             textAlign: TextAlign.center,
                             textAlignVertical: TextAlignVertical.center,
+                            expands: true,
+                            minLines: null,
+                            maxLines: null,
                             style: AppTextStyles.field,
                             cursorColor: AppColors.primary,
                             decoration: const InputDecoration(
