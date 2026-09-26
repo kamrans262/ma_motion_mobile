@@ -36,7 +36,10 @@ class MaOnboardingButton extends StatelessWidget {
                 shape: const RoundedRectangleBorder(),
                 padding: EdgeInsets.zero,
               ),
-              child: Text(label, style: AppTextStyles.buttonDark),
+              child: Transform.translate(
+                offset: const Offset(0, 1),
+                child: Text(label, style: AppTextStyles.buttonDark),
+              ),
             )
           : OutlinedButton(
               onPressed: onPressed,
@@ -66,14 +69,17 @@ class MaOnboardingButton extends StatelessWidget {
                           : AppColors.primary,
                     ),
                   ),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 16,
-                  letterSpacing: AppTextStyles.bodyTracking,
-                  height: 1.0,
-                  fontWeight: FontWeight.w500,
+              child: Transform.translate(
+                offset: const Offset(0, 1),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.fontFamily,
+                    fontSize: 16,
+                    letterSpacing: AppTextStyles.bodyTracking,
+                    height: 1.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
