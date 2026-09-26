@@ -116,7 +116,7 @@ void main() {
       ),
     );
     expect(switchText.style?.decoration, TextDecoration.underline);
-    expect(switchText.style?.decorationColor, AppColors.darkGray);
+    expect(switchText.style?.decorationColor, AppColors.mutedText);
     expect(
       tester.widget<TextButton>(
         find.byKey(const Key('appreciator_settings_delete_account')),
