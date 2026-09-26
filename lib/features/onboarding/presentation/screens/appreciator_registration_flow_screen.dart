@@ -445,7 +445,7 @@ class _AppreciatorRegistrationFlowScreenState
     switch (_step) {
       case 0:
         return MaOnboardingScaffold(
-          heading: "What's your name?",
+          heading: "What's Your Name?",
           subtitle: "This is how you'll appear to others",
           currentStep: _step,
           totalSteps: AppreciatorRegistrationFlowScreen.totalSteps,
@@ -455,7 +455,7 @@ class _AppreciatorRegistrationFlowScreenState
           child: MaOnboardingTextField(
             key: const Key('appreciator_name_field'),
             controller: _nameController,
-            hintText: 'Your name',
+            hintText: 'Your Name',
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.name],
             errorText: _fieldErrors['name'],
@@ -468,7 +468,7 @@ class _AppreciatorRegistrationFlowScreenState
 
       case 1:
         return MaOnboardingScaffold(
-          heading: 'Where are you based?',
+          heading: 'Where Are You Based?',
           subtitle: 'Help others discover local artists',
           currentStep: _step,
           totalSteps: AppreciatorRegistrationFlowScreen.totalSteps,
@@ -478,7 +478,7 @@ class _AppreciatorRegistrationFlowScreenState
           child: MaOnboardingTextField(
             key: const Key('appreciator_location_field'),
             controller: _locationController,
-            hintText: 'City/Zip Code',
+            hintText: 'City/ZIP Code',
             textInputAction: TextInputAction.next,
             errorText: _fieldErrors['location'],
             onChanged: (value) {
