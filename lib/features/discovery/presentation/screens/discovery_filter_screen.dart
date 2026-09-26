@@ -361,6 +361,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                               style: TextStyle(
                                 fontFamily: AppTextStyles.fontFamily,
                                 fontSize: 16,
+                                height: 1.0,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
