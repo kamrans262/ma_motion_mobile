@@ -11,7 +11,7 @@ void main() {
     'Role Selection dots move in one direction then return on the same line',
     () {
       expect(MaDotGridMetrics.columns, 18);
-      expect(MaDotGridMetrics.rows, 36);
+      expect(MaDotGridMetrics.minimumRows, 36);
       expect(MaDotGridMetrics.dotRadius, 0.8);
 
       for (final seconds in <double>[0, 6, 7]) {
