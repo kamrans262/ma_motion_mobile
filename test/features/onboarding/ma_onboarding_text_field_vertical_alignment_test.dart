@@ -24,7 +24,7 @@ void main() {
     expect(field.decoration?.hintText, 'Your name');
     expect(
       field.decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 18, 20, 10),
+      const EdgeInsets.fromLTRB(20, 21, 20, 7),
     );
     // Check actual hint layout, not only the TextField's alignment property.
     final fieldBounds = tester.getRect(fieldFinder);
