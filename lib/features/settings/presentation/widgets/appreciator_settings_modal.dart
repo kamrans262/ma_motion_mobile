@@ -644,7 +644,7 @@ class _SettingsField extends StatelessWidget {
             errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
+            contentPadding: const EdgeInsets.fromLTRB(12, 16, 12, 10),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
