@@ -562,13 +562,16 @@ class _AppreciatorSettingsModalState
                         color: AppColors.primary,
                       ),
                     )
-                  : const Text(
-                      'Save & Close',
-                      style: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 16,
-                        height: 1.0,
-                        fontWeight: FontWeight.w500,
+                  : Transform.translate(
+                      offset: const Offset(0, 1),
+                      child: const Text(
+                        'Save & Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
             ),
@@ -645,7 +648,7 @@ class _SettingsField extends StatelessWidget {
             errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
+            contentPadding: const EdgeInsets.fromLTRB(12, 21, 12, 7),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
