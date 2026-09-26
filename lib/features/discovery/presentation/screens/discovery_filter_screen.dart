@@ -310,7 +310,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                         vertical: 8,
                       ),
                       child: Text(
-                        'Clear filters',
+                        'Clear Filters',
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.darkGray,
                           fontSize: 14,
@@ -356,13 +356,16 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                                 color: AppColors.darkGray,
                               ),
                             )
-                          : const Text(
-                              'Apply Filters',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 16,
-                                height: 1.0,
-                                fontWeight: FontWeight.w500,
+                          : Transform.translate(
+                              offset: const Offset(0, 1),
+                              child: const Text(
+                                'Apply Filters',
+                                style: TextStyle(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 16,
+                                  height: 1.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                     ),
@@ -449,7 +452,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           style: AppTextStyles.field.copyWith(fontSize: 16),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
-            hintText: 'Enter city or zip code',
+            hintText: 'Enter City or ZIP Code',
             suffixIcon: _loadingLocations
                 ? const Padding(
                     padding: EdgeInsets.all(13),
@@ -587,7 +590,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       suffixIcon: suffixIcon,
       filled: true,
       fillColor: AppColors.filterInputFill,
-      contentPadding: const EdgeInsets.fromLTRB(14, 20, 14, 8),
+      contentPadding: const EdgeInsets.fromLTRB(14, 21, 14, 7),
       enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.zero,
         borderSide: BorderSide(color: AppColors.primary, width: 1),
