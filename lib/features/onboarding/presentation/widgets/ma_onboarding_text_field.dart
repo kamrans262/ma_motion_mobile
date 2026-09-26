@@ -65,11 +65,11 @@ class MaOnboardingTextField extends StatelessWidget {
             hintText: hintText,
             hintStyle: AppTextStyles.fieldHint,
             counterText: '',
-            // Testing: remove only the bottom padding from single-line
-            // placeholders and entered text; multiline fields stay unchanged.
+            // Testing: use 50px top and 0px bottom padding for
+            // single-line inputs; multiline fields stay unchanged.
             contentPadding: EdgeInsets.fromLTRB(
               20,
-              maxLines > 1 ? 21 : 0,
+              maxLines > 1 ? 21 : 50,
               20,
               maxLines > 1 ? 11 : 0,
             ),
