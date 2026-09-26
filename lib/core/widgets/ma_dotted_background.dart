@@ -17,31 +17,47 @@ abstract final class MaDotGridMetrics {
       size.width > 0 &&
       size.height > 0;
 
-  static double horizontalSpacing(Size size) => size.width / columns;
-  static double verticalSpacing(Size size) => size.height / rows;
+  /// Use one shared center-to-center distance on both axes so every dot sits
+  /// inside a true square grid cell. The complete 18 × 36 grid is then
+  /// centered inside the available surface.
+  static double spacing(Size size) =>
+      math.min(size.width / columns, size.height / rows);
 
-  /// The dots are centered within each grid cell. This keeps exactly 18
-  /// columns and 36 rows visible, without cropped dots at the outer edges.
+  static double horizontalSpacing(Size size) => spacing(size);
+  static double verticalSpacing(Size size) => spacing(size);
+
+  static Offset gridOrigin(Size size) {
+    final cell = spacing(size);
+    return Offset(
+      (size.width - (cell * columns)) / 2,
+      (size.height - (cell * rows)) / 2,
+    );
+  }
+
+  /// The dots are centered within square grid cells. Horizontal and vertical
+  /// center-to-center spacing are therefore always identical.
   static void paintDots(Canvas canvas, Size size, Paint paint, double radius) {
     if (!hasValidSize(size) || !radius.isFinite || radius <= 0) return;
 
-    final horizontal = horizontalSpacing(size);
-    final vertical = verticalSpacing(size);
+    final cell = spacing(size);
+    final origin = gridOrigin(size);
 
     for (var row = 0; row < rows; row++) {
-      final y = (row + 0.5) * vertical;
+      final y = origin.dy + ((row + 0.5) * cell);
       for (var column = 0; column < columns; column++) {
-        final x = (column + 0.5) * horizontal;
+        final x = origin.dx + ((column + 0.5) * cell);
         canvas.drawCircle(Offset(x, y), radius, paint);
       }
     }
   }
 
-  /// The opening circles cover their entire grid cell before shrinking,
-  /// preserving the continuous solid-purple opening of the Splash animation.
+  /// The opening circles cover the square grid cells plus any centered outer
+  /// margin, preserving the continuous solid-purple Splash opening.
   static double solidCircleRadius(Size size) {
-    final halfWidth = horizontalSpacing(size) / 2;
-    final halfHeight = verticalSpacing(size) / 2;
+    final cell = spacing(size);
+    final origin = gridOrigin(size);
+    final halfWidth = origin.dx + (cell / 2);
+    final halfHeight = origin.dy + (cell / 2);
     return math.sqrt(halfWidth * halfWidth + halfHeight * halfHeight);
   }
 }
