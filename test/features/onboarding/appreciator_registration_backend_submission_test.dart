@@ -189,10 +189,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           appreciatorOnboardingRepositoryProvider.overrideWithValue(
-            AppreciatorOnboardingRepository(
-              api: api,
-              tokenStore: tokenStore,
-            ),
+            AppreciatorOnboardingRepository(api: api, tokenStore: tokenStore),
           ),
           apiGatewayProvider.overrideWithValue(api),
           authTokenStoreProvider.overrideWithValue(tokenStore),
