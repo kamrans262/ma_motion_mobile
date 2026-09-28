@@ -59,8 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          dart format lib/features/onboarding/presentation/screens/maker_registration_flow_screen.dart lib/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart test/features/onboarding/maker_registration_backend_submission_test.dart test/features/onboarding/appreciator_registration_backend_submission_test.dart
-          git diff -- test/features/onboarding/maker_registration_backend_submission_test.dart test/features/onboarding/appreciator_registration_backend_submission_test.dart
+          dart format --output=none --set-exit-if-changed lib/features/onboarding/presentation/screens/maker_registration_flow_screen.dart lib/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart test/features/onboarding/maker_registration_backend_submission_test.dart test/features/onboarding/appreciator_registration_backend_submission_test.dart
           dart analyze lib/features/onboarding/presentation/screens/maker_registration_flow_screen.dart lib/features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart
           flutter test test/features/onboarding/maker_registration_backend_submission_test.dart --plain-name "existing Maker email stays on Email step and does not open OTP screen"
           flutter test test/features/onboarding/appreciator_registration_backend_submission_test.dart --plain-name "existing Appreciator email stays on Email step and does not open OTP screen"
