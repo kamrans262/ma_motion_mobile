@@ -395,6 +395,28 @@ class _MakerRegistrationFlowScreenState
 
     try {
       final email = ref.read(makerRegistrationProvider).email;
+      final account = await ref
+          .read(onboardingPrefillRepositoryProvider)
+          .account();
+      if (!mounted) return;
+
+      // A signed-in user may reach Maker OTP only while completing an
+      // incomplete Maker profile (including the approved one-way
+      // Appreciator -> Maker conversion). Completed or other-role accounts
+      // must not start a fresh Maker registration.
+      if (account != null &&
+          (!account.isMaker || account.makerOnboardingCompleted)) {
+        final normalizedEmail = email.trim().toLowerCase();
+        final accountEmail = account.email.trim().toLowerCase();
+        setState(() {
+          _fieldErrors['email'] = normalizedEmail == accountEmail
+              ? 'An account already exists with this email. Please log in instead.'
+              : 'You are already signed in to an existing account. Please use that account instead.';
+          _validationMessage = null;
+        });
+        return;
+      }
+
       final challenge = await ref
           .read(emailOtpRepositoryProvider)
           .requestOnboarding(email);
@@ -405,7 +427,11 @@ class _MakerRegistrationFlowScreenState
         _verifiedRegistrationChallengeId = null;
       });
     } on ApiException catch (error) {
-      if (mounted) setState(() => _validationMessage = error.message);
+      if (!mounted) return;
+
+      if (!_applyApiValidation(error)) {
+        setState(() => _validationMessage = error.message);
+      }
     } catch (_) {
       if (mounted) {
         setState(() {
