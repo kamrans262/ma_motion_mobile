@@ -99,10 +99,7 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: MaterialApp(
-            home: MakerRegistrationFlowScreen(
-              initialStep: 5,
-              onExit: () {},
-            ),
+            home: MakerRegistrationFlowScreen(initialStep: 5, onExit: () {}),
           ),
         ),
       );
@@ -272,8 +269,7 @@ class _SubmissionGateway implements ApiGateway {
       otpRequestCount++;
       if (rejectRegistrationOtp) {
         throw const ApiException(
-          message:
-              'An account already exists with this email. Please log in instead.',
+          message: 'An account already exists with this email. Please log in instead.',
           statusCode: 409,
           code: 'account_already_exists',
           fieldErrors: <String, List<String>>{
