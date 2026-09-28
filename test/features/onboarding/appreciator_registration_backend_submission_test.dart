@@ -88,6 +88,62 @@ void main() {
     },
   );
 
+  testWidgets(
+    'existing Appreciator email stays on Email step and does not open OTP screen',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final api = _AppreciatorGateway()..rejectRegistrationOtp = true;
+      final tokenStore = _MemoryTokenStore();
+      final container = ProviderContainer(
+        overrides: [
+          appreciatorOnboardingRepositoryProvider.overrideWithValue(
+            AppreciatorOnboardingRepository(
+              api: api,
+              tokenStore: tokenStore,
+            ),
+          ),
+          apiGatewayProvider.overrideWithValue(api),
+          authTokenStoreProvider.overrideWithValue(tokenStore),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      container
+          .read(appreciatorRegistrationProvider.notifier)
+          .setEmail('existing@example.com');
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: AppreciatorRegistrationFlowScreen(
+              initialStep: 2,
+              onExit: () {},
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('email_otp_screen')), findsNothing);
+      expect(
+        find.text(
+          'An account already exists with this email. Please log in instead.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('appreciator_email_field')), findsOneWidget);
+      expect(api.otpRequestCount, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   test(
     'existing signed-in account cannot create a second Appreciator profile',
     () async {
@@ -209,6 +265,8 @@ class _MemoryTokenStore implements AuthTokenStore {
 
 class _AppreciatorGateway implements ApiGateway {
   bool rejectOtp = false;
+  bool rejectRegistrationOtp = false;
+  int otpRequestCount = 0;
   String? lastPostedPath;
   Map<String, dynamic>? lastPostedData;
   bool? lastPostRequiresAuth;
@@ -246,6 +304,21 @@ class _AppreciatorGateway implements ApiGateway {
     }
 
     if (path == ApiPaths.requestEmailOtp) {
+      otpRequestCount++;
+      if (rejectRegistrationOtp) {
+        throw const ApiException(
+          message:
+              'An account already exists with this email. Please log in instead.',
+          statusCode: 409,
+          code: 'account_already_exists',
+          fieldErrors: <String, List<String>>{
+            'email': <String>[
+              'An account already exists with this email. Please log in instead.',
+            ],
+          },
+        );
+      }
+
       return <String, dynamic>{
         'success': true,
         'data': <String, dynamic>{
