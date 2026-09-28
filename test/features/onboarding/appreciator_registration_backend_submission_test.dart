@@ -101,10 +101,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           appreciatorOnboardingRepositoryProvider.overrideWithValue(
-            AppreciatorOnboardingRepository(
-              api: api,
-              tokenStore: tokenStore,
-            ),
+            AppreciatorOnboardingRepository(api: api, tokenStore: tokenStore),
           ),
           apiGatewayProvider.overrideWithValue(api),
           authTokenStoreProvider.overrideWithValue(tokenStore),
@@ -232,10 +229,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
       await tester.pump(const Duration(milliseconds: 850));
       expect(find.text('Verification Failed.'), findsOneWidget);
-      expect(
-        find.byKey(const Key('email_otp_failure_reason')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('email_otp_failure_reason')), findsOneWidget);
       expect(find.byKey(const Key('email_otp_success_continue')), findsNothing);
 
       await tester.pump(const Duration(milliseconds: 1200));
@@ -307,8 +301,7 @@ class _AppreciatorGateway implements ApiGateway {
       otpRequestCount++;
       if (rejectRegistrationOtp) {
         throw const ApiException(
-          message:
-              'An account already exists with this email. Please log in instead.',
+          message: 'An account already exists with this email. Please log in instead.',
           statusCode: 409,
           code: 'account_already_exists',
           fieldErrors: <String, List<String>>{
