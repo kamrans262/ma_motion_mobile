@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/api_exception.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
 import 'package:ma_motion_mobile/core/providers/core_providers.dart';
@@ -71,6 +72,56 @@ void main() {
     expect(api.profileImageUploadCount, 1);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'existing Maker email stays on Email step and does not open OTP screen',
+    (tester) async {
+      final api = _SubmissionGateway()..rejectRegistrationOtp = true;
+      final tokenStore = _MemoryTokenStore();
+      final repository = MakerOnboardingRepository(
+        api: api,
+        tokenStore: tokenStore,
+      );
+      final container = ProviderContainer(
+        overrides: [
+          makerOnboardingRepositoryProvider.overrideWithValue(repository),
+          apiGatewayProvider.overrideWithValue(api),
+          authTokenStoreProvider.overrideWithValue(tokenStore),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      container
+          .read(makerRegistrationProvider.notifier)
+          .setEmail('existing@example.com');
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: MakerRegistrationFlowScreen(
+              initialStep: 5,
+              onExit: () {},
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('maker_next_button')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('email_otp_screen')), findsNothing);
+      expect(
+        find.text(
+          'An account already exists with this email. Please log in instead.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('maker_email_field')), findsOneWidget);
+      expect(api.otpRequestCount, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'signed-out Maker completes onboarding directly into discovery without auth UI',
@@ -151,6 +202,8 @@ class _MemoryTokenStore implements AuthTokenStore {
 }
 
 class _SubmissionGateway implements ApiGateway {
+  bool rejectRegistrationOtp = false;
+  int otpRequestCount = 0;
   int makerOnboardingCount = 0;
   int profilePatchCount = 0;
   int profileImageUploadCount = 0;
@@ -215,6 +268,32 @@ class _SubmissionGateway implements ApiGateway {
     bool requiresAuth = true,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 10));
+    if (path == ApiPaths.requestEmailOtp) {
+      otpRequestCount++;
+      if (rejectRegistrationOtp) {
+        throw const ApiException(
+          message:
+              'An account already exists with this email. Please log in instead.',
+          statusCode: 409,
+          code: 'account_already_exists',
+          fieldErrors: <String, List<String>>{
+            'email': <String>[
+              'An account already exists with this email. Please log in instead.',
+            ],
+          },
+        );
+      }
+
+      return <String, dynamic>{
+        'success': true,
+        'data': <String, dynamic>{
+          'challenge_id': '11111111-1111-4111-8111-111111111111',
+          'expires_in_seconds': 600,
+          'resend_after_seconds': 60,
+        },
+      };
+    }
+
     if (path == ApiPaths.makerOnboarding) {
       makerOnboardingCount++;
       return <String, dynamic>{
