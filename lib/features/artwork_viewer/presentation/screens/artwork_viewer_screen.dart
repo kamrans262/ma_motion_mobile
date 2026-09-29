@@ -145,6 +145,14 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
 
       final candidates = <DiscoveryArtworkMedia?>[
         artwork.primaryMedia,
+        artwork.maker?.profileImageUrl == null
+            ? null
+            : DiscoveryArtworkMedia(
+                id: -((artwork.maker?.id ?? 0) + 1),
+                kind: 'image',
+                url: artwork.maker!.profileImageUrl!,
+                isPrimary: true,
+              ),
         ...artwork.media,
         ...artwork.artDisplayArtworks.map((item) => item.primaryMedia),
       ];
@@ -167,7 +175,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   }
 
   Widget _buildViewer(ArtworkDetail artwork, {required bool isSaved}) {
-    final configuredDisplay = artwork.artDisplayArtworks.isNotEmpty;
+    final configuredDisplay = artwork.hasConfiguredDisplay;
     final displayItems = artwork.orderedArtDisplayItems;
     final legacyMedia = artwork.media.isEmpty
         ? <DiscoveryArtworkMedia?>[artwork.primaryMedia]
@@ -211,7 +219,9 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                   final item = displayItems[index];
 
                   return _ArtworkMediaPage(
-                    pageKey: Key('artwork_display_artwork_${item.id}'),
+                    pageKey: item.isSalonImage
+                        ? const Key('artwork_display_salon_image')
+                        : Key('artwork_display_artwork_' + item.id.toString()),
                     description: item.description,
                     media: item.primaryMedia,
                     active: index == _currentPage,
