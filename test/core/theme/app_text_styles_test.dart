@@ -26,7 +26,7 @@ void main() {
     );
     expect(
       AppTextStyles.onboardingHelper.fontFamily,
-      AppTextStyles.bodyFontFamily,
+      AppTextStyles.displayFontFamily,
     );
     expect(AppTextStyles.onboardingHelper.height, 1.4);
     expect(AppTextStyles.onboardingHelper.letterSpacing, 0.2);
@@ -40,7 +40,7 @@ void main() {
     expect(AppTextStyles.buttonDark.height, 1.0);
     expect(
       AppTextStyles.buttonPurple.fontFamily,
-      AppTextStyles.bodyFontFamily,
+      AppTextStyles.displayFontFamily,
     );
     expect(AppTextStyles.buttonPurple.letterSpacing, 0.2);
     expect(AppTextStyles.chip.fontFamily, AppTextStyles.displayFontFamily);
