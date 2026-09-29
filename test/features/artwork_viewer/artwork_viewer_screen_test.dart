@@ -277,59 +277,53 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  test(
-    'Salon Image is the first item in the Maker display sequence',
-    () async {
-      final detail = await _SalonImageArtDisplayRepository().fetch(42);
+  test('Salon Image is the first item in the Maker display sequence', () async {
+    final detail = await _SalonImageArtDisplayRepository().fetch(42);
 
-      expect(detail.hasSalonImage, isTrue);
-      expect(detail.orderedArtDisplayItems, hasLength(4));
-      expect(detail.orderedArtDisplayItems.first.isSalonImage, isTrue);
-      expect(
-        detail.orderedArtDisplayItems.first.primaryMedia?.url,
-        'https://cdn.example/maker-salon.jpg',
-      );
-      expect(
-        detail.orderedArtDisplayItems.skip(1).map((item) => item.id).toList(),
-        <int>[42, 41, 43],
-      );
-      expect(detail.viewerPageCount, 5);
-    },
-  );
+    expect(detail.hasSalonImage, isTrue);
+    expect(detail.orderedArtDisplayItems, hasLength(4));
+    expect(detail.orderedArtDisplayItems.first.isSalonImage, isTrue);
+    expect(
+      detail.orderedArtDisplayItems.first.primaryMedia?.url,
+      'https://cdn.example/maker-salon.jpg',
+    );
+    expect(
+      detail.orderedArtDisplayItems.skip(1).map((item) => item.id).toList(),
+      <int>[42, 41, 43],
+    );
+    expect(detail.viewerPageCount, 5);
+  });
 
-  testWidgets(
-    'Salon Image is rendered before the artwork display items',
-    (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            artworkDetailRepositoryProvider.overrideWithValue(
-              _SalonImageArtDisplayRepository(),
-            ),
-            savedArtworksRepositoryProvider.overrideWithValue(
-              _FakeSavedArtworksRepository(),
-            ),
-          ],
-          child: const MaterialApp(
-            home: ArtworkViewerScreen(artworkId: 42),
+  testWidgets('Salon Image is rendered before the artwork display items', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          artworkDetailRepositoryProvider.overrideWithValue(
+            _SalonImageArtDisplayRepository(),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+          savedArtworksRepositoryProvider.overrideWithValue(
+            _FakeSavedArtworksRepository(),
+          ),
+        ],
+        child: const MaterialApp(home: ArtworkViewerScreen(artworkId: 42)),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('artwork_display_salon_image')),
-        findsOneWidget,
-      );
+    expect(
+      find.byKey(const Key('artwork_display_salon_image')),
+      findsOneWidget,
+    );
 
-      final dots = tester.widget<ArtworkViewerDots>(
-        find.byType(ArtworkViewerDots),
-      );
-      expect(dots.count, 5);
-      expect(dots.currentIndex, 0);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    final dots = tester.widget<ArtworkViewerDots>(
+      find.byType(ArtworkViewerDots),
+    );
+    expect(dots.count, 5);
+    expect(dots.currentIndex, 0);
+    expect(tester.takeException(), isNull);
+  });
   test(
     'configured art display starts with tapped artwork and avoids duplicates',
     () async {
