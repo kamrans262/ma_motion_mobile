@@ -123,6 +123,29 @@ void main() {
 
     expect(settingsList, findsOneWidget);
 
+    final showDescription = find.byKey(
+      const Key('maker_settings_show_description_0'),
+    );
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: showDescription,
+      scrollView: settingsList,
+    );
+    expect(
+      tester.widget<TextField>(showDescription).decoration?.fillColor,
+      AppColors.filterInputFill,
+    );
+    expect(
+      tester
+          .widget<TextField>(
+            find.byKey(const Key('maker_settings_show_location_0')),
+          )
+          .decoration
+          ?.fillColor,
+      AppColors.filterInputFill,
+    );
+    expect(find.byKey(const Key('maker_settings_add_show')), findsOneWidget);
+
     final emailSwitch = find.byKey(
       const Key('maker_settings_email_visibility'),
     );
@@ -199,6 +222,85 @@ void main() {
     expect(repository.closeCalls, 1);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Current & Upcoming Shows reveals styled fields and plus adds another show',
+    (WidgetTester tester) async {
+      final repository = _FakeSettingsRepository();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+          ],
+          child: MaterialApp(
+            home: MakerInfoSettingsScreen(
+              onClose: () {
+                repository.closeCalls++;
+              },
+            ),
+          ),
+        ),
+      );
+
+      await _finishInitialLoad(tester);
+
+      final list = find.byKey(const Key('maker_settings_scroll'));
+      final firstDescription = find.byKey(
+        const Key('maker_settings_show_description_0'),
+      );
+      await _scrollIntoSafeTapRegion(
+        tester,
+        target: firstDescription,
+        scrollView: list,
+      );
+
+      expect(firstDescription, findsOneWidget);
+      expect(
+        find.byKey(const Key('maker_settings_show_location_0')),
+        findsOneWidget,
+      );
+
+      final add = find.byKey(const Key('maker_settings_add_show'));
+      await _scrollIntoSafeTapRegion(tester, target: add, scrollView: list);
+      await tester.tap(add.hitTestable());
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('maker_settings_show_description_1')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('maker_settings_show_location_1')),
+        findsOneWidget,
+      );
+
+      await tester.enterText(
+        find.byKey(const Key('maker_settings_show_description_1')),
+        'Winter solo presentation',
+      );
+      await tester.enterText(
+        find.byKey(const Key('maker_settings_show_location_1')),
+        'New York, NY',
+      );
+
+      await tester.tap(find.byKey(const Key('maker_settings_save_close')));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(repository.lastDraft?.currentUpcomingShows, hasLength(2));
+      expect(
+        repository.lastDraft?.currentUpcomingShows.last.description,
+        'Winter solo presentation',
+      );
+      expect(
+        repository.lastDraft?.currentUpcomingShows.last.location,
+        'New York, NY',
+      );
+      expect(repository.closeCalls, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('Maker settings has no overflow on 320x520 viewport', (
     WidgetTester tester,
@@ -423,6 +525,12 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
       showWebsite: true,
       showEmail: false,
       showShows: true,
+      currentUpcomingShows: const <MakerInfoShowEntry>[
+        MakerInfoShowEntry(
+          description: 'Fall exhibition',
+          location: 'Chicago Arts Center',
+        ),
+      ],
       selectedTypeIds: <int>{1},
       selectedStyleIds: <int>{2},
       carousel: <MakerCarouselItem>[],
