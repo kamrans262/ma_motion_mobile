@@ -1045,10 +1045,7 @@ class _LabeledField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inputStyle = useFilterLocationTextStyle
-        ? AppTextStyles.field.copyWith(
-            color: AppColors.darkGray,
-            fontSize: 16,
-          )
+        ? AppTextStyles.field.copyWith(color: AppColors.darkGray, fontSize: 16)
         : AppTextStyles.field;
     final hintStyle = useFilterLocationTextStyle
         ? AppTextStyles.fieldHint.copyWith(
