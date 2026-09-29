@@ -55,9 +55,8 @@ class ArtworkDetailMaker {
       currentUpcomingShows: _listOrEmpty(map['current_upcoming_shows'])
           .whereType<Map>()
           .map(
-            (item) => ArtworkDetailMakerShow.fromMap(
-              Map<String, dynamic>.from(item),
-            ),
+            (item) =>
+                ArtworkDetailMakerShow.fromMap(Map<String, dynamic>.from(item)),
           )
           .where(
             (item) =>
