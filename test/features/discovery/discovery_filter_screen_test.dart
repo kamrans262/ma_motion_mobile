@@ -255,6 +255,7 @@ void main() {
     expect(sliderTheme.data.activeTrackColor, AppColors.white);
     expect(sliderTheme.data.inactiveTrackColor, AppColors.darkGray);
     expect(sliderTheme.data.thumbColor, AppColors.white);
+    expect(sliderTheme.data.tickMarkShape, SliderTickMarkShape.noTickMark);
     expect(sliderTheme.data.thumbShape, isA<RoundSliderThumbShape>());
     final thumbShape = sliderTheme.data.thumbShape! as RoundSliderThumbShape;
     expect(thumbShape.enabledThumbRadius, 8);
