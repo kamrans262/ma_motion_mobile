@@ -134,8 +134,7 @@ class ArtworkDetail {
   final DateTime? createdAt;
   final List<ArtworkDisplayItem> artDisplayArtworks;
 
-  bool get hasSalonImage =>
-      maker?.profileImageUrl?.trim().isNotEmpty == true;
+  bool get hasSalonImage => maker?.profileImageUrl?.trim().isNotEmpty == true;
 
   bool get hasConfiguredDisplay =>
       hasSalonImage || artDisplayArtworks.isNotEmpty;
