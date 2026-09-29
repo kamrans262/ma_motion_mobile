@@ -128,9 +128,11 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                       const SizedBox(height: 12),
                       const _InfoLabel('Current & Upcoming Shows'),
                       const SizedBox(height: 5),
-                      for (var index = 0;
-                          index < configuredShows.length;
-                          index++) ...[
+                      for (
+                        var index = 0;
+                        index < configuredShows.length;
+                        index++
+                      ) ...[
                         Text(
                           configuredShows[index].description,
                           key: Key('artwork_maker_configured_show_$index'),
