@@ -115,6 +115,9 @@ class MakerInfoSettingsRepository
       ),
       showEmail: _asBool(profile['show_email_on_info_page']),
       showShows: _asBool(profile['show_shows_on_info_page'], fallback: true),
+      currentUpcomingShows: _mapList(profile['current_upcoming_shows'])
+          .map(MakerInfoShowEntry.fromMap)
+          .toList(growable: false),
       isHidden: _asBool(profile['is_hidden']),
       selectedTypeIds: selectedTypeIds,
       selectedStyleIds: selectedStyleIds,
@@ -140,6 +143,9 @@ class MakerInfoSettingsRepository
         'show_website_on_info_page': draft.showWebsite,
         'show_email_on_info_page': draft.showEmail,
         'show_shows_on_info_page': draft.showShows,
+        'current_upcoming_shows': draft.currentUpcomingShows
+            .map((item) => item.toMap())
+            .toList(growable: false),
         'is_hidden': draft.isHidden,
         'type_ids': draft.typeIds.toList(growable: false),
         'style_ids': draft.styleIds.toList(growable: false),
