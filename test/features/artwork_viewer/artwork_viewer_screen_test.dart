@@ -277,7 +277,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  test(
+  test(,    'Salon Image is the first item in the Maker display sequence',,    () async {,      final detail = await _SalonImageArtDisplayRepository().fetch(42);,,      expect(detail.hasSalonImage, isTrue);,      expect(detail.orderedArtDisplayItems, hasLength(4));,      expect(detail.orderedArtDisplayItems.first.isSalonImage, isTrue);,      expect(,        detail.orderedArtDisplayItems.first.primaryMedia?.url,,        'https://cdn.example/maker-salon.jpg',,      );,      expect(,        detail.orderedArtDisplayItems.skip(1).map((item) => item.id).toList(),,        <int>[42, 41, 43],,      );,      expect(detail.viewerPageCount, 5);,    },,  );,,  testWidgets(,    'Salon Image is rendered before the artwork display items',,    (tester) async {,      await tester.pumpWidget(,        ProviderScope(,          overrides: [,            artworkDetailRepositoryProvider.overrideWithValue(,              _SalonImageArtDisplayRepository(),,            ),,            savedArtworksRepositoryProvider.overrideWithValue(,              _FakeSavedArtworksRepository(),,            ),,          ],,          child: const MaterialApp(,            home: ArtworkViewerScreen(artworkId: 42),,          ),,        ),,      );,      await tester.pumpAndSettle();,,      expect(,        find.byKey(const Key('artwork_display_salon_image')),,        findsOneWidget,,      );,,      final dots = tester.widget<ArtworkViewerDots>(,        find.byType(ArtworkViewerDots),,      );,      expect(dots.count, 5);,      expect(dots.currentIndex, 0);,      expect(tester.takeException(), isNull);,    },,  );,  test(
     'configured art display starts with tapped artwork and avoids duplicates',
     () async {
       final detail = await _ConfiguredArtDisplayRepository().fetch(42);
@@ -571,6 +571,81 @@ void main() {
   });
 }
 
+class _SalonImageArtDisplayRepository
+    implements ArtworkDetailRepositoryContract {
+  @override
+  Future<ArtworkDetail> fetch(int artworkId) async {
+    return ArtworkDetail(
+      id: 42,
+      title: 'Tapped Content 3',
+      description: 'Tapped artwork description',
+      media: const <DiscoveryArtworkMedia>[
+        DiscoveryArtworkMedia(
+          id: 102,
+          kind: 'image',
+          url: '',
+          width: 800,
+          height: 1000,
+          isPrimary: true,
+        ),
+      ],
+      primaryMedia: const DiscoveryArtworkMedia(
+        id: 102,
+        kind: 'image',
+        url: '',
+        width: 800,
+        height: 1000,
+        isPrimary: true,
+      ),
+      maker: const ArtworkDetailMaker(
+        id: 7,
+        name: 'Mara Vellan',
+        profileImageUrl: 'https://cdn.example/maker-salon.jpg',
+      ),
+      artDisplayArtworks: const <ArtworkDisplayItem>[
+        ArtworkDisplayItem(
+          slot: 2,
+          id: 41,
+          title: 'Content 2',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: 101,
+            kind: 'image',
+            url: '',
+            width: 800,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ),
+        ArtworkDisplayItem(
+          slot: 3,
+          id: 42,
+          title: 'Content 3',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: 102,
+            kind: 'image',
+            url: '',
+            width: 800,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ),
+        ArtworkDisplayItem(
+          slot: 4,
+          id: 43,
+          title: 'Content 4',
+          primaryMedia: DiscoveryArtworkMedia(
+            id: 103,
+            kind: 'image',
+            url: '',
+            width: 800,
+            height: 1000,
+            isPrimary: true,
+          ),
+        ),
+      ],
+    );
+  }
+}
 class _ConfiguredArtDisplayRepository
     implements ArtworkDetailRepositoryContract {
   @override
