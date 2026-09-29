@@ -6,9 +6,9 @@ abstract final class AppTextStyles {
   static const String displayFontFamily = 'HelveticaNeueLTStd';
   static const String bodyFontFamily = 'Instrument Sans';
 
-  // General UI text uses the client-approved body family. Keep this alias for
-  // existing shared components so the main app updates through one token.
-  static const String fontFamily = bodyFontFamily;
+  // Keep the app's established shared typography unchanged. Instrument Sans
+  // is opt-in only where a screen explicitly requests body copy in that font.
+  static const String fontFamily = displayFontFamily;
   static const double bodyTracking = 0.2;
 
   static const TextStyle onboardingHeading = TextStyle(
