@@ -514,13 +514,14 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  trackHeight: 1,
+                  trackHeight: 2,
+                  trackShape: const RectangularSliderTrackShape(),
                   activeTrackColor: AppColors.white,
                   inactiveTrackColor: AppColors.darkGray,
                   thumbColor: AppColors.white,
                   overlayColor: AppColors.primary50,
                   thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 5,
+                    enabledThumbRadius: 8,
                     elevation: 0,
                     pressedElevation: 0,
                   ),

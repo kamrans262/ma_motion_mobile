@@ -221,10 +221,14 @@ void main() {
       matching: find.byType(SliderTheme),
     );
     final sliderTheme = tester.widget<SliderTheme>(sliderThemeFinder.first);
-    expect(sliderTheme.data.trackHeight, 1);
+    expect(sliderTheme.data.trackHeight, 2);
+    expect(sliderTheme.data.trackShape, isA<RectangularSliderTrackShape>());
     expect(sliderTheme.data.activeTrackColor, AppColors.white);
     expect(sliderTheme.data.inactiveTrackColor, AppColors.darkGray);
     expect(sliderTheme.data.thumbColor, AppColors.white);
+    expect(sliderTheme.data.thumbShape, isA<RoundSliderThumbShape>());
+    final thumbShape = sliderTheme.data.thumbShape! as RoundSliderThumbShape;
+    expect(thumbShape.enabledThumbRadius, 8);
 
     expect(find.byKey(const Key('filter_radius_control_row')), findsOneWidget);
     expect(tester.takeException(), isNull);
