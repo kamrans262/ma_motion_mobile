@@ -1,5 +1,22 @@
 import '../../discovery/domain/discovery_artwork.dart';
 
+class ArtworkDetailMakerShow {
+  const ArtworkDetailMakerShow({
+    required this.description,
+    required this.location,
+  });
+
+  final String description;
+  final String location;
+
+  factory ArtworkDetailMakerShow.fromMap(Map<String, dynamic> map) {
+    return ArtworkDetailMakerShow(
+      description: map['description']?.toString() ?? '',
+      location: map['location']?.toString() ?? '',
+    );
+  }
+}
+
 class ArtworkDetailMaker {
   const ArtworkDetailMaker({
     required this.id,
@@ -10,6 +27,7 @@ class ArtworkDetailMaker {
     this.websiteUrl,
     this.contactEmail,
     this.showShowsOnInfoPage = true,
+    this.currentUpcomingShows = const <ArtworkDetailMakerShow>[],
     this.savedCount = 0,
   });
 
@@ -21,6 +39,7 @@ class ArtworkDetailMaker {
   final String? websiteUrl;
   final String? contactEmail;
   final bool showShowsOnInfoPage;
+  final List<ArtworkDetailMakerShow> currentUpcomingShows;
   final int savedCount;
 
   factory ArtworkDetailMaker.fromMap(Map<String, dynamic> map) {
@@ -33,6 +52,19 @@ class ArtworkDetailMaker {
       websiteUrl: _nullableString(map['website_url']),
       contactEmail: _nullableString(map['contact_email']),
       showShowsOnInfoPage: _asBoolDefaultTrue(map['show_shows_on_info_page']),
+      currentUpcomingShows: _listOrEmpty(map['current_upcoming_shows'])
+          .whereType<Map>()
+          .map(
+            (item) => ArtworkDetailMakerShow.fromMap(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .where(
+            (item) =>
+                item.description.trim().isNotEmpty &&
+                item.location.trim().isNotEmpty,
+          )
+          .toList(growable: false),
       savedCount: _asInt(map['saved_count']) ?? 0,
     );
   }
