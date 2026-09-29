@@ -221,7 +221,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                   return _ArtworkMediaPage(
                     pageKey: item.isSalonImage
                         ? const Key('artwork_display_salon_image')
-                        : Key('artwork_display_artwork_' + item.id.toString()),
+                        : Key('artwork_display_artwork_${item.id}'),
                     description: item.description,
                     media: item.primaryMedia,
                     active: index == _currentPage,
