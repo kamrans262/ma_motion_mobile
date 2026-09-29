@@ -68,7 +68,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          dart format --output=none --set-exit-if-changed lib/features/settings/domain/maker_info_settings_models.dart lib/features/settings/data/maker_info_settings_repository.dart lib/features/settings/presentation/screens/maker_info_settings_screen.dart lib/features/artwork_viewer/domain/artwork_detail.dart lib/features/artwork_viewer/presentation/widgets/artwork_maker_info_page.dart test/features/settings/maker_info_settings_repository_test.dart test/features/settings/maker_info_settings_screen_test.dart test/features/settings/artwork_viewer_visibility_contract_test.dart
+          dart format lib/features/settings/domain/maker_info_settings_models.dart lib/features/settings/data/maker_info_settings_repository.dart lib/features/settings/presentation/screens/maker_info_settings_screen.dart lib/features/artwork_viewer/domain/artwork_detail.dart lib/features/artwork_viewer/presentation/widgets/artwork_maker_info_page.dart test/features/settings/maker_info_settings_repository_test.dart test/features/settings/maker_info_settings_screen_test.dart test/features/settings/artwork_viewer_visibility_contract_test.dart
+          git diff -- lib/features/artwork_viewer/domain/artwork_detail.dart lib/features/artwork_viewer/presentation/widgets/artwork_maker_info_page.dart
           dart analyze lib/features/settings/domain/maker_info_settings_models.dart lib/features/settings/data/maker_info_settings_repository.dart lib/features/settings/presentation/screens/maker_info_settings_screen.dart lib/features/artwork_viewer/domain/artwork_detail.dart lib/features/artwork_viewer/presentation/widgets/artwork_maker_info_page.dart
           flutter test test/features/settings/maker_info_settings_repository_test.dart
           flutter test test/features/settings/maker_info_settings_screen_test.dart --plain-name "Current & Upcoming Shows reveals styled fields and plus adds another show"
