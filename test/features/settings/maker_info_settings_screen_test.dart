@@ -392,11 +392,7 @@ void main() {
         overrides: [
           makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
         ],
-        child: const MaterialApp(
-          home: MakerInfoSettingsScreen(
-            onClose: _noop,
-          ),
-        ),
+        child: const MaterialApp(home: MakerInfoSettingsScreen(onClose: _noop)),
       ),
     );
     await _finishInitialLoad(tester);
@@ -434,7 +430,7 @@ void main() {
               onClose: () {
                 repository.closeCalls++;
               },
-              ),
+            ),
           ),
         ),
       );
