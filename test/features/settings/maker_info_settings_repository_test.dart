@@ -30,6 +30,9 @@ void main() {
       expect(data.showWebsite, isTrue);
       expect(data.showEmail, isFalse);
       expect(data.showShows, isTrue);
+      expect(data.currentUpcomingShows, hasLength(2));
+      expect(data.currentUpcomingShows.first.description, 'Fall exhibition');
+      expect(data.currentUpcomingShows.first.location, 'Chicago Arts Center');
       expect(data.isHidden, isFalse);
       expect(data.carousel.single.slot, 1);
       expect(data.artworkSlots.single.slot, 2);
@@ -55,6 +58,12 @@ void main() {
           showWebsite: true,
           showEmail: true,
           showShows: false,
+          currentUpcomingShows: <MakerInfoShowEntry>[
+            MakerInfoShowEntry(
+              description: 'Fall exhibition',
+              location: 'Chicago Arts Center',
+            ),
+          ],
           isHidden: true,
           typeIds: <int>{1},
           styleIds: <int>{2},
@@ -65,6 +74,15 @@ void main() {
       expect(api.lastPatchData?['location_id'], 3);
       expect(api.lastPatchData?['show_email_on_info_page'], isTrue);
       expect(api.lastPatchData?['show_shows_on_info_page'], isFalse);
+      expect(
+        api.lastPatchData?['current_upcoming_shows'],
+        <Map<String, dynamic>>[
+          <String, dynamic>{
+            'description': 'Fall exhibition',
+            'location': 'Chicago Arts Center',
+          },
+        ],
+      );
       expect(api.lastPatchData?['is_hidden'], isTrue);
       expect(api.lastPatchData?['type_ids'], <int>[1]);
       expect(api.lastPatchData?['style_ids'], <int>[2]);
@@ -315,6 +333,16 @@ class _FakeApiGateway implements ApiGateway {
           'show_website_on_info_page': true,
           'show_email_on_info_page': false,
           'show_shows_on_info_page': true,
+          'current_upcoming_shows': <dynamic>[
+            <String, dynamic>{
+              'description': 'Fall exhibition',
+              'location': 'Chicago Arts Center',
+            },
+            <String, dynamic>{
+              'description': 'Winter solo presentation',
+              'location': 'New York, NY',
+            },
+          ],
           'is_hidden': false,
           'types': <dynamic>[
             <String, dynamic>{'id': 1, 'name': 'Painting', 'slug': 'painting'},
