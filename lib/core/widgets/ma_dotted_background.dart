@@ -20,7 +20,9 @@ abstract final class MaDotGridMetrics {
   /// Keep the established 18 columns across the full screen width. That
   /// width-derived cell size is reused vertically, so X/Y spacing is exactly
   /// equal and every grid cell is square.
-  static double spacing(Size size) => size.width / columns;
+  static const double spacingScale = 1.10;
+
+  static double spacing(Size size) => (size.width / columns) * spacingScale;
 
   static double horizontalSpacing(Size size) => spacing(size);
   static double verticalSpacing(Size size) => spacing(size);
