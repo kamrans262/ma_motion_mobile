@@ -77,6 +77,7 @@ class ArtworkDisplayItem {
     this.description,
     this.primaryMedia,
     this.createdAt,
+    this.isSalonImage = false,
   });
 
   final int? slot;
@@ -85,6 +86,7 @@ class ArtworkDisplayItem {
   final String? description;
   final DiscoveryArtworkMedia? primaryMedia;
   final DateTime? createdAt;
+  final bool isSalonImage;
 
   factory ArtworkDisplayItem.fromPlacementMap(Map<String, dynamic> map) {
     final artwork = _mapOrNull(map['artwork']) ?? const <String, dynamic>{};
@@ -132,10 +134,15 @@ class ArtworkDetail {
   final DateTime? createdAt;
   final List<ArtworkDisplayItem> artDisplayArtworks;
 
+  bool get hasSalonImage =>
+      maker?.profileImageUrl?.trim().isNotEmpty == true;
+
+  bool get hasConfiguredDisplay =>
+      hasSalonImage || artDisplayArtworks.isNotEmpty;
+
   int get viewerPageCount {
-    if (artDisplayArtworks.isNotEmpty) {
-      final uniqueIds = <int>{id, ...artDisplayArtworks.map((item) => item.id)};
-      return uniqueIds.length + 1;
+    if (hasConfiguredDisplay) {
+      return orderedArtDisplayItems.length + 1;
     }
 
     return (media.isEmpty ? 1 : media.length) + 1;
@@ -159,17 +166,34 @@ class ArtworkDetail {
       createdAt: createdAt,
     );
 
-    if (artDisplayArtworks.isEmpty) {
-      return <ArtworkDisplayItem>[selected];
-    }
-
     final orderedSlots = [...artDisplayArtworks]
       ..sort((a, b) => (a.slot ?? 999).compareTo(b.slot ?? 999));
 
-    return <ArtworkDisplayItem>[
-      selected,
-      ...orderedSlots.where((item) => item.id != id),
-    ];
+    final ordered = <ArtworkDisplayItem>[];
+
+    final salonUrl = maker?.profileImageUrl?.trim() ?? '';
+    if (salonUrl.isNotEmpty) {
+      final salonId = -((maker?.id ?? 0) + 1);
+      ordered.add(
+        ArtworkDisplayItem(
+          slot: 1,
+          id: salonId,
+          title: 'Salon Image',
+          isSalonImage: true,
+          primaryMedia: DiscoveryArtworkMedia(
+            id: salonId,
+            kind: 'image',
+            url: salonUrl,
+            isPrimary: true,
+          ),
+        ),
+      );
+    }
+
+    ordered.add(selected);
+    ordered.addAll(orderedSlots.where((item) => item.id != id));
+
+    return ordered;
   }
 
   factory ArtworkDetail.fromDiscovery(DiscoveryArtwork artwork) {
