@@ -8,6 +8,7 @@ void main() {
     expect(MaDotGridMetrics.minimumRows, 36);
     expect(MaDotGridMetrics.dotRadius, 0.8);
     expect(MaDotGridMetrics.dotRadius * 2, 1.6);
+    expect(MaDotGridMetrics.spacingScale, 1.10);
 
     for (final size in <Size>[
       const Size(320, 568),
@@ -23,10 +24,10 @@ void main() {
       final gridHeight = vertical * rows;
 
       expect(horizontal, closeTo(vertical, 0.001));
-      expect(gridWidth, closeTo(size.width, 0.001));
+      expect(gridWidth, closeTo(size.width * 1.10, 0.001));
       expect(rows, greaterThanOrEqualTo(MaDotGridMetrics.minimumRows));
       expect(gridHeight, greaterThan(size.height));
-      expect(origin.dx, closeTo(0, 0.001));
+      expect(origin.dx, closeTo(-(size.width * 0.05), 0.001));
       expect(origin.dy, lessThanOrEqualTo(0));
       expect(horizontal / 2, greaterThan(radius));
       expect(vertical / 2, greaterThan(radius));
