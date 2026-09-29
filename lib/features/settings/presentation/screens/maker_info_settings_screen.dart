@@ -1075,13 +1075,18 @@ class _LabeledField extends StatelessWidget {
             minLines: minLines,
             maxLines: maxLines,
             style: inputStyle,
+            textAlignVertical: useFilterLocationTextStyle
+                ? TextAlignVertical.center
+                : null,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: hintStyle,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: maxLines > 1
+              contentPadding: useFilterLocationTextStyle
+                  ? const EdgeInsets.symmetric(horizontal: 16, vertical: 14)
+                  : maxLines > 1
                   ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
                   : const EdgeInsets.fromLTRB(16, 21, 16, 7),
               enabledBorder: OutlineInputBorder(

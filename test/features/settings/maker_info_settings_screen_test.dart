@@ -62,11 +62,10 @@ void main() {
         AppTextStyles.bodyTracking,
       );
       expect(field.decoration?.hintStyle?.color, AppColors.darkGray);
+      expect(field.textAlignVertical, TextAlignVertical.center);
       expect(
         field.decoration?.contentPadding,
-        fieldKey == 'maker_settings_statement'
-            ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
-            : const EdgeInsets.fromLTRB(16, 21, 16, 7),
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       );
     }
     final save = tester.widget<OutlinedButton>(
@@ -157,6 +156,11 @@ void main() {
     );
     expect(showDescriptionField.style?.fontSize, AppTextStyles.field.fontSize);
     expect(showDescriptionField.style?.color, AppColors.white);
+    expect(showDescriptionField.textAlignVertical, isNull);
+    expect(
+      showDescriptionField.decoration?.contentPadding,
+      const EdgeInsets.fromLTRB(16, 19, 16, 9),
+    );
     expect(
       tester
           .widget<TextField>(
