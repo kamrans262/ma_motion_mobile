@@ -20,6 +20,28 @@ class MakerSettingsTaxonomyOption {
   }
 }
 
+class MakerInfoShowEntry {
+  const MakerInfoShowEntry({
+    required this.description,
+    required this.location,
+  });
+
+  final String description;
+  final String location;
+
+  factory MakerInfoShowEntry.fromMap(Map<String, dynamic> map) {
+    return MakerInfoShowEntry(
+      description: map['description']?.toString() ?? '',
+      location: map['location']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+    'description': description.trim(),
+    'location': location.trim(),
+  };
+}
+
 class MakerCarouselItem {
   const MakerCarouselItem({
     required this.slot,
@@ -171,6 +193,7 @@ class MakerInfoSettingsData {
     required this.showWebsite,
     required this.showEmail,
     required this.showShows,
+    required this.currentUpcomingShows,
     this.isHidden = false,
     required this.selectedTypeIds,
     required this.selectedStyleIds,
@@ -191,6 +214,7 @@ class MakerInfoSettingsData {
   final bool showWebsite;
   final bool showEmail;
   final bool showShows;
+  final List<MakerInfoShowEntry> currentUpcomingShows;
   final bool isHidden;
   final Set<int> selectedTypeIds;
   final Set<int> selectedStyleIds;
@@ -212,6 +236,7 @@ class MakerInfoSettingsDraft {
     required this.showWebsite,
     required this.showEmail,
     required this.showShows,
+    required this.currentUpcomingShows,
     this.isHidden = false,
     required this.typeIds,
     required this.styleIds,
@@ -226,6 +251,7 @@ class MakerInfoSettingsDraft {
   final bool showWebsite;
   final bool showEmail;
   final bool showShows;
+  final List<MakerInfoShowEntry> currentUpcomingShows;
   final bool isHidden;
   final Set<int> typeIds;
   final Set<int> styleIds;
