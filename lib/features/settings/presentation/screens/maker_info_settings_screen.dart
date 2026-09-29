@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -467,25 +466,6 @@ class _MakerInfoSettingsScreenState
     }
   }
 
-  Future<void> _logout() async {
-    if (_saving) return;
-
-    setState(() {
-      _saving = true;
-      _errorMessage = null;
-    });
-    try {
-      await ref.read(authRepositoryProvider).logout();
-    } catch (_) {
-      // AuthRepository.logout always clears the local token, even when the
-      // server cannot be reached. Complete the local sign-out as well.
-    }
-
-    if (!mounted) return;
-    widget.onLoggedOut?.call();
-    if (mounted) setState(() => _saving = false);
-  }
-
   Future<void> _deleteAccount() async {
     if (_saving) return;
     final deleted = await showMaDeleteAccountDialog(context);
@@ -697,7 +677,6 @@ class _MakerInfoSettingsScreenState
           padding: EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
                   child: Text(
@@ -708,44 +687,27 @@ class _MakerInfoSettingsScreenState
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                TextButton(
-                  key: const Key('maker_settings_logout'),
-                  onPressed: _saving ? null : _logout,
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.darkGray,
-                    minimumSize: Size.zero,
-                    padding: EdgeInsets.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: const Text(
-                    'Logout',
-                    style: TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.darkGray,
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 28),
             _LabeledField(
               label: 'Name',
               keyName: 'maker_settings_name',
+              useFilterLocationTextStyle: true,
               controller: _nameController,
               hintText: 'Artist Name',
             ),
             _LabeledField(
               label: 'Location',
               keyName: 'maker_settings_location',
+              useFilterLocationTextStyle: true,
               controller: _locationController,
               hintText: 'City/ZIP Code',
             ),
             _LabeledField(
               label: 'Statement',
               keyName: 'maker_settings_statement',
+              useFilterLocationTextStyle: true,
               controller: _statementController,
               hintText: 'Tell people about your work',
               minLines: 3,
@@ -759,7 +721,7 @@ class _MakerInfoSettingsScreenState
                   fontSize: 14,
                 ),
                 children: [
-                  const TextSpan(text: 'Your Profile Has Been Saved By '),
+                  const TextSpan(text: 'Your Work Has Been Saved By '),
                   TextSpan(
                     text: '${data.savedCount}',
                     style: const TextStyle(
@@ -1068,6 +1030,7 @@ class _LabeledField extends StatelessWidget {
     this.keyboardType,
     this.minLines = 1,
     this.maxLines = 1,
+    this.useFilterLocationTextStyle = false,
   });
 
   final String label;
@@ -1077,9 +1040,23 @@ class _LabeledField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int minLines;
   final int maxLines;
+  final bool useFilterLocationTextStyle;
 
   @override
   Widget build(BuildContext context) {
+    final inputStyle = useFilterLocationTextStyle
+        ? AppTextStyles.field.copyWith(
+            color: AppColors.darkGray,
+            fontSize: 16,
+          )
+        : AppTextStyles.field;
+    final hintStyle = useFilterLocationTextStyle
+        ? AppTextStyles.fieldHint.copyWith(
+            color: AppColors.darkGray,
+            fontSize: 16,
+          )
+        : AppTextStyles.fieldHint;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -1100,11 +1077,11 @@ class _LabeledField extends StatelessWidget {
             keyboardType: keyboardType,
             minLines: minLines,
             maxLines: maxLines,
-            style: AppTextStyles.field,
+            style: inputStyle,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: AppTextStyles.fieldHint,
+              hintStyle: hintStyle,
               filled: true,
               fillColor: AppColors.filterInputFill,
               contentPadding: maxLines > 1

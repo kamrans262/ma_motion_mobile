@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
@@ -46,6 +47,21 @@ void main() {
     ]) {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       expect(field.decoration?.fillColor, AppColors.filterInputFill);
+      expect(field.style?.fontFamily, AppTextStyles.fontFamily);
+      expect(field.style?.fontSize, 16);
+      expect(field.style?.fontWeight, FontWeight.w500);
+      expect(field.style?.height, 1);
+      expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
+      expect(field.style?.color, AppColors.darkGray);
+      expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+      expect(field.decoration?.hintStyle?.fontSize, 16);
+      expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
+      expect(field.decoration?.hintStyle?.height, 1);
+      expect(
+        field.decoration?.hintStyle?.letterSpacing,
+        AppTextStyles.bodyTracking,
+      );
+      expect(field.decoration?.hintStyle?.color, AppColors.darkGray);
       expect(
         field.decoration?.contentPadding,
         fieldKey == 'maker_settings_statement'
@@ -105,11 +121,14 @@ void main() {
     );
     await tester.pump();
     expect(find.text('Maker Info Setting'), findsOneWidget);
+    expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
+    expect(find.text('Logout'), findsNothing);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
     final savedCount = tester.widget<Text>(
       find.byKey(const Key('maker_settings_saved_count')),
     );
     final savedSpan = savedCount.textSpan! as TextSpan;
+    expect(savedSpan.toPlainText(), 'Your Work Has Been Saved By 37 People');
     final countSpan = savedSpan.children![1] as TextSpan;
     expect(countSpan.text, '37');
     expect(countSpan.style?.color, Colors.white);
@@ -131,10 +150,13 @@ void main() {
       target: showDescription,
       scrollView: settingsList,
     );
+    final showDescriptionField = tester.widget<TextField>(showDescription);
     expect(
-      tester.widget<TextField>(showDescription).decoration?.fillColor,
+      showDescriptionField.decoration?.fillColor,
       AppColors.filterInputFill,
     );
+    expect(showDescriptionField.style?.fontSize, AppTextStyles.field.fontSize);
+    expect(showDescriptionField.style?.color, AppColors.white);
     expect(
       tester
           .widget<TextField>(

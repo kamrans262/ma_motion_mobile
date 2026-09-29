@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/data/discovery_filter_repository.dart';
@@ -45,7 +46,7 @@ void main() {
     final locationSearch = find.byKey(const Key('filter_location_search'));
     expect(
       tester.widget<TextField>(locationSearch).decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(14, 22, 14, 4),
+      const EdgeInsets.fromLTRB(14, 21, 14, 7),
     );
     await tester.scrollUntilVisible(
       locationSearch,
@@ -188,6 +189,34 @@ void main() {
 
     final locationField = tester.widget<TextField>(locationSearch);
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
+    expect(locationField.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.style?.fontSize, 16);
+    expect(locationField.style?.fontWeight, FontWeight.w500);
+    expect(locationField.style?.height, 1);
+    expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
+    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.decoration?.hintStyle?.fontSize, 16);
+    expect(locationField.decoration?.hintStyle?.color, AppColors.darkGray);
+
+    final enabledBorder =
+        locationField.decoration?.enabledBorder! as OutlineInputBorder;
+    expect(enabledBorder.borderRadius, BorderRadius.zero);
+    expect(enabledBorder.borderSide.color, AppColors.primary50);
+    expect(enabledBorder.borderSide.width, 1);
+
+    final focusedBorder =
+        locationField.decoration?.focusedBorder! as OutlineInputBorder;
+    expect(focusedBorder.borderRadius, BorderRadius.zero);
+    expect(focusedBorder.borderSide.color, AppColors.primary);
+    expect(focusedBorder.borderSide.width, 1.2);
+
+    final editableText = tester.widget<EditableText>(
+      find.descendant(of: locationSearch, matching: find.byType(EditableText)),
+    );
+    expect(editableText.focusNode.hasFocus, isFalse);
+    await tester.tap(locationSearch);
+    await tester.pump();
+    expect(editableText.focusNode.hasFocus, isTrue);
 
     expect(find.text('Show Status'), findsOneWidget);
     expect(find.text('Currently Showing Work'), findsOneWidget);

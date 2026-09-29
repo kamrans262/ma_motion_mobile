@@ -592,13 +592,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       filled: true,
       fillColor: AppColors.filterInputFill,
       contentPadding: const EdgeInsets.fromLTRB(14, 21, 14, 7),
-      enabledBorder: const OutlineInputBorder(
+      enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.primary, width: 1),
+        borderSide: BorderSide(color: AppColors.primary50, width: 1),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.primary, width: 1),
+        borderSide: BorderSide(color: AppColors.primary, width: 1.2),
       ),
     );
   }
