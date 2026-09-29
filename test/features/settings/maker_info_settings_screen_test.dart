@@ -52,7 +52,7 @@ void main() {
       expect(field.style?.fontWeight, FontWeight.w500);
       expect(field.style?.height, 1);
       expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
-      expect(field.style?.color, AppColors.darkGray);
+      expect(field.style?.color, AppColors.white);
       expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
       expect(field.decoration?.hintStyle?.fontSize, 16);
       expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);

@@ -306,7 +306,7 @@ class _ArtworkMediaPage extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bottomReserve = hasDescription ? 76.0 : 28.0;
+        final bottomReserve = hasDescription ? 86.0 : 38.0;
 
         return Stack(
           key: pageKey,

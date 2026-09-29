@@ -181,6 +181,7 @@ void main() {
     expect(find.text('Radius (miles)'), findsOneWidget);
     final configuredSlider = tester.widget<Slider>(radiusSlider);
     expect(configuredSlider.max, 200);
+    expect(configuredSlider.padding, EdgeInsets.zero);
     final radiusText = tester.widget<Text>(
       find.byKey(const Key('filter_radius_value')),
     );

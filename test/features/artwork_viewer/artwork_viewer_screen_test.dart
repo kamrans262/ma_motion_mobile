@@ -110,6 +110,7 @@ void main() {
       );
       expect(mediaRect.left, frameRect.left);
       expect(mediaRect.right, frameRect.right);
+      expect(frameRect.bottom - mediaRect.bottom, 86);
 
       final closeBefore = tester.getTopLeft(
         find.byKey(const Key('artwork_viewer_close_button')),

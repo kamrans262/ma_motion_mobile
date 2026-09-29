@@ -533,6 +533,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 ),
                 child: Slider(
                   key: const Key('filter_radius_slider'),
+                  padding: EdgeInsets.zero,
                   value: radiusValue,
                   min: minMiles,
                   max: maxMiles,
