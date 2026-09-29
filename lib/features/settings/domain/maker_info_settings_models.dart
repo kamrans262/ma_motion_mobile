@@ -21,10 +21,7 @@ class MakerSettingsTaxonomyOption {
 }
 
 class MakerInfoShowEntry {
-  const MakerInfoShowEntry({
-    required this.description,
-    required this.location,
-  });
+  const MakerInfoShowEntry({required this.description, required this.location});
 
   final String description;
   final String location;
