@@ -19,6 +19,7 @@ void main() {
 
     final repository = _FakeSavedRepository();
     var settingsTapped = 0;
+    var backTapped = 0;
     DiscoveryArtwork? openedArtwork;
 
     await tester.pumpWidget(
@@ -28,6 +29,7 @@ void main() {
         ],
         child: MaterialApp(
           home: MakerSavedArtworksScreen(
+            onBack: () => backTapped++,
             onArtworkTap: (artwork) => openedArtwork = artwork,
             onSettingsTap: () => settingsTapped++,
           ),
@@ -42,6 +44,10 @@ void main() {
     );
     expect(find.byKey(const Key('artwork_tile_91')), findsOneWidget);
     expect(find.byKey(const Key('maker_nav_saved_filled')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('maker_nav_saved')).hitTestable());
+    await tester.pump();
+    expect(backTapped, 1);
 
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('maker_saved_artworks_screen')),

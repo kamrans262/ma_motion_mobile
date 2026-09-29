@@ -25,11 +25,11 @@ class ArtworkViewerDots extends StatelessWidget {
           return AnimatedContainer(
             key: Key('artwork_viewer_dot_$index'),
             duration: const Duration(milliseconds: 160),
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.symmetric(horizontal: 4.5),
+            width: 5,
+            height: 5,
+            margin: const EdgeInsets.symmetric(horizontal: 3),
             decoration: BoxDecoration(
-              color: active ? AppColors.primary : const Color(0xFF452080),
+              color: active ? AppColors.white : AppColors.darkGray,
               shape: BoxShape.circle,
             ),
           );

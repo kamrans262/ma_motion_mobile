@@ -132,7 +132,6 @@ class _MakerSavedArtworksScreenState
                               child: Text(
                                 'Saved',
                                 style: AppTextStyles.onboardingHeading.copyWith(
-                                  fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 22,
                                 ),
                               ),
@@ -172,7 +171,7 @@ class _MakerSavedArtworksScreenState
       bottomNavigationBar: MakerBottomNavigation(
         selectedColumnCount: _columnCount,
         heartSelected: true,
-        onSavedTap: () {},
+        onSavedTap: widget.onBack,
         onColumnCountSelected: (columnCount) {
           if (_columnCount == columnCount) return;
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_svg_asset.dart';
 import 'discovery_layout_metrics.dart';
 
@@ -189,7 +190,7 @@ class _ColumnCountItem extends StatelessWidget {
             '$columnCount',
             key: Key('maker_nav_column_text_$columnCount'),
             style: TextStyle(
-              fontFamily: 'HelveticaNeueLTStd',
+              fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: selected

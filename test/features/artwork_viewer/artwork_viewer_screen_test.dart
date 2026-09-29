@@ -70,13 +70,30 @@ void main() {
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
       );
-      expect(description.style?.fontFamily, 'HelveticaNeueLTStd');
+      expect(description.style?.fontFamily, 'Instrument Sans');
       expect(description.style?.fontSize, 14);
       expect(description.style?.fontWeight, FontWeight.w500);
       expect(description.style?.fontStyle, FontStyle.italic);
-      expect(description.style?.color, const Color(0xFFF0F0F0));
+      expect(description.style?.color, AppColors.mutedText);
 
-      expect(find.byKey(const Key('artwork_viewer_dots')), findsOneWidget);
+      final dotsFinder = find.byKey(const Key('artwork_viewer_dots'));
+      expect(dotsFinder, findsOneWidget);
+      final activeDot = find.byKey(const Key('artwork_viewer_dot_0'));
+      final inactiveDot = find.byKey(const Key('artwork_viewer_dot_1'));
+      expect(tester.getSize(activeDot), const Size.square(5));
+      expect(tester.getSize(inactiveDot), const Size.square(5));
+      expect(
+        (tester.widget<AnimatedContainer>(activeDot).decoration!
+                as BoxDecoration)
+            .color,
+        AppColors.white,
+      );
+      expect(
+        (tester.widget<AnimatedContainer>(inactiveDot).decoration!
+                as BoxDecoration)
+            .color,
+        AppColors.darkGray,
+      );
 
       final frameRect = tester.getRect(
         find.byKey(const Key('artwork_viewer_frame')),
@@ -85,6 +102,8 @@ void main() {
       expect(frameRect.top, 20);
       expect(frameRect.right, 410);
       expect(frameRect.bottom, 912);
+      final dotsRect = tester.getRect(dotsFinder);
+      expect(frameRect.bottom - dotsRect.bottom, 14);
 
       final mediaRect = tester.getRect(
         find.byKey(const Key('artwork_viewer_media_box')),

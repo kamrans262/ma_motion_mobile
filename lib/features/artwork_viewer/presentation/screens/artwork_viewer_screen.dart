@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../discovery/domain/discovery_artwork.dart';
 import '../../../saved_artworks/application/artwork_saved_status_provider.dart';
 import '../../../saved_artworks/application/saved_artworks_controller.dart';
@@ -243,7 +244,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 0,
+              bottom: 14,
               child: Center(
                 child: ArtworkViewerDots(
                   count: totalPageCount,
@@ -332,12 +333,12 @@ class _ArtworkMediaPage extends StatelessWidget {
                   maxLines: constraints.maxHeight < 620 ? 2 : 3,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontFamily: 'HelveticaNeueLTStd',
+                    fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 14,
                     height: 1.22,
                     fontWeight: FontWeight.w500,
                     fontStyle: FontStyle.italic,
-                    color: Color(0xFFF0F0F0),
+                    color: AppColors.mutedText,
                   ),
                 ),
               ),

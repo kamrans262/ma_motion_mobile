@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppTextStyles {
-  static const String fontFamily = 'HelveticaNeueLTStd';
-  // Slightly looser typography for the new font asset across shared styles.
+  static const String displayFontFamily = 'HelveticaNeueLTStd';
+  static const String bodyFontFamily = 'Instrument Sans';
+
+  // General UI text uses the client-approved body family. Keep this alias for
+  // existing shared components so the main app updates through one token.
+  static const String fontFamily = bodyFontFamily;
   static const double bodyTracking = 0.2;
 
   static const TextStyle onboardingHeading = TextStyle(
-    fontFamily: fontFamily,
+    fontFamily: displayFontFamily,
     fontSize: 34,
     letterSpacing: -0.8,
     height: 1.22,
