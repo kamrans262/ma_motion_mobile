@@ -45,11 +45,12 @@ class _MaSplashSequenceScreenState extends ConsumerState<MaSplashSequenceScreen>
     // The supplied reference is one continuous purple circle field:
     // initially the circles overlap enough to look like a solid screen, then
     // those same circles shrink until they become the final dot grid.
-    // Run the complete opening/logo/welcome sequence within 7.5 seconds.
-    // After the circles shrink into the final grid, the dots remain static.
+    // Keep the same shrink start point, but run the circle-to-dot shrink at
+    // half the previous speed (2x duration). After the circles shrink into
+    // the final grid, the dots remain static.
     _openingProgress = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.081967, 0.327869, curve: Curves.linear),
+      curve: const Interval(0.081967, 0.573771, curve: Curves.linear),
     );
 
     _controller.addStatusListener(_handleAnimationStatus);
