@@ -17,9 +17,10 @@ abstract final class MaDotGridMetrics {
       size.width > 0 &&
       size.height > 0;
 
-  /// Keep the established 18 columns across the full screen width. That
-  /// width-derived cell size is reused vertically, so X/Y spacing is exactly
-  /// equal and every grid cell is square.
+  /// Keep the established 18-column lattice, but expand its cell spacing by
+  /// 10% beyond the previous full-screen-width spacing. The same cell size is
+  /// reused vertically, so X/Y spacing remains exactly equal and every grid
+  /// cell stays square.
   static const double spacingScale = 1.10;
 
   static double spacing(Size size) => (size.width / columns) * spacingScale;
