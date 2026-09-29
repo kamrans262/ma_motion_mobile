@@ -42,6 +42,7 @@ class _MakerInfoSettingsScreenState
   final _statementController = TextEditingController();
   final _websiteController = TextEditingController();
   final _emailController = TextEditingController();
+  final List<_ShowEntryControllers> _showEditors = <_ShowEntryControllers>[];
 
   final Map<int, TextEditingController> _captionControllers =
       <int, TextEditingController>{
@@ -94,6 +95,10 @@ class _MakerInfoSettingsScreenState
     _websiteController.dispose();
     _emailController.dispose();
 
+    for (final editor in _showEditors) {
+      editor.dispose();
+    }
+
     for (final controller in _captionControllers.values) {
       controller.dispose();
     }
@@ -135,6 +140,23 @@ class _MakerInfoSettingsScreenState
       _showShows = data.showShows;
       _hideMakerPage = data.isHidden;
 
+      for (final editor in _showEditors) {
+        editor.dispose();
+      }
+      _showEditors
+        ..clear()
+        ..addAll(
+          data.currentUpcomingShows.map(
+            (show) => _ShowEntryControllers(
+              description: show.description,
+              location: show.location,
+            ),
+          ),
+        );
+      if (_showEditors.isEmpty) {
+        _showEditors.add(_ShowEntryControllers());
+      }
+
       final salon = _existingItem(data, 1);
       _captionControllers[1]!.text = salon?.caption ?? '';
 
@@ -166,6 +188,28 @@ class _MakerInfoSettingsScreenState
 
   Future<void> _saveAndClose() async {
     if (_saving) return;
+
+    final showEntries = <MakerInfoShowEntry>[];
+    for (final editor in _showEditors) {
+      final description = editor.description.text.trim();
+      final location = editor.location.text.trim();
+
+      if (description.isEmpty && location.isEmpty) {
+        continue;
+      }
+
+      if (description.isEmpty || location.isEmpty) {
+        setState(() {
+          _errorMessage =
+              'Please enter both a show description and event location.';
+        });
+        return;
+      }
+
+      showEntries.add(
+        MakerInfoShowEntry(description: description, location: location),
+      );
+    }
 
     for (var slot = 2; slot <= 4; slot++) {
       final existing = _existingArtworkSlot(_data, slot)?.artwork;
@@ -323,6 +367,7 @@ class _MakerInfoSettingsScreenState
           showWebsite: _showWebsite,
           showEmail: _showEmail,
           showShows: _showShows,
+          currentUpcomingShows: showEntries,
           isHidden: _hideMakerPage,
           typeIds: Set<int>.from(_selectedTypes),
           styleIds: Set<int>.from(_selectedStyles),
@@ -567,6 +612,25 @@ class _MakerInfoSettingsScreenState
     });
   }
 
+  void _addShowEditor() {
+    if (_saving) return;
+    setState(() {
+      _showEditors.add(_ShowEntryControllers());
+    });
+  }
+
+  void _removeShowEditor(int index) {
+    if (_saving || index < 0 || index >= _showEditors.length) return;
+
+    setState(() {
+      final removed = _showEditors.removeAt(index);
+      removed.dispose();
+
+      if (_showEditors.isEmpty) {
+        _showEditors.add(_ShowEntryControllers());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -774,9 +838,52 @@ class _MakerInfoSettingsScreenState
                   : (value) {
                       setState(() {
                         _showShows = value;
+                        if (value && _showEditors.isEmpty) {
+                          _showEditors.add(_ShowEntryControllers());
+                        }
                       });
                     },
             ),
+            if (_showShows) ...[
+              const SizedBox(height: 8),
+              for (var index = 0; index < _showEditors.length; index++) ...[
+                _ShowEntryEditor(
+                  index: index,
+                  descriptionController: _showEditors[index].description,
+                  locationController: _showEditors[index].location,
+                  canRemove: _showEditors.length > 1,
+                  onRemove: () => _removeShowEditor(index),
+                ),
+                if (index < _showEditors.length - 1)
+                  const SizedBox(height: 4),
+              ],
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  key: const Key('maker_settings_add_show'),
+                  onPressed: _saving ? null : _addShowEditor,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    overlayColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 6,
+                    ),
+                    minimumSize: const Size(44, 36),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  icon: const Icon(Icons.add, size: 20),
+                  label: Text(
+                    'Add Another Show',
+                    style: AppTextStyles.onboardingHelper.copyWith(
+                      color: AppColors.primary,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
             _VisibilityOnlyRow(
               key: const Key('maker_settings_hide_page'),
               label: 'Hide Maker Page',
@@ -1016,6 +1123,89 @@ class _LabeledField extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ShowEntryControllers {
+  _ShowEntryControllers({String description = '', String location = ''})
+    : description = TextEditingController(text: description),
+      location = TextEditingController(text: location);
+
+  final TextEditingController description;
+  final TextEditingController location;
+
+  void dispose() {
+    description.dispose();
+    location.dispose();
+  }
+}
+
+class _ShowEntryEditor extends StatelessWidget {
+  const _ShowEntryEditor({
+    required this.index,
+    required this.descriptionController,
+    required this.locationController,
+    required this.canRemove,
+    required this.onRemove,
+  });
+
+  final int index;
+  final TextEditingController descriptionController;
+  final TextEditingController locationController;
+  final bool canRemove;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: Key('maker_settings_show_entry_$index'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Show ${index + 1}',
+                style: AppTextStyles.onboardingHelper.copyWith(
+                  color: AppColors.primary,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            if (canRemove)
+              IconButton(
+                key: Key('maker_settings_remove_show_$index'),
+                onPressed: onRemove,
+                color: AppColors.primary,
+                iconSize: 18,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints.tightFor(
+                  width: 36,
+                  height: 36,
+                ),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                icon: const Icon(Icons.close),
+              ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        _LabeledField(
+          label: 'Show Description',
+          keyName: 'maker_settings_show_description_$index',
+          controller: descriptionController,
+          hintText: 'Describe the show',
+          minLines: 2,
+          maxLines: 4,
+        ),
+        _LabeledField(
+          label: 'Event Location',
+          keyName: 'maker_settings_show_location_$index',
+          controller: locationController,
+          hintText: 'Event location',
+        ),
+      ],
     );
   }
 }
