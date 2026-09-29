@@ -854,8 +854,7 @@ class _MakerInfoSettingsScreenState
                   canRemove: _showEditors.length > 1,
                   onRemove: () => _removeShowEditor(index),
                 ),
-                if (index < _showEditors.length - 1)
-                  const SizedBox(height: 4),
+                if (index < _showEditors.length - 1) const SizedBox(height: 4),
               ],
               Align(
                 alignment: Alignment.centerLeft,
