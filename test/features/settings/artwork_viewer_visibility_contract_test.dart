@@ -9,6 +9,12 @@ void main() {
       'website_url': 'https://artist.example',
       'contact_email': null,
       'show_shows_on_info_page': true,
+      'current_upcoming_shows': <dynamic>[
+        <String, dynamic>{
+          'description': 'Fall exhibition',
+          'location': 'Chicago Arts Center',
+        },
+      ],
     });
 
     final shared = ArtworkDetailMaker.fromMap(<String, dynamic>{
@@ -20,6 +26,9 @@ void main() {
 
     expect(hidden.contactEmail, isNull);
     expect(hidden.showShowsOnInfoPage, isTrue);
+    expect(hidden.currentUpcomingShows, hasLength(1));
+    expect(hidden.currentUpcomingShows.first.description, 'Fall exhibition');
+    expect(hidden.currentUpcomingShows.first.location, 'Chicago Arts Center');
     expect(shared.contactEmail, 'public@artist.example');
     expect(shared.showShowsOnInfoPage, isFalse);
   });
