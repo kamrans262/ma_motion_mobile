@@ -26,7 +26,11 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final maker = artwork.maker;
-    final currentShow = maker == null || !maker.showShowsOnInfoPage
+    final configuredShows = maker?.currentUpcomingShows ?? const [];
+    final currentShow =
+        maker == null ||
+            !maker.showShowsOnInfoPage ||
+            configuredShows.isNotEmpty
         ? null
         : ref.watch(makerCurrentShowProvider(maker.id));
 
@@ -118,6 +122,37 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         key: const Key('artwork_maker_info_email'),
                         style: const _InfoValueStyle(),
                       ),
+                    ],
+                    if ((maker?.showShowsOnInfoPage ?? false) &&
+                        configuredShows.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      const _InfoLabel('Current & Upcoming Shows'),
+                      const SizedBox(height: 5),
+                      for (var index = 0;
+                          index < configuredShows.length;
+                          index++) ...[
+                        Text(
+                          configuredShows[index].description,
+                          key: Key('artwork_maker_configured_show_$index'),
+                          style: const _InfoValueStyle(),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          configuredShows[index].location,
+                          key: Key(
+                            'artwork_maker_configured_show_location_$index',
+                          ),
+                          style: const TextStyle(
+                            fontFamily: 'Instrument Sans',
+                            fontSize: 14,
+                            height: 1.25,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFBDBDBD),
+                          ),
+                        ),
+                        if (index < configuredShows.length - 1)
+                          const SizedBox(height: 10),
+                      ],
                     ],
                     if (currentShow != null)
                       currentShow.when(
