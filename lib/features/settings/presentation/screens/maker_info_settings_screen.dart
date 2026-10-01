@@ -693,19 +693,19 @@ class _MakerInfoSettingsScreenState
             _LabeledField(
               label: 'Name',
               keyName: 'maker_settings_name',
-                      controller: _nameController,
+              controller: _nameController,
               hintText: 'Artist Name',
             ),
             _LabeledField(
               label: 'Location',
               keyName: 'maker_settings_location',
-                      controller: _locationController,
+              controller: _locationController,
               hintText: 'City/ZIP Code',
             ),
             _LabeledField(
               label: 'Statement',
               keyName: 'maker_settings_statement',
-                      controller: _statementController,
+              controller: _statementController,
               hintText: 'Tell people about your work',
               minLines: 3,
               maxLines: 6,
