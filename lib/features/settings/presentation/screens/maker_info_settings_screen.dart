@@ -693,22 +693,19 @@ class _MakerInfoSettingsScreenState
             _LabeledField(
               label: 'Name',
               keyName: 'maker_settings_name',
-              useFilterLocationTextStyle: true,
-              controller: _nameController,
+                      controller: _nameController,
               hintText: 'Artist Name',
             ),
             _LabeledField(
               label: 'Location',
               keyName: 'maker_settings_location',
-              useFilterLocationTextStyle: true,
-              controller: _locationController,
+                      controller: _locationController,
               hintText: 'City/ZIP Code',
             ),
             _LabeledField(
               label: 'Statement',
               keyName: 'maker_settings_statement',
-              useFilterLocationTextStyle: true,
-              controller: _statementController,
+                      controller: _statementController,
               hintText: 'Tell people about your work',
               minLines: 3,
               maxLines: 6,
@@ -1021,6 +1018,25 @@ class _MakerInfoSettingsScreenState
   }
 }
 
+TextStyle _makerSettingsInputStyle() {
+  return AppTextStyles.field.copyWith(
+    color: AppColors.white,
+    fontSize: 16,
+  );
+}
+
+TextStyle _makerSettingsHintStyle() {
+  return AppTextStyles.fieldHint.copyWith(
+    color: AppColors.darkGray,
+    fontSize: 16,
+  );
+}
+
+const EdgeInsets _makerSettingsInputPadding = EdgeInsets.symmetric(
+  horizontal: 16,
+  vertical: 14,
+);
+
 class _LabeledField extends StatelessWidget {
   const _LabeledField({
     required this.label,
@@ -1030,7 +1046,6 @@ class _LabeledField extends StatelessWidget {
     this.keyboardType,
     this.minLines = 1,
     this.maxLines = 1,
-    this.useFilterLocationTextStyle = false,
   });
 
   final String label;
@@ -1040,19 +1055,11 @@ class _LabeledField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int minLines;
   final int maxLines;
-  final bool useFilterLocationTextStyle;
 
   @override
   Widget build(BuildContext context) {
-    final inputStyle = useFilterLocationTextStyle
-        ? AppTextStyles.field.copyWith(color: AppColors.white, fontSize: 16)
-        : AppTextStyles.field;
-    final hintStyle = useFilterLocationTextStyle
-        ? AppTextStyles.fieldHint.copyWith(
-            color: AppColors.darkGray,
-            fontSize: 16,
-          )
-        : AppTextStyles.fieldHint;
+    final inputStyle = _makerSettingsInputStyle();
+    final hintStyle = _makerSettingsHintStyle();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -1075,20 +1082,14 @@ class _LabeledField extends StatelessWidget {
             minLines: minLines,
             maxLines: maxLines,
             style: inputStyle,
-            textAlignVertical: useFilterLocationTextStyle
-                ? TextAlignVertical.center
-                : null,
+            textAlignVertical: TextAlignVertical.center,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: hintStyle,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: useFilterLocationTextStyle
-                  ? const EdgeInsets.symmetric(horizontal: 16, vertical: 14)
-                  : maxLines > 1
-                  ? const EdgeInsets.fromLTRB(16, 19, 16, 9)
-                  : const EdgeInsets.fromLTRB(16, 21, 16, 7),
+              contentPadding: _makerSettingsInputPadding,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1550,22 +1551,23 @@ class _CarouselEditor extends StatelessWidget {
             key: Key('maker_settings_artwork_title_$slot'),
             controller: titleController,
             maxLength: 180,
-            style: AppTextStyles.field,
+            style: _makerSettingsInputStyle(),
+            textAlignVertical: TextAlignVertical.center,
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               counterText: '',
               hintText: 'Artwork Title',
-              hintStyle: AppTextStyles.fieldHint,
+              hintStyle: _makerSettingsHintStyle(),
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: const EdgeInsets.fromLTRB(16, 21, 16, 7),
+              contentPadding: _makerSettingsInputPadding,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
               ),
               focusedBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: AppColors.primary),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.2),
               ),
             ),
           ),
@@ -1583,22 +1585,23 @@ class _CarouselEditor extends StatelessWidget {
           key: Key('maker_settings_carousel_caption_$slot'),
           controller: captionController,
           maxLength: 280,
-          style: AppTextStyles.field,
+          style: _makerSettingsInputStyle(),
+          textAlignVertical: TextAlignVertical.center,
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             counterText: '',
             hintText: 'Optional Caption',
-            hintStyle: AppTextStyles.fieldHint,
+            hintStyle: _makerSettingsHintStyle(),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(16, 21, 16, 7),
+            contentPadding: _makerSettingsInputPadding,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
             ),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(color: AppColors.primary),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.2),
             ),
           ),
         ),
