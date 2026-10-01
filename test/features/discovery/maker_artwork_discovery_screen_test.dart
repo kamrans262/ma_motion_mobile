@@ -40,14 +40,20 @@ void main() {
       tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
       const Size(20, 20),
     );
-    final filterIcon = tester.widget<MaSvgAsset>(
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('discovery_filter_svg')),
+        matching: find.byType(CustomPaint),
+      ),
+      findsOneWidget,
+    );
+    expect(
       find.descendant(
         of: find.byKey(const Key('discovery_filter_svg')),
         matching: find.byType(MaSvgAsset),
       ),
+      findsNothing,
     );
-    expect(filterIcon.assetName, 'assets/MA_FilterIcon_2.svg');
-    expect(filterIcon.color, AppColors.primary);
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
       const Size(24, 24),

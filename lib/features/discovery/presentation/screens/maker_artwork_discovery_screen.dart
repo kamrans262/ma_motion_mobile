@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -321,6 +322,7 @@ class _MakerArtworkDiscoveryScreenState
                                     assetName: 'assets/MA_FilterIcon_2.svg',
                                     tooltip: 'Filter artwork',
                                     size: 20,
+                                    useFilterPainter: true,
                                     barHeight: metrics.toolbarHeight,
                                     alignment: Alignment.center,
                                     onPressed: widget.onFilterTap ?? () {},
@@ -408,6 +410,65 @@ class _MakerArtworkDiscoveryScreenState
   }
 }
 
+class _FilterToolbarIconPainter extends CustomPainter {
+  const _FilterToolbarIconPainter();
+
+  static const double _viewBoxWidth = 25.7;
+  static const double _viewBoxHeight = 28.1;
+  static const double _originalCircleRadius = 2.64;
+  static const double _lineStrokeWidth = 2.5;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scale = math.min(
+      size.width / _viewBoxWidth,
+      size.height / _viewBoxHeight,
+    );
+    final offsetX = (size.width - (_viewBoxWidth * scale)) / 2;
+    final offsetY = (size.height - (_viewBoxHeight * scale)) / 2;
+
+    double x(double value) => offsetX + (value * scale);
+    double y(double value) => offsetY + (value * scale);
+
+    final linePaint = Paint()
+      ..color = AppColors.primary
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _lineStrokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    final circlePaint = Paint()
+      ..color = AppColors.primary
+      ..style = PaintingStyle.fill;
+
+    final lineTop = _lineStrokeWidth / 2;
+    final lineBottom = size.height - (_lineStrokeWidth / 2);
+
+    for (final lineX in <double>[2.64, 12.94, 23.06]) {
+      canvas.drawLine(
+        Offset(x(lineX), lineTop),
+        Offset(x(lineX), lineBottom),
+        linePaint,
+      );
+    }
+
+    final circleRadius = _originalCircleRadius * scale;
+    for (final center in <(double, double)>[
+      (2.64, 7.36),
+      (12.94, 17.19),
+      (23.06, 11.17),
+    ]) {
+      canvas.drawCircle(
+        Offset(x(center.$1), y(center.$2)),
+        circleRadius,
+        circlePaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _FilterToolbarIconPainter oldDelegate) => false;
+}
+
 class _ToolbarSvgButton extends StatelessWidget {
   const _ToolbarSvgButton({
     required this.buttonKey,
@@ -420,6 +481,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     required this.alignment,
     required this.onPressed,
     this.materialIcon,
+    this.useFilterPainter = false,
   });
 
   final Key buttonKey;
@@ -432,6 +494,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final Alignment alignment;
   final VoidCallback onPressed;
   final IconData? materialIcon;
+  final bool useFilterPainter;
 
   @override
   Widget build(BuildContext context) {
@@ -466,12 +529,16 @@ class _ToolbarSvgButton extends StatelessWidget {
                         key: iconKey,
                         width: size,
                         height: size,
-                        child: MaSvgAsset(
-                          assetName: assetName,
-                          fallbackAssetName: fallbackAssetName,
-                          fit: BoxFit.contain,
-                          color: AppColors.primary,
-                        ),
+                        child: useFilterPainter
+                            ? const CustomPaint(
+                                painter: _FilterToolbarIconPainter(),
+                              )
+                            : MaSvgAsset(
+                                assetName: assetName,
+                                fallbackAssetName: fallbackAssetName,
+                                fit: BoxFit.contain,
+                                color: AppColors.primary,
+                              ),
                       )
                     : SizedBox(
                         key: iconKey,
