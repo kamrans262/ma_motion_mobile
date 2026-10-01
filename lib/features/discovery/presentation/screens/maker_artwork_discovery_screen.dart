@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -321,6 +322,7 @@ class _MakerArtworkDiscoveryScreenState
                                     assetName: 'assets/MA_FilterIcon_2.svg',
                                     tooltip: 'Filter artwork',
                                     size: 20,
+                                    dilateRadius: 0.6,
                                     barHeight: metrics.toolbarHeight,
                                     alignment: Alignment.center,
                                     onPressed: widget.onFilterTap ?? () {},
@@ -420,6 +422,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     required this.alignment,
     required this.onPressed,
     this.materialIcon,
+    this.dilateRadius = 0,
   });
 
   final Key buttonKey;
@@ -432,6 +435,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final Alignment alignment;
   final VoidCallback onPressed;
   final IconData? materialIcon;
+  final double dilateRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -466,12 +470,25 @@ class _ToolbarSvgButton extends StatelessWidget {
                         key: iconKey,
                         width: size,
                         height: size,
-                        child: MaSvgAsset(
-                          assetName: assetName,
-                          fallbackAssetName: fallbackAssetName,
-                          fit: BoxFit.contain,
-                          color: AppColors.primary,
-                        ),
+                        child: dilateRadius > 0
+                            ? ImageFiltered(
+                                imageFilter: ui.ImageFilter.dilate(
+                                  radiusX: dilateRadius,
+                                  radiusY: dilateRadius,
+                                ),
+                                child: MaSvgAsset(
+                                  assetName: assetName,
+                                  fallbackAssetName: fallbackAssetName,
+                                  fit: BoxFit.contain,
+                                  color: AppColors.primary,
+                                ),
+                              )
+                            : MaSvgAsset(
+                                assetName: assetName,
+                                fallbackAssetName: fallbackAssetName,
+                                fit: BoxFit.contain,
+                                color: AppColors.primary,
+                              ),
                       )
                     : SizedBox(
                         key: iconKey,

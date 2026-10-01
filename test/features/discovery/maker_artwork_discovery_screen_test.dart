@@ -49,6 +49,13 @@ void main() {
     expect(filterIcon.assetName, 'assets/MA_FilterIcon_2.svg');
     expect(filterIcon.color, AppColors.primary);
     expect(
+      find.descendant(
+        of: find.byKey(const Key('discovery_filter_svg')),
+        matching: find.byType(ImageFiltered),
+      ),
+      findsOneWidget,
+    );
+    expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
       const Size(24, 24),
     );
