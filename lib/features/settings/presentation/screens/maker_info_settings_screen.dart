@@ -1032,7 +1032,14 @@ TextStyle _makerSettingsHintStyle() {
   );
 }
 
-const EdgeInsets _makerSettingsInputPadding = EdgeInsets.symmetric(
+const EdgeInsets _makerSettingsSingleLineInputPadding = EdgeInsets.fromLTRB(
+  16,
+  12.5,
+  16,
+  15.5,
+);
+
+const EdgeInsets _makerSettingsMultilineInputPadding = EdgeInsets.symmetric(
   horizontal: 16,
   vertical: 14,
 );
@@ -1089,7 +1096,9 @@ class _LabeledField extends StatelessWidget {
               hintStyle: hintStyle,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: _makerSettingsInputPadding,
+              contentPadding: maxLines == 1
+                  ? _makerSettingsSingleLineInputPadding
+                  : _makerSettingsMultilineInputPadding,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1560,7 +1569,7 @@ class _CarouselEditor extends StatelessWidget {
               hintStyle: _makerSettingsHintStyle(),
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: _makerSettingsInputPadding,
+              contentPadding: _makerSettingsSingleLineInputPadding,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1594,7 +1603,7 @@ class _CarouselEditor extends StatelessWidget {
             hintStyle: _makerSettingsHintStyle(),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: _makerSettingsInputPadding,
+            contentPadding: _makerSettingsSingleLineInputPadding,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),

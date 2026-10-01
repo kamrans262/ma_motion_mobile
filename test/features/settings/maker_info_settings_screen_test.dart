@@ -502,7 +502,9 @@ void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.textAlignVertical, TextAlignVertical.center);
   expect(
     field.decoration?.contentPadding,
-    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    field.maxLines == 1
+        ? const EdgeInsets.fromLTRB(16, 12.5, 16, 15.5)
+        : const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
   );
   final focusedBorder = field.decoration?.focusedBorder as OutlineInputBorder?;
   expect(focusedBorder?.borderSide.color, AppColors.primary);
