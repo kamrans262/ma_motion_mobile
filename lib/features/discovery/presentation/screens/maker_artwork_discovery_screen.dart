@@ -451,7 +451,10 @@ class _FilterToolbarIconPainter extends CustomPainter {
       );
     }
 
-    final circleRadius = _originalCircleRadius * scale;
+    // The painter intentionally keeps the lines at a stronger final-pixel
+    // weight than the scaled SVG. Keep the circles at the matching original
+    // proportion as well so the knobs and lines feel visually consistent.
+    const circleRadius = _originalCircleRadius;
     for (final center in <(double, double)>[
       (2.64, 7.36),
       (12.94, 17.19),
