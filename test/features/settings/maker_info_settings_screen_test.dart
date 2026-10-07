@@ -80,6 +80,19 @@ void main() {
       await tester.pump();
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
+      final chipContainer = tester.widget<AnimatedContainer>(
+        find.descendant(of: target, matching: find.byType(AnimatedContainer)),
+      );
+      expect(
+        chipContainer.padding,
+        const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+      );
+      expect(chipContainer.constraints, isNull);
+      final chipText = tester.widget<Text>(
+        find.descendant(of: target, matching: find.text(choice.$2)),
+      );
+      expect(chipText.style?.fontSize, 14);
+      expect(chipText.style?.height, 1.1);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
@@ -100,6 +113,9 @@ void main() {
     );
     await tester.pump();
     expect(find.text('Maker Info Setting'), findsOneWidget);
+    final settingsTitle = tester.widget<Text>(find.text('Maker Info Setting'));
+    expect(settingsTitle.style?.fontSize, 22);
+    expect(settingsTitle.style?.fontWeight, FontWeight.w600);
     expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
     expect(find.text('Logout'), findsNothing);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
@@ -493,6 +509,7 @@ void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
   expect(field.decoration?.hintStyle?.fontSize, 16);
   expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
+  expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);
   expect(field.decoration?.hintStyle?.height, 1);
   expect(
     field.decoration?.hintStyle?.letterSpacing,

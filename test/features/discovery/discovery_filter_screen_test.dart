@@ -128,16 +128,20 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(const Key('filter_clear_button')), findsOneWidget);
-    expect(find.text('Clear filters'), findsOneWidget);
+    expect(find.text('Clear Filters'), findsOneWidget);
     expect(find.text('Filter'), findsOneWidget);
 
     final title = tester.widget<Text>(find.text('Filter'));
     expect(title.style?.fontFamily, 'HelveticaNeueLTStd');
-    expect(title.style?.fontWeight, FontWeight.w500);
+    expect(title.style?.fontWeight, FontWeight.w600);
     expect(title.style?.fontSize, 22);
-    final clearText = tester.widget<Text>(find.text('Clear filters'));
-    expect(clearText.style?.fontSize, 14);
+    final clearText = tester.widget<Text>(find.text('Clear Filters'));
+    expect(clearText.style?.fontSize, 16);
     expect(clearText.style?.fontWeight, FontWeight.w500);
+    expect(
+      tester.getBottomRight(find.text('Clear Filters')).dy,
+      closeTo(tester.getBottomRight(find.text('Filter')).dy, 0.1),
+    );
 
     final scaffold = tester.widget<Scaffold>(
       find.byKey(const Key('discovery_filter_screen')),
@@ -197,6 +201,7 @@ void main() {
     expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
     expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
     expect(locationField.decoration?.hintStyle?.fontSize, 16);
+    expect(locationField.decoration?.hintStyle?.fontStyle, FontStyle.normal);
     expect(locationField.decoration?.hintStyle?.color, AppColors.darkGray);
 
     final enabledBorder =

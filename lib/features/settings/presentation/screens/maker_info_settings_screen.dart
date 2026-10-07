@@ -683,7 +683,7 @@ class _MakerInfoSettingsScreenState
                     'Maker Info Setting',
                     style: AppTextStyles.onboardingHeading.copyWith(
                       fontSize: 22,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

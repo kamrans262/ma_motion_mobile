@@ -288,6 +288,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: Text(
@@ -296,7 +297,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.onboardingHeading.copyWith(
                         fontSize: 22,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -304,16 +305,15 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     key: const Key('filter_clear_button'),
                     onTap: _clearAll,
                     overlayColor: AppButtonStyles.purpleInkOverlay,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 2,
-                        vertical: 8,
-                      ),
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 38),
+                      alignment: Alignment.bottomCenter,
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
                       child: Text(
                         'Clear Filters',
                         style: AppTextStyles.onboardingHelper.copyWith(
                           color: AppColors.darkGray,
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                       ),
                     ),

@@ -263,6 +263,24 @@ void main() {
   ) async {
     await tester.pumpWidget(app(initialStep: 3));
 
+    final paintingChip = find.byKey(const Key('maker_type_Painting'));
+    final paintingContainer = tester.widget<AnimatedContainer>(
+      find.descendant(
+        of: paintingChip,
+        matching: find.byType(AnimatedContainer),
+      ),
+    );
+    expect(
+      paintingContainer.padding,
+      const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+    );
+    expect(paintingContainer.constraints, isNull);
+    final paintingText = tester.widget<Text>(
+      find.descendant(of: paintingChip, matching: find.text('Painting')),
+    );
+    expect(paintingText.style?.fontSize, 14);
+    expect(paintingText.style?.height, 1.1);
+
     await tester.tap(find.byKey(const Key('maker_next_button')));
     await tester.pump();
 

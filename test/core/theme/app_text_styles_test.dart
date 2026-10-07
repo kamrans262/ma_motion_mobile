@@ -36,6 +36,7 @@ void main() {
     expect(AppTextStyles.fieldHint.fontFamily, AppTextStyles.displayFontFamily);
     expect(AppTextStyles.fieldHint.height, 1.0);
     expect(AppTextStyles.fieldHint.letterSpacing, 0.2);
+    expect(AppTextStyles.fieldHint.fontStyle, FontStyle.normal);
     expect(AppTextStyles.buttonDark.fontFamily, AppTextStyles.displayFontFamily);
     expect(AppTextStyles.buttonDark.height, 1.0);
     expect(

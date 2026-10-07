@@ -33,8 +33,7 @@ class MaChoiceChip extends StatelessWidget {
         overlayColor: AppButtonStyles.purpleInkOverlay,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          constraints: const BoxConstraints(minHeight: 34),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.primary
@@ -44,8 +43,15 @@ class MaChoiceChip extends StatelessWidget {
           child: MaCenteredTaxonomyLabel(
             label: label,
             style: selected
-                ? AppTextStyles.chipSelected.copyWith(color: selectedTextColor)
-                : AppTextStyles.chip,
+                ? AppTextStyles.chipSelected.copyWith(
+                    color: selectedTextColor,
+                    fontSize: 14,
+                    height: 1.1,
+                  )
+                : AppTextStyles.chip.copyWith(
+                    fontSize: 14,
+                    height: 1.1,
+                  ),
           ),
         ),
       ),

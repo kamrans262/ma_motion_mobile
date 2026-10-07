@@ -44,7 +44,7 @@ abstract final class AppTextStyles {
     letterSpacing: bodyTracking,
     height: 1.0,
     fontWeight: FontWeight.w500,
-    fontStyle: FontStyle.italic,
+    fontStyle: FontStyle.normal,
     color: AppColors.mutedText,
   );
 
