@@ -87,6 +87,13 @@ CustomTransitionPage<void> _premiumPage({
   );
 }
 
+NoTransitionPage<void> _stationarySavedPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return NoTransitionPage<void>(key: state.pageKey, child: child);
+}
+
 GoRouter createAppRouter({
   required bool splashAutoPlay,
   required Duration splashDuration,
@@ -207,7 +214,7 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/appreciator/saved-artworks',
-        pageBuilder: (context, state) => _premiumPage(
+        pageBuilder: (context, state) => _stationarySavedPage(
           state: state,
           child: Builder(
             builder: (savedContext) => MakerSavedArtworksScreen(
@@ -290,7 +297,7 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/maker/saved-artworks',
-        pageBuilder: (context, state) => _premiumPage(
+        pageBuilder: (context, state) => _stationarySavedPage(
           state: state,
           child: Builder(
             builder: (savedContext) => MakerSavedArtworksScreen(
