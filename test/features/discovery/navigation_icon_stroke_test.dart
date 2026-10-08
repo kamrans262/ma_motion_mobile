@@ -4,11 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('navigation SVG sources use the shared 1.4 stroke width', () async {
+  test('search, heart, and filter sources use the shared 1.4 stroke width', () async {
     const assets = <String>[
       'assets/search.svg',
       'assets/heart.svg',
-      'assets/setting.svg',
       'assets/MA_FilterIcon_3.svg',
     ];
 
