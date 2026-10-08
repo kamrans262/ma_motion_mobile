@@ -45,15 +45,15 @@ void main() {
         of: find.byKey(const Key('discovery_filter_svg')),
         matching: find.byType(CustomPaint),
       ),
-      findsOneWidget,
+      findsNothing,
     );
-    expect(
+    final filterSvg = tester.widget<MaSvgAsset>(
       find.descendant(
         of: find.byKey(const Key('discovery_filter_svg')),
         matching: find.byType(MaSvgAsset),
       ),
-      findsNothing,
     );
+    expect(filterSvg.assetName, 'assets/MA_FilterIcon_3.svg');
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
       const Size(24, 24),

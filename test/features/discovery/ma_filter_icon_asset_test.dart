@@ -11,7 +11,7 @@ void main() {
             child: SizedBox(
               width: 20,
               height: 20,
-              child: SvgPicture.asset('assets/MA_FilterIcon_2.svg'),
+              child: SvgPicture.asset('assets/MA_FilterIcon_3.svg'),
             ),
           ),
         ),
