@@ -320,6 +320,7 @@ class _MakerArtworkDiscoveryScreenState
                                     assetName: 'assets/MA_FilterIcon_3.svg',
                                     tooltip: 'Filter artwork',
                                     size: 20,
+                                    fit: BoxFit.cover,
                                     barHeight: metrics.toolbarHeight,
                                     alignment: Alignment.center,
                                     onPressed: widget.onFilterTap ?? () {},
@@ -415,6 +416,7 @@ class _ToolbarSvgButton extends StatelessWidget {
     this.fallbackAssetName,
     required this.tooltip,
     required this.size,
+    this.fit = BoxFit.contain,
     required this.barHeight,
     required this.alignment,
     required this.onPressed,
@@ -427,6 +429,7 @@ class _ToolbarSvgButton extends StatelessWidget {
   final String? fallbackAssetName;
   final String tooltip;
   final double size;
+  final BoxFit fit;
   final double barHeight;
   final Alignment alignment;
   final VoidCallback onPressed;
@@ -468,7 +471,7 @@ class _ToolbarSvgButton extends StatelessWidget {
                         child: MaSvgAsset(
                           assetName: assetName,
                           fallbackAssetName: fallbackAssetName,
-                          fit: BoxFit.contain,
+                          fit: fit,
                           color: AppColors.primary,
                         ),
                       )

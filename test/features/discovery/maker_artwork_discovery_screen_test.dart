@@ -54,6 +54,7 @@ void main() {
       ),
     );
     expect(filterSvg.assetName, 'assets/MA_FilterIcon_3.svg');
+    expect(filterSvg.fit, BoxFit.cover);
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
       const Size(24, 24),
