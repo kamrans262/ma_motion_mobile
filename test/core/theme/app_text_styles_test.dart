@@ -19,7 +19,7 @@ void main() {
     expect(AppTextStyles.fontFamily, AppTextStyles.displayFontFamily);
 
     expect(AppTextStyles.onboardingHeading.height, 1.22);
-    expect(AppTextStyles.onboardingHeading.letterSpacing, -0.8);
+    expect(AppTextStyles.onboardingHeading.letterSpacing, -0.5);
     expect(AppTextStyles.onboardingHeading.fontSize, 34);
     expect(
       AppTextStyles.onboardingHeading.fontFamily,
