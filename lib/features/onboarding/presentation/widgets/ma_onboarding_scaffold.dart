@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_dotted_background.dart';
 import 'ma_onboarding_button.dart';
+import 'ma_onboarding_journey_shell.dart';
 import 'ma_step_dots.dart';
 
 class MaOnboardingScaffold extends StatelessWidget {
@@ -48,6 +49,7 @@ class MaOnboardingScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final embedded = MaOnboardingJourneyScope.isActive(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -59,11 +61,12 @@ class MaOnboardingScaffold extends StatelessWidget {
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: AppColors.splashBackground,
+        backgroundColor:
+            embedded ? Colors.transparent : AppColors.splashBackground,
         body: Stack(
           fit: StackFit.expand,
           children: [
-            const MaDottedBackground(),
+            if (!embedded) const MaDottedBackground(),
             SafeArea(
               bottom: false,
               child: LayoutBuilder(

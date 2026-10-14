@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/presentation/widgets/ma_onboarding_button.dart';
+import '../../../onboarding/presentation/widgets/ma_onboarding_journey_shell.dart';
 
 /// The existing onboarding geometry, without changing the shared onboarding
 /// scaffold or adding progress dots to Login and OTP.
@@ -52,6 +53,7 @@ class MaEmailAuthLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final embedded = MaOnboardingJourneyScope.isActive(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -64,11 +66,12 @@ class MaEmailAuthLayout extends StatelessWidget {
       child: Scaffold(
         key: screenKey,
         resizeToAvoidBottomInset: false,
-        backgroundColor: AppColors.splashBackground,
+        backgroundColor:
+            embedded ? Colors.transparent : AppColors.splashBackground,
         body: Stack(
           fit: StackFit.expand,
           children: [
-            background,
+            if (!embedded) background,
             SafeArea(
               bottom: false,
               child: LayoutBuilder(

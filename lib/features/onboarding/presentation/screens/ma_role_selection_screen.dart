@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../widgets/ma_onboarding_journey_shell.dart';
 import '../widgets/ma_role_selection_wandering_dots.dart';
 
 class MaRoleSelectionScreen extends StatefulWidget {
@@ -43,6 +44,8 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final embedded = MaOnboardingJourneyScope.isActive(context);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -53,11 +56,13 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
       ),
       child: Scaffold(
         key: const Key('role_selection_screen'),
-        backgroundColor: AppColors.splashBackground,
+        backgroundColor:
+            embedded ? Colors.transparent : AppColors.splashBackground,
         body: Stack(
           fit: StackFit.expand,
           children: [
-            MaRoleSelectionWanderingDots(progress: _wanderingController),
+            if (!embedded)
+              MaRoleSelectionWanderingDots(progress: _wanderingController),
             SafeArea(
               child: Stack(
                 fit: StackFit.expand,

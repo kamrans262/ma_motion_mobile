@@ -13,6 +13,7 @@ import '../../features/discovery/presentation/screens/maker_artwork_discovery_sc
 import '../../features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+import '../../features/onboarding/presentation/widgets/ma_onboarding_journey_shell.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
 import '../../features/settings/presentation/widgets/appreciator_settings_modal.dart';
@@ -129,65 +130,76 @@ GoRouter createAppRouter({
   return GoRouter(
     initialLocation: '/splash',
     routes: [
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => MaSplashSequenceScreen(
-          autoPlay: splashAutoPlay,
-          duration: splashDuration,
-          onResolved: (destination) {
-            if (context.mounted) {
-              goForMakerEntry(context, destination);
-            }
-          },
+      ShellRoute(
+        builder: (context, state, child) => MaOnboardingJourneyShell(
+          location: state.uri.path,
+          child: child,
         ),
-      ),
-      GoRoute(
-        path: '/login',
-        pageBuilder: (context, state) => _premiumPage(
-          state: state,
-          child: MaEmailLoginScreen(
-            onCreateAccount: () => context.go('/join'),
-            onAuthenticated: (destination) {
-              goForMakerEntry(context, destination);
-            },
+        routes: [
+          GoRoute(
+            path: '/splash',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: MaSplashSequenceScreen(
+                autoPlay: splashAutoPlay,
+                duration: splashDuration,
+                onResolved: (destination) {
+                  if (context.mounted) {
+                    goForMakerEntry(context, destination);
+                  }
+                },
+              ),
+            ),
           ),
-        ),
-      ),
-      GoRoute(
-        path: '/join',
-        pageBuilder: (context, state) => _premiumPage(
-          state: state,
-          child: MaRoleSelectionScreen(
-            onMaker: () => context.go('/maker-registration'),
-            onAppreciator: () => context.go('/appreciator-registration'),
-            onBack: () => context.go('/login'),
+          GoRoute(
+            path: '/login',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: MaEmailLoginScreen(
+                onCreateAccount: () => context.go('/join'),
+                onAuthenticated: (destination) {
+                  goForMakerEntry(context, destination);
+                },
+              ),
+            ),
           ),
-        ),
-      ),
-      GoRoute(
-        path: '/maker-registration',
-        pageBuilder: (context, state) => _premiumPage(
-          state: state,
-          child: MakerRegistrationFlowScreen(
-            prefillFromAccount: true,
-            onExit: () => context.go('/join'),
-            onCompleted: () => context.go('/maker/discovery'),
+          GoRoute(
+            path: '/join',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: MaRoleSelectionScreen(
+                onMaker: () => context.go('/maker-registration'),
+                onAppreciator: () => context.go('/appreciator-registration'),
+                onBack: () => context.go('/login'),
+              ),
+            ),
           ),
-        ),
-      ),
-      GoRoute(
-        path: '/appreciator-registration',
-        pageBuilder: (context, state) => _premiumPage(
-          state: state,
-          child: AppreciatorRegistrationFlowScreen(
-            prefillFromAccount: true,
-            onExit: () => context.go('/join'),
-            onCompleted: () => context.go('/appreciator/discovery'),
-            onSwitchToMaker: (destination) {
-              goForMakerEntry(context, destination);
-            },
+          GoRoute(
+            path: '/maker-registration',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: MakerRegistrationFlowScreen(
+                prefillFromAccount: true,
+                onExit: () => context.go('/join'),
+                onCompleted: () => context.go('/maker/discovery'),
+              ),
+            ),
           ),
-        ),
+          GoRoute(
+            path: '/appreciator-registration',
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              key: state.pageKey,
+              child: AppreciatorRegistrationFlowScreen(
+                prefillFromAccount: true,
+                onExit: () => context.go('/join'),
+                onCompleted: () => context.go('/appreciator/discovery'),
+                onSwitchToMaker: (destination) {
+                  goForMakerEntry(context, destination);
+                },
+              ),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: '/appreciator/discovery',
