@@ -592,7 +592,7 @@ class _MakerRegistrationFlowScreenState
     switch (_step) {
       case 0:
         return MaOnboardingScaffold(
-          heading: "What's Your Name or Studio Name?",
+          heading: "What's your name or studio name?",
           subtitle: "This is how you'll appear to others",
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,
@@ -615,7 +615,7 @@ class _MakerRegistrationFlowScreenState
 
       case 1:
         return MaOnboardingScaffold(
-          heading: 'Where Are You Based?',
+          heading: 'Where are you based?',
           subtitle: 'Help others discover local artists',
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,
@@ -637,7 +637,7 @@ class _MakerRegistrationFlowScreenState
 
       case 2:
         return MaOnboardingScaffold(
-          heading: 'Tell Us About Your Work',
+          heading: 'Tell us about your work',
           subtitle: 'A few sentences about your practice (optional)',
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,
@@ -673,7 +673,7 @@ class _MakerRegistrationFlowScreenState
 
       case 4:
         return MaOnboardingScaffold(
-          heading: 'Your Website',
+          heading: 'Your website',
           subtitle: 'Share your personal or studio site (Optional)',
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,
@@ -697,7 +697,7 @@ class _MakerRegistrationFlowScreenState
 
       case 5:
         return MaOnboardingScaffold(
-          heading: 'Email Address',
+          heading: 'Email address',
           subtitle: 'For Notifications and updates',
           currentStep: _step,
           totalSteps: MakerRegistrationFlowScreen.totalSteps,
@@ -729,7 +729,7 @@ class _MakerRegistrationFlowScreenState
         );
 
         return MaOnboardingScaffold(
-          heading: 'Upload Your Salon Image',
+          heading: 'Upload your salon image.',
           subtitle:
               'This will be the primary image representing you and your work. '
               'You can always change it later.',
@@ -794,7 +794,7 @@ class _TypeStyleStep extends ConsumerWidget {
     final controller = ref.read(makerRegistrationProvider.notifier);
 
     return MaOnboardingScaffold(
-      heading: 'What Kind of Work Do\nYou Make?',
+      heading: 'What kind of work do\nyou make?',
       subtitle: 'Select all that apply',
       currentStep: currentStep,
       totalSteps: MakerRegistrationFlowScreen.totalSteps,

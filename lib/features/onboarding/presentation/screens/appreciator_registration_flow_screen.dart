@@ -469,7 +469,7 @@ class _AppreciatorRegistrationFlowScreenState
     switch (_step) {
       case 0:
         return MaOnboardingScaffold(
-          heading: "What's Your Name?",
+          heading: "What's your name?",
           subtitle: "This is how you'll appear to others",
           currentStep: _step,
           totalSteps: AppreciatorRegistrationFlowScreen.totalSteps,
@@ -492,7 +492,7 @@ class _AppreciatorRegistrationFlowScreenState
 
       case 1:
         return MaOnboardingScaffold(
-          heading: 'Where Are You Based?',
+          heading: 'Where are you based?',
           subtitle: 'Help others discover local artists',
           currentStep: _step,
           totalSteps: AppreciatorRegistrationFlowScreen.totalSteps,
@@ -516,7 +516,7 @@ class _AppreciatorRegistrationFlowScreenState
 
       case 2:
         return MaOnboardingScaffold(
-          heading: 'Email Address',
+          heading: 'Email address',
           subtitle: 'For Notifications and updates',
           currentStep: _step,
           totalSteps: AppreciatorRegistrationFlowScreen.totalSteps,

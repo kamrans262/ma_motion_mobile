@@ -109,7 +109,7 @@ void main() {
     await tester.tap(find.byKey(const Key('maker_next_button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Email Address'), findsOneWidget);
+    expect(find.text('Email address'), findsOneWidget);
     expect(find.byKey(const Key('appreciator_email_field')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

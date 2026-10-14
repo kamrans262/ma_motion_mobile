@@ -245,7 +245,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('Please enter a valid website address.'), findsOneWidget);
-    expect(find.text('Email Address'), findsNothing);
+    expect(find.text('Email address'), findsNothing);
 
     await tester.enterText(
       find.byKey(const Key('maker_website_field')),
@@ -254,7 +254,7 @@ void main() {
     await tester.tap(find.byKey(const Key('maker_next_button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Email Address'), findsOneWidget);
+    expect(find.text('Email address'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -480,7 +480,7 @@ void main() {
 
     await tester.pumpWidget(app(initialStep: 5));
 
-    expect(find.text('Email Address'), findsOneWidget);
+    expect(find.text('Email address'), findsOneWidget);
     expect(find.byKey(const Key('maker_email_field')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -574,7 +574,7 @@ void main() {
   testWidgets('salon image step renders upload control', (tester) async {
     await tester.pumpWidget(app(initialStep: 6));
 
-    expect(find.text('Upload your salon image'), findsOneWidget);
+    expect(find.text('Upload your salon image.'), findsOneWidget);
     expect(find.byKey(const Key('maker_salon_image_picker')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

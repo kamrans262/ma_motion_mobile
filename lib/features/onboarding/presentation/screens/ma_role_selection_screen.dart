@@ -79,7 +79,7 @@ class _MaRoleSelectionScreenState extends State<MaRoleSelectionScreen>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Would You Like to\nJoin as a Maker or\nAppreciator?',
+                                'Would you like to\njoin as a Maker or\nAppreciator?',
                                 textAlign: TextAlign.center,
                                 style: AppTextStyles.onboardingHeading,
                               ),
