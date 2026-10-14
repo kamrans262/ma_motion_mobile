@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/appreciator_settings_repository.dart';
@@ -68,6 +69,10 @@ void main() {
     );
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
     expect(find.text('Settings'), findsOneWidget);
+    final settingsTitle = tester.widget<Text>(find.text('Settings'));
+    expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(settingsTitle.style?.fontSize, 24);
+    expect(settingsTitle.style?.fontWeight, FontWeight.w500);
     final terms = find.byKey(const Key('appreciator_settings_terms_text'));
     final privacy = find.byKey(const Key('appreciator_settings_privacy_text'));
     final deleteAccount = find.byKey(

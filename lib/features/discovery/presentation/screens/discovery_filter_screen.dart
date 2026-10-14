@@ -295,9 +295,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       'Filter',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.onboardingHeading.copyWith(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
+                      style: const TextStyle(
+                        fontFamily: AppTextStyles.bodyFontFamily,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
@@ -311,9 +313,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       child: Text(
                         'Clear Filters',
-                        style: AppTextStyles.onboardingHelper.copyWith(
-                          color: AppColors.darkGray,
-                          fontSize: 16,
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.white.withValues(alpha: 0.50),
                         ),
                       ),
                     ),

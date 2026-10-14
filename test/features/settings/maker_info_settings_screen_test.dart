@@ -114,8 +114,9 @@ void main() {
     await tester.pump();
     expect(find.text('Maker Info Setting'), findsOneWidget);
     final settingsTitle = tester.widget<Text>(find.text('Maker Info Setting'));
-    expect(settingsTitle.style?.fontSize, 22);
-    expect(settingsTitle.style?.fontWeight, FontWeight.w600);
+    expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(settingsTitle.style?.fontSize, 24);
+    expect(settingsTitle.style?.fontWeight, FontWeight.w500);
     expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
     expect(find.text('Logout'), findsNothing);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);

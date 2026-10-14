@@ -132,12 +132,17 @@ void main() {
     expect(find.text('Filter'), findsOneWidget);
 
     final title = tester.widget<Text>(find.text('Filter'));
-    expect(title.style?.fontFamily, 'HelveticaNeueLTStd');
-    expect(title.style?.fontWeight, FontWeight.w600);
-    expect(title.style?.fontSize, 22);
+    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(title.style?.fontWeight, FontWeight.w500);
+    expect(title.style?.fontSize, 24);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));
-    expect(clearText.style?.fontSize, 16);
-    expect(clearText.style?.fontWeight, FontWeight.w500);
+    expect(clearText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(clearText.style?.fontSize, 12);
+    expect(clearText.style?.fontWeight, FontWeight.w400);
+    expect(
+      clearText.style?.color,
+      AppColors.white.withValues(alpha: 0.50),
+    );
     expect(
       tester.getBottomRight(find.text('Clear Filters')).dy,
       closeTo(tester.getBottomRight(find.text('Filter')).dy, 0.1),
