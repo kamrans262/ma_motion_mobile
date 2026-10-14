@@ -139,6 +139,12 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
       heading: 'Welcome to the space between.',
       headingKey: const Key('email_login_heading'),
       subtitle: 'Enter your email address to continue',
+      subtitleKey: const Key('email_login_subtitle'),
+      subtitleStyle: AppTextStyles.onboardingHelper.copyWith(
+        fontFamily: AppTextStyles.bodyFontFamily,
+        letterSpacing: 0,
+        color: AppColors.white.withValues(alpha: 0.60),
+      ),
       primaryKey: const Key('email_login_button'),
       primaryLabel: _isSending ? 'Sending...' : 'Login',
       onPrimary: _isSending ? null : _login,

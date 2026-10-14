@@ -24,6 +24,8 @@ class MaEmailAuthLayout extends StatelessWidget {
     required this.primaryKey,
     required this.secondaryKey,
     this.headingKey,
+    this.subtitleKey,
+    this.subtitleStyle,
     this.belowSecondary,
     this.secondaryFilled = false,
     this.secondarySubdued = true,
@@ -41,6 +43,8 @@ class MaEmailAuthLayout extends StatelessWidget {
   final Key primaryKey;
   final Key secondaryKey;
   final Key? headingKey;
+  final Key? subtitleKey;
+  final TextStyle? subtitleStyle;
   final Widget? belowSecondary;
   final bool secondaryFilled;
   final bool secondarySubdued;
@@ -109,7 +113,10 @@ class MaEmailAuthLayout extends StatelessWidget {
                               const SizedBox(height: 6),
                               Text(
                                 subtitle,
-                                style: AppTextStyles.onboardingHelper,
+                                key: subtitleKey,
+                                style:
+                                    subtitleStyle ??
+                                    AppTextStyles.onboardingHelper,
                               ),
                               const SizedBox(height: 20),
                               content,

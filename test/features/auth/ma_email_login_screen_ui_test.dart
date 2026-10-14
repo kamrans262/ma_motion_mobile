@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/features/auth/presentation/screens/ma_email_login_screen.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 
@@ -38,8 +39,21 @@ void main() {
     expect(heading.style?.fontFamily, 'HelveticaNeueLTStd');
     expect(heading.style?.fontSize, 34);
     expect(heading.style?.fontWeight, FontWeight.w500);
-    expect(heading.style?.letterSpacing, -0.8);
+    expect(heading.style?.letterSpacing, -0.5);
     expect(heading.style?.height, 1.22);
+
+    final subtitle = tester.widget<Text>(
+      find.byKey(const Key('email_login_subtitle')),
+    );
+    expect(subtitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(subtitle.style?.fontSize, 14);
+    expect(subtitle.style?.fontWeight, FontWeight.w500);
+    expect(subtitle.style?.letterSpacing, 0);
+    expect(subtitle.style?.height, 1.4);
+    expect(
+      subtitle.style?.color,
+      AppColors.white.withValues(alpha: 0.60),
+    );
 
     final email = tester.widget<TextField>(
       find.descendant(
@@ -48,6 +62,14 @@ void main() {
       ),
     );
     expect(email.decoration?.hintText, 'you@email.com');
+    expect(email.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(email.decoration?.hintStyle?.fontSize, 16);
+    expect(email.decoration?.hintStyle?.fontWeight, FontWeight.w500);
+    expect(email.decoration?.hintStyle?.letterSpacing, 0);
+    expect(
+      email.decoration?.hintStyle?.color,
+      AppColors.white.withValues(alpha: 0.40),
+    );
     expect(
       email.decoration?.contentPadding,
       const EdgeInsets.fromLTRB(20, 21, 20, 7),
