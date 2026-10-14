@@ -320,7 +320,7 @@ class _MakerArtworkDiscoveryScreenState
                                     iconKey: const Key('discovery_filter_svg'),
                                     assetName: 'assets/MA_FilterIcon_3.svg',
                                     tooltip: 'Filter artwork',
-                                    size: 20,
+                                    size: 24,
                                     useFilterPainter: true,
                                     barHeight: metrics.toolbarHeight,
                                     alignment: Alignment.center,

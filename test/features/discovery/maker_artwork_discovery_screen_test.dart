@@ -38,7 +38,7 @@ void main() {
     );
     expect(
       tester.getSize(find.byKey(const Key('discovery_filter_svg'))),
-      const Size(20, 20),
+      const Size(24, 24),
     );
     expect(
       find.descendant(
@@ -108,11 +108,10 @@ void main() {
     expect(topIcon.height, bottomIcon.height);
     expect(
       tester.getRect(find.byKey(const Key('discovery_filter_svg'))).height,
-      20,
+      24,
     );
 
-    // Keep the original search-icon positioning while sizing only the
-    // filter icon to 20px. The filter must remain vertically aligned.
+    // Search and filter use the same 24px footprint and stay vertically aligned.
     final topBar = tester.getRect(
       find.byKey(const Key('discovery_top_bar_visibility')),
     );
