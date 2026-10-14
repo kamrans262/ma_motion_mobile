@@ -73,10 +73,11 @@ void main() {
       expect(description.style?.fontFamily, 'Instrument Sans');
       expect(description.style?.fontSize, 14);
       expect(description.style?.fontWeight, FontWeight.w400);
+      expect(description.style?.fontStyle, FontStyle.italic);
       expect(description.style?.height, 1.625);
       expect(
         description.style?.color,
-        AppColors.white.withValues(alpha: 0.40),
+        AppColors.white.withValues(alpha: 0.70),
       );
 
       final dotsFinder = find.byKey(const Key('artwork_viewer_dots'));
@@ -106,11 +107,11 @@ void main() {
       expect(frameRect.right, 410);
       expect(frameRect.bottom, 912);
       final dotsRect = tester.getRect(dotsFinder);
-      expect(frameRect.bottom - dotsRect.bottom, 20);
+      expect(frameRect.bottom - dotsRect.bottom, 0);
       final descriptionRect = tester.getRect(
         find.byKey(const Key('artwork_viewer_description')),
       );
-      expect(dotsRect.top - descriptionRect.bottom, closeTo(40, 0.1));
+      expect(dotsRect.top - descriptionRect.bottom, closeTo(26, 0.1));
       final firstDotRect = tester.getRect(activeDot);
       final secondDotRect = tester.getRect(inactiveDot);
       expect(secondDotRect.left - firstDotRect.right, closeTo(8, 0.1));
