@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_onboarding_text_field.dart';
 
 void main() {
@@ -22,6 +24,13 @@ void main() {
     final field = tester.widget<TextField>(fieldFinder);
     expect(field.textAlignVertical, TextAlignVertical.center);
     expect(field.decoration?.hintText, 'Your name');
+    expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(field.decoration?.hintStyle?.fontSize, 16);
+    expect(field.decoration?.hintStyle?.letterSpacing, 0);
+    expect(
+      field.decoration?.hintStyle?.color,
+      AppColors.white.withValues(alpha: 0.40),
+    );
     expect(
       field.decoration?.contentPadding,
       const EdgeInsets.fromLTRB(20, 21, 20, 7),

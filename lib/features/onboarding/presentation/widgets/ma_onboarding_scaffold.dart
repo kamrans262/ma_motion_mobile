@@ -113,7 +113,11 @@ class MaOnboardingScaffold extends StatelessWidget {
                               Text(
                                 subtitle,
                                 key: const Key('maker_step_subtitle'),
-                                style: AppTextStyles.onboardingHelper,
+                                style: AppTextStyles.onboardingHelper.copyWith(
+                                  fontFamily: AppTextStyles.bodyFontFamily,
+                                  letterSpacing: 0,
+                                  color: AppColors.white.withValues(alpha: 0.60),
+                                ),
                               ),
                               SizedBox(height: childGap),
                               child,

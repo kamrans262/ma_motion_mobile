@@ -61,7 +61,12 @@ class MaOnboardingTextField extends StatelessWidget {
             filled: true,
             fillColor: AppColors.inputFill,
             hintText: hintText,
-            hintStyle: AppTextStyles.fieldHint,
+            hintStyle: AppTextStyles.fieldHint.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
+              fontSize: 16,
+              letterSpacing: 0,
+              color: AppColors.white.withValues(alpha: 0.40),
+            ),
             counterText: '',
             // Keep total single-line vertical padding unchanged while
             // shifting the text slightly lower for optical centering.
