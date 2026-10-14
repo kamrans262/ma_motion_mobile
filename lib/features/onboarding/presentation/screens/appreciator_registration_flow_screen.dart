@@ -479,7 +479,7 @@ class _AppreciatorRegistrationFlowScreenState
           child: MaOnboardingTextField(
             key: const Key('appreciator_name_field'),
             controller: _nameController,
-            hintText: 'Your Name',
+            hintText: 'Your name',
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.name],
             errorText: _fieldErrors['name'],
@@ -502,7 +502,7 @@ class _AppreciatorRegistrationFlowScreenState
           child: MaOnboardingTextField(
             key: const Key('appreciator_location_field'),
             controller: _locationController,
-            hintText: 'City/ZIP Code',
+            hintText: 'City or Zip Code',
             textInputAction: TextInputAction.next,
             errorText: _fieldErrors['location'],
             onChanged: (value) {
@@ -531,7 +531,7 @@ class _AppreciatorRegistrationFlowScreenState
               MaOnboardingTextField(
                 key: const Key('appreciator_email_field'),
                 controller: _emailController,
-                hintText: 'you@email.com',
+                hintText: 'your@email.com',
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.email],

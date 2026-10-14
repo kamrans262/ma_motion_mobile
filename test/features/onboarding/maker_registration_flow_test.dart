@@ -41,6 +41,15 @@ void main() {
 
     expect(find.text("What's your name or studio name?"), findsOneWidget);
     expect(find.byKey(const Key('maker_name_field')), findsOneWidget);
+    expect(
+      tester.widget<TextField>(
+        find.descendant(
+          of: find.byKey(const Key('maker_name_field')),
+          matching: find.byType(TextField),
+        ),
+      ).decoration?.hintText,
+      'Your name',
+    );
     final heading = tester.widget<Text>(
       find.byKey(const Key('maker_step_heading')),
     );
