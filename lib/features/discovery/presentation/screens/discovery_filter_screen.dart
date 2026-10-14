@@ -314,9 +314,9 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       child: Text(
                         'Clear Filters',
                         style: TextStyle(
-                          fontFamily: AppTextStyles.bodyFontFamily,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                           color: AppColors.white.withValues(alpha: 0.50),
                         ),
                       ),

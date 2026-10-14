@@ -136,9 +136,9 @@ void main() {
     expect(title.style?.fontWeight, FontWeight.w500);
     expect(title.style?.fontSize, 24);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));
-    expect(clearText.style?.fontFamily, AppTextStyles.bodyFontFamily);
-    expect(clearText.style?.fontSize, 12);
-    expect(clearText.style?.fontWeight, FontWeight.w400);
+    expect(clearText.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(clearText.style?.fontSize, 14);
+    expect(clearText.style?.fontWeight, FontWeight.w500);
     expect(
       clearText.style?.color,
       AppColors.white.withValues(alpha: 0.50),
