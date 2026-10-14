@@ -70,7 +70,7 @@ void main() {
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
     expect(find.text('Settings'), findsOneWidget);
     final settingsTitle = tester.widget<Text>(find.text('Settings'));
-    expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(settingsTitle.style?.fontFamily, AppTextStyles.fontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
     final terms = find.byKey(const Key('appreciator_settings_terms_text'));

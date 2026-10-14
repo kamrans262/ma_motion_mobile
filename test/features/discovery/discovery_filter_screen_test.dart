@@ -132,7 +132,7 @@ void main() {
     expect(find.text('Filter'), findsOneWidget);
 
     final title = tester.widget<Text>(find.text('Filter'));
-    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(title.style?.fontFamily, AppTextStyles.fontFamily);
     expect(title.style?.fontWeight, FontWeight.w500);
     expect(title.style?.fontSize, 24);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));

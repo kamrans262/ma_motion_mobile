@@ -296,7 +296,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontFamily: AppTextStyles.bodyFontFamily,
+                        fontFamily: AppTextStyles.fontFamily,
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
                         color: AppColors.primary,

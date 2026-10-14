@@ -682,7 +682,7 @@ class _MakerInfoSettingsScreenState
                   child: Text(
                     'Maker Info Setting',
                     style: const TextStyle(
-                      fontFamily: AppTextStyles.bodyFontFamily,
+                      fontFamily: AppTextStyles.fontFamily,
                       fontSize: 24,
                       fontWeight: FontWeight.w500,
                       color: AppColors.primary,
