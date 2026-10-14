@@ -244,7 +244,7 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 14,
+              bottom: 20,
               child: Center(
                 child: ArtworkViewerDots(
                   count: totalPageCount,
@@ -325,20 +325,19 @@ class _ArtworkMediaPage extends StatelessWidget {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 30,
+                bottom: 65,
                 child: Text(
                   description,
                   key: const Key('artwork_viewer_description'),
                   textAlign: TextAlign.center,
                   maxLines: constraints.maxHeight < 620 ? 2 : 3,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 14,
-                    height: 1.22,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.italic,
-                    color: AppColors.mutedText,
+                    height: 1.625,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.white.withValues(alpha: 0.40),
                   ),
                 ),
               ),

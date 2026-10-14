@@ -72,9 +72,12 @@ void main() {
       );
       expect(description.style?.fontFamily, 'Instrument Sans');
       expect(description.style?.fontSize, 14);
-      expect(description.style?.fontWeight, FontWeight.w500);
-      expect(description.style?.fontStyle, FontStyle.italic);
-      expect(description.style?.color, AppColors.mutedText);
+      expect(description.style?.fontWeight, FontWeight.w400);
+      expect(description.style?.height, 1.625);
+      expect(
+        description.style?.color,
+        AppColors.white.withValues(alpha: 0.40),
+      );
 
       final dotsFinder = find.byKey(const Key('artwork_viewer_dots'));
       expect(dotsFinder, findsOneWidget);
@@ -92,7 +95,7 @@ void main() {
         (tester.widget<AnimatedContainer>(inactiveDot).decoration!
                 as BoxDecoration)
             .color,
-        AppColors.darkGray,
+        AppColors.white.withValues(alpha: 0.30),
       );
 
       final frameRect = tester.getRect(
@@ -103,7 +106,14 @@ void main() {
       expect(frameRect.right, 410);
       expect(frameRect.bottom, 912);
       final dotsRect = tester.getRect(dotsFinder);
-      expect(frameRect.bottom - dotsRect.bottom, 14);
+      expect(frameRect.bottom - dotsRect.bottom, 20);
+      final descriptionRect = tester.getRect(
+        find.byKey(const Key('artwork_viewer_description')),
+      );
+      expect(dotsRect.top - descriptionRect.bottom, closeTo(40, 0.1));
+      final firstDotRect = tester.getRect(activeDot);
+      final secondDotRect = tester.getRect(inactiveDot);
+      expect(secondDotRect.left - firstDotRect.right, closeTo(8, 0.1));
 
       final mediaRect = tester.getRect(
         find.byKey(const Key('artwork_viewer_media_box')),

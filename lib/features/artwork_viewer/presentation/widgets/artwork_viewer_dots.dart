@@ -27,9 +27,11 @@ class ArtworkViewerDots extends StatelessWidget {
             duration: const Duration(milliseconds: 160),
             width: 5,
             height: 5,
-            margin: const EdgeInsets.symmetric(horizontal: 3),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              color: active ? AppColors.white : AppColors.darkGray,
+              color: active
+                  ? AppColors.white
+                  : AppColors.white.withValues(alpha: 0.30),
               shape: BoxShape.circle,
             ),
           );
