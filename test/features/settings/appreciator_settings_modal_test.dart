@@ -44,10 +44,34 @@ void main() {
     ]) {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       expect(field.decoration?.fillColor, AppColors.filterInputFill);
+      expect(field.style?.fontFamily, AppTextStyles.fontFamily);
+      expect(field.style?.fontSize, 16);
+      expect(field.style?.fontWeight, FontWeight.w500);
+      expect(field.style?.height, 1);
+      expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
+      expect(field.style?.color, AppColors.white);
+      expect(field.textAlignVertical, TextAlignVertical.center);
       expect(
         field.decoration?.contentPadding,
-        const EdgeInsets.fromLTRB(12, 16, 12, 8),
+        const EdgeInsets.fromLTRB(16, 12.5, 16, 15.5),
       );
+      expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+      expect(field.decoration?.hintStyle?.fontSize, 16);
+      expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
+      expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);
+      expect(field.decoration?.hintStyle?.height, 1);
+      expect(
+        field.decoration?.hintStyle?.letterSpacing,
+        AppTextStyles.bodyTracking,
+      );
+      expect(field.decoration?.hintStyle?.color, AppColors.darkGray);
+      final enabledBorder =
+          field.decoration?.enabledBorder as OutlineInputBorder?;
+      final focusedBorder =
+          field.decoration?.focusedBorder as OutlineInputBorder?;
+      expect(enabledBorder?.borderSide.color, AppColors.primary50);
+      expect(focusedBorder?.borderSide.color, AppColors.primary);
+      expect(focusedBorder?.borderSide.width, 1.2);
     }
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('appreciator_settings_save_close')),
@@ -73,6 +97,8 @@ void main() {
     expect(settingsTitle.style?.fontFamily, AppTextStyles.fontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
+    expect(settingsTitle.style?.height, isNull);
+    expect(settingsTitle.style?.color, AppColors.primary);
     final terms = find.byKey(const Key('appreciator_settings_terms_text'));
     final privacy = find.byKey(const Key('appreciator_settings_privacy_text'));
     final deleteAccount = find.byKey(

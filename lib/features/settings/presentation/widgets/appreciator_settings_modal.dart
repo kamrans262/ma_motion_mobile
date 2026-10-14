@@ -390,7 +390,6 @@ class _AppreciatorSettingsModalState
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 24,
-                  height: 1.15,
                   fontWeight: FontWeight.w500,
                   color: AppColors.primary,
                 ),
@@ -622,13 +621,11 @@ class _SettingsField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 14,
+          style: AppTextStyles.onboardingHelper.copyWith(
             color: AppColors.primary,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 5),
         TextField(
           key: fieldKey,
           controller: controller,
@@ -636,26 +633,29 @@ class _SettingsField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           onChanged: onChanged,
-          style: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 14,
+          style: AppTextStyles.field.copyWith(
             color: AppColors.white,
+            fontSize: 16,
           ),
+          textAlignVertical: TextAlignVertical.center,
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
-            isDense: true,
             errorText: errorText,
             errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
+            hintStyle: AppTextStyles.fieldHint.copyWith(
+              color: AppColors.darkGray,
+              fontSize: 16,
+            ),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(12, 21, 12, 7),
+            contentPadding: const EdgeInsets.fromLTRB(16, 12.5, 16, 15.5),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),
             ),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(color: AppColors.primary),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.2),
             ),
             errorBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
