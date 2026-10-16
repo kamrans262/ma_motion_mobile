@@ -23,14 +23,19 @@ class MaLegalLink extends StatelessWidget {
   final TextStyle style;
 
   Future<void> _open(BuildContext context) async {
-    try {
-      final launched = await launchUrl(
-        Uri.parse(url),
-        mode: LaunchMode.externalApplication,
-      );
-      if (launched) return;
-    } catch (_) {
-      // A browser may not be available on the device.
+    final uri = Uri.parse(url);
+    // Prefer the device browser, then try the platform handler and a browser
+    // tab if the device cannot resolve the first request.
+    for (final mode in <LaunchMode>[
+      LaunchMode.externalApplication,
+      LaunchMode.platformDefault,
+      LaunchMode.inAppBrowserView,
+    ]) {
+      try {
+        if (await launchUrl(uri, mode: mode)) return;
+      } catch (error) {
+        debugPrint('MA legal link launch failed ($mode): $error');
+      }
     }
 
     if (context.mounted) {
