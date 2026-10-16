@@ -1300,7 +1300,7 @@ class _EventLocationAutocompleteFieldState
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: AppColors.filterInputFill,
-              border: Border.all(color: AppColors.primary50),
+              border: Border.all(color: AppColors.primary, width: 1.2),
               borderRadius: BorderRadius.zero,
             ),
             child: Column(
@@ -1325,7 +1325,7 @@ class _EventLocationAutocompleteFieldState
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
                   child: Text(
-                    'Powered by Google',
+                    'Google Maps',
                     style: _makerSettingsHintStyle().copyWith(fontSize: 12),
                     textAlign: TextAlign.right,
                   ),
