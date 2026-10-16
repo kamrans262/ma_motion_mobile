@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_legal_link.dart';
 import 'package:ma_motion_mobile/features/auth/presentation/screens/ma_email_login_screen.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_role_selection_wandering_dots.dart';
 
@@ -115,6 +116,20 @@ void main() {
     final privacy = tester.widget<Text>(
       find.byKey(const Key('email_login_privacy_text')),
     );
+    for (final (keyName, expectedUrl) in <(String, String)>[
+      ('email_login_terms_text', MaLegalUrls.terms),
+      ('email_login_privacy_text', MaLegalUrls.privacy),
+    ]) {
+      expect(
+        tester.widget<MaLegalLink>(
+          find.ancestor(
+            of: find.byKey(Key(keyName)),
+            matching: find.byType(MaLegalLink),
+          ),
+        ).url,
+        expectedUrl,
+      );
+    }
     expect(terms.style?.color, AppColors.primary);
     expect(privacy.style?.color, AppColors.primary);
     expect(terms.style?.decoration, TextDecoration.underline);

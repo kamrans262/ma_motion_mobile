@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_legal_link.dart';
 import '../../../onboarding/domain/onboarding_validators.dart';
 import '../../../onboarding/presentation/widgets/ma_onboarding_text_field.dart';
 import '../widgets/ma_email_auth_layout.dart';
@@ -172,9 +173,10 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
               spacing: 16,
               runSpacing: 6,
               children: [
-                Text(
-                  'Terms & Conditions',
-                  key: Key('email_login_terms_text'),
+                MaLegalLink(
+                  label: 'Terms & Conditions',
+                  url: MaLegalUrls.terms,
+                  textKey: Key('email_login_terms_text'),
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,
@@ -183,9 +185,10 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
                     decorationColor: AppColors.primary,
                   ),
                 ),
-                Text(
-                  'Privacy Policy',
-                  key: Key('email_login_privacy_text'),
+                MaLegalLink(
+                  label: 'Privacy Policy',
+                  url: MaLegalUrls.privacy,
+                  textKey: Key('email_login_privacy_text'),
                   style: TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 12,

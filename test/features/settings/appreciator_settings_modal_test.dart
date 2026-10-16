@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_legal_link.dart';
 import 'package:ma_motion_mobile/features/auth/data/experience_switch_repository.dart';
 import 'package:ma_motion_mobile/features/auth/domain/maker_entry_destination.dart';
 import 'package:ma_motion_mobile/features/settings/data/appreciator_settings_repository.dart';
@@ -104,6 +105,22 @@ void main() {
     final deleteAccount = find.byKey(
       const Key('appreciator_settings_delete_account'),
     );
+    expect(find.byKey(const Key('appreciator_settings_logout')), findsNothing);
+    expect(find.text('Logout'), findsNothing);
+    for (final (keyName, expectedUrl) in <(String, String)>[
+      ('appreciator_settings_terms_text', MaLegalUrls.terms),
+      ('appreciator_settings_privacy_text', MaLegalUrls.privacy),
+    ]) {
+      expect(
+        tester.widget<MaLegalLink>(
+          find.ancestor(
+            of: find.byKey(Key(keyName)),
+            matching: find.byType(MaLegalLink),
+          ),
+        ).url,
+        expectedUrl,
+      );
+    }
     expect(terms, findsOneWidget);
     expect(privacy, findsOneWidget);
     expect(deleteAccount, findsOneWidget);

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_legal_link.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
@@ -159,6 +160,20 @@ void main() {
       eventLocationField.decoration?.contentPadding,
       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
+    for (final (keyName, expectedUrl) in <(String, String)>[
+      ('maker_settings_terms_text', MaLegalUrls.terms),
+      ('maker_settings_privacy_text', MaLegalUrls.privacy),
+    ]) {
+      expect(
+        tester.widget<MaLegalLink>(
+          find.ancestor(
+            of: find.byKey(Key(keyName)),
+            matching: find.byType(MaLegalLink),
+          ),
+        ).url,
+        expectedUrl,
+      );
+    }
     expect(find.byKey(const Key('maker_settings_add_show')), findsOneWidget);
 
     final emailSwitch = find.byKey(

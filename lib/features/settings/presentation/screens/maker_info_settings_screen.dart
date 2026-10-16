@@ -10,6 +10,7 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_legal_link.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
 import '../../data/event_location_autocomplete_repository.dart';
 import '../../data/maker_info_settings_repository.dart';
@@ -901,9 +902,10 @@ class _MakerInfoSettingsScreenState
             ],
             const Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                'Terms & Conditions',
-                key: Key('maker_settings_terms_text'),
+              child: MaLegalLink(
+                label: 'Terms & Conditions',
+                url: MaLegalUrls.terms,
+                textKey: Key('maker_settings_terms_text'),
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
@@ -916,9 +918,10 @@ class _MakerInfoSettingsScreenState
             const SizedBox(height: 8),
             const Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                'Privacy Policy',
-                key: Key('maker_settings_privacy_text'),
+              child: MaLegalLink(
+                label: 'Privacy Policy',
+                url: MaLegalUrls.privacy,
+                textKey: Key('maker_settings_privacy_text'),
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
