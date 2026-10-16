@@ -148,14 +148,16 @@ void main() {
     );
     final showDescriptionField = tester.widget<TextField>(showDescription);
     _expectMakerSettingsInputStyle(showDescriptionField);
+    final eventLocationField = tester.widget<TextField>(
+      find.byKey(const Key('maker_settings_show_location_0')),
+    );
+    expect(eventLocationField.decoration?.fillColor, AppColors.filterInputFill);
+    // Extra line space prevents selected Google Place text from clipping;
+    // the symmetric inset preserves the existing field height.
+    expect(eventLocationField.style?.height, 1.25);
     expect(
-      tester
-          .widget<TextField>(
-            find.byKey(const Key('maker_settings_show_location_0')),
-          )
-          .decoration
-          ?.fillColor,
-      AppColors.filterInputFill,
+      eventLocationField.decoration?.contentPadding,
+      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
     expect(find.byKey(const Key('maker_settings_add_show')), findsOneWidget);
 

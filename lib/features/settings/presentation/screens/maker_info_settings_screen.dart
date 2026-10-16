@@ -1059,6 +1059,8 @@ class _LabeledField extends StatelessWidget {
     this.maxLines = 1,
     this.onChanged,
     this.bottomPadding = 12,
+    this.inputLineHeight,
+    this.inputContentPadding,
   });
 
   final String label;
@@ -1070,10 +1072,14 @@ class _LabeledField extends StatelessWidget {
   final int maxLines;
   final ValueChanged<String>? onChanged;
   final double bottomPadding;
+  final double? inputLineHeight;
+  final EdgeInsetsGeometry? inputContentPadding;
 
   @override
   Widget build(BuildContext context) {
-    final inputStyle = _makerSettingsInputStyle();
+    final inputStyle = inputLineHeight == null
+        ? _makerSettingsInputStyle()
+        : _makerSettingsInputStyle().copyWith(height: inputLineHeight);
     final hintStyle = _makerSettingsHintStyle();
 
     return Padding(
@@ -1105,9 +1111,11 @@ class _LabeledField extends StatelessWidget {
               hintStyle: hintStyle,
               filled: true,
               fillColor: AppColors.filterInputFill,
-              contentPadding: maxLines == 1
-                  ? _makerSettingsSingleLineInputPadding
-                  : _makerSettingsMultilineInputPadding,
+              contentPadding:
+                  inputContentPadding ??
+                  (maxLines == 1
+                      ? _makerSettingsSingleLineInputPadding
+                      : _makerSettingsMultilineInputPadding),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
                 borderSide: BorderSide(color: AppColors.primary50),
@@ -1291,6 +1299,11 @@ class _EventLocationAutocompleteFieldState
           controller: widget.controller,
           hintText: 'Event location',
           onChanged: _onChanged,
+          inputLineHeight: 1.25,
+          inputContentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
           bottomPadding: _suggestions.isEmpty ? 12 : 0,
         ),
         if (_suggestions.isNotEmpty)
