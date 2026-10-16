@@ -1140,6 +1140,7 @@ class _ShowEntryControllers {
 
 class _ShowEntryEditor extends StatelessWidget {
   const _ShowEntryEditor({
+    super.key,
     required this.index,
     required this.descriptionController,
     required this.locationController,
