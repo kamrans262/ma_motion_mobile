@@ -1300,7 +1300,6 @@ class _EventLocationAutocompleteFieldState
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: AppColors.filterInputFill,
-              border: Border.all(color: AppColors.primary, width: 1.2),
               borderRadius: BorderRadius.zero,
             ),
             child: Column(
