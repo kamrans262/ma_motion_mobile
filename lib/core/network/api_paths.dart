@@ -15,6 +15,8 @@ abstract final class ApiPaths {
   static const String makerExperienceOnboarding =
       '/me/experience/maker/onboarding';
   static const String makerProfile = '/me/maker-profile';
+  static const String eventLocationSuggestions =
+      '/me/shows/event-location-suggestions';
   static const String appreciatorProfile = '/me/appreciator-profile';
   static const String profile = '/me/profile';
   static const String profileImage = '/me/profile-image';

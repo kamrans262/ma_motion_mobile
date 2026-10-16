@@ -11,6 +11,7 @@ import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/presentation/widgets/ma_choice_chip.dart';
+import '../../data/event_location_autocomplete_repository.dart';
 import '../../data/maker_info_settings_repository.dart';
 import '../../domain/maker_info_settings_models.dart';
 import '../widgets/ma_settings_dialogs.dart';
@@ -809,6 +810,7 @@ class _MakerInfoSettingsScreenState
               const SizedBox(height: 8),
               for (var index = 0; index < _showEditors.length; index++) ...[
                 _ShowEntryEditor(
+                  key: ObjectKey(_showEditors[index]),
                   index: index,
                   descriptionController: _showEditors[index].description,
                   locationController: _showEditors[index].location,
@@ -1055,6 +1057,8 @@ class _LabeledField extends StatelessWidget {
     this.keyboardType,
     this.minLines = 1,
     this.maxLines = 1,
+    this.onChanged,
+    this.bottomPadding = 12,
   });
 
   final String label;
@@ -1064,6 +1068,8 @@ class _LabeledField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int minLines;
   final int maxLines;
+  final ValueChanged<String>? onChanged;
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -1071,7 +1077,7 @@ class _LabeledField extends StatelessWidget {
     final hintStyle = _makerSettingsHintStyle();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: bottomPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1088,6 +1094,7 @@ class _LabeledField extends StatelessWidget {
             key: Key(keyName),
             controller: controller,
             keyboardType: keyboardType,
+            onChanged: onChanged,
             minLines: minLines,
             maxLines: maxLines,
             style: inputStyle,
@@ -1189,12 +1196,142 @@ class _ShowEntryEditor extends StatelessWidget {
           minLines: 2,
           maxLines: 4,
         ),
+        _EventLocationAutocompleteField(
+          index: index,
+          controller: locationController,
+        ),
+      ],
+    );
+  }
+}
+
+/// Scoped to Maker Settings > Current & Upcoming Shows > Event Location.
+/// Selecting a place inserts editable text into the existing show location.
+class _EventLocationAutocompleteField extends ConsumerStatefulWidget {
+  const _EventLocationAutocompleteField({
+    required this.index,
+    required this.controller,
+  });
+
+  final int index;
+  final TextEditingController controller;
+
+  @override
+  ConsumerState<_EventLocationAutocompleteField> createState() =>
+      _EventLocationAutocompleteFieldState();
+}
+
+class _EventLocationAutocompleteFieldState
+    extends ConsumerState<_EventLocationAutocompleteField> {
+  Timer? _debounce;
+  int _requestVersion = 0;
+  List<String> _suggestions = const <String>[];
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _requestVersion++;
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    final requestVersion = ++_requestVersion;
+    if (_suggestions.isNotEmpty) {
+      setState(() => _suggestions = const <String>[]);
+    }
+
+    final query = value.trim();
+    if (query.length < 2 || query.length > 120) return;
+
+    _debounce = Timer(const Duration(milliseconds: 350), () {
+      unawaited(_loadSuggestions(query, requestVersion));
+    });
+  }
+
+  Future<void> _loadSuggestions(String query, int requestVersion) async {
+    try {
+      final suggestions = await ref
+          .read(eventLocationAutocompleteRepositoryProvider)
+          .search(query);
+      if (!mounted ||
+          requestVersion != _requestVersion ||
+          widget.controller.text.trim() != query) {
+        return;
+      }
+      setState(() => _suggestions = suggestions);
+    } catch (_) {
+      // Autocomplete errors must not block manual typing or saving.
+      if (mounted && requestVersion == _requestVersion) {
+        setState(() => _suggestions = const <String>[]);
+      }
+    }
+  }
+
+  void _selectSuggestion(String description) {
+    _debounce?.cancel();
+    _requestVersion++;
+    widget.controller.value = TextEditingValue(
+      text: description,
+      selection: TextSelection.collapsed(offset: description.length),
+    );
+    setState(() => _suggestions = const <String>[]);
+    FocusScope.of(context).unfocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         _LabeledField(
           label: 'Event Location',
-          keyName: 'maker_settings_show_location_$index',
-          controller: locationController,
+          keyName: 'maker_settings_show_location_' + widget.index.toString(),
+          controller: widget.controller,
           hintText: 'Event location',
+          onChanged: _onChanged,
+          bottomPadding: _suggestions.isEmpty ? 12 : 0,
         ),
+        if (_suggestions.isNotEmpty)
+          Container(
+            key: Key('maker_settings_show_location_suggestions_' +
+                widget.index.toString()),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: AppColors.filterInputFill,
+              border: Border.all(color: AppColors.primary50),
+              borderRadius: BorderRadius.zero,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0; index < _suggestions.length; index++)
+                  InkWell(
+                    key: Key('maker_settings_show_location_suggestion_' +
+                        widget.index.toString() + '_' + index.toString()),
+                    onTap: () => _selectSuggestion(_suggestions[index]),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        _suggestions[index],
+                        style: _makerSettingsInputStyle(),
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                  child: Text(
+                    'Powered by Google',
+                    style: _makerSettingsHintStyle().copyWith(fontSize: 12),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
