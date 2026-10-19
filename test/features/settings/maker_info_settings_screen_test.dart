@@ -104,9 +104,10 @@ void main() {
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
+      expect(chip.selected, isTrue);
       expect(
         tester.widget<Text>(find.text(choice.$2)).style?.color,
-        AppColors.white40,
+        AppColors.white,
       );
       expect(
         textCenter.dy,
@@ -135,7 +136,7 @@ void main() {
     expect(savedSpan.toPlainText(), 'Your Work Has Been Saved By 37 People');
     final countSpan = savedSpan.children![1] as TextSpan;
     expect(countSpan.text, '37');
-    expect(countSpan.style?.color, AppColors.white40);
+    expect(countSpan.style?.color, AppColors.white);
 
     final keyword = tester.widget<Text>(
       find.byKey(const Key('maker_settings_keyword_label')),
@@ -220,8 +221,8 @@ void main() {
     );
     expect(legalPrivacy, findsOneWidget);
     expect(deleteAccount, findsOneWidget);
-    expect(tester.widget<Text>(legalTerms).style?.color, AppColors.white40);
-    expect(tester.widget<Text>(legalPrivacy).style?.color, AppColors.white40);
+    expect(tester.widget<Text>(legalTerms).style?.color, AppColors.white50);
+    expect(tester.widget<Text>(legalPrivacy).style?.color, AppColors.white50);
     expect(
       tester.getTopLeft(legalPrivacy).dy,
       greaterThan(tester.getTopLeft(legalTerms).dy),
@@ -233,8 +234,8 @@ void main() {
     final deleteText = tester.widget<Text>(
       find.descendant(of: deleteAccount, matching: find.byType(Text)),
     );
-    expect(deleteText.style?.color, AppColors.white40);
-    expect(deleteText.style?.decorationColor, AppColors.white40);
+    expect(deleteText.style?.color, AppColors.white50);
+    expect(deleteText.style?.decorationColor, AppColors.white50);
     expect(
       tester.widget<Text>(legalTerms).style?.decoration,
       TextDecoration.underline,
@@ -542,7 +543,7 @@ void _expectMakerSettingsInputStyle(TextField field) {
     field.decoration?.hintStyle?.letterSpacing,
     AppTextStyles.bodyTracking,
   );
-  expect(field.decoration?.hintStyle?.color, AppColors.white40);
+  expect(field.decoration?.hintStyle?.color, AppColors.white50);
   expect(field.textAlignVertical, TextAlignVertical.center);
   expect(
     field.decoration?.contentPadding,

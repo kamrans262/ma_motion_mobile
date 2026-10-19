@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_choice_chip.dart';
 
 void main() {
   Widget app({int initialStep = 0}) {
@@ -50,7 +52,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Type Style labels and every option are 14px', (tester) async {
+  testWidgets('Type Style headings stay 14px and chips match Filter typography', (tester) async {
     await tester.pumpWidget(app(initialStep: 3));
 
     final typeText = tester.widget<Text>(find.text('Type'));
@@ -60,20 +62,31 @@ void main() {
 
     expect(typeText.style?.fontSize, 14);
     expect(styleText.style?.fontSize, 14);
-    expect(paintingText.style?.fontSize, 14);
-    expect(abstractText.style?.fontSize, 14);
+    for (final text in <Text>[paintingText, abstractText]) {
+      expect(text.style?.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(text.style?.fontSize, 12);
+      expect(text.style?.fontWeight, FontWeight.w400);
+      expect(text.style?.fontStyle, FontStyle.normal);
+    }
 
     for (final choice in <(String, String)>[
       ('maker_type_Painting', 'Painting'),
       ('maker_style_Abstract', 'Abstract'),
     ]) {
-      final buttonCenter = tester.getCenter(find.byKey(Key(choice.$1)));
+      final chipFinder = find.byKey(Key(choice.$1));
+      final chip = tester.widget<MaChoiceChip>(chipFinder);
+      expect(chip.verticalOffset, 0);
+      final label = tester.widget<MaCenteredTaxonomyLabel>(
+        find.descendant(
+          of: chipFinder,
+          matching: find.byType(MaCenteredTaxonomyLabel),
+        ),
+      );
+      expect(label.verticalOffset, 0);
+      final buttonCenter = tester.getCenter(chipFinder);
       final labelCenter = tester.getCenter(find.text(choice.$2));
       expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
-      expect(
-        labelCenter.dy,
-        closeTo(buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
-      );
+      expect(labelCenter.dy, closeTo(buttonCenter.dy, 1));
     }
 
     final unselected = tester.widget<AnimatedContainer>(

@@ -15,6 +15,7 @@ abstract final class AppColors {
   static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
   static const Color white40 = Color(0x66FFFFFF);
+  static const Color white50 = Color(0x80FFFFFF);
   static const Color error = Color(0xFFFF6B6B);
 
   static Color get primary50 => primary.withValues(alpha: 0.50);

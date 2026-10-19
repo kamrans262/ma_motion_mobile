@@ -824,6 +824,10 @@ class _TypeStyleStep extends ConsumerWidget {
                   key: Key('maker_type_$type'),
                   label: type,
                   selected: draft.types.contains(type),
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  verticalOffset: 0,
                   onTap: () {
                     controller.toggleType(type);
                     onSelectionChanged('types');
@@ -857,6 +861,10 @@ class _TypeStyleStep extends ConsumerWidget {
                   key: Key('maker_style_$style'),
                   label: style,
                   selected: draft.styles.contains(style),
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  verticalOffset: 0,
                   onTap: () {
                     controller.toggleStyle(style);
                     onSelectionChanged('styles');

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork_page.dart';
@@ -61,7 +62,12 @@ void main() {
     expect(artistName, findsOneWidget);
     expect(tester.widget<Text>(artistName).data, 'Mara Vellan');
     expect(find.byKey(const Key('saved_artwork_remove_91')), findsNothing);
-    expect(tester.widget<Text>(artistName).style?.color, AppColors.white);
+    final artistStyle = tester.widget<Text>(artistName).style;
+    expect(artistStyle?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(artistStyle?.fontSize, 12);
+    expect(artistStyle?.fontWeight, FontWeight.w400);
+    expect(artistStyle?.fontStyle, FontStyle.normal);
+    expect(artistStyle?.color, AppColors.white);
     expect(
       tester.getRect(artistBar).bottom,
       tester.getRect(find.byKey(const Key('artwork_tile_91'))).bottom,
