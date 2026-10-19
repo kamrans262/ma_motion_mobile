@@ -132,13 +132,14 @@ void main() {
     expect(find.text('Filter'), findsOneWidget);
 
     final title = tester.widget<Text>(find.text('Filter'));
-    expect(title.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(title.style?.fontWeight, FontWeight.w500);
     expect(title.style?.fontSize, 24);
+    expect(title.style?.color, AppColors.primary);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));
-    expect(clearText.style?.fontFamily, AppTextStyles.fontFamily);
-    expect(clearText.style?.fontSize, 14);
-    expect(clearText.style?.fontWeight, FontWeight.w500);
+    expect(clearText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(clearText.style?.fontSize, 12);
+    expect(clearText.style?.fontWeight, FontWeight.w400);
     expect(
       clearText.style?.color,
       AppColors.white.withValues(alpha: 0.50),
@@ -194,20 +195,24 @@ void main() {
     final radiusText = tester.widget<Text>(
       find.byKey(const Key('filter_radius_value')),
     );
+    expect(radiusText.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(radiusText.style?.fontSize, 14);
+    expect(radiusText.style?.fontWeight, FontWeight.w500);
+    expect(radiusText.style?.color, AppColors.white);
     expect(radiusText.data, '25');
 
     final locationField = tester.widget<TextField>(locationSearch);
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
-    expect(locationField.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.style?.fontSize, 16);
-    expect(locationField.style?.fontWeight, FontWeight.w500);
+    expect(locationField.style?.fontWeight, FontWeight.w400);
     expect(locationField.style?.height, 1);
     expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
-    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.decoration?.hintStyle?.fontSize, 16);
     expect(locationField.decoration?.hintStyle?.fontStyle, FontStyle.normal);
-    expect(locationField.decoration?.hintStyle?.color, AppColors.darkGray);
+    expect(locationField.decoration?.hintStyle?.color, AppColors.white40);
+    expect(locationField.decoration?.hintStyle?.fontWeight, FontWeight.w400);
 
     final enabledBorder =
         locationField.decoration?.enabledBorder! as OutlineInputBorder;
@@ -235,6 +240,10 @@ void main() {
     final applyButton = tester.widget<OutlinedButton>(
       find.byKey(const Key('filter_apply_button')),
     );
+    final applyText = tester.widget<Text>(find.text('Apply Filters'));
+    expect(applyText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(applyText.style?.fontSize, 16);
+    expect(applyText.style?.fontWeight, FontWeight.w400);
     expect(
       applyButton.style?.backgroundColor?.resolve(<WidgetState>{}),
       const Color(0xFF020202),
@@ -275,7 +284,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Filter text stays at or above 14px and options are opaque', (
+  testWidgets('Filter typography matches client spec and options are opaque', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(430, 1500));
@@ -305,8 +314,10 @@ void main() {
       'Radius (miles)',
     ]) {
       final text = tester.widget<Text>(find.text(label));
-      expect(text.style?.fontSize, 14);
-      expect(text.style?.fontWeight, FontWeight.w500);
+      expect(text.style?.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(text.style?.fontSize, 12);
+      expect(text.style?.fontWeight, FontWeight.w400);
+      expect(text.style?.color, AppColors.primary);
     }
 
     final typeText = tester.widget<Text>(
@@ -315,8 +326,9 @@ void main() {
         matching: find.text('Painting'),
       ),
     );
-    expect(typeText.style?.fontSize, 14);
-    expect(typeText.style?.fontWeight, FontWeight.w500);
+    expect(typeText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(typeText.style?.fontSize, 12);
+    expect(typeText.style?.fontWeight, FontWeight.w400);
 
     final styleText = tester.widget<Text>(
       find.descendant(
@@ -324,8 +336,9 @@ void main() {
         matching: find.text('Minimal'),
       ),
     );
-    expect(styleText.style?.fontSize, 14);
-    expect(styleText.style?.fontWeight, FontWeight.w500);
+    expect(styleText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(styleText.style?.fontSize, 12);
+    expect(styleText.style?.fontWeight, FontWeight.w400);
 
     for (final choice in <(String, String)>[
       ('filter_type_1', 'Painting'),
@@ -342,8 +355,9 @@ void main() {
 
     for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
       final widget = tester.widget<Text>(find.text(text));
-      expect(widget.style?.fontSize, 14);
-      expect(widget.style?.fontWeight, FontWeight.w500);
+      expect(widget.style?.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(widget.style?.fontSize, 12);
+      expect(widget.style?.fontWeight, FontWeight.w400);
     }
     expect(find.byKey(const Key('filter_status_past')), findsNothing);
     expect(find.textContaining('Past'), findsNothing);
