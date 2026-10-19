@@ -129,7 +129,9 @@ class MaOnboardingScaffold extends StatelessWidget {
                                 Text(
                                   validationMessage!,
                                   key: const Key('maker_validation_message'),
-                                  style: AppTextStyles.onboardingError,
+                                  style: AppTextStyles.onboardingError.copyWith(
+                                      fontFamily: AppTextStyles.bodyFontFamily,
+                                    ),
                                 ),
                               ],
                             ],

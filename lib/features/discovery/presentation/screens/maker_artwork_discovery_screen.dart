@@ -262,7 +262,7 @@ class _MakerArtworkDiscoveryScreenState
                                     textInputAction: TextInputAction.search,
                                     textAlignVertical: TextAlignVertical.top,
                                     style: const TextStyle(
-                                      fontFamily: AppTextStyles.fontFamily,
+                                      fontFamily: AppTextStyles.bodyFontFamily,
                                       fontSize: 14,
                                       height: 1,
                                       fontWeight: FontWeight.w400,
@@ -273,7 +273,7 @@ class _MakerArtworkDiscoveryScreenState
                                       isDense: true,
                                       hintText: 'Artist name...',
                                       hintStyle: TextStyle(
-                                        fontFamily: AppTextStyles.fontFamily,
+                                        fontFamily: AppTextStyles.bodyFontFamily,
                                         fontSize: 14,
                                         height: 1,
                                         color: AppColors.primary.withValues(
@@ -343,7 +343,7 @@ class _MakerArtworkDiscoveryScreenState
                                           '$filterCount',
                                           style: const TextStyle(
                                             fontFamily:
-                                                AppTextStyles.fontFamily,
+                                                AppTextStyles.bodyFontFamily,
                                             fontSize: 10,
                                             fontWeight: FontWeight.w700,
                                             color: AppColors.black,
@@ -585,7 +585,7 @@ class _DiscoveryBody extends ConsumerWidget {
                 state.errorMessage!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 15,
                   color: AppColors.mutedText,
                 ),
@@ -615,7 +615,7 @@ class _DiscoveryBody extends ConsumerWidget {
         child: Text(
           'No artwork matches these filters.',
           style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
+            fontFamily: AppTextStyles.bodyFontFamily,
             fontSize: 15,
             color: AppColors.mutedText,
           ),

@@ -756,7 +756,9 @@ class _MakerRegistrationFlowScreenState
                 Text(
                   _fieldErrors['image']!,
                   key: const Key('maker_salon_image_error'),
-                  style: AppTextStyles.onboardingError,
+                  style: AppTextStyles.onboardingError.copyWith(
+                   fontFamily: AppTextStyles.bodyFontFamily,
+                 ),
                 ),
               ],
             ],
@@ -810,6 +812,9 @@ class _TypeStyleStep extends ConsumerWidget {
           Text(
             'Type',
             style: AppTextStyles.onboardingHelper.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
               color: AppColors.primary,
             ),
           ),
@@ -840,13 +845,18 @@ class _TypeStyleStep extends ConsumerWidget {
             Text(
               typeError!,
               key: const Key('maker_type_error'),
-              style: AppTextStyles.onboardingError,
+              style: AppTextStyles.onboardingError.copyWith(
+                   fontFamily: AppTextStyles.bodyFontFamily,
+                 ),
             ),
           ],
           const SizedBox(height: 22),
           Text(
             'Style',
             style: AppTextStyles.onboardingHelper.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
               color: AppColors.primary,
             ),
           ),
@@ -877,7 +887,9 @@ class _TypeStyleStep extends ConsumerWidget {
             Text(
               styleError!,
               key: const Key('maker_style_error'),
-              style: AppTextStyles.onboardingError,
+              style: AppTextStyles.onboardingError.copyWith(
+                   fontFamily: AppTextStyles.bodyFontFamily,
+                 ),
             ),
           ],
         ],

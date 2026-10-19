@@ -55,7 +55,11 @@ class MaOnboardingTextField extends StatelessWidget {
           textAlignVertical: maxLines > 1
               ? TextAlignVertical.top
               : TextAlignVertical.center,
-          style: AppTextStyles.field,
+          style: AppTextStyles.field.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
           decoration: InputDecoration(
             isDense: true,
             filled: true,
@@ -64,11 +68,14 @@ class MaOnboardingTextField extends StatelessWidget {
             hintStyle: AppTextStyles.fieldHint.copyWith(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 16,
+              fontWeight: FontWeight.w400,
               letterSpacing: 0,
               color: AppColors.white.withValues(alpha: 0.40),
             ),
             counterText: '',
-            contentPadding: const EdgeInsets.all(12),
+            contentPadding: maxLines == 1
+                ? const EdgeInsets.symmetric(horizontal: 12, vertical: 13)
+                : const EdgeInsets.all(12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50, width: 1.2),
@@ -93,7 +100,9 @@ class MaOnboardingTextField extends StatelessWidget {
           Text(
             errorText!,
             key: const Key('onboarding_field_error'),
-            style: AppTextStyles.onboardingError,
+            style: AppTextStyles.onboardingError.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
+            ),
           ),
         ],
       ],

@@ -132,6 +132,7 @@ class _MakerSavedArtworksScreenState
                               child: Text(
                                 'Saved',
                                 style: AppTextStyles.onboardingHeading.copyWith(
+                                   fontFamily: AppTextStyles.bodyFontFamily,
                                   fontSize: 22,
                                 ),
                               ),
@@ -222,7 +223,7 @@ class _SavedBody extends ConsumerWidget {
                 state.errorMessage!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 15,
                   color: AppColors.mutedText,
                 ),
@@ -251,7 +252,7 @@ class _SavedBody extends ConsumerWidget {
           'No saved artwork yet.',
           key: Key('saved_artworks_empty'),
           style: TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
+            fontFamily: AppTextStyles.bodyFontFamily,
             fontSize: 15,
             color: AppColors.mutedText,
           ),

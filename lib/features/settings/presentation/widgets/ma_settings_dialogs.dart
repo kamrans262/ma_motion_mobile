@@ -51,7 +51,7 @@ Future<void> showMaVideoTooLongDialog(BuildContext context) {
                 'Video must be 5 seconds or less.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -62,7 +62,7 @@ Future<void> showMaVideoTooLongDialog(BuildContext context) {
                 'Please choose a shorter video and try again.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.mutedText,
                   fontSize: 14,
                 ),
@@ -193,7 +193,7 @@ class _DeleteAccountConfirmationState
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.white,
-                    fontFamily: AppTextStyles.fontFamily,
+                    fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -204,7 +204,7 @@ class _DeleteAccountConfirmationState
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.mutedText,
-                    fontFamily: AppTextStyles.fontFamily,
+                    fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 14,
                   ),
                 ),
@@ -227,14 +227,14 @@ class _DeleteAccountConfirmationState
                     enabled: !_busy,
                     textAlignVertical: TextAlignVertical.top,
                     style: const TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
+                      fontFamily: AppTextStyles.bodyFontFamily,
                       color: AppColors.white,
                       fontSize: 14,
                     ),
                     decoration: const InputDecoration(
                       labelText: 'Current Password',
                       labelStyle: TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
+                        fontFamily: AppTextStyles.bodyFontFamily,
                         color: AppColors.mutedText,
                       ),
                       contentPadding: const EdgeInsets.all(12),
@@ -256,7 +256,7 @@ class _DeleteAccountConfirmationState
                     key: const Key('ma_delete_account_error'),
                     style: const TextStyle(
                       color: AppColors.error,
-                      fontFamily: AppTextStyles.fontFamily,
+                      fontFamily: AppTextStyles.bodyFontFamily,
                       fontSize: 14,
                     ),
                   ),
@@ -283,7 +283,10 @@ class _DeleteAccountConfirmationState
                                 )
                               : Transform.translate(
                                   offset: const Offset(0, 1),
-                                  child: const Text('Confirm'),
+                                  child: const Text(
+                                     'Confirm',
+                                     style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+                                   ),
                                 ),
                         ),
                       ),
@@ -300,7 +303,10 @@ class _DeleteAccountConfirmationState
                           style: AppButtonStyles.filterAction(),
                           child: Transform.translate(
                             offset: const Offset(0, 1),
-                            child: const Text('Close'),
+                            child: const Text(
+                               'Close',
+                               style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+                             ),
                           ),
                         ),
                       ),
