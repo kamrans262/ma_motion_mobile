@@ -46,7 +46,7 @@ void main() {
     final locationSearch = find.byKey(const Key('filter_location_search'));
     expect(
       tester.widget<TextField>(locationSearch).decoration?.contentPadding,
-      const EdgeInsets.all(12)
+      const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
     );
     await tester.scrollUntilVisible(
       locationSearch,

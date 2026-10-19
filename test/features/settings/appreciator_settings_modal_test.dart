@@ -54,7 +54,7 @@ void main() {
       expect(field.textAlignVertical, TextAlignVertical.center);
       expect(
         field.decoration?.contentPadding,
-        const EdgeInsets.all(12)
+        const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
       );
       expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
       expect(field.decoration?.hintStyle?.fontSize, 16);

@@ -595,9 +595,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         fontSize: 16,
       ),
       suffixIcon: suffixIcon,
+      // Avoid the default 48px suffix-icon minimum when suggestions load.
+      isDense: true,
+      suffixIconConstraints:
+          suffixIcon == null ? null : const BoxConstraints(),
       filled: true,
       fillColor: AppColors.filterInputFill,
-      contentPadding: const EdgeInsets.all(12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.zero,
         borderSide: BorderSide(color: AppColors.primary50, width: 1),

@@ -1039,7 +1039,10 @@ TextStyle _makerSettingsHintStyle() {
   );
 }
 
-const EdgeInsets _makerSettingsSingleLineInputPadding = EdgeInsets.all(12);
+const EdgeInsets _makerSettingsSingleLineInputPadding = EdgeInsets.symmetric(
+  horizontal: 12,
+  vertical: 13,
+);
 
 const EdgeInsets _makerSettingsMultilineInputPadding = EdgeInsets.all(12);
 
@@ -1295,7 +1298,7 @@ class _EventLocationAutocompleteFieldState
           hintText: 'Event location',
           onChanged: _onChanged,
           inputLineHeight: 1.25,
-          inputContentPadding: const EdgeInsets.all(12),
+          inputContentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
           bottomPadding: _suggestions.isEmpty ? 12 : 0,
         ),
         if (_suggestions.isNotEmpty)

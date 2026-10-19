@@ -157,7 +157,7 @@ void main() {
     expect(eventLocationField.style?.height, 1.25);
     expect(
       eventLocationField.decoration?.contentPadding,
-      const EdgeInsets.all(12)
+      const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
     );
     for (final (keyName, expectedUrl) in <(String, String)>[
       ('maker_settings_terms_text', MaLegalUrls.terms),
@@ -536,7 +536,9 @@ void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.textAlignVertical, TextAlignVertical.center);
   expect(
     field.decoration?.contentPadding,
-const EdgeInsets.all(12)
+    field.maxLines == 1
+        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 13)
+        : const EdgeInsets.all(12),
   );
   final focusedBorder = field.decoration?.focusedBorder as OutlineInputBorder?;
   expect(focusedBorder?.borderSide.color, AppColors.primary);
