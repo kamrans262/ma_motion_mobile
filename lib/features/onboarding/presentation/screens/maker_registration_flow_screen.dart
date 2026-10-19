@@ -814,7 +814,7 @@ class _TypeStyleStep extends ConsumerWidget {
             style: AppTextStyles.onboardingHelper.copyWith(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               color: AppColors.primary,
             ),
           ),
@@ -856,7 +856,7 @@ class _TypeStyleStep extends ConsumerWidget {
             style: AppTextStyles.onboardingHelper.copyWith(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               color: AppColors.primary,
             ),
           ),

@@ -65,7 +65,7 @@ void main() {
     for (final label in <Text>[typeText, styleText]) {
       expect(label.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(label.style?.fontSize, 12);
-      expect(label.style?.fontWeight, FontWeight.w500);
+      expect(label.style?.fontWeight, FontWeight.w400);
       expect(label.style?.color, AppColors.primary);
     }
     for (final text in <Text>[paintingText, abstractText]) {

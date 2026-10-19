@@ -58,8 +58,9 @@ void main() {
 
     final savedTitle = tester.widget<Text>(find.text('Saved'));
     expect(savedTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
-    expect(savedTitle.style?.fontSize, 22);
+    expect(savedTitle.style?.fontSize, 24);
     expect(savedTitle.style?.fontWeight, FontWeight.w500);
+    expect(savedTitle.style?.color, AppColors.primary);
 
     final artistBar = find.byKey(const Key('saved_artwork_artist_bar_91'));
     final artistName = find.byKey(const Key('saved_artwork_artist_name_91'));

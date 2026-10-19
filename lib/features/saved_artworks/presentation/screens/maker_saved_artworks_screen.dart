@@ -133,7 +133,7 @@ class _MakerSavedArtworksScreenState
                                 'Saved',
                                 style: AppTextStyles.onboardingHeading.copyWith(
                                    fontFamily: AppTextStyles.bodyFontFamily,
-                                  fontSize: 22,
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
