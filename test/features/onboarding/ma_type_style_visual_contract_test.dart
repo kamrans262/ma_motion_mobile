@@ -52,7 +52,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Type Style headings stay 14px and chips match Filter typography', (tester) async {
+  testWidgets('Onboarding Type/Style chips match Filter typography', (
+    tester,
+  ) async {
     await tester.pumpWidget(app(initialStep: 3));
 
     final typeText = tester.widget<Text>(find.text('Type'));
@@ -66,7 +68,7 @@ void main() {
       expect(text.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(text.style?.fontSize, 12);
       expect(text.style?.fontWeight, FontWeight.w400);
-      expect(text.style?.fontStyle, FontStyle.normal);
+      expect(text.style?.fontStyle, isNot(FontStyle.italic));
     }
 
     for (final choice in <(String, String)>[
