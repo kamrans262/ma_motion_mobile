@@ -524,14 +524,14 @@ class _AppreciatorSettingsModalState
                       ),
                     )
                   : const Text(
-                       'Save & Close',
-                       style: TextStyle(
-                         fontFamily: _settingsFontFamily,
-                         fontSize: 16,
-                         height: 1.0,
-                         fontWeight: FontWeight.w400,
-                       ),
-                     ),
+                      'Save & Close',
+                      style: TextStyle(
+                        fontFamily: _settingsFontFamily,
+                        fontSize: 16,
+                        height: 1.0,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -602,6 +602,7 @@ class _SettingsField extends StatelessWidget {
           textInputAction: textInputAction,
           onChanged: onChanged,
           style: AppTextStyles.field.copyWith(
+            fontFamily: _settingsFontFamily,
             color: AppColors.white,
             fontSize: 16,
             fontWeight: FontWeight.w400,
@@ -615,6 +616,7 @@ class _SettingsField extends StatelessWidget {
               fontSize: 12,
             ),
             hintStyle: AppTextStyles.fieldHint.copyWith(
+              fontFamily: _settingsFontFamily,
               color: AppColors.white40,
               fontSize: 16,
               fontWeight: FontWeight.w400,
@@ -672,9 +674,9 @@ class _LoadFailure extends StatelessWidget {
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
               child: const Text(
-                 'Try Again',
-                 style: TextStyle(fontFamily: _settingsFontFamily),
-               ),
+                'Try Again',
+                style: TextStyle(fontFamily: _settingsFontFamily),
+              ),
             ),
           ],
         ),

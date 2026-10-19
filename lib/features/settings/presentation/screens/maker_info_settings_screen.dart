@@ -496,11 +496,11 @@ class _MakerInfoSettingsScreenState
                   title: const Text(
                     'Choose image',
                     style: TextStyle(
-                        fontFamily: _settingsFontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.white40,
-                      ),
+                      fontFamily: _settingsFontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.white40,
+                    ),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.image),
                 ),
@@ -512,11 +512,11 @@ class _MakerInfoSettingsScreenState
                   title: const Text(
                     'Choose video (5 seconds max)',
                     style: TextStyle(
-                        fontFamily: _settingsFontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.white40,
-                      ),
+                      fontFamily: _settingsFontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.white40,
+                    ),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.video),
                 ),
@@ -659,14 +659,14 @@ class _MakerInfoSettingsScreenState
                             ),
                           )
                         : const Text(
-                             'Save & Close',
-                             style: TextStyle(
-                               fontFamily: _settingsFontFamily,
-                               fontSize: 16,
-                               height: 1.0,
-                               fontWeight: FontWeight.w400,
-                             ),
-                           ),
+                            'Save & Close',
+                            style: TextStyle(
+                              fontFamily: _settingsFontFamily,
+                              fontSize: 16,
+                              height: 1.0,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -1044,6 +1044,7 @@ TextStyle _settingsLabelStyle() => AppTextStyles.onboardingHelper.copyWith(
 
 TextStyle _makerSettingsInputStyle() {
   return AppTextStyles.field.copyWith(
+    fontFamily: _settingsFontFamily,
     color: AppColors.white,
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -1052,6 +1053,7 @@ TextStyle _makerSettingsInputStyle() {
 
 TextStyle _makerSettingsHintStyle() {
   return AppTextStyles.fieldHint.copyWith(
+    fontFamily: _settingsFontFamily,
     color: AppColors.white40,
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -2009,9 +2011,9 @@ class _LoadError extends StatelessWidget {
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
               child: const Text(
-                 'Try Again',
-                 style: TextStyle(fontFamily: _settingsFontFamily),
-               ),
+                'Try Again',
+                style: TextStyle(fontFamily: _settingsFontFamily),
+              ),
             ),
           ],
         ),
