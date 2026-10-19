@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/network/api_exception.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
@@ -33,6 +34,10 @@ void main() {
 
       expect(find.byKey(const Key('ma_video_duration_dialog')), findsOneWidget);
       expect(find.text('Video must be 5 seconds or less.'), findsOneWidget);
+      expect(
+        tester.widget<Text>(find.text('Video must be 5 seconds or less.')).style?.fontFamily,
+        AppTextStyles.bodyFontFamily,
+      );
       expect(find.byKey(const Key('ma_video_duration_close')), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('ma_video_duration_close')));
@@ -90,6 +95,10 @@ void main() {
       );
       expect(find.byIcon(Icons.delete_forever_outlined), findsNothing);
       expect(find.byKey(const Key('ma_delete_account_password')), findsNothing);
+      expect(
+        tester.widget<Text>(find.text('Are you sure you want to delete your MA account?')).style?.fontFamily,
+        AppTextStyles.bodyFontFamily,
+      );
       await tester.tap(find.byKey(const Key('ma_delete_account_close')));
       await tester.pumpAndSettle();
       expect(api.deletions, 0);

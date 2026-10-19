@@ -56,6 +56,11 @@ void main() {
     expect(scaffold.backgroundColor, AppColors.artworkNavBackground);
     expect(AppColors.savedBackground, const Color(0xFF0F2519));
 
+    final savedTitle = tester.widget<Text>(find.text('Saved'));
+    expect(savedTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(savedTitle.style?.fontSize, 22);
+    expect(savedTitle.style?.fontWeight, FontWeight.w500);
+
     final artistBar = find.byKey(const Key('saved_artwork_artist_bar_91'));
     final artistName = find.byKey(const Key('saved_artwork_artist_name_91'));
     expect(artistBar, findsOneWidget);

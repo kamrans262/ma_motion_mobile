@@ -24,8 +24,12 @@ void main() {
     final field = tester.widget<TextField>(fieldFinder);
     expect(field.textAlignVertical, TextAlignVertical.center);
     expect(field.decoration?.hintText, 'Your name');
+    expect(field.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(field.style?.fontSize, 16);
+    expect(field.style?.fontWeight, FontWeight.w400);
     expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(field.decoration?.hintStyle?.fontSize, 16);
+    expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w400);
     expect(field.decoration?.hintStyle?.letterSpacing, 0);
     expect(
       field.decoration?.hintStyle?.color,
@@ -33,7 +37,7 @@ void main() {
     );
     expect(
       field.decoration?.contentPadding,
-      const EdgeInsets.all(12)
+      const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
     );
     // Check actual hint layout, not only the TextField's alignment property.
     final fieldBounds = tester.getRect(fieldFinder);

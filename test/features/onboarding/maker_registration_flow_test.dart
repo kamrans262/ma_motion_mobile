@@ -287,7 +287,7 @@ void main() {
     final paintingText = tester.widget<Text>(
       find.descendant(of: paintingChip, matching: find.text('Painting')),
     );
-    expect(paintingText.style?.fontSize, 14);
+    expect(paintingText.style?.fontSize, 12);
     expect(paintingText.style?.height, 1.1);
 
     await tester.tap(find.byKey(const Key('maker_next_button')));

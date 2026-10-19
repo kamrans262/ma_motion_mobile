@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_svg_asset.dart';
 import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
@@ -143,11 +144,11 @@ void main() {
       find.byKey(const Key('maker_nav_column_text_1')),
     );
 
-    expect(selected.style?.fontFamily, 'HelveticaNeueLTStd');
+    expect(selected.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(selected.style?.fontSize, 16);
     expect(selected.style?.fontWeight, FontWeight.w500);
     expect(selected.style?.color, const Color(0xFF9F67FF));
-    expect(unselected.style?.fontFamily, 'HelveticaNeueLTStd');
+    expect(unselected.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(unselected.style?.fontSize, 16);
     expect(unselected.style?.fontWeight, FontWeight.w500);
     expect(

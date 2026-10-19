@@ -62,8 +62,12 @@ void main() {
     final paintingText = tester.widget<Text>(find.text('Painting'));
     final abstractText = tester.widget<Text>(find.text('Abstract'));
 
-    expect(typeText.style?.fontSize, 14);
-    expect(styleText.style?.fontSize, 14);
+    for (final label in <Text>[typeText, styleText]) {
+      expect(label.style?.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(label.style?.fontSize, 12);
+      expect(label.style?.fontWeight, FontWeight.w500);
+      expect(label.style?.color, AppColors.primary);
+    }
     for (final text in <Text>[paintingText, abstractText]) {
       expect(text.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(text.style?.fontSize, 12);

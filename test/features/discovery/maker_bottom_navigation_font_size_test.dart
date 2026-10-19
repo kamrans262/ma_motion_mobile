@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/widgets/maker_bottom_navigation.dart';
 
 void main() {
@@ -28,6 +29,7 @@ void main() {
         final number = tester.widget<Text>(
           find.byKey(Key('maker_nav_column_text_$column')),
         );
+        expect(number.style?.fontFamily, AppTextStyles.bodyFontFamily);
         expect(number.style?.fontSize, 16);
         expect(number.style?.fontWeight, FontWeight.w500);
         expect(
