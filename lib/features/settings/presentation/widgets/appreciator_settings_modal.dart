@@ -366,7 +366,7 @@ class _AppreciatorSettingsModalState
             'Settings',
             key: Key('appreciator_settings_heading'),
             style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
+              fontFamily: _settingsFontFamily,
               fontSize: 24,
               fontWeight: FontWeight.w500,
               color: AppColors.primary,
@@ -417,8 +417,8 @@ class _AppreciatorSettingsModalState
               child: Text(
                 _switching ? 'Switching…' : 'Switch to Maker',
                 style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
+                  fontFamily: _settingsFontFamily,
+                  fontSize: 12,
                   decoration: TextDecoration.underline,
                   decorationColor: AppColors.white40,
                   color: AppColors.white40,
@@ -434,8 +434,8 @@ class _AppreciatorSettingsModalState
               url: MaLegalUrls.terms,
               textKey: Key('appreciator_settings_terms_text'),
               style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
+                fontFamily: _settingsFontFamily,
+                fontSize: 12,
                 color: AppColors.white40,
                 decoration: TextDecoration.underline,
                 decorationColor: AppColors.white40,
@@ -450,8 +450,8 @@ class _AppreciatorSettingsModalState
               url: MaLegalUrls.privacy,
               textKey: Key('appreciator_settings_privacy_text'),
               style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
-                fontSize: 14,
+                fontFamily: _settingsFontFamily,
+                fontSize: 12,
                 color: AppColors.white40,
                 decoration: TextDecoration.underline,
                 decorationColor: AppColors.white40,
@@ -475,8 +475,8 @@ class _AppreciatorSettingsModalState
               child: const Text(
                 'Delete Your Account',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
-                  fontSize: 14,
+                  fontFamily: _settingsFontFamily,
+                  fontSize: 12,
                   decoration: TextDecoration.underline,
                   decorationColor: AppColors.white40,
                   decorationStyle: TextDecorationStyle.solid,
@@ -491,7 +491,10 @@ class _AppreciatorSettingsModalState
             Text(
               _errorMessage!,
               key: const Key('appreciator_settings_error'),
-              style: AppTextStyles.error.copyWith(fontSize: 14),
+              style: AppTextStyles.error.copyWith(
+                fontFamily: _settingsFontFamily,
+                fontSize: 12,
+              ),
             ),
           ],
           if (_successMessage != null) ...[
@@ -499,9 +502,9 @@ class _AppreciatorSettingsModalState
             Text(
               _successMessage!,
               key: const Key('appreciator_settings_success'),
-              style: AppTextStyles.onboardingHelper.copyWith(
+              style: _settingsLabelStyle().copyWith(
                 color: AppColors.primary,
-                fontSize: 14,
+                fontSize: 12,
               ),
             ),
           ],
@@ -520,18 +523,15 @@ class _AppreciatorSettingsModalState
                         color: AppColors.primary,
                       ),
                     )
-                  : Transform.translate(
-                      offset: const Offset(0, 2),
-                      child: const Text(
-                        'Save & Close',
-                        style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 16,
-                          height: 1.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                  : const Text(
+                       'Save & Close',
+                       style: TextStyle(
+                         fontFamily: _settingsFontFamily,
+                         fontSize: 16,
+                         height: 1.0,
+                         fontWeight: FontWeight.w400,
+                       ),
+                     ),
             ),
           ),
         ],
@@ -553,6 +553,15 @@ class _AppreciatorSettingsModalState
     });
   }
 }
+
+// Filter-consistent Settings typography, scoped to this modal.
+const String _settingsFontFamily = AppTextStyles.bodyFontFamily;
+
+TextStyle _settingsLabelStyle() => AppTextStyles.onboardingHelper.copyWith(
+  fontFamily: _settingsFontFamily,
+  fontSize: 12,
+  fontWeight: FontWeight.w400,
+);
 
 class _SettingsField extends StatelessWidget {
   const _SettingsField({
@@ -580,7 +589,7 @@ class _SettingsField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppTextStyles.onboardingHelper.copyWith(
+          style: _settingsLabelStyle().copyWith(
             color: AppColors.primary,
           ),
         ),
@@ -595,15 +604,20 @@ class _SettingsField extends StatelessWidget {
           style: AppTextStyles.field.copyWith(
             color: AppColors.white,
             fontSize: 16,
+            fontWeight: FontWeight.w400,
           ),
           textAlignVertical: TextAlignVertical.center,
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             errorText: errorText,
-            errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
+            errorStyle: AppTextStyles.error.copyWith(
+              fontFamily: _settingsFontFamily,
+              fontSize: 12,
+            ),
             hintStyle: AppTextStyles.fieldHint.copyWith(
               color: AppColors.white40,
               fontSize: 16,
+              fontWeight: FontWeight.w400,
             ),
             filled: true,
             fillColor: AppColors.filterInputFill,
@@ -650,17 +664,17 @@ class _LoadFailure extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTextStyles.onboardingHelper,
+              style: _settingsLabelStyle(),
             ),
             const SizedBox(height: 16),
             OutlinedButton(
               key: const Key('appreciator_settings_retry'),
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text('Try Again'),
-              ),
+              child: const Text(
+                 'Try Again',
+                 style: TextStyle(fontFamily: _settingsFontFamily),
+               ),
             ),
           ],
         ),

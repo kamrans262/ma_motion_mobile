@@ -13,6 +13,10 @@ class MaChoiceChip extends StatelessWidget {
     required this.onTap,
     this.selectedTextColor,
     this.unselectedBackgroundColor,
+    this.fontFamily,
+    this.fontSize = 14,
+    this.fontWeight,
+    this.verticalOffset = MaCenteredTaxonomyLabel.opticalOffsetY,
   });
 
   final String label;
@@ -20,6 +24,10 @@ class MaChoiceChip extends StatelessWidget {
   final VoidCallback onTap;
   final Color? selectedTextColor;
   final Color? unselectedBackgroundColor;
+  final String? fontFamily;
+  final double fontSize;
+  final FontWeight? fontWeight;
+  final double verticalOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +50,19 @@ class MaChoiceChip extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
+            verticalOffset: verticalOffset,
             style: selected
                 ? AppTextStyles.chipSelected.copyWith(
                     color: selectedTextColor,
-                    fontSize: 14,
+                    fontFamily: fontFamily,
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
                     height: 1.1,
                   )
                 : AppTextStyles.chip.copyWith(
-                    fontSize: 14,
+                    fontFamily: fontFamily,
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
                     height: 1.1,
                   ),
           ),
