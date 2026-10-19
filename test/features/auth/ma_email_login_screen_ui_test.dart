@@ -63,6 +63,9 @@ void main() {
       ),
     );
     expect(email.decoration?.hintText, 'you@email.com');
+    expect(email.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(email.style?.fontSize, 18);
+    expect(email.style?.fontWeight, FontWeight.w500);
     expect(email.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(email.decoration?.hintStyle?.fontSize, 16);
     expect(email.decoration?.hintStyle?.fontWeight, FontWeight.w500);

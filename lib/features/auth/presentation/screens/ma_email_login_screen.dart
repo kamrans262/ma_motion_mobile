@@ -207,6 +207,7 @@ class _MaEmailLoginScreenState extends ConsumerState<MaEmailLoginScreen>
         children: [
           MaOnboardingTextField(
             key: const Key('email_login_field'),
+            useLoginTypography: true,
             controller: _emailController,
             hintText: 'you@email.com',
             keyboardType: TextInputType.emailAddress,

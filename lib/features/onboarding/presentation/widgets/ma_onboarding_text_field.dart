@@ -19,6 +19,7 @@ class MaOnboardingTextField extends StatelessWidget {
     this.inputFormatters,
     this.maxLength,
     this.onSubmitted,
+    this.useLoginTypography = false,
   });
 
   final TextEditingController controller;
@@ -33,6 +34,9 @@ class MaOnboardingTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
   final ValueChanged<String>? onSubmitted;
+
+  // Login deliberately retains its original typography and padding.
+  final bool useLoginTypography;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +59,13 @@ class MaOnboardingTextField extends StatelessWidget {
           textAlignVertical: maxLines > 1
               ? TextAlignVertical.top
               : TextAlignVertical.center,
-          style: AppTextStyles.field.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
+          style: useLoginTypography
+              ? AppTextStyles.field
+              : AppTextStyles.field.copyWith(
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
           decoration: InputDecoration(
             isDense: true,
             filled: true,
@@ -68,14 +74,14 @@ class MaOnboardingTextField extends StatelessWidget {
             hintStyle: AppTextStyles.fieldHint.copyWith(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 16,
-              fontWeight: FontWeight.w400,
+              fontWeight: useLoginTypography ? FontWeight.w500 : FontWeight.w400,
               letterSpacing: 0,
               color: AppColors.white.withValues(alpha: 0.40),
             ),
             counterText: '',
-            contentPadding: maxLines == 1
-                ? const EdgeInsets.symmetric(horizontal: 12, vertical: 13)
-                : const EdgeInsets.all(12),
+            contentPadding: useLoginTypography || maxLines != 1
+                ? const EdgeInsets.all(12)
+                : const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50, width: 1.2),
@@ -100,9 +106,11 @@ class MaOnboardingTextField extends StatelessWidget {
           Text(
             errorText!,
             key: const Key('onboarding_field_error'),
-            style: AppTextStyles.onboardingError.copyWith(
-              fontFamily: AppTextStyles.bodyFontFamily,
-            ),
+            style: useLoginTypography
+                ? AppTextStyles.onboardingError
+                : AppTextStyles.onboardingError.copyWith(
+                    fontFamily: AppTextStyles.bodyFontFamily,
+                  ),
           ),
         ],
       ],
