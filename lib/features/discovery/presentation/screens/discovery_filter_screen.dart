@@ -683,6 +683,8 @@ class _ChoicePill extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
+            // Instrument Sans needs no Helvetica-specific downward shift.
+            verticalOffset: 0,
             style: TextStyle(
               fontFamily: _filterFontFamily,
               fontSize: fontSize,

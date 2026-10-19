@@ -347,10 +347,14 @@ void main() {
       final buttonCenter = tester.getCenter(find.byKey(Key(choice.$1)));
       final labelCenter = tester.getCenter(find.text(choice.$2));
       expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
-      expect(
-        labelCenter.dy,
-        closeTo(buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+      final label = tester.widget<MaCenteredTaxonomyLabel>(
+        find.descendant(
+          of: find.byKey(Key(choice.$1)),
+          matching: find.byType(MaCenteredTaxonomyLabel),
+        ),
       );
+      expect(label.verticalOffset, 0);
+      expect(labelCenter.dy, closeTo(buttonCenter.dy, 1));
     }
 
     for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
