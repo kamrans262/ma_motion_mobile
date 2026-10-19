@@ -153,12 +153,11 @@ void main() {
       find.byKey(const Key('maker_settings_show_location_0')),
     );
     expect(eventLocationField.decoration?.fillColor, AppColors.filterInputFill);
-    // Extra line space prevents selected Google Place text from clipping;
-    // the symmetric inset preserves the existing field height.
+    // Preserve the extra line height that protects selected Place text.
     expect(eventLocationField.style?.height, 1.25);
     expect(
       eventLocationField.decoration?.contentPadding,
-      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      const EdgeInsets.all(12)
     );
     for (final (keyName, expectedUrl) in <(String, String)>[
       ('maker_settings_terms_text', MaLegalUrls.terms),
@@ -537,9 +536,7 @@ void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.textAlignVertical, TextAlignVertical.center);
   expect(
     field.decoration?.contentPadding,
-    field.maxLines == 1
-        ? const EdgeInsets.fromLTRB(16, 12.5, 16, 15.5)
-        : const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+const EdgeInsets.all(12)
   );
   final focusedBorder = field.decoration?.focusedBorder as OutlineInputBorder?;
   expect(focusedBorder?.borderSide.color, AppColors.primary);

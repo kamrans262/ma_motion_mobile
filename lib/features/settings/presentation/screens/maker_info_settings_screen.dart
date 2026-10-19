@@ -1039,17 +1039,9 @@ TextStyle _makerSettingsHintStyle() {
   );
 }
 
-const EdgeInsets _makerSettingsSingleLineInputPadding = EdgeInsets.fromLTRB(
-  16,
-  12.5,
-  16,
-  15.5,
-);
+const EdgeInsets _makerSettingsSingleLineInputPadding = EdgeInsets.all(12);
 
-const EdgeInsets _makerSettingsMultilineInputPadding = EdgeInsets.symmetric(
-  horizontal: 16,
-  vertical: 14,
-);
+const EdgeInsets _makerSettingsMultilineInputPadding = EdgeInsets.all(12);
 
 class _LabeledField extends StatelessWidget {
   const _LabeledField({
@@ -1303,10 +1295,7 @@ class _EventLocationAutocompleteFieldState
           hintText: 'Event location',
           onChanged: _onChanged,
           inputLineHeight: 1.25,
-          inputContentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
+          inputContentPadding: const EdgeInsets.all(12),
           bottomPadding: _suggestions.isEmpty ? 12 : 0,
         ),
         if (_suggestions.isNotEmpty)

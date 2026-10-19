@@ -68,14 +68,7 @@ class MaOnboardingTextField extends StatelessWidget {
               color: AppColors.white.withValues(alpha: 0.40),
             ),
             counterText: '',
-            // Keep total single-line vertical padding unchanged while
-            // shifting the text slightly lower for optical centering.
-            contentPadding: EdgeInsets.fromLTRB(
-              20,
-              maxLines > 1 ? 21 : 21,
-              20,
-              maxLines > 1 ? 11 : 7,
-            ),
+            contentPadding: const EdgeInsets.all(12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50, width: 1.2),

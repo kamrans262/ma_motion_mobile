@@ -597,7 +597,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       suffixIcon: suffixIcon,
       filled: true,
       fillColor: AppColors.filterInputFill,
-      contentPadding: const EdgeInsets.fromLTRB(14, 21, 14, 7),
+      contentPadding: const EdgeInsets.all(12),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.zero,
         borderSide: BorderSide(color: AppColors.primary50, width: 1),

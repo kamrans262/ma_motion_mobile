@@ -607,7 +607,7 @@ class _SettingsField extends StatelessWidget {
             ),
             filled: true,
             fillColor: AppColors.filterInputFill,
-            contentPadding: const EdgeInsets.fromLTRB(16, 12.5, 16, 15.5),
+            contentPadding: const EdgeInsets.all(12),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
               borderSide: BorderSide(color: AppColors.primary50),

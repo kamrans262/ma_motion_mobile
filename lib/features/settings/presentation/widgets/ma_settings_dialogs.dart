@@ -237,8 +237,7 @@ class _DeleteAccountConfirmationState
                         fontFamily: AppTextStyles.fontFamily,
                         color: AppColors.mutedText,
                       ),
-                      // Keep the floating label; lower the entered text optically.
-                      contentPadding: EdgeInsets.fromLTRB(12, 21, 12, 7),
+                      contentPadding: const EdgeInsets.all(12),
                       filled: true,
                       fillColor: AppColors.filterInputFill,
                       enabledBorder: OutlineInputBorder(

@@ -73,7 +73,7 @@ void main() {
     );
     expect(
       email.decoration?.contentPadding,
-      const EdgeInsets.fromLTRB(20, 21, 20, 7),
+      const EdgeInsets.all(12)
     );
 
     final login = tester.widget<OutlinedButton>(
