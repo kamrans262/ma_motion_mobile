@@ -65,7 +65,7 @@ void main() {
         field.decoration?.hintStyle?.letterSpacing,
         AppTextStyles.bodyTracking,
       );
-      expect(field.decoration?.hintStyle?.color, AppColors.darkGray);
+      expect(field.decoration?.hintStyle?.color, AppColors.white40);
       final enabledBorder =
           field.decoration?.enabledBorder as OutlineInputBorder?;
       final focusedBorder =
@@ -124,8 +124,8 @@ void main() {
     expect(terms, findsOneWidget);
     expect(privacy, findsOneWidget);
     expect(deleteAccount, findsOneWidget);
-    expect(tester.widget<Text>(terms).style?.color, AppColors.darkGray);
-    expect(tester.widget<Text>(privacy).style?.color, AppColors.darkGray);
+    expect(tester.widget<Text>(terms).style?.color, AppColors.white40);
+    expect(tester.widget<Text>(privacy).style?.color, AppColors.white40);
     expect(
       tester.getTopLeft(privacy).dy,
       greaterThan(tester.getTopLeft(terms).dy),
@@ -138,7 +138,7 @@ void main() {
       tester.widget<Text>(
         find.descendant(of: deleteAccount, matching: find.byType(Text)),
       ).style?.color,
-      AppColors.darkGray,
+      AppColors.white40,
     );
     expect(
       tester.widget<Text>(terms).style?.decoration,
@@ -155,7 +155,7 @@ void main() {
           matching: find.byType(Text),
         ),
       ).style?.color,
-      AppColors.mutedText,
+      AppColors.white40,
     );
     final switchText = tester.widget<Text>(
       find.descendant(
@@ -164,12 +164,12 @@ void main() {
       ),
     );
     expect(switchText.style?.decoration, TextDecoration.underline);
-    expect(switchText.style?.decorationColor, AppColors.mutedText);
+    expect(switchText.style?.decorationColor, AppColors.white40);
     expect(
       tester.widget<TextButton>(
         find.byKey(const Key('appreciator_settings_delete_account')),
       ).style?.foregroundColor?.resolve(<WidgetState>{}),
-      AppColors.darkGray,
+      AppColors.white40,
     );
 
     expect(

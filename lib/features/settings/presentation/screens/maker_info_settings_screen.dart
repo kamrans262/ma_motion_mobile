@@ -495,7 +495,7 @@ class _MakerInfoSettingsScreenState
                   ),
                   title: const Text(
                     'Choose image',
-                    style: TextStyle(color: AppColors.white),
+                    style: TextStyle(color: AppColors.white40),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.image),
                 ),
@@ -506,7 +506,7 @@ class _MakerInfoSettingsScreenState
                   ),
                   title: const Text(
                     'Choose video (5 seconds max)',
-                    style: TextStyle(color: AppColors.white),
+                    style: TextStyle(color: AppColors.white40),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.video),
                 ),
@@ -645,7 +645,7 @@ class _MakerInfoSettingsScreenState
                             dimension: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: AppColors.darkGray,
+                              color: AppColors.white40,
                             ),
                           )
                         : Transform.translate(
@@ -726,7 +726,7 @@ class _MakerInfoSettingsScreenState
                   TextSpan(
                     text: '${data.savedCount}',
                     style: const TextStyle(
-                      color: AppColors.white,
+                      color: AppColors.white40,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -863,7 +863,7 @@ class _MakerInfoSettingsScreenState
             Divider(
               height: 1,
               thickness: 1,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: AppColors.white40,
             ),
             const SizedBox(height: 24),
             Text(
@@ -909,9 +909,9 @@ class _MakerInfoSettingsScreenState
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
-                  color: AppColors.darkGray,
+                  color: AppColors.white40,
                   decoration: TextDecoration.underline,
-                  decorationColor: AppColors.darkGray,
+                  decorationColor: AppColors.white40,
                 ),
               ),
             ),
@@ -925,9 +925,9 @@ class _MakerInfoSettingsScreenState
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
-                  color: AppColors.darkGray,
+                  color: AppColors.white40,
                   decoration: TextDecoration.underline,
-                  decorationColor: AppColors.darkGray,
+                  decorationColor: AppColors.white40,
                 ),
               ),
             ),
@@ -940,7 +940,7 @@ class _MakerInfoSettingsScreenState
                 overlayColor: Colors.transparent,
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
-                foregroundColor: AppColors.darkGray,
+                foregroundColor: AppColors.white40,
                 minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -950,10 +950,10 @@ class _MakerInfoSettingsScreenState
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
-                  decorationColor: AppColors.darkGray,
+                  decorationColor: AppColors.white40,
                   decorationStyle: TextDecorationStyle.solid,
                   decorationThickness: 1.5,
-                  color: AppColors.darkGray,
+                  color: AppColors.white40,
                 ),
               ),
             ),
@@ -1034,7 +1034,7 @@ TextStyle _makerSettingsInputStyle() {
 
 TextStyle _makerSettingsHintStyle() {
   return AppTextStyles.fieldHint.copyWith(
-    color: AppColors.darkGray,
+    color: AppColors.white40,
     fontSize: 16,
   );
 }
@@ -1539,7 +1539,7 @@ class _TaxonomySection extends StatelessWidget {
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
                 selected: selectedIds.contains(option.id),
-                selectedTextColor: AppColors.white,
+                selectedTextColor: AppColors.white40,
                 unselectedBackgroundColor: const Color(0xFF020202),
                 onTap: () => onToggle(option.id),
               ),
@@ -1602,7 +1602,7 @@ class _CarouselEditor extends StatelessWidget {
           'Image or Video (5 sec. or less) JPEG, PNG, MP4, MOV, GIF',
           style: AppTextStyles.onboardingHelper.copyWith(
             fontSize: 14,
-            color: Colors.white.withValues(alpha: 0.4),
+            color: AppColors.white40,
           ),
         ),
         if (isArtwork && moderationStatus != null) ...[
@@ -1612,7 +1612,7 @@ class _CarouselEditor extends StatelessWidget {
             key: Key('maker_settings_artwork_status_$slot'),
             style: AppTextStyles.onboardingHelper.copyWith(
               fontSize: 14,
-              color: AppColors.mutedText,
+              color: AppColors.white40,
             ),
           ),
         ],
@@ -1689,7 +1689,7 @@ class _CarouselEditor extends StatelessWidget {
             errorMessage!,
             key: Key('maker_settings_carousel_error_$slot'),
             style: AppTextStyles.onboardingError.copyWith(
-              color: AppColors.white,
+              color: AppColors.white40,
             ),
           ),
         ],
