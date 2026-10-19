@@ -236,6 +236,10 @@ void main() {
     );
     expect(deleteText.style?.color, AppColors.white50);
     expect(deleteText.style?.decorationColor, AppColors.white50);
+    expect(deleteText.style, tester.widget<Text>(legalPrivacy).style);
+    expect(deleteText.style, tester.widget<Text>(legalTerms).style);
+    expect(deleteText.style?.fontWeight, FontWeight.w400);
+    expect(deleteText.style?.decorationThickness, isNull);
     expect(
       tester.widget<Text>(legalTerms).style?.decoration,
       TextDecoration.underline,

@@ -433,13 +433,7 @@ class _AppreciatorSettingsModalState
               label: 'Terms & Conditions',
               url: MaLegalUrls.terms,
               textKey: Key('appreciator_settings_terms_text'),
-              style: TextStyle(
-                fontFamily: _settingsFontFamily,
-                fontSize: 12,
-                color: AppColors.white50,
-                decoration: TextDecoration.underline,
-                decorationColor: AppColors.white50,
-              ),
+              style: _settingsLegalLinkStyle,
             ),
           ),
           const SizedBox(height: 8),
@@ -449,13 +443,7 @@ class _AppreciatorSettingsModalState
               label: 'Privacy Policy',
               url: MaLegalUrls.privacy,
               textKey: Key('appreciator_settings_privacy_text'),
-              style: TextStyle(
-                fontFamily: _settingsFontFamily,
-                fontSize: 12,
-                color: AppColors.white50,
-                decoration: TextDecoration.underline,
-                decorationColor: AppColors.white50,
-              ),
+              style: _settingsLegalLinkStyle,
             ),
           ),
           const SizedBox(height: 8),
@@ -468,21 +456,14 @@ class _AppreciatorSettingsModalState
                 backgroundColor: Colors.transparent,
                 overlayColor: Colors.transparent,
                 foregroundColor: AppColors.white50,
+                textStyle: _settingsLegalLinkStyle,
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(44, 20),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
                 'Delete Your Account',
-                style: TextStyle(
-                  fontFamily: _settingsFontFamily,
-                  fontSize: 12,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.white50,
-                  decorationStyle: TextDecorationStyle.solid,
-                  decorationThickness: 1.5,
-                  color: AppColors.white50,
-                ),
+                style: _settingsLegalLinkStyle,
               ),
             ),
           ),
@@ -556,6 +537,17 @@ class _AppreciatorSettingsModalState
 
 // Filter-consistent Settings typography, scoped to this modal.
 const String _settingsFontFamily = AppTextStyles.bodyFontFamily;
+
+const TextStyle _settingsLegalLinkStyle = TextStyle(
+  fontFamily: _settingsFontFamily,
+  fontSize: 12,
+  fontWeight: FontWeight.w400,
+  letterSpacing: 0,
+  color: AppColors.white50,
+  decoration: TextDecoration.underline,
+  decorationColor: AppColors.white50,
+);
+
 
 TextStyle _settingsLabelStyle() => AppTextStyles.onboardingHelper.copyWith(
   fontFamily: _settingsFontFamily,

@@ -139,12 +139,14 @@ void main() {
       tester.getTopLeft(deleteAccount).dy,
       greaterThan(tester.getTopLeft(privacy).dy),
     );
-    expect(
-      tester.widget<Text>(
-        find.descendant(of: deleteAccount, matching: find.byType(Text)),
-      ).style?.color,
-      AppColors.white50,
+    final deleteText = tester.widget<Text>(
+      find.descendant(of: deleteAccount, matching: find.byType(Text)),
     );
+    expect(deleteText.style?.color, AppColors.white50);
+    expect(deleteText.style, tester.widget<Text>(privacy).style);
+    expect(deleteText.style, tester.widget<Text>(terms).style);
+    expect(deleteText.style?.fontWeight, FontWeight.w400);
+    expect(deleteText.style?.decorationThickness, isNull);
     expect(
       tester.widget<Text>(terms).style?.decoration,
       TextDecoration.underline,
