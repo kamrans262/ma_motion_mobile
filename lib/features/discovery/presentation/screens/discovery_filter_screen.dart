@@ -23,6 +23,7 @@ class DiscoveryFilterScreen extends ConsumerStatefulWidget {
 
   final VoidCallback? onClose;
   final VoidCallback? onApplied;
+
   /// Use transparent, inset-free content inside MaGlassPopup.
   final bool popupLayout;
 
@@ -471,7 +472,9 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           controller: _locationSearchController,
           onChanged: _searchLocations,
           style: AppTextStyles.field.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,fontSize: 16),
+            fontFamily: AppTextStyles.bodyFontFamily,
+            fontSize: 16,
+          ),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
             hintText: 'Enter City or ZIP Code',

@@ -29,6 +29,7 @@ class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
   final VoidCallback onClose;
   final VoidCallback? onAccountDeleted;
   final VoidCallback? onLoggedOut;
+
   /// Use transparent, inset-free content inside MaGlassPopup.
   final bool popupLayout;
 

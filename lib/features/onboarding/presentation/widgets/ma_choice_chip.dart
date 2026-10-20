@@ -50,13 +50,13 @@ class MaChoiceChip extends StatelessWidget {
             verticalOffset: verticalOffset,
             style: selected
                 ? AppTextStyles.chipSelected.copyWith(
-                  fontFamily: fontFamily,
+                    fontFamily: fontFamily,
                     color: selectedTextColor,
                     fontSize: 14,
                     height: 1.1,
                   )
                 : AppTextStyles.chip.copyWith(
-                  fontFamily: fontFamily,
+                    fontFamily: fontFamily,
                     fontSize: 14,
                     height: 1.1,
                   ),

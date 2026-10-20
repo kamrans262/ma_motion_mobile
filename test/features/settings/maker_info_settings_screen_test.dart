@@ -43,9 +43,18 @@ void main() {
       tester.widget<Text>(find.text('Save & Close')).style?.fontSize,
       16,
     );
-    final chip = tester.widget<MaChoiceChip>(
-      find.byKey(const Key('maker_settings_type_1')),
+    expect(
+      tester.getCenter(find.text('Save & Close')).dy,
+      closeTo(tester.getCenter(find.byKey(const Key('maker_settings_save_close'))).dy, 1),
     );
+    final chipFinder = find.byKey(const Key('maker_settings_type_1'));
+    await tester.dragUntilVisible(
+      chipFinder,
+      find.byKey(const Key('maker_settings_scroll')),
+      const Offset(0, -160),
+    );
+    await tester.pump();
+    final chip = tester.widget<MaChoiceChip>(chipFinder);
     expect(chip.verticalOffset, 0);
     expect(tester.takeException(), isNull);
   });
