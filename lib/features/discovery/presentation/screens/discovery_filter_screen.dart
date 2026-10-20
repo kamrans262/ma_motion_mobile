@@ -705,7 +705,6 @@ class _ChoicePill extends StatelessWidget {
           child: MaCenteredTaxonomyLabel(
             label: label,
             verticalOffset: 0,
-            stableSelectedFontWeight: FontWeight.w600,
             style: TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,

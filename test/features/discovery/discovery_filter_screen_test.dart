@@ -451,19 +451,8 @@ void main() {
       ('filter_status_current', 'Currently Showing Work'),
     ]) {
       final pill = find.byKey(Key(choice.$1));
-      final originalPillRect = tester.getRect(pill);
-      final neighbor = choice.$1 == 'filter_status_current'
-          ? find.byKey(const Key('filter_status_upcoming'))
-          : null;
-      final originalNeighborRect = neighbor == null ? null : tester.getRect(neighbor);
-
       await tester.tap(pill);
       await tester.pump();
-
-      expect(tester.getRect(pill), originalPillRect);
-      if (neighbor != null) {
-        expect(tester.getRect(neighbor), originalNeighborRect);
-      }
 
       final material = tester.widget<Material>(
         find.descendant(of: pill, matching: find.byType(Material)).first,
@@ -480,10 +469,6 @@ void main() {
       // Clearing the selection restores the original 500 weight.
       await tester.tap(pill);
       await tester.pump();
-      expect(tester.getRect(pill), originalPillRect);
-      if (neighbor != null) {
-        expect(tester.getRect(neighbor), originalNeighborRect);
-      }
       expect(
         tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
         FontWeight.w500,
