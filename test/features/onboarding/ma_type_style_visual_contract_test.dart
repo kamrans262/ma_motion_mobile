@@ -132,15 +132,23 @@ void main() {
     );
 
     final paintingChip = find.byKey(const Key('maker_type_Painting'));
+    final sculptureChip = find.byKey(const Key('maker_type_Sculpture'));
+    final paintingRect = tester.getRect(paintingChip);
+    final sculptureRect = tester.getRect(sculptureChip);
+
     await tester.tap(paintingChip);
-    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(tester.getRect(paintingChip), paintingRect);
+    expect(tester.getRect(sculptureChip), sculptureRect);
     expect(tester.widget<MaChoiceChip>(paintingChip).selected, isTrue);
     expect(
       tester.widget<Text>(find.text('Painting')).style?.fontWeight,
       FontWeight.w600,
     );
     await tester.tap(paintingChip);
-    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(tester.getRect(paintingChip), paintingRect);
+    expect(tester.getRect(sculptureChip), sculptureRect);
     expect(tester.widget<MaChoiceChip>(paintingChip).selected, isFalse);
     expect(
       tester.widget<Text>(find.text('Painting')).style?.fontWeight,

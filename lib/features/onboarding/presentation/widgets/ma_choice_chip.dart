@@ -58,6 +58,7 @@ class MaChoiceChip extends StatelessWidget {
           child: MaCenteredTaxonomyLabel(
             label: label,
             verticalOffset: verticalOffset,
+            stableSelectedFontWeight: selectedFontWeight,
             style: selected
                 ? AppTextStyles.chipSelected.copyWith(
                     fontFamily: fontFamily,

@@ -559,7 +559,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   overlayColor: AppColors.primary50,
                   tickMarkShape: SliderTickMarkShape.noTickMark,
                   thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 8,
+                    enabledThumbRadius: 6,
                     elevation: 0,
                     pressedElevation: 0,
                   ),
@@ -705,6 +705,7 @@ class _ChoicePill extends StatelessWidget {
           child: MaCenteredTaxonomyLabel(
             label: label,
             verticalOffset: 0,
+            stableSelectedFontWeight: FontWeight.w600,
             style: TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
