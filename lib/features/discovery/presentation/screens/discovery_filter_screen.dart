@@ -301,7 +301,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           children: [
             Padding(
               padding: widget.popupLayout
-                  ? const EdgeInsets.only(bottom: 10)
+                  ? const EdgeInsets.only(bottom: 16)
                   : const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -331,7 +331,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                         'Clear Filters',
                         style: TextStyle(
                           fontFamily: AppTextStyles.bodyFontFamily,
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: AppColors.white.withValues(alpha: 0.50),
                         ),
@@ -369,7 +369,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 bottom: !widget.popupLayout,
                 child: Padding(
                   padding: widget.popupLayout
-                      ? const EdgeInsets.only(top: 10)
+                      ? const EdgeInsets.only(top: 16)
                       : const EdgeInsets.fromLTRB(20, 10, 20, 18),
                   child: SizedBox(
                     width: double.infinity,
@@ -411,49 +411,49 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     return ListView(
       key: const Key('filter_scroll'),
       padding: widget.popupLayout
-          ? const EdgeInsets.fromLTRB(0, 8, 0, 26)
+          ? EdgeInsets.zero
           : const EdgeInsets.fromLTRB(20, 8, 20, 26),
       children: [
         _sectionTitle('Type'),
         Wrap(
           spacing: 8,
-          runSpacing: 7,
+          runSpacing: 8,
           children: [
             for (final type in options.types)
               _ChoicePill(
                 key: Key('filter_type_${type.id}'),
                 label: type.name,
                 selected: _selectedTypeIds.contains(type.id),
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 darkBackground: true,
                 onTap: () => _toggleType(type.id),
               ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         _sectionTitle('Style'),
         Wrap(
           spacing: 8,
-          runSpacing: 7,
+          runSpacing: 8,
           children: [
             for (final style in options.styles)
               _ChoicePill(
                 key: Key('filter_style_${style.id}'),
                 label: style.name,
                 selected: _selectedStyleIds.contains(style.id),
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 darkBackground: true,
                 onTap: () => _toggleStyle(style.id),
               ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         _sectionTitle('Show Status'),
         Wrap(
           spacing: 8,
-          runSpacing: 7,
+          runSpacing: 8,
           children: [
             for (final status in options.showStatuses)
               if (status.value != 'past')
@@ -461,14 +461,14 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   key: Key('filter_status_${status.value}'),
                   label: status.label,
                   selected: _selectedStatuses.contains(status.value),
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   darkBackground: true,
                   onTap: () => _toggleStatus(status.value),
                 ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         _sectionTitle('Location'),
         TextField(
           key: const Key('filter_location_search'),
@@ -477,6 +477,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           style: AppTextStyles.field.copyWith(
             fontFamily: AppTextStyles.bodyFontFamily,
             fontSize: 16,
+            fontWeight: FontWeight.w400,
           ),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
@@ -527,17 +528,17 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               ),
             ),
           ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
         Text(
           'Radius (miles)',
           style: AppTextStyles.onboardingHelper.copyWith(
             fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 8),
         Row(
           key: const Key('filter_radius_control_row'),
           children: [
@@ -606,8 +607,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         style: AppTextStyles.onboardingHelper.copyWith(
           fontFamily: AppTextStyles.bodyFontFamily,
           color: AppColors.primary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
@@ -623,6 +624,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         fontFamily: AppTextStyles.bodyFontFamily,
         color: AppColors.darkGray,
         fontSize: 16,
+        fontWeight: FontWeight.w400,
       ),
       suffixIcon: suffixIcon,
       filled: true,
@@ -663,7 +665,7 @@ class _ChoicePill extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.fontSize = 14,
+    this.fontSize = 12,
     this.fontWeight,
     this.darkBackground = false,
   });
@@ -687,7 +689,7 @@ class _ChoicePill extends StatelessWidget {
         onTap: onTap,
         overlayColor: AppButtonStyles.purpleInkOverlay,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             border: Border.all(
               color: selected ? AppColors.white : AppColors.darkGray,
@@ -700,7 +702,7 @@ class _ChoicePill extends StatelessWidget {
             style: TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
-              height: 1.1,
+              height: 16 / 12,
               fontWeight: fontWeight ?? FontWeight.w500,
               color: selected ? AppColors.black : AppColors.white,
             ),

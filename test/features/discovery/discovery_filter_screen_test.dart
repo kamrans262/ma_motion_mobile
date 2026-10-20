@@ -38,7 +38,7 @@ void main() {
     );
     expect(scaffold.backgroundColor, Colors.transparent);
     final list = tester.widget<ListView>(find.byKey(const Key('filter_scroll')));
-    expect(list.padding, const EdgeInsets.fromLTRB(0, 8, 0, 26));
+    expect(list.padding, EdgeInsets.zero);
 
     final title = tester.widget<Text>(find.text('Filter'));
     expect(title.style?.fontSize, 24);
@@ -201,7 +201,7 @@ void main() {
     expect(title.style?.fontSize, 24);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));
     expect(clearText.style?.fontFamily, AppTextStyles.bodyFontFamily);
-    expect(clearText.style?.fontSize, 14);
+    expect(clearText.style?.fontSize, 12);
     expect(clearText.style?.fontWeight, FontWeight.w500);
     expect(
       clearText.style?.color,
@@ -265,7 +265,7 @@ void main() {
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
     expect(locationField.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.style?.fontSize, 16);
-    expect(locationField.style?.fontWeight, FontWeight.w500);
+    expect(locationField.style?.fontWeight, FontWeight.w400);
     expect(locationField.style?.height, 1);
     expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
     expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
@@ -369,8 +369,8 @@ void main() {
       'Radius (miles)',
     ]) {
       final text = tester.widget<Text>(find.text(label));
-      expect(text.style?.fontSize, 14);
-      expect(text.style?.fontWeight, FontWeight.w500);
+      expect(text.style?.fontSize, 12);
+      expect(text.style?.fontWeight, FontWeight.w400);
     }
 
     final typeText = tester.widget<Text>(
@@ -379,7 +379,7 @@ void main() {
         matching: find.text('Painting'),
       ),
     );
-    expect(typeText.style?.fontSize, 14);
+    expect(typeText.style?.fontSize, 12);
     expect(typeText.style?.fontWeight, FontWeight.w500);
 
     final styleText = tester.widget<Text>(
@@ -388,7 +388,7 @@ void main() {
         matching: find.text('Minimal'),
       ),
     );
-    expect(styleText.style?.fontSize, 14);
+    expect(styleText.style?.fontSize, 12);
     expect(styleText.style?.fontWeight, FontWeight.w500);
 
     for (final choice in <(String, String)>[
@@ -409,7 +409,7 @@ void main() {
 
     for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
       final widget = tester.widget<Text>(find.text(text));
-      expect(widget.style?.fontSize, 14);
+      expect(widget.style?.fontSize, 12);
       expect(widget.style?.fontWeight, FontWeight.w500);
     }
     expect(find.byKey(const Key('filter_status_past')), findsNothing);
