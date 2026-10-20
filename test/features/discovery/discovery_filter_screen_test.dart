@@ -454,9 +454,15 @@ void main() {
       );
       final border = (borderBox.decoration! as BoxDecoration).border! as Border;
       expect(border.top.color, AppColors.white);
+      final selectedLabel = tester.widget<Text>(find.text(choice.$2));
+      expect(selectedLabel.style?.color, AppColors.black);
+      expect(selectedLabel.style?.fontWeight, FontWeight.w600);
+      // Clearing the selection restores the original 500 weight.
+      await tester.tap(pill);
+      await tester.pump();
       expect(
-        tester.widget<Text>(find.text(choice.$2)).style?.color,
-        AppColors.black,
+        tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
+        FontWeight.w500,
       );
     }
     final slider = tester.widget<SliderTheme>(

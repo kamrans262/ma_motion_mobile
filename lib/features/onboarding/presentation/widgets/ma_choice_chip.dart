@@ -14,6 +14,7 @@ class MaChoiceChip extends StatelessWidget {
     this.selectedTextColor,
     this.unselectedBackgroundColor,
     this.fontFamily,
+    this.selectedFontWeight,
     this.fontSize = 14,
     this.padding = const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
     this.verticalOffset = MaCenteredTaxonomyLabel.opticalOffsetY,
@@ -26,6 +27,8 @@ class MaChoiceChip extends StatelessWidget {
   final Color? unselectedBackgroundColor;
   // Opt-in font override for Settings without changing Onboarding.
   final String? fontFamily;
+  // Only screens that opt in use a heavier selected label.
+  final FontWeight? selectedFontWeight;
   final double fontSize;
   final EdgeInsetsGeometry padding;
   final double verticalOffset;
@@ -56,6 +59,7 @@ class MaChoiceChip extends StatelessWidget {
                 ? AppTextStyles.chipSelected.copyWith(
                     fontFamily: fontFamily,
                     color: selectedTextColor,
+                    fontWeight: selectedFontWeight,
                     fontSize: fontSize,
                     height: fontSize == 12 ? 16 / 12 : 1.1,
                   )

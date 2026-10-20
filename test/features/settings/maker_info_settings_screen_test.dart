@@ -173,7 +173,9 @@ void main() {
       );
       expect(chipText.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(chipText.style?.fontSize, 12);
-      expect(chipText.style?.fontWeight, FontWeight.w500);
+      expect(chip.selectedFontWeight, FontWeight.w600);
+      expect(chip.selected, isTrue);
+      expect(chipText.style?.fontWeight, FontWeight.w600);
       expect(chipText.style?.height, 16 / 12);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
@@ -185,6 +187,21 @@ void main() {
       expect(
         textCenter.dy,
         closeTo(center.dy, 1),
+      );
+      await tester.tap(target.hitTestable());
+      await tester.pumpAndSettle();
+      expect(tester.widget<MaChoiceChip>(target).selected, isFalse);
+      expect(
+        tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
+        FontWeight.w500,
+      );
+      // Restore the selection so the rest of this save-flow test is unchanged.
+      await tester.tap(target.hitTestable());
+      await tester.pumpAndSettle();
+      expect(tester.widget<MaChoiceChip>(target).selected, isTrue);
+      expect(
+        tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
+        FontWeight.w600,
       );
     }
 
