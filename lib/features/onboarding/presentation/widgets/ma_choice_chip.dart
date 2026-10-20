@@ -14,6 +14,8 @@ class MaChoiceChip extends StatelessWidget {
     this.selectedTextColor,
     this.unselectedBackgroundColor,
     this.fontFamily,
+    this.fontSize = 14,
+    this.padding = const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
     this.verticalOffset = MaCenteredTaxonomyLabel.opticalOffsetY,
   });
 
@@ -24,6 +26,8 @@ class MaChoiceChip extends StatelessWidget {
   final Color? unselectedBackgroundColor;
   // Opt-in font override for Settings without changing Onboarding.
   final String? fontFamily;
+  final double fontSize;
+  final EdgeInsetsGeometry padding;
   final double verticalOffset;
 
   @override
@@ -38,7 +42,7 @@ class MaChoiceChip extends StatelessWidget {
         overlayColor: AppButtonStyles.purpleInkOverlay,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          padding: padding,
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.primary
@@ -52,13 +56,13 @@ class MaChoiceChip extends StatelessWidget {
                 ? AppTextStyles.chipSelected.copyWith(
                     fontFamily: fontFamily,
                     color: selectedTextColor,
-                    fontSize: 14,
-                    height: 1.1,
+                    fontSize: fontSize,
+                    height: fontSize == 12 ? 16 / 12 : 1.1,
                   )
                 : AppTextStyles.chip.copyWith(
                     fontFamily: fontFamily,
-                    fontSize: 14,
-                    height: 1.1,
+                    fontSize: fontSize,
+                    height: fontSize == 12 ? 16 / 12 : 1.1,
                   ),
           ),
         ),

@@ -48,6 +48,8 @@ void main() {
     await tester.pump();
     final chip = tester.widget<MaChoiceChip>(chipFinder);
     expect(chip.verticalOffset, 0);
+    expect(chip.fontSize, 12);
+    expect(chip.padding, const EdgeInsets.symmetric(horizontal: 12, vertical: 4));
 
     final save = find.byKey(const Key('maker_settings_save_close'));
     await tester.scrollUntilVisible(
@@ -151,15 +153,15 @@ void main() {
       );
       expect(
         chipContainer.padding,
-        const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       );
       expect(chipContainer.constraints, isNull);
       final chipText = tester.widget<Text>(
         find.descendant(of: target, matching: find.text(choice.$2)),
       );
       expect(chipText.style?.fontFamily, AppTextStyles.bodyFontFamily);
-      expect(chipText.style?.fontSize, 14);
-      expect(chipText.style?.height, 1.1);
+      expect(chipText.style?.fontSize, 12);
+      expect(chipText.style?.height, 16 / 12);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
@@ -184,6 +186,8 @@ void main() {
     expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
+    final carouselTitle = tester.widget<Text>(find.text('Carousel Images'));
+    expect(carouselTitle.style?.fontSize, 18);
     expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
     expect(find.text('Logout'), findsNothing);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
@@ -586,13 +590,13 @@ void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.decoration?.fillColor, AppColors.filterInputFill);
   expect(field.style?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.style?.fontSize, 16);
-  expect(field.style?.fontWeight, FontWeight.w500);
+  expect(field.style?.fontWeight, FontWeight.w400);
   expect(field.style?.height, 1);
   expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
   expect(field.style?.color, AppColors.white);
   expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.decoration?.hintStyle?.fontSize, 16);
-  expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
+  expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w400);
   expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);
   expect(field.decoration?.hintStyle?.height, 1);
   expect(

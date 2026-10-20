@@ -656,7 +656,7 @@ class _MakerInfoSettingsScreenState
               bottom: !widget.popupLayout,
               child: Padding(
                 padding: widget.popupLayout
-                    ? const EdgeInsets.only(top: 10)
+                    ? const EdgeInsets.only(top: 16)
                     : const EdgeInsets.fromLTRB(20, 10, 20, 16),
                 child: SizedBox(
                   height: 48,
@@ -715,7 +715,7 @@ class _MakerInfoSettingsScreenState
                 ),
               ],
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 16),
             _LabeledField(
               label: 'Name',
               keyName: 'maker_settings_name',
@@ -742,7 +742,7 @@ class _MakerInfoSettingsScreenState
                 style: AppTextStyles.onboardingHelper.copyWith(
                   fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.primary,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
                 children: [
                   const TextSpan(text: 'Your Work Has Been Saved By '),
@@ -757,16 +757,17 @@ class _MakerInfoSettingsScreenState
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Text(
               'Keyword',
               key: const Key('maker_settings_keyword_label'),
               style: AppTextStyles.onboardingHelper.copyWith(
                 fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
+                fontSize: 12,
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 8),
             _TaxonomySection(
               label: 'Type',
               options: data.availableTypes,
@@ -778,7 +779,7 @@ class _MakerInfoSettingsScreenState
                 });
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             _TaxonomySection(
               label: 'Style',
               options: data.availableStyles,
@@ -790,7 +791,7 @@ class _MakerInfoSettingsScreenState
                 });
               },
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
             _VisibilityField(
               label: 'Website',
               controller: _websiteController,
@@ -884,19 +885,19 @@ class _MakerInfoSettingsScreenState
                       });
                     },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Divider(
               height: 1,
               thickness: 1,
               color: Colors.white.withValues(alpha: 0.4),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Text(
               'Carousel Images',
               style: AppTextStyles.onboardingHelper.copyWith(
                 fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             const SizedBox(height: 12),
@@ -924,7 +925,7 @@ class _MakerInfoSettingsScreenState
                 onChoose: () => _chooseMedia(slot),
                 onRemove: () => _removeSlot(slot),
               ),
-              SizedBox(height: slot == 4 ? 11 : 22),
+              const SizedBox(height: 12),
             ],
             const Align(
               alignment: Alignment.centerLeft,
@@ -995,7 +996,7 @@ class _MakerInfoSettingsScreenState
                 ),
               ),
             ],
-            const SizedBox(height: 12),
+            if (!widget.popupLayout) const SizedBox(height: 12),
             if (widget.popupLayout) _buildSaveButton(),
           ],
         );
@@ -1057,6 +1058,7 @@ TextStyle _makerSettingsInputStyle() {
     fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.white,
     fontSize: 16,
+    fontWeight: FontWeight.w400,
   );
 }
 
@@ -1065,6 +1067,7 @@ TextStyle _makerSettingsHintStyle() {
     fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.darkGray,
     fontSize: 16,
+    fontWeight: FontWeight.w400,
   );
 }
 
@@ -1090,7 +1093,7 @@ class _LabeledField extends StatelessWidget {
     this.minLines = 1,
     this.maxLines = 1,
     this.onChanged,
-    this.bottomPadding = 12,
+    this.bottomPadding = 16,
     this.inputLineHeight,
     this.inputContentPadding,
   });
@@ -1125,9 +1128,10 @@ class _LabeledField extends StatelessWidget {
               style: AppTextStyles.onboardingHelper.copyWith(
                 fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
+                fontSize: 12,
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 8),
           ],
           TextField(
             key: Key(keyName),
@@ -1338,7 +1342,7 @@ class _EventLocationAutocompleteFieldState
             horizontal: 16,
             vertical: 12,
           ),
-          bottomPadding: _suggestions.isEmpty ? 12 : 0,
+          bottomPadding: _suggestions.isEmpty ? 16 : 0,
         ),
         if (_suggestions.isNotEmpty)
           Container(
@@ -1406,7 +1410,7 @@ class _VisibilityField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
           Row(
@@ -1419,6 +1423,7 @@ class _VisibilityField extends StatelessWidget {
                   style: AppTextStyles.onboardingHelper.copyWith(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     color: AppColors.primary,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -1437,7 +1442,8 @@ class _VisibilityField extends StatelessWidget {
                         style: AppTextStyles.onboardingHelper.copyWith(
                           fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.primary,
-                          fontSize: 14,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -1452,7 +1458,7 @@ class _VisibilityField extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           _LabeledField(
             label: '',
             keyName: keyName,
@@ -1481,7 +1487,7 @@ class _VisibilityOnlyRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Expanded(
@@ -1490,6 +1496,7 @@ class _VisibilityOnlyRow extends StatelessWidget {
               style: AppTextStyles.onboardingHelper.copyWith(
                 fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
+                fontSize: 12,
               ),
             ),
           ),
@@ -1570,6 +1577,8 @@ class _TaxonomySection extends StatelessWidget {
           style: AppTextStyles.onboardingHelper.copyWith(
             fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(height: 8),
@@ -1580,6 +1589,8 @@ class _TaxonomySection extends StatelessWidget {
             for (final option in options)
               MaChoiceChip(
                 fontFamily: AppTextStyles.bodyFontFamily,
+                fontSize: 12,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 verticalOffset: 0,
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
