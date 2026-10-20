@@ -14,7 +14,12 @@ import '../../domain/discovery_filter_models.dart';
 import '../../domain/discovery_query.dart';
 
 class DiscoveryFilterScreen extends ConsumerStatefulWidget {
-  const DiscoveryFilterScreen({super.key, this.onClose, this.onApplied, this.popupLayout = false});
+  const DiscoveryFilterScreen({
+    super.key,
+    this.onClose,
+    this.onApplied,
+    this.popupLayout = false,
+  });
 
   final VoidCallback? onClose;
   final VoidCallback? onApplied;

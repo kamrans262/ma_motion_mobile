@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/pagination_meta.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
+import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/discovery/data/artwork_discovery_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/data/discovery_filter_repository.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
@@ -13,6 +14,48 @@ import 'package:ma_motion_mobile/features/discovery/domain/discovery_query.dart'
 import 'package:ma_motion_mobile/features/discovery/presentation/screens/discovery_filter_screen.dart';
 
 void main() {
+  testWidgets('popup Filter keeps its typography and field geometry', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          discoveryFilterRepositoryProvider.overrideWithValue(
+            _FakeFilterRepository(),
+          ),
+          artworkDiscoveryRepositoryProvider.overrideWithValue(
+            _FakeArtworkRepository(),
+          ),
+        ],
+        child: const MaterialApp(
+          home: DiscoveryFilterScreen(popupLayout: true),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('discovery_filter_screen')),
+    );
+    expect(scaffold.backgroundColor, Colors.transparent);
+    final list = tester.widget<ListView>(find.byKey(const Key('filter_scroll')));
+    expect(list.padding, const EdgeInsets.fromLTRB(0, 8, 0, 26));
+
+    final title = tester.widget<Text>(find.text('Filter'));
+    expect(title.style?.fontSize, 24);
+    expect(title.style?.fontWeight, FontWeight.w500);
+    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    final typePill = find.byKey(const Key('filter_type_1'));
+    expect(typePill, findsOneWidget);
+    final label = tester.widget<MaCenteredTaxonomyLabel>(
+      find.descendant(
+        of: typePill,
+        matching: find.byType(MaCenteredTaxonomyLabel),
+      ),
+    );
+    expect(label.verticalOffset, 0);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('applies taxonomy, status and radius filters', (tester) async {
     final artworkRepository = _FakeArtworkRepository();
 

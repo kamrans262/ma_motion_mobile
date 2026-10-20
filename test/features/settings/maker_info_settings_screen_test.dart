@@ -12,6 +12,44 @@ import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_cho
 import 'package:ma_motion_mobile/features/settings/presentation/screens/maker_info_settings_screen.dart';
 
 void main() {
+  testWidgets('Maker Settings popup uses transparent, inset-free form', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(
+            _FakeSettingsRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(
+            popupLayout: true,
+            onClose: () {},
+          ),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('maker_info_settings_screen')),
+    );
+    expect(scaffold.backgroundColor, Colors.transparent);
+    final list = tester.widget<ListView>(
+      find.byKey(const Key('maker_settings_scroll')),
+    );
+    expect(list.padding, EdgeInsets.zero);
+    expect(
+      tester.widget<Text>(find.text('Save & Close')).style?.fontSize,
+      16,
+    );
+    final chip = tester.widget<MaChoiceChip>(
+      find.byKey(const Key('maker_settings_type_1')),
+    );
+    expect(chip.verticalOffset, 0);
+    expect(tester.takeException(), isNull);
+  });
+
   WidgetController.hitTestWarningShouldBeFatal = true;
 
   testWidgets('renders Maker Info Setting and saves profile changes', (
