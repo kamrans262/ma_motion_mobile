@@ -92,7 +92,7 @@ void main() {
 
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets('renders Maker Info Setting and saves profile changes', (
+  testWidgets('renders Settings and saves profile changes', (
     WidgetTester tester,
   ) async {
     final repository = _FakeSettingsRepository();
@@ -206,13 +206,13 @@ void main() {
     }
 
     await tester.dragUntilVisible(
-      find.text('Maker Info Setting'),
+      find.text('Settings'),
       settingsList,
       const Offset(0, 160),
     );
     await tester.pump();
-    expect(find.text('Maker Info Setting'), findsOneWidget);
-    final settingsTitle = tester.widget<Text>(find.text('Maker Info Setting'));
+    expect(find.text('Settings'), findsOneWidget);
+    final settingsTitle = tester.widget<Text>(find.text('Settings'));
     expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
@@ -283,8 +283,45 @@ void main() {
       scrollView: settingsList,
     );
 
+    // Figma switch: 48x24 track and 16px thumb; no Material Switch.
+    expect(tester.getSize(emailSwitch), const Size(48, 24));
+    final trackFinder = find.descendant(
+      of: emailSwitch,
+      matching: find.byType(AnimatedContainer),
+    );
+    final thumbFinder = find.descendant(
+      of: emailSwitch,
+      matching: find.byType(Container),
+    );
+    final alignmentFinder = find.descendant(
+      of: emailSwitch,
+      matching: find.byType(AnimatedAlign),
+    );
+    BoxDecoration trackDecoration() =>
+        tester.widget<AnimatedContainer>(trackFinder).decoration!
+            as BoxDecoration;
+    BoxDecoration thumbDecoration() =>
+        tester.widget<Container>(thumbFinder).decoration! as BoxDecoration;
+
+    expect(trackDecoration().color, Colors.white.withValues(alpha: 0.2));
+    expect(trackDecoration().borderRadius, BorderRadius.circular(12));
+    expect(thumbDecoration().color, Colors.white);
+    expect(thumbDecoration().shape, BoxShape.circle);
+    expect(tester.getSize(thumbFinder), const Size(16, 16));
+    expect(
+      tester.widget<AnimatedAlign>(alignmentFinder).alignment,
+      Alignment.centerLeft,
+    );
+
     await tester.tap(emailSwitch.hitTestable());
-    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(trackDecoration().color, Colors.white);
+    expect(thumbDecoration().color, Colors.black);
+    expect(
+      tester.widget<AnimatedAlign>(alignmentFinder).alignment,
+      Alignment.centerRight,
+    );
 
     final hidePage = find.byKey(const Key('maker_settings_hide_page'));
     await _scrollIntoSafeTapRegion(
@@ -430,6 +467,46 @@ void main() {
     },
   );
 
+  for (final status in <String>['approved', 'pending']) {
+    testWidgets('Maker Settings hides approved status only: $status', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeSettingsRepository()
+        ..confirmedSlots.add(2)
+        ..artworkModerationStatus = status;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+          ],
+          child: const MaterialApp(
+            home: MakerInfoSettingsScreen(onClose: _noop),
+          ),
+        ),
+      );
+      await _finishInitialLoad(tester);
+
+      final artwork = find.byKey(const Key('maker_settings_carousel_2'));
+      await tester.dragUntilVisible(
+        artwork,
+        find.byKey(const Key('maker_settings_scroll')),
+        const Offset(0, -220),
+      );
+      await tester.pump();
+
+      expect(artwork, findsOneWidget);
+      final statusText = find.byKey(const Key('maker_settings_artwork_status_2'));
+      if (status == 'approved') {
+        expect(statusText, findsNothing);
+        expect(find.text('Status: approved'), findsNothing);
+      } else {
+        expect(statusText, findsOneWidget);
+        expect(find.text('Status: pending'), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('Maker settings has no overflow on 320x520 viewport', (
     WidgetTester tester,
   ) async {
@@ -449,7 +526,7 @@ void main() {
 
     await _finishInitialLoad(tester);
 
-    expect(find.text('Maker Info Setting'), findsOneWidget);
+    expect(find.text('Settings'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -662,6 +739,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int deleteArtworkCalls = 0;
   MakerInfoSettingsDraft? lastDraft;
   final Set<int> confirmedSlots = <int>{};
+  String artworkModerationStatus = 'pending';
 
   @override
   Future<MakerInfoSettingsData> load() async {
@@ -698,7 +776,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
                 styleId: 2,
                 locationId: 3,
                 locationText: 'Chicago, IL',
-                moderationStatus: 'pending',
+                moderationStatus: artworkModerationStatus,
                 isVisible: true,
                 media: <MakerSettingsArtworkMedia>[
                   MakerSettingsArtworkMedia(

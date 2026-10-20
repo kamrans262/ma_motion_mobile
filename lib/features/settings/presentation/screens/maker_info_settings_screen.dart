@@ -710,7 +710,7 @@ class _MakerInfoSettingsScreenState
               children: [
                 Flexible(
                   child: Text(
-                    'Maker Info Setting',
+                    'Settings',
                     style: const TextStyle(
                       fontFamily: AppTextStyles.bodyFontFamily,
                       fontSize: 24,
@@ -1523,6 +1523,8 @@ class _CompactVisibilityToggle extends StatelessWidget {
     required this.onChanged,
   });
 
+  static const Duration _transition = Duration(milliseconds: 160);
+
   final bool value;
   final ValueChanged<bool>? onChanged;
 
@@ -1532,24 +1534,32 @@ class _CompactVisibilityToggle extends StatelessWidget {
 
     return Semantics(
       button: true,
+      enabled: enabled,
       toggled: value,
       child: InkWell(
         onTap: enabled ? () => onChanged!(!value) : null,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         overlayColor: AppButtonStyles.purpleInkOverlay,
-        child: SizedBox(
-          width: 50,
-          height: 28,
-          child: IgnorePointer(
-            child: Transform.scale(
-              scale: 0.72,
-              alignment: Alignment.center,
-              child: Switch(
-                value: value,
-                onChanged: enabled ? (_) {} : null,
-                activeThumbColor: AppColors.white,
-                activeTrackColor: AppColors.primary,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: AnimatedContainer(
+          duration: _transition,
+          curve: Curves.easeInOut,
+          width: 48,
+          height: 24,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: value ? Colors.white : Colors.white.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: AnimatedAlign(
+            duration: _transition,
+            curve: Curves.easeInOut,
+            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: value ? Colors.black : Colors.white,
               ),
             ),
           ),
@@ -1672,7 +1682,10 @@ class _CarouselEditor extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.4),
           ),
         ),
-        if (isArtwork && moderationStatus != null) ...[
+        if (isArtwork &&
+            moderationStatus != null &&
+            moderationStatus!.trim().isNotEmpty &&
+            moderationStatus!.trim().toLowerCase() != 'approved') ...[
           const SizedBox(height: 2),
           Text(
             'Status: $moderationStatus',
