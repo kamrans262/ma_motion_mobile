@@ -810,17 +810,26 @@ class _TypeStyleStep extends ConsumerWidget {
           Text(
             'Type',
             style: AppTextStyles.onboardingHelper.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 8),
           Wrap(
             key: const Key('maker_type_options'),
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               for (final type in MakerRegistrationOptions.types)
                 MaChoiceChip(
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 12,
+                  letterSpacing: 0,
+                  selectedFontWeight: FontWeight.w600,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  verticalOffset: 0,
                   key: Key('maker_type_$type'),
                   label: type,
                   selected: draft.types.contains(type),
@@ -839,21 +848,30 @@ class _TypeStyleStep extends ConsumerWidget {
               style: AppTextStyles.onboardingError,
             ),
           ],
-          const SizedBox(height: 22),
+          const SizedBox(height: 16),
           Text(
             'Style',
             style: AppTextStyles.onboardingHelper.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 8),
           Wrap(
             key: const Key('maker_style_options'),
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               for (final style in MakerRegistrationOptions.styles)
                 MaChoiceChip(
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 12,
+                  letterSpacing: 0,
+                  selectedFontWeight: FontWeight.w600,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  verticalOffset: 0,
                   key: Key('maker_style_$style'),
                   label: style,
                   selected: draft.styles.contains(style),

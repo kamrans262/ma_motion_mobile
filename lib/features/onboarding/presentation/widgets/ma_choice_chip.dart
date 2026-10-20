@@ -15,6 +15,7 @@ class MaChoiceChip extends StatelessWidget {
     this.unselectedBackgroundColor,
     this.fontFamily,
     this.selectedFontWeight,
+    this.letterSpacing,
     this.fontSize = 14,
     this.padding = const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
     this.verticalOffset = MaCenteredTaxonomyLabel.opticalOffsetY,
@@ -29,6 +30,8 @@ class MaChoiceChip extends StatelessWidget {
   final String? fontFamily;
   // Only screens that opt in use a heavier selected label.
   final FontWeight? selectedFontWeight;
+  // Optional tracking override for chips matched to the Filter popup.
+  final double? letterSpacing;
   final double fontSize;
   final EdgeInsetsGeometry padding;
   final double verticalOffset;
@@ -60,11 +63,13 @@ class MaChoiceChip extends StatelessWidget {
                     fontFamily: fontFamily,
                     color: selectedTextColor,
                     fontWeight: selectedFontWeight,
+                    letterSpacing: letterSpacing,
                     fontSize: fontSize,
                     height: fontSize == 12 ? 16 / 12 : 1.1,
                   )
                 : AppTextStyles.chip.copyWith(
                     fontFamily: fontFamily,
+                    letterSpacing: letterSpacing,
                     fontSize: fontSize,
                     height: fontSize == 12 ? 16 / 12 : 1.1,
                   ),
