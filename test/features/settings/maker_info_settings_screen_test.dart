@@ -81,6 +81,7 @@ void main() {
       await tester.pump();
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
+      expect(chip.fontFamily, AppTextStyles.bodyFontFamily);
       final chipContainer = tester.widget<AnimatedContainer>(
         find.descendant(of: target, matching: find.byType(AnimatedContainer)),
       );
@@ -92,6 +93,7 @@ void main() {
       final chipText = tester.widget<Text>(
         find.descendant(of: target, matching: find.text(choice.$2)),
       );
+      expect(chipText.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(chipText.style?.fontSize, 14);
       expect(chipText.style?.height, 1.1);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
@@ -115,7 +117,7 @@ void main() {
     await tester.pump();
     expect(find.text('Maker Info Setting'), findsOneWidget);
     final settingsTitle = tester.widget<Text>(find.text('Maker Info Setting'));
-    expect(settingsTitle.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
     expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
@@ -518,13 +520,13 @@ Future<void> _scrollIntoSafeTapRegion(
 
 void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.decoration?.fillColor, AppColors.filterInputFill);
-  expect(field.style?.fontFamily, AppTextStyles.fontFamily);
+  expect(field.style?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.style?.fontSize, 16);
   expect(field.style?.fontWeight, FontWeight.w500);
   expect(field.style?.height, 1);
   expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
   expect(field.style?.color, AppColors.white);
-  expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+  expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.decoration?.hintStyle?.fontSize, 16);
   expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
   expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);

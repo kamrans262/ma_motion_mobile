@@ -296,7 +296,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
+                        fontFamily: AppTextStyles.bodyFontFamily,
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
                         color: AppColors.primary,
@@ -314,7 +314,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       child: Text(
                         'Clear Filters',
                         style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
+                          fontFamily: AppTextStyles.bodyFontFamily,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: AppColors.white.withValues(alpha: 0.50),
@@ -365,7 +365,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                               child: const Text(
                                 'Apply Filters',
                                 style: TextStyle(
-                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontFamily: AppTextStyles.bodyFontFamily,
                                   fontSize: 16,
                                   height: 1.0,
                                   fontWeight: FontWeight.w500,
@@ -453,7 +453,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           key: const Key('filter_location_search'),
           controller: _locationSearchController,
           onChanged: _searchLocations,
-          style: AppTextStyles.field.copyWith(fontSize: 16),
+          style: AppTextStyles.field.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,fontSize: 16),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
             hintText: 'Enter City or ZIP Code',
@@ -492,6 +493,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       title: Text(
                         suggestion.label,
                         style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.white,
                           fontSize: 14,
                         ),
@@ -506,6 +508,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         Text(
           'Radius (miles)',
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -558,6 +561,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 key: const Key('filter_radius_value'),
                 textAlign: TextAlign.right,
                 style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -576,6 +580,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       child: Text(
         title,
         style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
           color: AppColors.primary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -591,6 +596,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: AppTextStyles.fieldHint.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
         color: AppColors.darkGray,
         fontSize: 16,
       ),
@@ -667,7 +673,7 @@ class _ChoicePill extends StatelessWidget {
           child: MaCenteredTaxonomyLabel(
             label: label,
             style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
+              fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
               height: 1.1,
               fontWeight: fontWeight ?? FontWeight.w500,
@@ -697,7 +703,9 @@ class _LoadError extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTextStyles.onboardingHelper,
+              style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
+              ),
             ),
             const SizedBox(height: 16),
             OutlinedButton(
@@ -705,7 +713,10 @@ class _LoadError extends StatelessWidget {
               style: AppButtonStyles.outlineAction(),
               child: Transform.translate(
                 offset: const Offset(0, 1),
-                child: const Text('Try Again'),
+                child: const Text(
+                  'Try Again',
+                  style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+                ),
               ),
             ),
           ],

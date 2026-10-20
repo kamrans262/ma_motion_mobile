@@ -13,6 +13,7 @@ class MaChoiceChip extends StatelessWidget {
     required this.onTap,
     this.selectedTextColor,
     this.unselectedBackgroundColor,
+    this.fontFamily,
   });
 
   final String label;
@@ -20,6 +21,8 @@ class MaChoiceChip extends StatelessWidget {
   final VoidCallback onTap;
   final Color? selectedTextColor;
   final Color? unselectedBackgroundColor;
+  // Opt-in font override for Settings without changing Onboarding.
+  final String? fontFamily;
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +47,13 @@ class MaChoiceChip extends StatelessWidget {
             label: label,
             style: selected
                 ? AppTextStyles.chipSelected.copyWith(
+                     fontFamily: fontFamily,
                     color: selectedTextColor,
                     fontSize: 14,
                     height: 1.1,
                   )
                 : AppTextStyles.chip.copyWith(
+                     fontFamily: fontFamily,
                     fontSize: 14,
                     height: 1.1,
                   ),

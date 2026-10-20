@@ -132,11 +132,11 @@ void main() {
     expect(find.text('Filter'), findsOneWidget);
 
     final title = tester.widget<Text>(find.text('Filter'));
-    expect(title.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(title.style?.fontWeight, FontWeight.w500);
     expect(title.style?.fontSize, 24);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));
-    expect(clearText.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(clearText.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(clearText.style?.fontSize, 14);
     expect(clearText.style?.fontWeight, FontWeight.w500);
     expect(
@@ -199,12 +199,12 @@ void main() {
 
     final locationField = tester.widget<TextField>(locationSearch);
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
-    expect(locationField.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.style?.fontSize, 16);
     expect(locationField.style?.fontWeight, FontWeight.w500);
     expect(locationField.style?.height, 1);
     expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
-    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.decoration?.hintStyle?.fontSize, 16);
     expect(locationField.decoration?.hintStyle?.fontStyle, FontStyle.normal);
     expect(locationField.decoration?.hintStyle?.color, AppColors.darkGray);
