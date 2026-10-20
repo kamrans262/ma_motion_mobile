@@ -52,12 +52,24 @@ void main() {
         matching: find.byType(MaCenteredTaxonomyLabel),
       ),
     );
-    expect(label.verticalOffset, MaCenteredTaxonomyLabel.opticalOffsetY);
+    expect(label.verticalOffset, 0);
 
     final apply = find.byKey(const Key('filter_apply_button'));
+    await tester.scrollUntilVisible(
+      apply,
+      180,
+      scrollable: _verticalFilterScrollable(),
+    );
+    expect(
+      find.ancestor(
+        of: apply,
+        matching: find.byKey(const Key('filter_scroll')),
+      ),
+      findsOneWidget,
+    );
     expect(
       tester.getCenter(find.text('Apply Filters')).dy,
-      closeTo(tester.getCenter(apply).dy + 1, 1),
+      closeTo(tester.getCenter(apply).dy, 1),
     );
     final applyText = tester.widget<Text>(find.text('Apply Filters'));
     expect(applyText.style?.fontFamily, AppTextStyles.bodyFontFamily);
@@ -389,7 +401,7 @@ void main() {
       expect(
         labelCenter.dy,
         closeTo(
-          buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY,
+          buttonCenter.dy,
           1,
         ),
       );

@@ -644,9 +644,14 @@ class _MakerInfoSettingsScreenState
             ? _LoadError(message: _errorMessage!, onRetry: _load)
             : _buildForm(),
       ),
-      bottomNavigationBar: _loading || _data == null
-          ? null
-          : SafeArea(
+      bottomNavigationBar: !widget.popupLayout && !_loading && _data != null
+          ? _buildSaveButton()
+          : null,
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return SafeArea(
               top: false,
               bottom: !widget.popupLayout,
               child: Padding(
@@ -667,23 +672,19 @@ class _MakerInfoSettingsScreenState
                               color: AppColors.darkGray,
                             ),
                           )
-                        : Transform.translate(
-                            offset: const Offset(0, 2),
-                            child: const Text(
-                              'Save & Close',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.bodyFontFamily,
-                                fontSize: 16,
-                                height: 1.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+                        : const Text(
+                            'Save & Close',
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.bodyFontFamily,
+                              fontSize: 16,
+                              height: 1.0,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                   ),
                 ),
               ),
-            ),
-    );
+            );
   }
 
   Widget _buildForm() {
@@ -995,6 +996,7 @@ class _MakerInfoSettingsScreenState
               ),
             ],
             const SizedBox(height: 12),
+            if (widget.popupLayout) _buildSaveButton(),
           ],
         );
       },
@@ -1578,7 +1580,7 @@ class _TaxonomySection extends StatelessWidget {
             for (final option in options)
               MaChoiceChip(
                 fontFamily: AppTextStyles.bodyFontFamily,
-                verticalOffset: 1.5,
+                verticalOffset: 0,
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
                 selected: selectedIds.contains(option.id),
@@ -2035,12 +2037,9 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text(
-                  'Try Again',
-                  style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
-                ),
+              child: const Text(
+                'Try Again',
+                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
               ),
             ),
           ],

@@ -39,14 +39,6 @@ void main() {
       find.byKey(const Key('maker_settings_scroll')),
     );
     expect(list.padding, EdgeInsets.zero);
-    expect(
-      tester.widget<Text>(find.text('Save & Close')).style?.fontSize,
-      16,
-    );
-    expect(
-      tester.getCenter(find.text('Save & Close')).dy,
-      closeTo(tester.getCenter(find.byKey(const Key('maker_settings_save_close'))).dy + 2, 1),
-    );
     final chipFinder = find.byKey(const Key('maker_settings_type_1'));
     await tester.dragUntilVisible(
       chipFinder,
@@ -55,7 +47,32 @@ void main() {
     );
     await tester.pump();
     final chip = tester.widget<MaChoiceChip>(chipFinder);
-    expect(chip.verticalOffset, 1.5);
+    expect(chip.verticalOffset, 0);
+
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await tester.scrollUntilVisible(
+      save,
+      240,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('maker_settings_scroll')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(
+      find.ancestor(
+        of: save,
+        matching: find.byKey(const Key('maker_settings_scroll')),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester.widget<Text>(find.text('Save & Close')).style?.fontSize,
+      16,
+    );
+    expect(
+      tester.getCenter(find.text('Save & Close')).dy,
+      closeTo(tester.getCenter(save).dy, 1),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -128,7 +145,7 @@ void main() {
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
       expect(chip.fontFamily, AppTextStyles.bodyFontFamily);
-      expect(chip.verticalOffset, 1.5);
+      expect(chip.verticalOffset, 0);
       final chipContainer = tester.widget<AnimatedContainer>(
         find.descendant(of: target, matching: find.byType(AnimatedContainer)),
       );
@@ -152,7 +169,7 @@ void main() {
       );
       expect(
         textCenter.dy,
-        closeTo(center.dy + 1.5, 1),
+        closeTo(center.dy, 1),
       );
     }
 

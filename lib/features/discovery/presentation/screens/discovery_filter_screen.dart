@@ -356,8 +356,15 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     )
                   : _buildForm(options),
             ),
-            if (options != null)
-              SafeArea(
+            if (!widget.popupLayout && options != null) _buildApplyButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildApplyButton() {
+    return SafeArea(
                 top: false,
                 bottom: !widget.popupLayout,
                 child: Padding(
@@ -379,26 +386,19 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                                 color: AppColors.darkGray,
                               ),
                             )
-                          : Transform.translate(
-                              offset: const Offset(0, 1),
-                              child: const Text(
-                                'Apply Filters',
-                                style: TextStyle(
-                                  fontFamily: AppTextStyles.bodyFontFamily,
-                                  fontSize: 16,
-                                  height: 1.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          : const Text(
+                              'Apply Filters',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.bodyFontFamily,
+                                fontSize: 16,
+                                height: 1.0,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        ),
-      ),
-    );
+              );
   }
 
   Widget _buildForm(DiscoveryFilterOptions options) {
@@ -593,6 +593,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             ),
           ],
         ),
+        if (widget.popupLayout) _buildApplyButton(),
       ],
     );
   }
@@ -695,7 +696,7 @@ class _ChoicePill extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
-            verticalOffset: MaCenteredTaxonomyLabel.opticalOffsetY,
+            verticalOffset: 0,
             style: TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
@@ -735,12 +736,9 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text(
-                  'Try Again',
-                  style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
-                ),
+              child: const Text(
+                'Try Again',
+                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
               ),
             ),
           ],
