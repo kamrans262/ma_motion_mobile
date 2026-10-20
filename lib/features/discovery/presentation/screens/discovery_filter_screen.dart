@@ -369,7 +369,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 bottom: !widget.popupLayout,
                 child: Padding(
                   padding: widget.popupLayout
-                      ? const EdgeInsets.only(top: 16)
+                      ? const EdgeInsets.only(top: 40)
                       : const EdgeInsets.fromLTRB(20, 10, 20, 18),
                   child: SizedBox(
                     width: double.infinity,
