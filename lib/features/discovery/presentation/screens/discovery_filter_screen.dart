@@ -493,7 +493,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       title: Text(
                         suggestion.label,
                         style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                          fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.white,
                           fontSize: 14,
                         ),
@@ -561,7 +561,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 key: const Key('filter_radius_value'),
                 textAlign: TextAlign.right,
                 style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -580,7 +580,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       child: Text(
         title,
         style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+          fontFamily: AppTextStyles.bodyFontFamily,
           color: AppColors.primary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -596,7 +596,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: AppTextStyles.fieldHint.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+        fontFamily: AppTextStyles.bodyFontFamily,
         color: AppColors.darkGray,
         fontSize: 16,
       ),

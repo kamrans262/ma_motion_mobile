@@ -492,7 +492,7 @@ class _AppreciatorSettingsModalState
               _errorMessage!,
               key: const Key('appreciator_settings_error'),
               style: AppTextStyles.error.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,fontSize: 14),
+                fontFamily: AppTextStyles.bodyFontFamily,fontSize: 14),
             ),
           ],
           if (_successMessage != null) ...[
@@ -501,7 +501,7 @@ class _AppreciatorSettingsModalState
               _successMessage!,
               key: const Key('appreciator_settings_success'),
               style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
                 fontSize: 14,
               ),
@@ -605,9 +605,9 @@ class _SettingsField extends StatelessWidget {
           decoration: InputDecoration(
             errorText: errorText,
             errorStyle: AppTextStyles.error.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,fontSize: 14),
+              fontFamily: AppTextStyles.bodyFontFamily,fontSize: 14),
             hintStyle: AppTextStyles.fieldHint.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+              fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.darkGray,
               fontSize: 16,
             ),
@@ -657,7 +657,7 @@ class _LoadFailure extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: AppTextStyles.onboardingHelper.copyWith(
-                  fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 ),
             ),
             const SizedBox(height: 16),

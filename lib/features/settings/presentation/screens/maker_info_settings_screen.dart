@@ -496,9 +496,9 @@ class _MakerInfoSettingsScreenState
                   title: const Text(
                     'Choose image',
                     style: TextStyle(
-                        color: AppColors.white,
-                        fontFamily: AppTextStyles.bodyFontFamily,
-                      ),
+                      color: AppColors.white,
+                      fontFamily: AppTextStyles.bodyFontFamily,
+                    ),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.image),
                 ),
@@ -510,9 +510,9 @@ class _MakerInfoSettingsScreenState
                   title: const Text(
                     'Choose video (5 seconds max)',
                     style: TextStyle(
-                        color: AppColors.white,
-                        fontFamily: AppTextStyles.bodyFontFamily,
-                      ),
+                      color: AppColors.white,
+                      fontFamily: AppTextStyles.bodyFontFamily,
+                    ),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.video),
                 ),
@@ -724,7 +724,7 @@ class _MakerInfoSettingsScreenState
               key: const Key('maker_settings_saved_count'),
               TextSpan(
                 style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.primary,
                   fontSize: 14,
                 ),
@@ -746,7 +746,7 @@ class _MakerInfoSettingsScreenState
               'Keyword',
               key: const Key('maker_settings_keyword_label'),
               style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
               ),
             ),
@@ -847,7 +847,7 @@ class _MakerInfoSettingsScreenState
                   label: Text(
                     'Add Another Show',
                     style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                      fontFamily: AppTextStyles.bodyFontFamily,
                       color: AppColors.primary,
                       fontSize: 14,
                     ),
@@ -878,7 +878,7 @@ class _MakerInfoSettingsScreenState
             Text(
               'Carousel Images',
               style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
                 fontSize: 17,
               ),
@@ -1037,7 +1037,7 @@ class _MakerInfoSettingsScreenState
 
 TextStyle _makerSettingsInputStyle() {
   return AppTextStyles.field.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+    fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.white,
     fontSize: 16,
   );
@@ -1045,7 +1045,7 @@ TextStyle _makerSettingsInputStyle() {
 
 TextStyle _makerSettingsHintStyle() {
   return AppTextStyles.fieldHint.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+    fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.darkGray,
     fontSize: 16,
   );
@@ -1106,7 +1106,7 @@ class _LabeledField extends StatelessWidget {
             Text(
               label,
               style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
               ),
             ),
@@ -1190,7 +1190,7 @@ class _ShowEntryEditor extends StatelessWidget {
               child: Text(
                 'Show ${index + 1}',
                 style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.primary,
                   fontSize: 14,
                 ),
@@ -1400,7 +1400,7 @@ class _VisibilityField extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                    fontFamily: AppTextStyles.bodyFontFamily,
                     color: AppColors.primary,
                   ),
                 ),
@@ -1418,7 +1418,7 @@ class _VisibilityField extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.right,
                         style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                          fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.primary,
                           fontSize: 14,
                         ),
@@ -1471,7 +1471,7 @@ class _VisibilityOnlyRow extends StatelessWidget {
             child: Text(
               label,
               style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
               ),
             ),
@@ -1640,7 +1640,7 @@ class _CarouselEditor extends StatelessWidget {
             'Status: $moderationStatus',
             key: Key('maker_settings_artwork_status_$slot'),
             style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+              fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 14,
               color: AppColors.mutedText,
             ),
@@ -1719,7 +1719,7 @@ class _CarouselEditor extends StatelessWidget {
             errorMessage!,
             key: Key('maker_settings_carousel_error_$slot'),
             style: AppTextStyles.onboardingError.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+              fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.white,
             ),
           ),
@@ -1729,7 +1729,7 @@ class _CarouselEditor extends StatelessWidget {
           Text(
             'Artwork Title:',
             style: AppTextStyles.onboardingHelper.copyWith(
-            fontFamily: AppTextStyles.bodyFontFamily,
+              fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.primary,
               fontSize: 14,
             ),
@@ -2012,7 +2012,7 @@ class _LoadError extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: AppTextStyles.onboardingHelper.copyWith(
-                  fontFamily: AppTextStyles.bodyFontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 ),
             ),
             const SizedBox(height: 16),
