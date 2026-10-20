@@ -14,6 +14,7 @@ class MaChoiceChip extends StatelessWidget {
     this.selectedTextColor,
     this.unselectedBackgroundColor,
     this.fontFamily,
+    this.verticalOffset = MaCenteredTaxonomyLabel.opticalOffsetY,
   });
 
   final String label;
@@ -23,6 +24,7 @@ class MaChoiceChip extends StatelessWidget {
   final Color? unselectedBackgroundColor;
   // Opt-in font override for Settings without changing Onboarding.
   final String? fontFamily;
+  final double verticalOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class MaChoiceChip extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
+            verticalOffset: verticalOffset,
             style: selected
                 ? AppTextStyles.chipSelected.copyWith(
                   fontFamily: fontFamily,

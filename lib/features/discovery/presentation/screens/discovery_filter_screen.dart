@@ -14,10 +14,12 @@ import '../../domain/discovery_filter_models.dart';
 import '../../domain/discovery_query.dart';
 
 class DiscoveryFilterScreen extends ConsumerStatefulWidget {
-  const DiscoveryFilterScreen({super.key, this.onClose, this.onApplied});
+  const DiscoveryFilterScreen({super.key, this.onClose, this.onApplied, this.popupLayout = false});
 
   final VoidCallback? onClose;
   final VoidCallback? onApplied;
+  /// Use transparent, inset-free content inside MaGlassPopup.
+  final bool popupLayout;
 
   @override
   ConsumerState<DiscoveryFilterScreen> createState() =>
@@ -281,12 +283,20 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     final options = _options;
     return Scaffold(
       key: const Key('discovery_filter_screen'),
-      backgroundColor: AppColors.artworkBackground,
+      backgroundColor: widget.popupLayout
+          ? Colors.transparent
+          : AppColors.artworkBackground,
       body: SafeArea(
+        top: !widget.popupLayout,
+        bottom: !widget.popupLayout,
+        left: !widget.popupLayout,
+        right: !widget.popupLayout,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+              padding: widget.popupLayout
+                  ? const EdgeInsets.only(bottom: 10)
+                  : const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -343,8 +353,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             if (options != null)
               SafeArea(
                 top: false,
+                bottom: !widget.popupLayout,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
+                  padding: widget.popupLayout
+                      ? const EdgeInsets.only(top: 10)
+                      : const EdgeInsets.fromLTRB(20, 10, 20, 18),
                   child: SizedBox(
                     width: double.infinity,
                     height: 48,
@@ -360,16 +373,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                                 color: AppColors.darkGray,
                               ),
                             )
-                          : Transform.translate(
-                              offset: const Offset(0, 1),
-                              child: const Text(
-                                'Apply Filters',
-                                style: TextStyle(
-                                  fontFamily: AppTextStyles.bodyFontFamily,
-                                  fontSize: 16,
-                                  height: 1.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          : const Text(
+                              'Apply Filters',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.bodyFontFamily,
+                                fontSize: 16,
+                                height: 1.0,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                     ),
@@ -391,7 +401,9 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
     return ListView(
       key: const Key('filter_scroll'),
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 26),
+      padding: widget.popupLayout
+          ? const EdgeInsets.fromLTRB(0, 8, 0, 26)
+          : const EdgeInsets.fromLTRB(20, 8, 20, 26),
       children: [
         _sectionTitle('Type'),
         Wrap(
@@ -672,6 +684,7 @@ class _ChoicePill extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
+            verticalOffset: 0,
             style: TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
@@ -711,12 +724,9 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text(
-                  'Try Again',
-                  style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
-                ),
+              child: const Text(
+                'Try Again',
+                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
               ),
             ),
           ],

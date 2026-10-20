@@ -23,11 +23,14 @@ class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
     required this.onClose,
     this.onAccountDeleted,
     this.onLoggedOut,
+    this.popupLayout = false,
   });
 
   final VoidCallback onClose;
   final VoidCallback? onAccountDeleted;
   final VoidCallback? onLoggedOut;
+  /// Use transparent, inset-free content inside MaGlassPopup.
+  final bool popupLayout;
 
   @override
   ConsumerState<MakerInfoSettingsScreen> createState() =>
@@ -624,8 +627,14 @@ class _MakerInfoSettingsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       key: const Key('maker_info_settings_screen'),
-      backgroundColor: AppColors.artworkBackground,
+      backgroundColor: widget.popupLayout
+          ? Colors.transparent
+          : AppColors.artworkBackground,
       body: SafeArea(
+        top: !widget.popupLayout,
+        bottom: !widget.popupLayout,
+        left: !widget.popupLayout,
+        right: !widget.popupLayout,
         child: _loading
             ? const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
@@ -638,8 +647,11 @@ class _MakerInfoSettingsScreenState
           ? null
           : SafeArea(
               top: false,
+              bottom: !widget.popupLayout,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+                padding: widget.popupLayout
+                    ? const EdgeInsets.only(top: 10)
+                    : const EdgeInsets.fromLTRB(20, 10, 20, 16),
                 child: SizedBox(
                   height: 48,
                   child: OutlinedButton(
@@ -654,16 +666,13 @@ class _MakerInfoSettingsScreenState
                               color: AppColors.darkGray,
                             ),
                           )
-                        : Transform.translate(
-                            offset: const Offset(0, 2),
-                            child: const Text(
-                              'Save & Close',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.bodyFontFamily,
-                                fontSize: 16,
-                                height: 1.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+                        : const Text(
+                            'Save & Close',
+                            style: TextStyle(
+                              fontFamily: AppTextStyles.bodyFontFamily,
+                              fontSize: 16,
+                              height: 1.0,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                   ),
@@ -682,7 +691,9 @@ class _MakerInfoSettingsScreenState
 
         return ListView(
           key: const Key('maker_settings_scroll'),
-          padding: EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
+          padding: widget.popupLayout
+              ? EdgeInsets.zero
+              : EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
           children: [
             Row(
               children: [
@@ -1563,6 +1574,7 @@ class _TaxonomySection extends StatelessWidget {
             for (final option in options)
               MaChoiceChip(
                 fontFamily: AppTextStyles.bodyFontFamily,
+                verticalOffset: 0,
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
                 selected: selectedIds.contains(option.id),
@@ -2019,12 +2031,9 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text(
-                    'Try Again',
-                    style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
-                  ),
+              child: const Text(
+                'Try Again',
+                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
               ),
             ),
           ],

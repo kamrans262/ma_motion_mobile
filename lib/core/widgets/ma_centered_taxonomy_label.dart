@@ -10,10 +10,12 @@ class MaCenteredTaxonomyLabel extends StatelessWidget {
     super.key,
     required this.label,
     required this.style,
+    this.verticalOffset = opticalOffsetY,
   });
 
   final String label;
   final TextStyle style;
+  final double verticalOffset;
 
   static const double opticalOffsetY = 1.5;
 
@@ -23,7 +25,7 @@ class MaCenteredTaxonomyLabel extends StatelessWidget {
       widthFactor: 1,
       heightFactor: 1,
       child: Transform.translate(
-        offset: const Offset(0, opticalOffsetY),
+        offset: Offset(0, verticalOffset),
         child: Text(
           label,
           textAlign: TextAlign.center,

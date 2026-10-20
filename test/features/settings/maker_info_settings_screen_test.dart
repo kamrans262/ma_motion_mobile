@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_legal_link.dart';
-import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_choice_chip.dart';
@@ -82,6 +81,7 @@ void main() {
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
       expect(chip.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(chip.verticalOffset, 0);
       final chipContainer = tester.widget<AnimatedContainer>(
         find.descendant(of: target, matching: find.byType(AnimatedContainer)),
       );
@@ -105,7 +105,7 @@ void main() {
       );
       expect(
         textCenter.dy,
-        closeTo(center.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+        closeTo(center.dy, 1),
       );
     }
 
