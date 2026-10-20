@@ -18,7 +18,7 @@ void main() {
       ),
     );
 
-    expect(MaGlassPopup.overlayBlurSigma, 4);
+    expect(MaGlassPopup.overlayBlurSigma, 8);
     expect(MaGlassPopup.panelBlurSigma, 12);
     expect(find.byType(BackdropFilter), findsNWidgets(2));
 

@@ -741,6 +741,8 @@ class _MakerInfoSettingsScreenState
               hintText: 'Tell people about your work',
               minLines: 3,
               maxLines: 6,
+              // Figma places the saved-count message 8px after Statement.
+              bottomPadding: 8,
             ),
             Text.rich(
               key: const Key('maker_settings_saved_count'),
@@ -877,8 +879,8 @@ class _MakerInfoSettingsScreenState
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
             ],
+            const SizedBox(height: 16),
             _VisibilityOnlyRow(
               key: const Key('maker_settings_hide_page'),
               label: 'Hide Maker Page',
@@ -1064,7 +1066,7 @@ TextStyle _makerSettingsInputStyle() {
     fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.white,
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
   );
 }
 
@@ -1073,7 +1075,7 @@ TextStyle _makerSettingsHintStyle() {
     fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.darkGray,
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
   );
 }
 
@@ -1493,7 +1495,7 @@ class _VisibilityOnlyRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.zero,
       child: Row(
         children: [
           Expanded(

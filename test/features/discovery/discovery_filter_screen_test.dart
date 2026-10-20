@@ -265,11 +265,12 @@ void main() {
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
     expect(locationField.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.style?.fontSize, 16);
-    expect(locationField.style?.fontWeight, FontWeight.w400);
+    expect(locationField.style?.fontWeight, FontWeight.w500);
     expect(locationField.style?.height, 1);
     expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
     expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.decoration?.hintStyle?.fontSize, 16);
+    expect(locationField.decoration?.hintStyle?.fontWeight, FontWeight.w500);
     expect(locationField.decoration?.hintStyle?.fontStyle, FontStyle.normal);
     expect(locationField.decoration?.hintStyle?.color, AppColors.darkGray);
 

@@ -483,7 +483,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           style: AppTextStyles.field.copyWith(
             fontFamily: AppTextStyles.bodyFontFamily,
             fontSize: 16,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w500,
           ),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
@@ -630,7 +630,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
         fontFamily: AppTextStyles.bodyFontFamily,
         color: AppColors.darkGray,
         fontSize: 16,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
       ),
       suffixIcon: suffixIcon,
       filled: true,

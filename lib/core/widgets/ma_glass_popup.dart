@@ -12,7 +12,7 @@ class MaGlassPopup extends StatelessWidget {
 
   static const Color overlayColor = Color(0xCC000000);
   static const Color panelColor = Color(0xB3000000);
-  static const double overlayBlurSigma = 4;
+  static const double overlayBlurSigma = 8;
   static const double panelBlurSigma = 12;
   static const double panelPadding = 24;
   static const double horizontalMargin = 16;

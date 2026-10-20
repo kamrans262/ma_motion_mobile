@@ -173,6 +173,7 @@ void main() {
       );
       expect(chipText.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(chipText.style?.fontSize, 12);
+      expect(chipText.style?.fontWeight, FontWeight.w500);
       expect(chipText.style?.height, 16 / 12);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
@@ -600,13 +601,13 @@ void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.decoration?.fillColor, AppColors.filterInputFill);
   expect(field.style?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.style?.fontSize, 16);
-  expect(field.style?.fontWeight, FontWeight.w400);
+  expect(field.style?.fontWeight, FontWeight.w500);
   expect(field.style?.height, 1);
   expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
   expect(field.style?.color, AppColors.white);
   expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.decoration?.hintStyle?.fontSize, 16);
-  expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w400);
+  expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
   expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);
   expect(field.decoration?.hintStyle?.height, 1);
   expect(
