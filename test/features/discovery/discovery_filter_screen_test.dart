@@ -70,11 +70,11 @@ void main() {
     final applyPadding = tester.widget<Padding>(
       find.ancestor(of: apply, matching: find.byType(Padding)).first,
     );
-    expect(applyPadding.padding, const EdgeInsets.only(top: 40));
+    expect(applyPadding.padding, const EdgeInsets.only(top: 24));
     expect(
       tester.getTopLeft(apply).dy -
           tester.getBottomLeft(find.byKey(const Key('filter_radius_control_row'))).dy,
-      closeTo(40, 1),
+      closeTo(24, 1),
     );
     expect(
       tester.getCenter(find.text('Apply Filters')).dy,
