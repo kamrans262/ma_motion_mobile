@@ -663,7 +663,13 @@ class _MakerInfoSettingsScreenState
                   child: OutlinedButton(
                     key: const Key('maker_settings_save_close'),
                     onPressed: _saving ? null : _saveAndClose,
-                    style: AppButtonStyles.filterAction(),
+                    style: widget.popupLayout
+                        ? AppButtonStyles.filterAction().copyWith(
+                            padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+                              EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          )
+                        : AppButtonStyles.filterAction(),
                     child: _saving
                         ? const SizedBox.square(
                             dimension: 20,

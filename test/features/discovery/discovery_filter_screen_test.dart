@@ -339,7 +339,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Filter text stays at or above 14px and options are opaque', (
+  testWidgets('Filter labels and chips match Figma 12px styles', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(430, 1500));

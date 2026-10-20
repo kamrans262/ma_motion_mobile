@@ -377,7 +377,13 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     child: OutlinedButton(
                       key: const Key('filter_apply_button'),
                       onPressed: _applying ? null : _apply,
-                      style: AppButtonStyles.filterAction(),
+                      style: widget.popupLayout
+                          ? AppButtonStyles.filterAction().copyWith(
+                              padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+                                EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            )
+                          : AppButtonStyles.filterAction(),
                       child: _applying
                           ? const SizedBox.square(
                               dimension: 18,

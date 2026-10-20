@@ -51,6 +51,18 @@ void main() {
     expect(chip.fontSize, 12);
     expect(chip.padding, const EdgeInsets.symmetric(horizontal: 12, vertical: 4));
 
+    final carousel = find.text('Carousel Images');
+    await tester.scrollUntilVisible(
+      carousel,
+      260,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('maker_settings_scroll')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    final carouselTitle = tester.widget<Text>(carousel);
+    expect(carouselTitle.style?.fontSize, 18);
+
     final save = find.byKey(const Key('maker_settings_save_close'));
     await tester.scrollUntilVisible(
       save,
@@ -186,8 +198,6 @@ void main() {
     expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
-    final carouselTitle = tester.widget<Text>(find.text('Carousel Images'));
-    expect(carouselTitle.style?.fontSize, 18);
     expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
     expect(find.text('Logout'), findsNothing);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
