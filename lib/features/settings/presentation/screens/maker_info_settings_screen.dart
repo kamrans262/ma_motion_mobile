@@ -710,7 +710,7 @@ class _MakerInfoSettingsScreenState
               children: [
                 Flexible(
                   child: Text(
-                    'Settings',
+                    'Maker Info Settings',
                     style: const TextStyle(
                       fontFamily: AppTextStyles.bodyFontFamily,
                       fontSize: 24,

@@ -92,7 +92,7 @@ void main() {
 
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets('renders Settings and saves profile changes', (
+  testWidgets('renders Maker Info Settings and saves profile changes', (
     WidgetTester tester,
   ) async {
     final repository = _FakeSettingsRepository();
@@ -206,13 +206,13 @@ void main() {
     }
 
     await tester.dragUntilVisible(
-      find.text('Settings'),
+      find.text('Maker Info Settings'),
       settingsList,
       const Offset(0, 160),
     );
     await tester.pump();
-    expect(find.text('Settings'), findsOneWidget);
-    final settingsTitle = tester.widget<Text>(find.text('Settings'));
+    expect(find.text('Maker Info Settings'), findsOneWidget);
+    final settingsTitle = tester.widget<Text>(find.text('Maker Info Settings'));
     expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
@@ -526,7 +526,7 @@ void main() {
 
     await _finishInitialLoad(tester);
 
-    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Maker Info Settings'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
     expect(tester.takeException(), isNull);
 
