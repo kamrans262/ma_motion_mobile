@@ -289,13 +289,13 @@ void main() {
       of: emailSwitch,
       matching: find.byType(AnimatedContainer),
     );
-    final thumbFinder = find.descendant(
-      of: emailSwitch,
-      matching: find.byType(Container),
-    );
     final alignmentFinder = find.descendant(
       of: emailSwitch,
       matching: find.byType(AnimatedAlign),
+    );
+    final thumbFinder = find.descendant(
+      of: alignmentFinder,
+      matching: find.byType(Container),
     );
     BoxDecoration trackDecoration() =>
         tester.widget<AnimatedContainer>(trackFinder).decoration!
