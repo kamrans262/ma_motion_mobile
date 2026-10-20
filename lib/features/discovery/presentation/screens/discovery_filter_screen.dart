@@ -379,13 +379,16 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                                 color: AppColors.darkGray,
                               ),
                             )
-                          : const Text(
-                              'Apply Filters',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.bodyFontFamily,
-                                fontSize: 16,
-                                height: 1.0,
-                                fontWeight: FontWeight.w500,
+                          : Transform.translate(
+                              offset: const Offset(0, 1),
+                              child: const Text(
+                                'Apply Filters',
+                                style: TextStyle(
+                                  fontFamily: AppTextStyles.bodyFontFamily,
+                                  fontSize: 16,
+                                  height: 1.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                     ),
@@ -692,7 +695,7 @@ class _ChoicePill extends StatelessWidget {
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
-            verticalOffset: 0,
+            verticalOffset: MaCenteredTaxonomyLabel.opticalOffsetY,
             style: TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
@@ -732,9 +735,12 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: const Text(
-                'Try Again',
-                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+              child: Transform.translate(
+                offset: const Offset(0, 1),
+                child: const Text(
+                  'Try Again',
+                  style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+                ),
               ),
             ),
           ],

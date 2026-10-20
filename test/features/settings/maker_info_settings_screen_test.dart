@@ -45,7 +45,7 @@ void main() {
     );
     expect(
       tester.getCenter(find.text('Save & Close')).dy,
-      closeTo(tester.getCenter(find.byKey(const Key('maker_settings_save_close'))).dy, 1),
+      closeTo(tester.getCenter(find.byKey(const Key('maker_settings_save_close'))).dy + 2, 1),
     );
     final chipFinder = find.byKey(const Key('maker_settings_type_1'));
     await tester.dragUntilVisible(
@@ -55,7 +55,7 @@ void main() {
     );
     await tester.pump();
     final chip = tester.widget<MaChoiceChip>(chipFinder);
-    expect(chip.verticalOffset, 0);
+    expect(chip.verticalOffset, 1.5);
     expect(tester.takeException(), isNull);
   });
 
@@ -128,7 +128,7 @@ void main() {
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
       expect(chip.fontFamily, AppTextStyles.bodyFontFamily);
-      expect(chip.verticalOffset, 0);
+      expect(chip.verticalOffset, 1.5);
       final chipContainer = tester.widget<AnimatedContainer>(
         find.descendant(of: target, matching: find.byType(AnimatedContainer)),
       );
@@ -152,7 +152,7 @@ void main() {
       );
       expect(
         textCenter.dy,
-        closeTo(center.dy, 1),
+        closeTo(center.dy + 1.5, 1),
       );
     }
 

@@ -667,13 +667,16 @@ class _MakerInfoSettingsScreenState
                               color: AppColors.darkGray,
                             ),
                           )
-                        : const Text(
-                            'Save & Close',
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.bodyFontFamily,
-                              fontSize: 16,
-                              height: 1.0,
-                              fontWeight: FontWeight.w500,
+                        : Transform.translate(
+                            offset: const Offset(0, 2),
+                            child: const Text(
+                              'Save & Close',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.bodyFontFamily,
+                                fontSize: 16,
+                                height: 1.0,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                   ),
@@ -1575,7 +1578,7 @@ class _TaxonomySection extends StatelessWidget {
             for (final option in options)
               MaChoiceChip(
                 fontFamily: AppTextStyles.bodyFontFamily,
-                verticalOffset: 0,
+                verticalOffset: 1.5,
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
                 selected: selectedIds.contains(option.id),
@@ -2032,9 +2035,12 @@ class _LoadError extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: const Text(
-                'Try Again',
-                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+              child: Transform.translate(
+                offset: const Offset(0, 1),
+                child: const Text(
+                  'Try Again',
+                  style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+                ),
               ),
             ),
           ],

@@ -52,7 +52,17 @@ void main() {
         matching: find.byType(MaCenteredTaxonomyLabel),
       ),
     );
-    expect(label.verticalOffset, 0);
+    expect(label.verticalOffset, MaCenteredTaxonomyLabel.opticalOffsetY);
+
+    final apply = find.byKey(const Key('filter_apply_button'));
+    expect(
+      tester.getCenter(find.text('Apply Filters')).dy,
+      closeTo(tester.getCenter(apply).dy + 1, 1),
+    );
+    final applyText = tester.widget<Text>(find.text('Apply Filters'));
+    expect(applyText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(applyText.style?.fontSize, 16);
+    expect(applyText.style?.fontWeight, FontWeight.w500);
     expect(tester.takeException(), isNull);
   });
 
@@ -378,7 +388,10 @@ void main() {
       expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
       expect(
         labelCenter.dy,
-        closeTo(buttonCenter.dy, 1),
+        closeTo(
+          buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY,
+          1,
+        ),
       );
     }
 
