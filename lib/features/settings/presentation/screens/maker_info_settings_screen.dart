@@ -1616,6 +1616,7 @@ class _TaxonomySection extends StatelessWidget {
                 selected: selectedIds.contains(option.id),
                 selectedTextColor: AppColors.white,
                 unselectedBackgroundColor: const Color(0xFF020202),
+                borderColor: AppColors.splashDot,
                 onTap: () => onToggle(option.id),
               ),
           ],
@@ -1778,7 +1779,7 @@ class _CarouselEditor extends StatelessWidget {
         const SizedBox(height: 10),
         if (isArtwork && titleController != null) ...[
           Text(
-            'Artwork Title:',
+            'Artwork title:',
             style: AppTextStyles.onboardingHelper.copyWith(
               fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.primary,
@@ -1795,7 +1796,7 @@ class _CarouselEditor extends StatelessWidget {
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               counterText: '',
-              hintText: 'Artwork Title',
+              hintText: 'Artwork title',
               hintStyle: _makerSettingsHintStyle(),
               filled: true,
               fillColor: AppColors.filterInputFill,
@@ -1830,7 +1831,7 @@ class _CarouselEditor extends StatelessWidget {
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             counterText: '',
-            hintText: 'Optional Caption',
+            hintText: 'Optional caption',
             hintStyle: _makerSettingsHintStyle(),
             filled: true,
             fillColor: AppColors.filterInputFill,
