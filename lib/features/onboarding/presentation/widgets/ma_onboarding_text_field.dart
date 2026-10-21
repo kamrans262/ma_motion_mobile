@@ -71,9 +71,9 @@ class MaOnboardingTextField extends StatelessWidget {
             // Keep total single-line vertical padding unchanged while
             // shifting the text slightly lower for optical centering.
             contentPadding: EdgeInsets.fromLTRB(
-              16,
+              20,
               maxLines > 1 ? 21 : 21,
-              16,
+              20,
               maxLines > 1 ? 11 : 7,
             ),
             border: OutlineInputBorder(
