@@ -1163,11 +1163,11 @@ class _LabeledField extends StatelessWidget {
                       : _makerSettingsMultilineInputPadding),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: AppColors.splashDot),
+                borderSide: BorderSide(color: AppColors.primary50),
               ),
               focusedBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: AppColors.splashDot, width: 1.2),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.2),
               ),
             ),
           ),
@@ -1616,7 +1616,6 @@ class _TaxonomySection extends StatelessWidget {
                 selected: selectedIds.contains(option.id),
                 selectedTextColor: AppColors.white,
                 unselectedBackgroundColor: const Color(0xFF020202),
-                borderColor: AppColors.splashDot,
                 onTap: () => onToggle(option.id),
               ),
           ],
@@ -1803,11 +1802,11 @@ class _CarouselEditor extends StatelessWidget {
               contentPadding: _makerSettingsSingleLineInputPadding,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: AppColors.splashDot),
+                borderSide: BorderSide(color: AppColors.primary50),
               ),
               focusedBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide: BorderSide(color: AppColors.splashDot, width: 1.2),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.2),
               ),
             ),
           ),
@@ -1838,11 +1837,11 @@ class _CarouselEditor extends StatelessWidget {
             contentPadding: _makerSettingsSingleLineInputPadding,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(color: AppColors.splashDot),
+              borderSide: BorderSide(color: AppColors.primary50),
             ),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: BorderSide(color: AppColors.splashDot, width: 1.2),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.2),
             ),
           ),
         ),
