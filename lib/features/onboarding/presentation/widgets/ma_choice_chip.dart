@@ -13,6 +13,7 @@ class MaChoiceChip extends StatelessWidget {
     required this.onTap,
     this.selectedTextColor,
     this.unselectedBackgroundColor,
+    this.borderColor,
     this.fontFamily,
     this.selectedFontWeight,
     this.letterSpacing,
@@ -26,6 +27,7 @@ class MaChoiceChip extends StatelessWidget {
   final VoidCallback onTap;
   final Color? selectedTextColor;
   final Color? unselectedBackgroundColor;
+  final Color? borderColor;
   // Opt-in font override for Settings without changing Onboarding.
   final String? fontFamily;
   // Only screens that opt in use a heavier selected label.
@@ -53,7 +55,7 @@ class MaChoiceChip extends StatelessWidget {
             color: selected
                 ? AppColors.primary
                 : unselectedBackgroundColor ?? AppColors.savedBackground,
-            border: Border.all(color: AppColors.primary, width: 1.1),
+            border: Border.all(color: borderColor ?? AppColors.primary, width: 1.1),
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
