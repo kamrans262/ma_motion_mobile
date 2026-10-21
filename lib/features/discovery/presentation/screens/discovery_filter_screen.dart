@@ -638,11 +638,11 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       contentPadding: const EdgeInsets.fromLTRB(14, 21, 14, 7),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.splashDot, width: 1),
+        borderSide: BorderSide(color: AppColors.primary50, width: 1),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.zero,
-        borderSide: BorderSide(color: AppColors.splashDot, width: 1.2),
+        borderSide: BorderSide(color: AppColors.primary, width: 1.2),
       ),
     );
   }
@@ -698,7 +698,7 @@ class _ChoicePill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.splashDot,
+              color: selected ? AppColors.white : AppColors.darkGray,
               width: 0.8,
             ),
           ),
