@@ -526,7 +526,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   overlayColor: AppColors.primary50,
                   tickMarkShape: SliderTickMarkShape.noTickMark,
                   thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 8,
+                    enabledThumbRadius: 6,
                     elevation: 0,
                     pressedElevation: 0,
                   ),

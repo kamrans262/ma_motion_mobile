@@ -269,7 +269,7 @@ void main() {
     expect(sliderTheme.data.tickMarkShape, SliderTickMarkShape.noTickMark);
     expect(sliderTheme.data.thumbShape, isA<RoundSliderThumbShape>());
     final thumbShape = sliderTheme.data.thumbShape! as RoundSliderThumbShape;
-    expect(thumbShape.enabledThumbRadius, 8);
+    expect(thumbShape.enabledThumbRadius, 6);
 
     expect(find.byKey(const Key('filter_radius_control_row')), findsOneWidget);
     expect(tester.takeException(), isNull);
