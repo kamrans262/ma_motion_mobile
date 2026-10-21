@@ -51,6 +51,38 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Type Style step follows Figma centered content and vertical gaps', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 1100));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(app(initialStep: 3));
+
+    final heading = find.byKey(const Key('maker_step_heading'));
+    final subtitle = find.byKey(const Key('maker_step_subtitle'));
+    final typeLabel = find.text('Type');
+    final styleChips = find.byKey(const Key('maker_style_options'));
+    final scroll = find.byKey(const Key('maker_onboarding_scroll'));
+
+    expect(
+      tester.getTopLeft(subtitle).dy - tester.getBottomLeft(heading).dy,
+      closeTo(8, 0.1),
+    );
+    expect(
+      tester.getTopLeft(typeLabel).dy - tester.getBottomLeft(subtitle).dy,
+      closeTo(24, 0.1),
+    );
+
+    final blockCenter = (
+      tester.getTopLeft(heading).dy + tester.getBottomLeft(styleChips).dy
+    ) / 2;
+    // Top inset 32 and bottom inset 30 center the content one pixel
+    // below the viewport midpoint when sufficient vertical room exists.
+    expect(blockCenter, closeTo(tester.getCenter(scroll).dy + 1, 2));
+    expect(tester.getTopLeft(heading).dy, greaterThan(32));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Type Style typography matches the Filter popup', (tester) async {
     await tester.pumpWidget(app(initialStep: 3));
 
