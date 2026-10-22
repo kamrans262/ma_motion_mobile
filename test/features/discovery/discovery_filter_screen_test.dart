@@ -444,6 +444,21 @@ void main() {
     );
     expect(currentPill.color, const Color(0xFF020202));
 
+    // All unselected Filter chips use translucent white outlines.
+    for (final key in <String>[
+      'filter_type_1',
+      'filter_style_2',
+      'filter_status_current',
+    ]) {
+      final pill = find.byKey(Key(key));
+      final borderBox = tester.widget<Container>(
+        find.descendant(of: pill, matching: find.byType(Container)).first,
+      );
+      final border = (borderBox.decoration! as BoxDecoration).border! as Border;
+      expect(border.top.color, AppColors.white.withValues(alpha: 0.30));
+      expect(border.top.width, 0.8);
+    }
+
     // Selected Type, Style and Show Status buttons are white with black text.
     for (final choice in <(String, String)>[
       ('filter_type_1', 'Painting'),
