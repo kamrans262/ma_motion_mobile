@@ -81,7 +81,7 @@ class MaGlassPopup extends StatelessWidget {
                                 position: DecorationPosition.foreground,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: AppColors.splashDot,
+                                    color: AppColors.primary50,
                                     width: 1.1,
                                   ),
                                 ),
