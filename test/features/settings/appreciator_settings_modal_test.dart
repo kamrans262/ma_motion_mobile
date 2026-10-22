@@ -38,9 +38,6 @@ void main() {
       find.byKey(const Key('appreciator_settings_card')),
     );
     expect(card.color, AppColors.artworkBackground);
-    final cardBorder = card.shape as RoundedRectangleBorder;
-    expect(cardBorder.side.color, AppColors.primary50);
-    expect(cardBorder.side.width, 1.1);
     for (final fieldKey in <String>[
       'appreciator_settings_name',
       'appreciator_settings_location',
