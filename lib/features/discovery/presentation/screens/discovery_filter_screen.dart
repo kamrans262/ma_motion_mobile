@@ -698,7 +698,9 @@ class _ChoicePill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             border: Border.all(
-              color: selected ? AppColors.white : AppColors.darkGray,
+              color: selected
+                  ? AppColors.white
+                  : AppColors.white.withValues(alpha: 0.30),
               width: 0.8,
             ),
           ),
