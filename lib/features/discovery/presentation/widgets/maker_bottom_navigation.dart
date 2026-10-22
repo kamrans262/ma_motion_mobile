@@ -69,6 +69,7 @@ class MakerBottomNavigation extends StatelessWidget {
                         iconSize: iconSize,
                         selected: heartSelected,
                         filledHeart: heartSelected,
+                        contentAlignment: Alignment.centerRight,
                         onTap: onSavedTap,
                       ),
                     ),
@@ -99,6 +100,7 @@ class MakerBottomNavigation extends StatelessWidget {
                         semanticsLabel: settingsSemanticsLabel,
                         iconSize: iconSize,
                         selected: settingsSelected,
+                        contentAlignment: Alignment.centerLeft,
                         onTap: onSettingsTap,
                       ),
                     ),
@@ -123,6 +125,7 @@ class _SvgNavigationItem extends StatelessWidget {
     required this.iconSize,
     required this.selected,
     this.filledHeart = false,
+    this.contentAlignment = Alignment.center,
     required this.onTap,
   });
 
@@ -134,6 +137,7 @@ class _SvgNavigationItem extends StatelessWidget {
   final double iconSize;
   final bool selected;
   final bool filledHeart;
+  final Alignment contentAlignment;
   final VoidCallback? onTap;
 
   @override
@@ -155,7 +159,8 @@ class _SvgNavigationItem extends StatelessWidget {
         highlightColor: Colors.transparent,
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
-        child: Center(
+        child: Align(
+          alignment: contentAlignment,
           child: SizedBox(
             key: iconKey,
             width: iconSize,
