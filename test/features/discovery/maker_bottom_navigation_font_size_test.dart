@@ -4,7 +4,7 @@ import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/widgets/maker_bottom_navigation.dart';
 
 void main() {
-  testWidgets('bottom bar has wider number spacing and tighter icon gaps', (
+  testWidgets('bottom bar matches Figma V2 number and icon spacing', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(430, 900));
@@ -30,8 +30,8 @@ void main() {
         .toList();
 
     // Keep Figma V2's approximately 87.3px number-to-number spacing.
-    // Move each outer icon 8px inward to reduce the visible edge gaps.
-    expect(centers[1] - centers[0], closeTo(36, 0.2));
+    // Heart and Settings are centered in their 40px side zones.
+    expect(centers[1] - centers[0], closeTo(44, 0.2));
     for (var i = 1; i < 4; i++) {
       expect(centers[i + 1] - centers[i], closeTo(87.33, 0.2));
     }
