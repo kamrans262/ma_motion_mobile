@@ -320,6 +320,9 @@ class _AppreciatorSettingsModalState
                   color: AppColors.artworkBackground,
                   elevation: 18,
                   shadowColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: AppColors.primary50, width: 1.1),
+                  ),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       maxWidth: 360,
