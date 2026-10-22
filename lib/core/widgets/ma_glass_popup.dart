@@ -2,8 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-
 /// Shared two-layer glass presentation for Filter and Maker Settings popups.
 class MaGlassPopup extends StatelessWidget {
   const MaGlassPopup({
@@ -77,26 +75,17 @@ class MaGlassPopup extends StatelessWidget {
                                 sigmaX: panelBlurSigma,
                                 sigmaY: panelBlurSigma,
                               ),
-                              child: DecoratedBox(
-                                position: DecorationPosition.foreground,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.primary50,
-                                    width: 1.1,
-                                  ),
-                                ),
-                                child: ColoredBox(
-                                  color: panelColor,
-                                  child: Padding(
-                                    key: const Key('ma_glass_popup_padding'),
-                                    padding: const EdgeInsets.all(panelPadding),
-                                    // The popup already accounts for the keyboard,
-                                    // so its embedded Scaffold must not resize twice.
-                                    child: MediaQuery.removeViewInsets(
-                                      context: context,
-                                      removeBottom: true,
-                                      child: child,
-                                    ),
+                              child: ColoredBox(
+                                color: panelColor,
+                                child: Padding(
+                                  key: const Key('ma_glass_popup_padding'),
+                                  padding: const EdgeInsets.all(panelPadding),
+                                  // The popup already accounts for the keyboard,
+                                  // so its embedded Scaffold must not resize twice.
+                                  child: MediaQuery.removeViewInsets(
+                                    context: context,
+                                    removeBottom: true,
+                                    child: child,
                                   ),
                                 ),
                               ),
