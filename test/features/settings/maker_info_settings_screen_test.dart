@@ -175,6 +175,23 @@ void main() {
       expect(chipText.style?.fontSize, 12);
       expect(chip.selectedFontWeight, FontWeight.w600);
       expect(chip.selected, isTrue);
+      expect(
+        chip.unselectedBorderColor,
+        AppColors.primary.withValues(alpha: 0.30),
+      );
+      Border chipBorder() =>
+          (tester
+                      .widget<AnimatedContainer>(
+                        find.descendant(
+                          of: target,
+                          matching: find.byType(AnimatedContainer),
+                        ),
+                      )
+                      .decoration as BoxDecoration)
+                  .border!
+              as Border;
+      expect(chipBorder().top.color, AppColors.primary);
+      expect(chipBorder().top.width, 1.1);
       expect(chipText.style?.fontWeight, FontWeight.w600);
       expect(chipText.style?.height, 16 / 12);
       final originalChipRect = tester.getRect(target);
@@ -193,6 +210,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.getRect(target), originalChipRect);
       expect(tester.widget<MaChoiceChip>(target).selected, isFalse);
+      expect(chipBorder().top.color, AppColors.primary.withValues(alpha: 0.30));
+      expect(chipBorder().top.width, 1.1);
       expect(
         tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
         FontWeight.w500,
@@ -202,6 +221,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.getRect(target), originalChipRect);
       expect(tester.widget<MaChoiceChip>(target).selected, isTrue);
+      expect(chipBorder().top.color, AppColors.primary);
       expect(
         tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
         FontWeight.w600,
