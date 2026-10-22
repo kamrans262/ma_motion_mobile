@@ -32,6 +32,17 @@ class MakerBottomNavigation extends StatelessWidget {
         final barHeight = (65 * scale).clamp(58.0, 72.0).toDouble();
         final metrics = DiscoveryLayoutMetrics.fromWidth(constraints.maxWidth);
         final iconSize = metrics.toolbarIconSize;
+        // Match the Figma V2 navigation rhythm: compact icon zones at the
+        // edges and 48px number targets spaced across the remaining width.
+        // The number targets shrink only when a narrow screen requires it.
+        const sideItemWidth = 40.0;
+        final numberGroupWidth =
+            constraints.maxWidth -
+            2 * metrics.gridHorizontalPadding -
+            2 * sideItemWidth;
+        final numberItemWidth = (numberGroupWidth / 4)
+            .clamp(0.0, 48.0)
+            .toDouble();
 
         return Material(
           key: const Key('maker_bottom_navigation_material'),
@@ -47,7 +58,8 @@ class MakerBottomNavigation extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: sideItemWidth,
                       child: _SvgNavigationItem(
                         itemKey: const Key('maker_nav_saved'),
                         iconKey: const Key('maker_nav_saved_svg'),
@@ -60,15 +72,25 @@ class MakerBottomNavigation extends StatelessWidget {
                         onTap: onSavedTap,
                       ),
                     ),
-                    for (var columnCount = 1; columnCount <= 4; columnCount++)
-                      Expanded(
-                        child: _ColumnCountItem(
-                          columnCount: columnCount,
-                          selected: columnCount == selectedColumnCount,
-                          onTap: () => onColumnCountSelected?.call(columnCount),
-                        ),
-                      ),
                     Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          for (var columnCount = 1; columnCount <= 4; columnCount++)
+                            SizedBox(
+                              width: numberItemWidth,
+                              child: _ColumnCountItem(
+                                columnCount: columnCount,
+                                selected: columnCount == selectedColumnCount,
+                                onTap: () =>
+                                    onColumnCountSelected?.call(columnCount),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: sideItemWidth,
                       child: _SvgNavigationItem(
                         itemKey: const Key('maker_nav_settings'),
                         iconKey: const Key('maker_nav_settings_svg'),
