@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_glass_popup.dart';
+import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 
 void main() {
   testWidgets('glass popup matches overlay, panel and inset contract', (
@@ -32,6 +33,12 @@ void main() {
     );
     expect(overlayBox.color, const Color(0xCC000000));
     expect(panelBox.color, const Color(0xB3000000));
+    final panelDecoration = tester.widget<DecoratedBox>(
+      find.descendant(of: panel, matching: find.byType(DecoratedBox)).first,
+    );
+    final outline = (panelDecoration.decoration as BoxDecoration).border!;
+    expect(outline.top.color, AppColors.primary50);
+    expect(outline.top.width, 1.1);
 
     final padding = tester.widget<Padding>(
       find.byKey(const Key('ma_glass_popup_padding')),
