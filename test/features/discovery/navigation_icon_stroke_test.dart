@@ -4,11 +4,22 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('settings inner circle and outer gear share the same horizontal center', () async {
-    for (final asset in <String>['assets/setting.svg', 'assets/icons/setting.svg']) {
-      final source = await rootBundle.loadString(asset);
-      expect(source, contains('transform="translate(-0.67 0)"'));
-    }
+  test('Settings gear matches the original Heart width and stays centered', () async {
+    final outline = await rootBundle.loadString('assets/heart.svg');
+    final filled = await rootBundle.loadString('assets/heart_filled.svg');
+    final gear = await rootBundle.loadString('assets/setting.svg');
+    final gearFallback = await rootBundle.loadString('assets/icons/setting.svg');
+
+    // The original Heart path spans x=1.548..22.452 in its 24px viewBox.
+    expect(outline, contains('M20.84 4.61'));
+    expect(filled, contains('M20.84 4.61'));
+    expect(gearFallback, gear);
+    // Settings' outer gear now reaches the same bounds, centered at x=12.
+    // Its separate inner circular path is left unchanged.
+    expect(gear, contains('L 1.548 9.2'));
+    expect(gear, contains('L 22.452 9.2'));
+    expect(gear, contains('M12 15.25A3.25 3.25'));
+    expect(gear, isNot(contains('transform="translate(-0.67 0)"')));
   });
 
   test('bottom Heart and Settings assets use matched 24px canvas geometry', () async {
