@@ -36,6 +36,23 @@ class MakerBottomNavigation extends StatelessWidget {
         // edges and 48px number targets spaced across the remaining width.
         // The number targets shrink only when a narrow screen requires it.
         const sideItemWidth = 40.0;
+        const toolbarButtonWidth = 48.0;
+        const heartIconSize = 22.0;
+        const filterIconSize = 24.0;
+        // Align the bottom icons' outer bounds to the top toolbar's
+        // Search and Filter icons without changing the number positions.
+        final searchIconInsetWithinButton =
+            (toolbarButtonWidth - iconSize) / 2;
+        const filterIconInsetWithinButton =
+            (toolbarButtonWidth - filterIconSize) / 2;
+        final heartOffset =
+            searchIconInsetWithinButton +
+            heartIconSize / 2 -
+            sideItemWidth / 2;
+        final settingsOffset =
+            sideItemWidth / 2 -
+            iconSize / 2 -
+            filterIconInsetWithinButton;
         final numberGroupWidth =
             constraints.maxWidth -
             2 * metrics.gridHorizontalPadding -
@@ -66,8 +83,8 @@ class MakerBottomNavigation extends StatelessWidget {
                         assetName: 'assets/heart.svg',
                         fallbackAssetName: 'assets/icons/heart.svg',
                         semanticsLabel: 'Saved artwork',
-                        iconSize: 22,
-                        horizontalVisualOffset: -6,
+                        iconSize: heartIconSize,
+                        horizontalVisualOffset: heartOffset,
                         selected: heartSelected,
                         filledHeart: heartSelected,
                         onTap: onSavedTap,
@@ -99,7 +116,7 @@ class MakerBottomNavigation extends StatelessWidget {
                         fallbackAssetName: 'assets/icons/setting.svg',
                         semanticsLabel: settingsSemanticsLabel,
                         iconSize: iconSize,
-                        horizontalVisualOffset: 6,
+                        horizontalVisualOffset: settingsOffset,
                         selected: settingsSelected,
                         onTap: onSettingsTap,
                       ),
@@ -160,8 +177,8 @@ class _SvgNavigationItem extends StatelessWidget {
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
         child: Center(
-          // Move the visual icons outward without moving their tap targets
-          // or changing the 1–4 number positions.
+          // Adjust only the visual icon position, preserving tap targets
+          // and the positions of numbers 1–4.
           child: Transform.translate(
             offset: Offset(horizontalVisualOffset, 0),
             child: SizedBox(
