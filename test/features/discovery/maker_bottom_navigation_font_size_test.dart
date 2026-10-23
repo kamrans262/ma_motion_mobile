@@ -4,7 +4,7 @@ import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/widgets/maker_bottom_navigation.dart';
 
 void main() {
-  testWidgets('bottom bar matches Figma V2 number and icon spacing', (
+  testWidgets('bottom bar icons match top toolbar edge insets', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(430, 900));
@@ -29,13 +29,24 @@ void main() {
         .map((key) => tester.getCenter(find.byKey(key)).dx)
         .toList();
 
-    // Keep Figma V2's approximately 87.3px number-to-number spacing.
-    // The icons shift 6px outward to produce 50px outer center gaps.
-    expect(centers[1] - centers[0], closeTo(50, 0.2));
+    // Preserve the existing 87.3px number-to-number spacing.
+    // Visual icon bounds align to the Search and Filter toolbar icons.
+    expect(centers[1] - centers[0], closeTo(41, 0.2));
     for (var i = 1; i < 4; i++) {
       expect(centers[i + 1] - centers[i], closeTo(87.33, 0.2));
     }
-    expect(centers[5] - centers[4], closeTo(50, 0.2));
+    expect(centers[5] - centers[4], closeTo(40, 0.2));
+    expect(
+      tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
+      closeTo(32, 0.2),
+    );
+    expect(
+      430 -
+          tester.getBottomRight(
+            find.byKey(const Key('maker_nav_settings_svg')),
+          ).dx,
+      closeTo(32, 0.2),
+    );
     expect(tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))), const Size(22, 22));
     expect(tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))), const Size(24, 24));
 
@@ -73,6 +84,20 @@ void main() {
     for (var column = 1; column <= 4; column++) {
       expect(find.byKey(Key('maker_nav_$column')), findsOneWidget);
     }
+
+    // On small displays, Search is 22px and Filter is 24px, both in
+    // 48px-wide toolbar targets with 16px horizontal screen padding.
+    expect(
+      tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
+      closeTo(29, 0.2),
+    );
+    expect(
+      280 -
+          tester.getBottomRight(
+            find.byKey(const Key('maker_nav_settings_svg')),
+          ).dx,
+      closeTo(28, 0.2),
+    );
     expect(tester.takeException(), isNull);
   });
 
