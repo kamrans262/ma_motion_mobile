@@ -35,7 +35,7 @@ void main() {
     // The four number positions adapt to preserve the icon edge alignment.
     expect(centers[1] - centers[0], closeTo(50, 0.2));
     for (var i = 1; i < 4; i++) {
-      expect(centers[i + 1] - centers[i], closeTo(80.67, 0.2));
+      expect(centers[i + 1] - centers[i], closeTo(81.33, 0.2));
     }
     expect(centers[5] - centers[4], closeTo(50, 0.2));
     expect(
@@ -49,8 +49,8 @@ void main() {
           ).dx,
       closeTo(32, 0.2),
     );
-    expect(tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))), const Size(24, 24));
-    expect(tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))), const Size(24, 24));
+    expect(tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))), const Size(22, 22));
+    expect(tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))), const Size(22, 22));
 
     // The number glyphs are shifted down optically while keeping their
     // horizontal centers, touch targets, and font geometry unchanged.
@@ -87,8 +87,8 @@ void main() {
       expect(find.byKey(Key('maker_nav_$column')), findsOneWidget);
     }
 
-    // On small displays, Search uses a 22px canvas, but both bottom
-    // icons remain 24px; all toolbar targets retain responsive padding.
+    // On small displays, both bottom icon boxes remain 22px;
+    // all toolbar and navigation insets retain responsive padding.
     expect(
       tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
       closeTo(29.4, 0.2),
@@ -110,11 +110,11 @@ void main() {
       const Key('maker_nav_4'),
       const Key('maker_nav_settings_svg'),
     ].map((key) => tester.getCenter(find.byKey(key)).dx).toList();
-    expect(centers[1] - centers[0], closeTo(39.1, 0.2));
+    expect(centers[1] - centers[0], closeTo(40.1, 0.2));
     for (var i = 1; i < 4; i++) {
       expect(centers[i + 1] - centers[i], closeTo(40, 0.2));
     }
-    expect(centers[5] - centers[4], closeTo(39.1, 0.2));
+    expect(centers[5] - centers[4], closeTo(40.1, 0.2));
     expect(tester.takeException(), isNull);
   });
 
@@ -166,7 +166,7 @@ void main() {
     }
   });
 
-  testWidgets('selected Heart uses matching 24px filled SVG geometry', (
+  testWidgets('selected Heart uses matching 22px filled SVG geometry', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -180,7 +180,7 @@ void main() {
 
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
-      const Size(24, 24),
+      const Size(22, 22),
     );
     final selectedHeart = tester.widget<MaSvgAsset>(
       find.byKey(const Key('maker_nav_saved_filled')),
