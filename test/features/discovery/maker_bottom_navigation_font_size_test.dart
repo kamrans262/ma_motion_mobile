@@ -86,17 +86,17 @@ void main() {
     }
 
     // On small displays, Search is 22px and Filter is 24px, both in
-    // 48px-wide toolbar targets with 16px horizontal screen padding.
+    // 48px-wide toolbar targets with 16.4px responsive screen padding.
     expect(
       tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
-      closeTo(29, 0.2),
+      closeTo(29.4, 0.2),
     );
     expect(
       280 -
           tester.getBottomRight(
             find.byKey(const Key('maker_nav_settings_svg')),
           ).dx,
-      closeTo(28, 0.2),
+      closeTo(28.4, 0.2),
     );
     expect(tester.takeException(), isNull);
   });
