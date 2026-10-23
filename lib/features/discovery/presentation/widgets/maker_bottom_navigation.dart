@@ -78,11 +78,20 @@ class MakerBottomNavigation extends StatelessWidget {
                 .toDouble();
         final outerGap = 50.0.clamp(0.0, maximumOuterGap).toDouble();
         final numberCenterSpacing = (iconCenterSpan - 2 * outerGap) / 3;
-        final numberItemWidth = numberCenterSpacing
-            .clamp(0.0, 48.0)
-            .toDouble();
         final numberGroupLeftX = horizontalPadding + sideItemWidth;
         final numberGroupRightX = screenWidth - horizontalPadding - sideItemWidth;
+        // Allow the number touch targets to contract on extremely small
+        // screens without drifting the end numbers off their intended centers.
+        final maxWidthAtLeftEdge =
+            2 * (heartCenterX + outerGap - numberGroupLeftX);
+        final maxWidthAtRightEdge =
+            2 * (numberGroupRightX - (settingsCenterX - outerGap));
+        final numberItemWidth = [
+          48.0,
+          numberCenterSpacing,
+          maxWidthAtLeftEdge,
+          maxWidthAtRightEdge,
+        ].reduce((a, b) => a < b ? a : b).clamp(0.0, double.infinity).toDouble();
         final numberLeftInset =
             (heartCenterX + outerGap - numberGroupLeftX - numberItemWidth / 2)
                 .clamp(0.0, double.infinity)
