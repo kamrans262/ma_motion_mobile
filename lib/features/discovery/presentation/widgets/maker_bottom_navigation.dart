@@ -37,8 +37,8 @@ class MakerBottomNavigation extends StatelessWidget {
         // fitting four independently tappable numbers on narrower screens.
         const sideItemWidth = 40.0;
         const toolbarButtonWidth = 48.0;
-        const heartIconSize = 24.0;
-        const settingsIconSize = 24.0;
+        const heartIconSize = 22.0;
+        const settingsIconSize = 22.0;
         const filterIconSize = 24.0;
         // Align the bottom icons' outer bounds to the top toolbar's
         // Search and Filter icons at every supported screen width.
