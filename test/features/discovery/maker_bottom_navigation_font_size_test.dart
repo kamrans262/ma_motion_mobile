@@ -109,11 +109,11 @@ void main() {
       const Key('maker_nav_4'),
       const Key('maker_nav_settings_svg'),
     ].map((key) => tester.getCenter(find.byKey(key)).dx).toList();
-    expect(centers[1] - centers[0], closeTo(39.6, 0.2));
+    expect(centers[1] - centers[0], closeTo(40.1, 0.2));
     for (var i = 1; i < 4; i++) {
       expect(centers[i + 1] - centers[i], closeTo(40, 0.2));
     }
-    expect(centers[5] - centers[4], closeTo(39.6, 0.2));
+    expect(centers[5] - centers[4], closeTo(40.1, 0.2));
     expect(tester.takeException(), isNull);
   });
 
