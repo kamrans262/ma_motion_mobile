@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/widgets/maker_bottom_navigation.dart';
+import 'package:ma_motion_mobile/features/discovery/presentation/widgets/discovery_layout_metrics.dart';
 
 void main() {
   testWidgets('bottom bar icons match top toolbar edge insets', (
@@ -29,13 +30,13 @@ void main() {
         .map((key) => tester.getCenter(find.byKey(key)).dx)
         .toList();
 
-    // Preserve the existing 87.3px number-to-number spacing.
-    // Visual icon bounds align to the Search and Filter toolbar icons.
-    expect(centers[1] - centers[0], closeTo(41, 0.2));
+    // At 430px, the two outer gaps are exactly 50 logical pixels.
+    // The four number positions adapt to preserve the icon edge alignment.
+    expect(centers[1] - centers[0], closeTo(50, 0.2));
     for (var i = 1; i < 4; i++) {
-      expect(centers[i + 1] - centers[i], closeTo(87.33, 0.2));
+      expect(centers[i + 1] - centers[i], closeTo(81, 0.2));
     }
-    expect(centers[5] - centers[4], closeTo(40, 0.2));
+    expect(centers[5] - centers[4], closeTo(50, 0.2));
     expect(
       tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
       closeTo(32, 0.2),
@@ -98,7 +99,70 @@ void main() {
           ).dx,
       closeTo(28.4, 0.2),
     );
+    // At 280 logical pixels there is not enough room to keep both 50px
+    // outer gaps and four 40px-wide number targets, so they adapt evenly.
+    final centers = <Key>[
+      const Key('maker_nav_saved_svg'),
+      const Key('maker_nav_1'),
+      const Key('maker_nav_2'),
+      const Key('maker_nav_3'),
+      const Key('maker_nav_4'),
+      const Key('maker_nav_settings_svg'),
+    ].map((key) => tester.getCenter(find.byKey(key)).dx).toList();
+    expect(centers[1] - centers[0], closeTo(39.6, 0.2));
+    for (var i = 1; i < 4; i++) {
+      expect(centers[i + 1] - centers[i], closeTo(40, 0.2));
+    }
+    expect(centers[5] - centers[4], closeTo(39.6, 0.2));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('50px icon gaps and toolbar edge alignment adapt across widths', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    for (final width in <double>[320, 375, 390, 430, 600]) {
+      await tester.binding.setSurfaceSize(Size(width, 900));
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(bottomNavigationBar: MakerBottomNavigation()),
+        ),
+      );
+      await tester.pump();
+
+      final metrics = DiscoveryLayoutMetrics.fromWidth(width);
+      final expectedHeartLeft =
+          metrics.gridHorizontalPadding + (48 - metrics.toolbarIconSize) / 2;
+      final expectedSettingsRight = metrics.gridHorizontalPadding + 12;
+      expect(
+        tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
+        closeTo(expectedHeartLeft, 0.2),
+      );
+      expect(
+        width -
+            tester.getBottomRight(
+              find.byKey(const Key('maker_nav_settings_svg')),
+            ).dx,
+        closeTo(expectedSettingsRight, 0.2),
+      );
+
+      final centers = <Key>[
+        const Key('maker_nav_saved_svg'),
+        const Key('maker_nav_1'),
+        const Key('maker_nav_2'),
+        const Key('maker_nav_3'),
+        const Key('maker_nav_4'),
+        const Key('maker_nav_settings_svg'),
+      ].map((key) => tester.getCenter(find.byKey(key)).dx).toList();
+
+      expect(centers[1] - centers[0], closeTo(50, 0.2));
+      expect(centers[5] - centers[4], closeTo(50, 0.2));
+      final spacing = centers[2] - centers[1];
+      for (var i = 2; i < 4; i++) {
+        expect(centers[i + 1] - centers[i], closeTo(spacing, 0.2));
+      }
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('grid numbers stay 16px; selection changes only color', (
