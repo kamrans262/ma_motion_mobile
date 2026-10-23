@@ -17,7 +17,7 @@ void main() {
     expect(gear, isNot(contains('matrix(1 0 0 1.007569061')));
   });
 
-  test('original Settings and 22px Heart SVGs preserve their asset specs', () async {
+  test('original Settings and 20px Heart SVGs preserve their asset specs', () async {
     final outline = await rootBundle.loadString('assets/heart.svg');
     final fallback = await rootBundle.loadString('assets/icons/heart.svg');
     final filled = await rootBundle.loadString('assets/heart_filled.svg');
@@ -32,7 +32,7 @@ void main() {
       filled,
       filledFallback,
     ]) {
-      expect(source, contains('width="22" height="22"'));
+      expect(source, contains('width="20" height="20"'));
       expect(source, contains('viewBox="0 0 24 24"'));
       expect(source, contains('stroke-width="1.2"'));
     }
