@@ -91,7 +91,10 @@ class MakerBottomNavigation extends StatelessWidget {
           numberCenterSpacing,
           maxWidthAtLeftEdge,
           maxWidthAtRightEdge,
-        ].reduce((a, b) => a < b ? a : b).clamp(0.0, double.infinity).toDouble();
+        ]
+            .reduce((a, b) => a < b ? a : b)
+            .clamp(0.0, double.infinity)
+            .toDouble();
         final numberLeftInset =
             (heartCenterX + outerGap - numberGroupLeftX - numberItemWidth / 2)
                 .clamp(0.0, double.infinity)
