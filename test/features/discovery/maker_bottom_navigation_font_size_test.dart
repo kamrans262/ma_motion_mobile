@@ -30,12 +30,14 @@ void main() {
         .toList();
 
     // Keep Figma V2's approximately 87.3px number-to-number spacing.
-    // Heart and Settings are centered in their 40px side zones.
-    expect(centers[1] - centers[0], closeTo(44, 0.2));
+    // The icons shift 6px outward to produce 50px outer center gaps.
+    expect(centers[1] - centers[0], closeTo(50, 0.2));
     for (var i = 1; i < 4; i++) {
       expect(centers[i + 1] - centers[i], closeTo(87.33, 0.2));
     }
-    expect(centers[5] - centers[4], closeTo(44, 0.2));
+    expect(centers[5] - centers[4], closeTo(50, 0.2));
+    expect(tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))), const Size(22, 22));
+    expect(tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))), const Size(24, 24));
 
     // The number glyphs are shifted down optically while keeping their
     // horizontal centers, touch targets, and font geometry unchanged.
