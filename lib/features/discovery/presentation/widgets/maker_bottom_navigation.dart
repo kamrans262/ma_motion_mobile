@@ -32,15 +32,15 @@ class MakerBottomNavigation extends StatelessWidget {
         final barHeight = (65 * scale).clamp(58.0, 72.0).toDouble();
         final metrics = DiscoveryLayoutMetrics.fromWidth(constraints.maxWidth);
         final iconSize = metrics.toolbarIconSize;
-        // Match the Figma V2 navigation rhythm: compact icon zones at the
-        // edges and 48px number targets spaced across the remaining width.
-        // The number targets shrink only when a narrow screen requires it.
+        // Keep outer icon edges aligned with Search and Filter. Aim for 50
+        // logical pixels from each icon center to its adjacent number, while
+        // fitting four independently tappable numbers on narrower screens.
         const sideItemWidth = 40.0;
         const toolbarButtonWidth = 48.0;
         const heartIconSize = 22.0;
         const filterIconSize = 24.0;
         // Align the bottom icons' outer bounds to the top toolbar's
-        // Search and Filter icons without changing the number positions.
+        // Search and Filter icons at every supported screen width.
         final searchIconInsetWithinButton =
             (toolbarButtonWidth - iconSize) / 2;
         const filterIconInsetWithinButton =
@@ -53,13 +53,46 @@ class MakerBottomNavigation extends StatelessWidget {
             sideItemWidth / 2 -
             iconSize / 2 -
             filterIconInsetWithinButton;
+        final screenWidth = constraints.maxWidth;
+        final horizontalPadding = metrics.gridHorizontalPadding;
         final numberGroupWidth =
-            constraints.maxWidth -
-            2 * metrics.gridHorizontalPadding -
-            2 * sideItemWidth;
-        final numberItemWidth = (numberGroupWidth / 4)
+            screenWidth - 2 * horizontalPadding - 2 * sideItemWidth;
+        final heartCenterX =
+            horizontalPadding + searchIconInsetWithinButton + heartIconSize / 2;
+        final settingsCenterX =
+            screenWidth -
+            horizontalPadding -
+            filterIconInsetWithinButton -
+            iconSize / 2;
+        final iconCenterSpan = settingsCenterX - heartCenterX;
+
+        // Reserve at least 40 logical pixels for each number's tap target
+        // where screen width permits it. On very narrow widths the targets
+        // shrink evenly rather than overflowing the Row.
+        final minimumNumberWidth = (numberGroupWidth / 4)
+            .clamp(0.0, 40.0)
+            .toDouble();
+        final maximumOuterGap =
+            ((iconCenterSpan - 3 * minimumNumberWidth) / 2)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+        final outerGap = 50.0.clamp(0.0, maximumOuterGap).toDouble();
+        final numberCenterSpacing = (iconCenterSpan - 2 * outerGap) / 3;
+        final numberItemWidth = numberCenterSpacing
             .clamp(0.0, 48.0)
             .toDouble();
+        final numberGroupLeftX = horizontalPadding + sideItemWidth;
+        final numberGroupRightX = screenWidth - horizontalPadding - sideItemWidth;
+        final numberLeftInset =
+            (heartCenterX + outerGap - numberGroupLeftX - numberItemWidth / 2)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+        final numberRightInset =
+            (numberGroupRightX -
+                    (settingsCenterX - outerGap) -
+                    numberItemWidth / 2)
+                .clamp(0.0, double.infinity)
+                .toDouble();
 
         return Material(
           key: const Key('maker_bottom_navigation_material'),
@@ -91,20 +124,26 @@ class MakerBottomNavigation extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (var columnCount = 1; columnCount <= 4; columnCount++)
-                            SizedBox(
-                              width: numberItemWidth,
-                              child: _ColumnCountItem(
-                                columnCount: columnCount,
-                                selected: columnCount == selectedColumnCount,
-                                onTap: () =>
-                                    onColumnCountSelected?.call(columnCount),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: numberLeftInset,
+                          right: numberRightInset,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            for (var columnCount = 1; columnCount <= 4; columnCount++)
+                              SizedBox(
+                                width: numberItemWidth,
+                                child: _ColumnCountItem(
+                                  columnCount: columnCount,
+                                  selected: columnCount == selectedColumnCount,
+                                  onTap: () =>
+                                      onColumnCountSelected?.call(columnCount),
+                                ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(
