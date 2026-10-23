@@ -4,27 +4,20 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('Settings gear matches the original Heart width and stays centered', () async {
-    final outline = await rootBundle.loadString('assets/heart.svg');
-    final filled = await rootBundle.loadString('assets/heart_filled.svg');
+  test('Settings original SVG geometry is restored and centered', () async {
     final gear = await rootBundle.loadString('assets/setting.svg');
     final gearFallback = await rootBundle.loadString('assets/icons/setting.svg');
 
-    // The original Heart path spans x=1.548..22.452 in its 24px viewBox.
-    expect(outline, contains('M20.84 4.61'));
-    expect(filled, contains('M20.84 4.61'));
     expect(gearFallback, gear);
-    // Settings' outer gear now reaches the same bounds, centered at x=12.
-    // Its separate inner circular path is left unchanged.
-    expect(gear, contains('L 1.548 9.2'));
-    expect(gear, contains('L 22.452 9.2'));
+    expect(gear, contains('width="24" height="24"'));
+    expect(gear, contains('viewBox="0 0 24 24"'));
     expect(gear, contains('M12 15.25A3.25 3.25'));
-    // Gear Y bounds 2.95..21.05 are transformed to Heart Y bounds 2.998..21.235.
-    expect(gear, contains('matrix(1 0 0 1.007569061 0 0.025671271)'));
-    expect(gear, isNot(contains('transform="translate(-0.67 0)"')));
+    expect(gear, contains('transform="translate(-0.67 0)"'));
+    expect(gear, contains('M19.43 13.15'));
+    expect(gear, isNot(contains('matrix(1 0 0 1.007569061')));
   });
 
-  test('bottom Heart and Settings assets use matched 22px display size', () async {
+  test('original Settings and 22px Heart SVGs preserve their asset specs', () async {
     final outline = await rootBundle.loadString('assets/heart.svg');
     final fallback = await rootBundle.loadString('assets/icons/heart.svg');
     final filled = await rootBundle.loadString('assets/heart_filled.svg');
@@ -38,12 +31,14 @@ void main() {
       fallback,
       filled,
       filledFallback,
-      settings,
     ]) {
       expect(source, contains('width="22" height="22"'));
       expect(source, contains('viewBox="0 0 24 24"'));
       expect(source, contains('stroke-width="1.2"'));
     }
+    expect(settings, contains('width="24" height="24"'));
+    expect(settings, contains('viewBox="0 0 24 24"'));
+    expect(settings, contains('stroke-width="1.2"'));
 
     expect(fallback, outline);
     expect(filledFallback, filled);
