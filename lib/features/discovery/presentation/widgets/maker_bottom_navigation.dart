@@ -207,16 +207,21 @@ class _ColumnCountItem extends StatelessWidget {
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
         child: Center(
-          child: Text(
-            '$columnCount',
-            key: Key('maker_nav_column_text_$columnCount'),
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLTStd',
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: selected
-                  ? AppColors.primary
-                  : AppColors.primary.withValues(alpha: 0.50),
+          // Helvetica Neue's numeral glyphs appear optically high when
+          // mathematically centered beside the navigation icons.
+          child: Transform.translate(
+            offset: const Offset(0, 2),
+            child: Text(
+              '$columnCount',
+              key: Key('maker_nav_column_text_$columnCount'),
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLTStd',
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: selected
+                    ? AppColors.primary
+                    : AppColors.primary.withValues(alpha: 0.50),
+              ),
             ),
           ),
         ),
