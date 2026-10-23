@@ -19,10 +19,12 @@ void main() {
     expect(gear, contains('L 1.548 9.2'));
     expect(gear, contains('L 22.452 9.2'));
     expect(gear, contains('M12 15.25A3.25 3.25'));
+    // Gear Y bounds 2.95..21.05 are transformed to Heart Y bounds 2.998..21.235.
+    expect(gear, contains('matrix(1 0 0 1.007569061 0 0.025671271)'));
     expect(gear, isNot(contains('transform="translate(-0.67 0)"')));
   });
 
-  test('bottom Heart and Settings assets use matched 24px canvas geometry', () async {
+  test('bottom Heart and Settings assets use matched 22px display size', () async {
     final outline = await rootBundle.loadString('assets/heart.svg');
     final fallback = await rootBundle.loadString('assets/icons/heart.svg');
     final filled = await rootBundle.loadString('assets/heart_filled.svg');
@@ -38,7 +40,7 @@ void main() {
       filledFallback,
       settings,
     ]) {
-      expect(source, contains('width="24" height="24"'));
+      expect(source, contains('width="22" height="22"'));
       expect(source, contains('viewBox="0 0 24 24"'));
       expect(source, contains('stroke-width="1.2"'));
     }
