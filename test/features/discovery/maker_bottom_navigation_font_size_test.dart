@@ -35,7 +35,23 @@ void main() {
     for (var i = 1; i < 4; i++) {
       expect(centers[i + 1] - centers[i], closeTo(87.33, 0.2));
     }
-    expect(centers[5] - centers[4], closeTo(36, 0.2));
+    expect(centers[5] - centers[4], closeTo(44, 0.2));
+
+    // The number glyphs are shifted down optically while keeping their
+    // horizontal centers, touch targets, and font geometry unchanged.
+    final heartCenterY = tester
+        .getCenter(find.byKey(const Key('maker_nav_saved_svg')))
+        .dy;
+    final settingsCenterY = tester
+        .getCenter(find.byKey(const Key('maker_nav_settings_svg')))
+        .dy;
+    expect(settingsCenterY, closeTo(heartCenterY, 0.2));
+    for (var column = 1; column <= 4; column++) {
+      final textCenterY = tester
+          .getCenter(find.byKey(Key('maker_nav_column_text_$column')))
+          .dy;
+      expect(textCenterY - heartCenterY, closeTo(2, 0.2));
+    }
     expect(tester.takeException(), isNull);
   });
 
