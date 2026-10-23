@@ -37,8 +37,8 @@ class MakerBottomNavigation extends StatelessWidget {
         // fitting four independently tappable numbers on narrower screens.
         const sideItemWidth = 40.0;
         const toolbarButtonWidth = 48.0;
-        const heartIconSize = 22.0;
-        const settingsIconSize = 22.0;
+        const heartIconSize = 20.0;
+        const settingsIconSize = 24.0;
         const filterIconSize = 24.0;
         // Align the bottom icons' outer bounds to the top toolbar's
         // Search and Filter icons at every supported screen width.
@@ -237,7 +237,7 @@ class _SvgNavigationItem extends StatelessWidget {
               key: iconKey,
               width: iconSize,
               height: iconSize,
-              // The selected Heart uses the same normalized SVG outline,
+              // The selected Heart uses the same original SVG outline,
               // filled instead of falling back to a larger Material glyph.
               child: MaSvgAsset(
                 key: filledHeart ? const Key('maker_nav_saved_filled') : null,
