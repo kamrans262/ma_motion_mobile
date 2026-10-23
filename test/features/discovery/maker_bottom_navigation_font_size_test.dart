@@ -49,8 +49,8 @@ void main() {
           ).dx,
       closeTo(32, 0.2),
     );
-    expect(tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))), const Size(22, 22));
-    expect(tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))), const Size(22, 22));
+    expect(tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))), const Size(20, 20));
+    expect(tester.getSize(find.byKey(const Key('maker_nav_settings_svg'))), const Size(24, 24));
 
     // The number glyphs are shifted down optically while keeping their
     // horizontal centers, touch targets, and font geometry unchanged.
@@ -87,8 +87,8 @@ void main() {
       expect(find.byKey(Key('maker_nav_$column')), findsOneWidget);
     }
 
-    // On small displays, both bottom icon boxes remain 22px;
-    // all toolbar and navigation insets retain responsive padding.
+    // Heart uses 20px and Settings uses 24px at every screen width;
+    // the toolbar and navigation insets remain responsive.
     expect(
       tester.getTopLeft(find.byKey(const Key('maker_nav_saved_svg'))).dx,
       closeTo(29.4, 0.2),
@@ -166,7 +166,7 @@ void main() {
     }
   });
 
-  testWidgets('selected Heart uses matching 22px filled SVG geometry', (
+  testWidgets('selected Heart uses matching 20px filled SVG geometry', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -180,7 +180,7 @@ void main() {
 
     expect(
       tester.getSize(find.byKey(const Key('maker_nav_saved_svg'))),
-      const Size(22, 22),
+      const Size(20, 20),
     );
     final selectedHeart = tester.widget<MaSvgAsset>(
       find.byKey(const Key('maker_nav_saved_filled')),
