@@ -66,7 +66,8 @@ class MakerBottomNavigation extends StatelessWidget {
                         assetName: 'assets/heart.svg',
                         fallbackAssetName: 'assets/icons/heart.svg',
                         semanticsLabel: 'Saved artwork',
-                        iconSize: iconSize,
+                        iconSize: 22,
+                        horizontalVisualOffset: -6,
                         selected: heartSelected,
                         filledHeart: heartSelected,
                         onTap: onSavedTap,
@@ -98,6 +99,7 @@ class MakerBottomNavigation extends StatelessWidget {
                         fallbackAssetName: 'assets/icons/setting.svg',
                         semanticsLabel: settingsSemanticsLabel,
                         iconSize: iconSize,
+                        horizontalVisualOffset: 6,
                         selected: settingsSelected,
                         onTap: onSettingsTap,
                       ),
@@ -123,6 +125,7 @@ class _SvgNavigationItem extends StatelessWidget {
     required this.iconSize,
     required this.selected,
     this.filledHeart = false,
+    this.horizontalVisualOffset = 0,
     required this.onTap,
   });
 
@@ -134,6 +137,7 @@ class _SvgNavigationItem extends StatelessWidget {
   final double iconSize;
   final bool selected;
   final bool filledHeart;
+  final double horizontalVisualOffset;
   final VoidCallback? onTap;
 
   @override
@@ -156,23 +160,28 @@ class _SvgNavigationItem extends StatelessWidget {
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
         child: Center(
-          child: SizedBox(
-            key: iconKey,
-            width: iconSize,
-            height: iconSize,
-            child: filledHeart
-                ? Icon(
-                    Icons.favorite_rounded,
-                    key: const Key('maker_nav_saved_filled'),
-                    size: iconSize,
-                    color: AppColors.primary,
-                  )
-                : MaSvgAsset(
-                    assetName: assetName,
-                    fallbackAssetName: fallbackAssetName,
-                    fit: BoxFit.contain,
-                    color: color,
-                  ),
+          // Move the visual icons outward without moving their tap targets
+          // or changing the 1–4 number positions.
+          child: Transform.translate(
+            offset: Offset(horizontalVisualOffset, 0),
+            child: SizedBox(
+              key: iconKey,
+              width: iconSize,
+              height: iconSize,
+              child: filledHeart
+                  ? Icon(
+                      Icons.favorite_rounded,
+                      key: const Key('maker_nav_saved_filled'),
+                      size: iconSize,
+                      color: AppColors.primary,
+                    )
+                  : MaSvgAsset(
+                      assetName: assetName,
+                      fallbackAssetName: fallbackAssetName,
+                      fit: BoxFit.contain,
+                      color: color,
+                    ),
+            ),
           ),
         ),
       ),
