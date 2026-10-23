@@ -37,7 +37,8 @@ class MakerBottomNavigation extends StatelessWidget {
         // fitting four independently tappable numbers on narrower screens.
         const sideItemWidth = 40.0;
         const toolbarButtonWidth = 48.0;
-        const heartIconSize = 22.0;
+        const heartIconSize = 24.0;
+        const settingsIconSize = 24.0;
         const filterIconSize = 24.0;
         // Align the bottom icons' outer bounds to the top toolbar's
         // Search and Filter icons at every supported screen width.
@@ -51,7 +52,7 @@ class MakerBottomNavigation extends StatelessWidget {
             sideItemWidth / 2;
         final settingsOffset =
             sideItemWidth / 2 -
-            iconSize / 2 -
+            settingsIconSize / 2 -
             filterIconInsetWithinButton;
         final screenWidth = constraints.maxWidth;
         final horizontalPadding = metrics.gridHorizontalPadding;
@@ -63,7 +64,7 @@ class MakerBottomNavigation extends StatelessWidget {
             screenWidth -
             horizontalPadding -
             filterIconInsetWithinButton -
-            iconSize / 2;
+            settingsIconSize / 2;
         final iconCenterSpan = settingsCenterX - heartCenterX;
 
         // Reserve at least 40 logical pixels for each number's tap target
@@ -166,7 +167,7 @@ class MakerBottomNavigation extends StatelessWidget {
                         assetName: 'assets/setting.svg',
                         fallbackAssetName: 'assets/icons/setting.svg',
                         semanticsLabel: settingsSemanticsLabel,
-                        iconSize: iconSize,
+                        iconSize: settingsIconSize,
                         horizontalVisualOffset: settingsOffset,
                         selected: settingsSelected,
                         onTap: onSettingsTap,
@@ -236,19 +237,17 @@ class _SvgNavigationItem extends StatelessWidget {
               key: iconKey,
               width: iconSize,
               height: iconSize,
-              child: filledHeart
-                  ? Icon(
-                      Icons.favorite_rounded,
-                      key: const Key('maker_nav_saved_filled'),
-                      size: iconSize,
-                      color: AppColors.primary,
-                    )
-                  : MaSvgAsset(
-                      assetName: assetName,
-                      fallbackAssetName: fallbackAssetName,
-                      fit: BoxFit.contain,
-                      color: color,
-                    ),
+              // The selected Heart uses the same normalized SVG outline,
+              // filled instead of falling back to a larger Material glyph.
+              child: MaSvgAsset(
+                key: filledHeart ? const Key('maker_nav_saved_filled') : null,
+                assetName: filledHeart ? 'assets/heart_filled.svg' : assetName,
+                fallbackAssetName: filledHeart
+                    ? 'assets/icons/heart_filled.svg'
+                    : fallbackAssetName,
+                fit: BoxFit.contain,
+                color: color,
+              ),
             ),
           ),
         ),
