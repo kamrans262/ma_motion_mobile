@@ -415,7 +415,7 @@ class _FilterToolbarIconPainter extends CustomPainter {
   static const double _viewBoxWidth = 25.7;
   static const double _viewBoxHeight = 28.1;
   static const double _lineStrokeWidth = 1.2;
-  static const double _circleRadius = 2.53;
+  static const double _circleRadius = 2.3;
 
   @override
   void paint(Canvas canvas, Size size) {
