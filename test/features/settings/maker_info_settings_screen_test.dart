@@ -126,6 +126,10 @@ void main() {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       _expectMakerSettingsInputStyle(field);
     }
+    final locationField = tester.widget<TextField>(
+      find.byKey(const Key('maker_settings_location')),
+    );
+    expect(locationField.decoration?.hintText, 'Enter city or ZIP code');
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('maker_settings_save_close')),
     );
@@ -173,7 +177,7 @@ void main() {
       );
       expect(chipText.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(chipText.style?.fontSize, 12);
-      expect(chip.selectedFontWeight, FontWeight.w600);
+      expect(chip.selectedFontWeight, FontWeight.w500);
       expect(chip.selected, isTrue);
       expect(
         chip.unselectedBorderColor,
@@ -192,7 +196,7 @@ void main() {
               as Border;
       expect(chipBorder().top.color, AppColors.primary);
       expect(chipBorder().top.width, 1.1);
-      expect(chipText.style?.fontWeight, FontWeight.w600);
+      expect(chipText.style?.fontWeight, FontWeight.w500);
       expect(chipText.style?.height, 16 / 12);
       final originalChipRect = tester.getRect(target);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
@@ -224,7 +228,7 @@ void main() {
       expect(chipBorder().top.color, AppColors.primary);
       expect(
         tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
-        FontWeight.w600,
+        FontWeight.w500,
       );
     }
 
