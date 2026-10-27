@@ -711,9 +711,7 @@ class _ChoicePill extends StatelessWidget {
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
               height: 16 / 12,
-              fontWeight: selected
-                  ? FontWeight.w600
-                  : fontWeight ?? FontWeight.w500,
+              fontWeight: fontWeight ?? FontWeight.w500,
               color: selected ? AppColors.black : AppColors.white,
             ),
           ),
