@@ -480,8 +480,8 @@ void main() {
       expect(border.top.color, AppColors.white);
       final selectedLabel = tester.widget<Text>(find.text(choice.$2));
       expect(selectedLabel.style?.color, AppColors.black);
-      expect(selectedLabel.style?.fontWeight, FontWeight.w600);
-      // Clearing the selection restores the original 500 weight.
+      expect(selectedLabel.style?.fontWeight, FontWeight.w500);
+      // Selected and unselected chips retain the same 500 weight.
       await tester.tap(pill);
       await tester.pump();
       expect(
