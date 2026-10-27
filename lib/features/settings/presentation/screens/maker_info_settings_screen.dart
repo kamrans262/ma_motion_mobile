@@ -732,7 +732,7 @@ class _MakerInfoSettingsScreenState
               label: 'Location',
               keyName: 'maker_settings_location',
               controller: _locationController,
-              hintText: 'City/ZIP Code',
+              hintText: 'Enter city or ZIP code',
             ),
             _LabeledField(
               label: 'Statement',
@@ -1607,7 +1607,7 @@ class _TaxonomySection extends StatelessWidget {
             for (final option in options)
               MaChoiceChip(
                 fontFamily: AppTextStyles.bodyFontFamily,
-                selectedFontWeight: FontWeight.w600,
+                selectedFontWeight: FontWeight.w500,
                 fontSize: 12,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 verticalOffset: 0,
