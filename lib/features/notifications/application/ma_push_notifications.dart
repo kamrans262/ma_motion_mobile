@@ -128,7 +128,8 @@ class MaPushNotifications {
     _onOpenInbox = onOpenInbox;
     _sessionChanges ??= authSessionChanges.stream.listen((signedIn) {
       if (signedIn) {
-        unawaited(syncToken());
+        // A different user may sign in on the same physical device.
+        unawaited(syncToken(force: true));
       } else {
         _registeredToken = null;
       }
