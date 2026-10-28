@@ -19,6 +19,7 @@ import '../../features/notifications/presentation/screens/notifications_screen.d
 import '../../features/onboarding/presentation/widgets/ma_onboarding_journey_shell.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
+import '../../features/settings/presentation/screens/typography_comparison_screen.dart';
 import '../../features/settings/presentation/widgets/appreciator_settings_modal.dart';
 import '../../features/splash/presentation/screens/ma_splash_sequence_screen.dart';
 
@@ -393,6 +394,14 @@ GoRouter createAppRouter({
             onAccountDeleted: () => context.go('/login'),
             onLoggedOut: () => context.go('/login'),
           ),
+        ),
+      ),
+      // Temporary preview: never changes the shared typography tokens.
+      GoRoute(
+        path: '/maker/typography-preview',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: TypographyComparisonScreen(onBack: () => context.pop()),
         ),
       ),
       GoRoute(
