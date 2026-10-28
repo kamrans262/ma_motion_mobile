@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/ma_centered_taxonomy_label.dart';
 
 /// Temporary, read-only typography comparison. Do not apply these styles to
 /// onboarding, login, filter or settings until the design is selected.
@@ -38,6 +39,11 @@ class TypographyComparisonScreen extends StatelessWidget {
     _TypeVariation(28, FontWeight.w600),
     _TypeVariation(30, FontWeight.w500),
     _TypeVariation(32, FontWeight.w600),
+  ];
+
+  // Preview-only border opacity variations; leave Settings unchanged.
+  static const List<int> _chipBorderPercentages = [
+    30, 40, 50, 60, 70, 80, 90, 100,
   ];
 
   @override
@@ -130,9 +136,123 @@ class TypographyComparisonScreen extends StatelessWidget {
                     sample: 'Settings',
                     isHeading: false,
                   ),
+                const SizedBox(height: 16),
+                _sectionTitle('Settings Chips — Border Color Comparison'),
+                const SizedBox(height: 8),
+                const Text(
+                  'Unselected Type/Style chips only. Same 12px w600 text, '
+                  'background, padding, and spacing as Settings. Only the '
+                  'purple border opacity varies from 30% to 100%. '
+                  'The current Settings border remains 40%.',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.bodyFontFamily,
+                    fontSize: 12,
+                    height: 1.45,
+                    color: AppColors.mutedText,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                for (var index = 0;
+                    index < _chipBorderPercentages.length;
+                    index++)
+                  _chipBorderVariationTile(
+                    index: index + 1,
+                    borderPercent: _chipBorderPercentages[index],
+                  ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _chipBorderVariationTile({
+    required int index,
+    required int borderPercent,
+  }) {
+    final borderOpacity = borderPercent / 100.0;
+
+    return Container(
+      key: Key('typography_chips_border_$borderPercent'),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: AppColors.filterInputFill,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Variation ' + index.toString() + ' — ' +
+                borderPercent.toString() + '% Purple Border' +
+                (borderPercent == 40 ? ' (Current Settings)' : ''),
+            style: const TextStyle(
+              fontFamily: AppTextStyles.bodyFontFamily,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _chipSampleLabel('Type'),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _previewChip('Painting', borderOpacity),
+              _previewChip('Sculpture', borderOpacity),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _chipSampleLabel('Style'),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _previewChip('Abstract', borderOpacity),
+              _previewChip('Minimalist', borderOpacity),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chipSampleLabel(String label) {
+    return Text(
+      label,
+      style: AppTextStyles.onboardingHelper.copyWith(
+        fontFamily: AppTextStyles.bodyFontFamily,
+        color: AppColors.primary,
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
+  // Uses the same unselected Settings chip fill, padding, text style and
+  // taxonomy label alignment. Only the preview border alpha is varied.
+  Widget _previewChip(String label, double borderOpacity) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF020202),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: borderOpacity),
+          width: 1.1,
+        ),
+      ),
+      child: MaCenteredTaxonomyLabel(
+        label: label,
+        verticalOffset: 0,
+        style: AppTextStyles.chip.copyWith(
+          fontFamily: AppTextStyles.bodyFontFamily,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+          height: 16 / 12,
         ),
       ),
     );
