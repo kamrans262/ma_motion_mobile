@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
@@ -252,6 +253,12 @@ class _AppreciatorSettingsModalState
     Navigator.of(context).pop();
   }
 
+  void _openNotifications() {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.go('/appreciator/notifications');
+  }
+
   Future<void> _deleteAccount() async {
     if (_busy) return;
     final deleted = await showMaDeleteAccountDialog(context);
@@ -417,6 +424,31 @@ class _AppreciatorSettingsModalState
               child: Text(
                 _switching ? 'Switching…' : 'Switch to Maker',
                 style: const TextStyle(
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.mutedText,
+                  color: AppColors.mutedText,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('appreciator_settings_notifications'),
+              onPressed: _busy ? null : _openNotifications,
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
+                foregroundColor: AppColors.mutedText,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 20),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text('Notifications',
+                style: TextStyle(
                   fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
