@@ -652,46 +652,70 @@ class _MakerInfoSettingsScreenState
   }
 
   Widget _buildSaveButton() {
+    final style = widget.popupLayout
+        ? AppButtonStyles.filterAction().copyWith(
+            padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+              EdgeInsets.symmetric(vertical: 12),
+            ),
+          )
+        : AppButtonStyles.filterAction();
     return SafeArea(
-              top: false,
-              bottom: !widget.popupLayout,
-              child: Padding(
-                padding: widget.popupLayout
-                    ? const EdgeInsets.only(top: 16)
-                    : const EdgeInsets.fromLTRB(20, 10, 20, 16),
-                child: SizedBox(
-                  height: 48,
-                  child: OutlinedButton(
-                    key: const Key('maker_settings_save_close'),
-                    onPressed: _saving ? null : _saveAndClose,
-                    style: widget.popupLayout
-                        ? AppButtonStyles.filterAction().copyWith(
-                            padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
-                              EdgeInsets.symmetric(vertical: 12),
-                            ),
-                          )
-                        : AppButtonStyles.filterAction(),
-                    child: _saving
-                        ? const SizedBox.square(
-                            dimension: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.darkGray,
-                            ),
-                          )
-                        : const Text(
-                            'Save & Close',
-                            style: TextStyle(
-                              fontFamily: AppTextStyles.bodyFontFamily,
-                              fontSize: 16,
-                              height: 1.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                  ),
-                ),
+      top: false,
+      bottom: !widget.popupLayout,
+      child: Padding(
+        padding: widget.popupLayout ? const EdgeInsets.only(top: 16) : const EdgeInsets.fromLTRB(20, 10, 20, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('maker_settings_close_button'),
+                onPressed: _saving ? null : widget.onClose,
+                style: style,
+                child: const Text(
+                        'Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ),
-            );
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('maker_settings_save_close'),
+                onPressed: _saving ? null : _saveAndClose,
+                style: style,
+                child: _saving
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.darkGray,
+                        ),
+                      )
+                    : const Text(
+                        'Save & Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildForm() {
@@ -1642,7 +1666,7 @@ class _TaxonomySection extends StatelessWidget {
                 selected: selectedIds.contains(option.id),
                 selectedTextColor: AppColors.white,
                 unselectedBackgroundColor: const Color(0xFF020202),
-                unselectedBorderColor: AppColors.primary.withValues(alpha: 0.30),
+                unselectedBorderColor: AppColors.primary.withValues(alpha: 0.40),
                 onTap: () => onToggle(option.id),
               ),
           ],

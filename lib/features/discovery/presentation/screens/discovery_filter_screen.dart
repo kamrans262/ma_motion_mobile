@@ -9,6 +9,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_centered_taxonomy_label.dart';
 import '../../application/artwork_discovery_controller.dart';
 import '../../data/discovery_filter_repository.dart';
+import '../../../settings/data/event_location_autocomplete_repository.dart';
 import '../../domain/discovery_artwork.dart';
 import '../../domain/discovery_filter_models.dart';
 import '../../domain/discovery_query.dart';
@@ -42,6 +43,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   DiscoveryFilterOptions? _options;
   DiscoveryLocation? _selectedLocation;
   List<DiscoveryLocation> _locationSuggestions = const <DiscoveryLocation>[];
+  int _locationRequestVersion = 0;
+  bool _showGoogleAttribution = false;
 
   late Set<int> _selectedTypeIds;
   late Set<int> _selectedStyleIds;
@@ -134,66 +137,92 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
   void _searchLocations(String value) {
     _locationDebounce?.cancel();
+    final version = ++_locationRequestVersion;
     final text = value.trim();
-
-    if (text.isEmpty) {
-      setState(() {
-        _selectedLocation = null;
-        _locationSuggestions = const <DiscoveryLocation>[];
-        _loadingLocations = false;
-      });
-      return;
-    }
-
     if (_selectedLocation?.label == text) return;
-
     setState(() {
       _selectedLocation = null;
+      _locationSuggestions = const <DiscoveryLocation>[];
+      _loadingLocations = false;
+      _showGoogleAttribution = false;
     });
-
+    if (text.length < 2 || text.length > 120) return;
+    // Same 350ms delay as Settings > Event Location.
     _locationDebounce = Timer(
-      const Duration(milliseconds: 300),
-      () => _loadLocations(text),
+      const Duration(milliseconds: 350),
+      () => unawaited(_loadLocations(text, version)),
     );
   }
 
-  Future<void> _loadLocations(String text) async {
-    if (!mounted) return;
-
-    setState(() {
-      _loadingLocations = true;
-    });
-
+  Future<List<DiscoveryLocation>> _knownLocations(String text) async {
     try {
-      final page = await ref
+      final result = await ref
           .read(discoveryFilterRepositoryProvider)
           .searchLocations(text);
-
-      if (!mounted || _locationSearchController.text.trim() != text.trim()) {
-        return;
-      }
-
-      setState(() {
-        _locationSuggestions = page.items;
-        _loadingLocations = false;
-      });
+      return result.items;
     } catch (_) {
-      if (!mounted) return;
-
-      setState(() {
-        _locationSuggestions = const <DiscoveryLocation>[];
-        _loadingLocations = false;
-      });
+      return const <DiscoveryLocation>[];
     }
   }
 
-  void _selectLocation(DiscoveryLocation location) {
-    FocusScope.of(context).unfocus();
+  Future<List<String>> _googlePlaces(String text) async {
+    try {
+      // Reuse Settings > Current & Upcoming Shows > Event Location.
+      return await ref
+          .read(eventLocationAutocompleteRepositoryProvider)
+          .search(text);
+    } catch (_) {
+      return const <String>[];
+    }
+  }
 
+  Future<void> _loadLocations(String text, int version) async {
+    if (!mounted || version != _locationRequestVersion) return;
+    setState(() => _loadingLocations = true);
+    // Both requests begin at once. Discovery results also work as fallback.
+    final knownFuture = _knownLocations(text);
+    final placesFuture = _googlePlaces(text);
+    final known = await knownFuture;
+    final places = await placesFuture;
+    if (!mounted ||
+        version != _locationRequestVersion ||
+        _locationSearchController.text.trim() != text) {
+      return;
+    }
+    final knownByLabel = <String, DiscoveryLocation>{
+      for (final item in known) item.label.trim().toLowerCase(): item,
+    };
+    final merged = <DiscoveryLocation>[];
+    final seen = <String>{};
+    for (final place in places) {
+      final label = place.trim();
+      if (label.isEmpty || !seen.add(label.toLowerCase())) continue;
+      // Keep existing IDs/coordinates for exact matches.
+      merged.add(knownByLabel[label.toLowerCase()] ??
+          DiscoveryLocation(id: 0, label: label));
+    }
+    for (final item in known) {
+      final label = item.label.trim().toLowerCase();
+      if (label.isEmpty || !seen.add(label)) continue;
+      merged.add(item);
+    }
+    setState(() {
+      _locationSuggestions = merged;
+      _showGoogleAttribution = places.isNotEmpty;
+      _loadingLocations = false;
+    });
+  }
+
+  void _selectLocation(DiscoveryLocation location) {
+    _locationDebounce?.cancel();
+    _locationRequestVersion++;
+    FocusScope.of(context).unfocus();
     setState(() {
       _selectedLocation = location;
       _locationSearchController.text = location.label;
       _locationSuggestions = const <DiscoveryLocation>[];
+      _loadingLocations = false;
+      _showGoogleAttribution = false;
     });
   }
 
@@ -222,12 +251,16 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   }
 
   void _clearAll() {
+    _locationDebounce?.cancel();
+    _locationRequestVersion++;
     setState(() {
       _selectedTypeIds.clear();
       _selectedStyleIds.clear();
       _selectedStatuses.clear();
       _selectedLocation = null;
       _locationSuggestions = const <DiscoveryLocation>[];
+      _showGoogleAttribution = false;
+      _loadingLocations = false;
       _locationSearchController.clear();
       _radiusMiles = _defaultRadiusMiles;
       _errorMessage = null;
@@ -241,7 +274,12 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     final rawLocation = _locationSearchController.text.trim();
     final canUseRadius =
         location?.latitude != null && location?.longitude != null;
-    final looksPostal = _looksLikePostal(rawLocation);
+    // Places suggestions provide descriptions, not GPS coordinates.
+    final knownLocation = canUseRadius || (location != null && location.id > 0);
+    final searchLocation = location != null && !knownLocation
+        ? rawLocation.split(',').first.trim()
+        : rawLocation;
+    final looksPostal = _looksLikePostal(searchLocation);
 
     final query = DiscoveryQuery(
       typeIds: Set<int>.from(_selectedTypeIds),
@@ -254,10 +292,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           : null,
       locationLabel:
           location?.label ?? (rawLocation.isEmpty ? null : rawLocation),
-      city: location == null && rawLocation.isNotEmpty && !looksPostal
-          ? rawLocation
+      city: !knownLocation && searchLocation.isNotEmpty && !looksPostal
+          ? searchLocation
           : '',
-      postalCode: location == null && looksPostal ? rawLocation : '',
+      postalCode: !knownLocation && looksPostal ? searchLocation : '',
       countryCode: location?.countryCode,
       latitude: canUseRadius ? location!.latitude : null,
       longitude: canUseRadius ? location!.longitude : null,
@@ -364,47 +402,76 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   }
 
   Widget _buildApplyButton() {
+    final style = widget.popupLayout
+        ? AppButtonStyles.filterAction().copyWith(
+            padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+              EdgeInsets.symmetric(vertical: 12),
+            ),
+          )
+        : AppButtonStyles.filterAction();
     return SafeArea(
-                top: false,
-                bottom: !widget.popupLayout,
-                child: Padding(
-                  padding: widget.popupLayout
-                      ? const EdgeInsets.only(top: 24)
-                      : const EdgeInsets.fromLTRB(20, 10, 20, 18),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: OutlinedButton(
-                      key: const Key('filter_apply_button'),
-                      onPressed: _applying ? null : _apply,
-                      style: widget.popupLayout
-                          ? AppButtonStyles.filterAction().copyWith(
-                              padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
-                                EdgeInsets.symmetric(vertical: 12),
-                              ),
-                            )
-                          : AppButtonStyles.filterAction(),
-                      child: _applying
-                          ? const SizedBox.square(
-                              dimension: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.darkGray,
-                              ),
-                            )
-                          : const Text(
-                              'Apply Filters',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.bodyFontFamily,
-                                fontSize: 16,
-                                height: 1.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
-              );
+      top: false,
+      bottom: !widget.popupLayout,
+      child: Padding(
+        padding: widget.popupLayout ? const EdgeInsets.only(top: 24) : const EdgeInsets.fromLTRB(20, 10, 20, 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('filter_close_button'),
+                onPressed: _applying ? null : () {
+                        if (widget.onClose != null) {
+                          widget.onClose!();
+                        } else {
+                          Navigator.of(context).maybePop();
+                        }
+                      },
+                style: style,
+                child: const Text(
+                        'Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('filter_apply_button'),
+                onPressed: _applying ? null : _apply,
+                style: style,
+                child: _applying
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.darkGray,
+                        ),
+                      )
+                    : const Text(
+                        'Apply Filters',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildForm(DiscoveryFilterOptions options) {
@@ -487,7 +554,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           ),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
-            hintText: 'Enter City or ZIP Code',
+            hintText: 'Enter city or ZIP code',
             suffixIcon: _loadingLocations
                 ? const Padding(
                     padding: EdgeInsets.all(13),
@@ -516,19 +583,38 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  for (final suggestion in _locationSuggestions.take(8))
+                  for (var index = 0;
+                      index < _locationSuggestions.length && index < 8;
+                      index++)
                     ListTile(
-                      key: Key('location_suggestion_${suggestion.id}'),
+                      key: Key(_locationSuggestions[index].id > 0
+                          ? 'location_suggestion_' +
+                              _locationSuggestions[index].id.toString()
+                          : 'location_suggestion_google_' + index.toString()),
                       dense: true,
                       title: Text(
-                        suggestion.label,
+                        _locationSuggestions[index].label,
                         style: AppTextStyles.onboardingHelper.copyWith(
                           fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.white,
                           fontSize: 14,
                         ),
                       ),
-                      onTap: () => _selectLocation(suggestion),
+                      onTap: () => _selectLocation(_locationSuggestions[index]),
+                    ),
+                  if (_showGoogleAttribution)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Google Maps',
+                          style: AppTextStyles.fieldHint.copyWith(
+                            fontFamily: AppTextStyles.bodyFontFamily,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     ),
                 ],
               ),
