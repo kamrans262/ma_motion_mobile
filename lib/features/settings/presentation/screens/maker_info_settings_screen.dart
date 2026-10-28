@@ -1657,7 +1657,8 @@ class _TaxonomySection extends StatelessWidget {
             for (final option in options)
               MaChoiceChip(
                 fontFamily: AppTextStyles.bodyFontFamily,
-                selectedFontWeight: FontWeight.w500,
+                selectedFontWeight: FontWeight.w600,
+                unselectedFontWeight: FontWeight.w600,
                 fontSize: 12,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 verticalOffset: 0,
