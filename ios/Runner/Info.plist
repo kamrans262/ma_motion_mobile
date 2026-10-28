@@ -66,6 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>MA uses your photo library so you can choose your salon image.</string>
 </dict>
