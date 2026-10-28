@@ -15,6 +15,7 @@ import '../../features/discovery/presentation/screens/maker_artwork_discovery_sc
 import '../../features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/onboarding/presentation/widgets/ma_onboarding_journey_shell.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
@@ -250,6 +251,15 @@ GoRouter createAppRouter({
                 extra: artwork,
               );
             },
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/appreciator/notifications',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: NotificationsScreen(
+            onBack: () => context.go('/appreciator/discovery'),
           ),
         ),
       ),
