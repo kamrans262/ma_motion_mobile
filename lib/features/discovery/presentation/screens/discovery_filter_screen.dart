@@ -570,54 +570,55 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           ),
         ),
         if (_locationSuggestions.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Material(
-              key: const Key('filter_location_suggestions'),
+          Container(
+            key: const Key('filter_location_suggestions'),
+            decoration: const BoxDecoration(
               color: AppColors.filterInputFill,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-                side: BorderSide(color: AppColors.primary),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var index = 0;
-                      index < _locationSuggestions.length && index < 8;
-                      index++)
-                    ListTile(
-                      key: Key(_locationSuggestions[index].id > 0
-                          ? 'location_suggestion_' +
-                              _locationSuggestions[index].id.toString()
-                          : 'location_suggestion_google_' + index.toString()),
-                      dense: true,
-                      title: Text(
+              borderRadius: BorderRadius.zero,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0;
+                    index < _locationSuggestions.length && index < 8;
+                    index++)
+                  InkWell(
+                    key: Key(_locationSuggestions[index].id > 0
+                        ? 'location_suggestion_' +
+                            _locationSuggestions[index].id.toString()
+                        : 'location_suggestion_google_' + index.toString()),
+                    onTap: () => _selectLocation(_locationSuggestions[index]),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Text(
                         _locationSuggestions[index].label,
-                        style: AppTextStyles.onboardingHelper.copyWith(
+                        style: AppTextStyles.field.copyWith(
                           fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                      onTap: () => _selectLocation(_locationSuggestions[index]),
-                    ),
-                  if (_showGoogleAttribution)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          'Google Maps',
-                          style: AppTextStyles.fieldHint.copyWith(
-                            fontFamily: AppTextStyles.bodyFontFamily,
-                            fontSize: 12,
-                          ),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                ],
-              ),
+                  ),
+                if (_showGoogleAttribution)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                    child: Text(
+                      'Google Maps',
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.fieldHint.copyWith(
+                        fontFamily: AppTextStyles.bodyFontFamily,
+                        color: AppColors.darkGray,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         const SizedBox(height: 12),
