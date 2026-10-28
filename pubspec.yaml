@@ -32,6 +32,12 @@ dependencies:
   # request cancellation, timeout handling, etc.
   dio: ^5.11.1
 
+  # MA Motion push delivery; native Firebase configuration is added locally
+  # using FlutterFire CLI for the user's Firebase project.
+  firebase_core: ^5.1.0
+  firebase_messaging: ^17.0.1
+  flutter_local_notifications: ^20.1.0
+
   # ============================================================
   # ROUTING / NAVIGATION
   # ============================================================
