@@ -546,9 +546,9 @@ class _AppreciatorSettingsModalState
               key: const Key('appreciator_settings_close_button'),
               onPressed: _busy ? null : () => Navigator.of(context).pop(),
               style: AppButtonStyles.filterAction(),
-              child: const Transform.translate(
-                offset: Offset(0, 2),
-                child: Text(
+              child: Transform.translate(
+                offset: const Offset(0, 2),
+                child: const Text(
                   'Close',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
