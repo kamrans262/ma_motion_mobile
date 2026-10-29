@@ -11,30 +11,20 @@ class TypographyComparisonScreen extends StatelessWidget {
 
   final VoidCallback onBack;
 
-  // The app's Figma-aligned onboarding token is 34px / w500 /
-  // line height 1.22 / letter spacing -0.5px.
-  // Settings/Filter reference: 24px / w500. Its line height and tracking
-  // are not explicitly set in the current app reference.
-  // Compare font weights only. Keep the current reference sizes fixed:
-  // 34px for Onboarding/Login headings and 24px for Settings/Filter titles.
-  static const List<_TypeVariation> _headingVariations = [
-    _TypeVariation(34, FontWeight.w300),
-    _TypeVariation(34, FontWeight.w400),
-    _TypeVariation(34, FontWeight.w500),
-    _TypeVariation(34, FontWeight.w600),
-    _TypeVariation(34, FontWeight.w700),
-    _TypeVariation(34, FontWeight.w800),
-    _TypeVariation(34, FontWeight.w900),
-  ];
+  // Chosen typography from the previous weight comparison (Variation 6):
+  // Helvetica Neue LT Std, requested w800, with existing heading/title sizes.
+  // The registered Helvetica file is w500; Flutter may synthesize w800.
+  static const FontWeight _chosenWeight = FontWeight.w800;
+  static const double _headingSize = 34;
+  static const double _titleSize = 24;
 
-  static const List<_TypeVariation> _titleVariations = [
-    _TypeVariation(24, FontWeight.w300),
-    _TypeVariation(24, FontWeight.w400),
-    _TypeVariation(24, FontWeight.w500),
-    _TypeVariation(24, FontWeight.w600),
-    _TypeVariation(24, FontWeight.w700),
-    _TypeVariation(24, FontWeight.w800),
-    _TypeVariation(24, FontWeight.w900),
+  // Show the existing -0.5px heading tracking as a baseline, followed by
+  // the requested 0–2px letter-spacing comparisons.
+  static const List<double> _headingTracking = [
+    -0.5, 0, 0.5, 1, 1.5, 2,
+  ];
+  static const List<double> _titleTracking = [
+    0, 0.5, 1, 1.5, 2,
   ];
 
   // Preview-only border opacity variations; leave Settings unchanged.
@@ -84,10 +74,11 @@ class TypographyComparisonScreen extends StatelessWidget {
                 const SizedBox(height: 18),
                 Text(
                   'Helvetica Neue LT Std 65 Medium is the only registered '
-                  'Helvetica font file. Only w500 is genuine; w300, w400, '
-                  'w600, w700, w800 and w900 are requested weights without '
-                  'matching font files. They may be simulated or render '
-                  'similarly to w500 on some devices.',
+                  'Chosen font: Helvetica Neue LT Std, w800 (Variation 6). '
+                  'Only Helvetica 65 Medium (w500) is registered, so w800 '
+                  'is requested/simulated and may not look like a genuine '
+                  'Helvetica Extra Bold file. Compare tracking below; '
+                  'no changes will be made to the live app.',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 13,
@@ -99,7 +90,8 @@ class TypographyComparisonScreen extends StatelessWidget {
                 _sectionTitle('Onboarding / Animation / Login — Headings'),
                 const SizedBox(height: 8),
                 const Text(
-                  'Reference: 34px · w500 · line height 1.22 · tracking -0.5px',
+                  'Selected: Helvetica · 34px · w800 (requested) · '
+                  'line height 1.22. Current app tracking: -0.5px.',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 12,
@@ -107,10 +99,10 @@ class TypographyComparisonScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                for (var index = 0; index < _headingVariations.length; index++)
+                for (var index = 0; index < _headingTracking.length; index++)
                   _variationTile(
                     index: index + 1,
-                    variation: _headingVariations[index],
+                    tracking: _headingTracking[index],
                     sample: 'Welcome to the space between.',
                     isHeading: true,
                   ),
@@ -118,7 +110,8 @@ class TypographyComparisonScreen extends StatelessWidget {
                 _sectionTitle('Settings / Filter — Titles'),
                 const SizedBox(height: 8),
                 const Text(
-                  'Reference: 24px · w500 · default line height and tracking',
+                  'Selected: Helvetica · 24px · w800 (requested). '
+                  'Current app tracking: default (approximately 0px).',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 12,
@@ -126,10 +119,10 @@ class TypographyComparisonScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                for (var index = 0; index < _titleVariations.length; index++)
+                for (var index = 0; index < _titleTracking.length; index++)
                   _variationTile(
                     index: index + 1,
-                    variation: _titleVariations[index],
+                    tracking: _titleTracking[index],
                     sample: 'Settings',
                     isHeading: false,
                   ),
@@ -269,32 +262,35 @@ class TypographyComparisonScreen extends StatelessWidget {
 
   Widget _variationTile({
     required int index,
-    required _TypeVariation variation,
+    required double tracking,
     required String sample,
     required bool isHeading,
   }) {
-    final isOriginal = variation.weight == FontWeight.w500;
-    final simulated = !isOriginal;
-    final weightLabel = 'w${(variation.weight.index + 1) * 100}';
+    final fontSize = isHeading ? _headingSize : _titleSize;
+    final referenceTracking = isHeading ? -0.5 : 0.0;
+    final isCurrentTracking = tracking == referenceTracking;
+    final trackingLabel = tracking > 0 ? '+' + tracking.toString() : tracking.toString();
 
-    // The w500 heading preview matches the current shared heading token.
-    // No actual screen or global theme is modified.
+    // Only the spacing changes between samples. All samples retain the
+    // selected w800 and original app sizes, colors and heading line height.
     final previewStyle = isHeading
         ? AppTextStyles.onboardingHeading.copyWith(
-            fontSize: variation.size,
-            fontWeight: variation.weight,
+            fontSize: fontSize,
+            fontWeight: _chosenWeight,
+            letterSpacing: tracking,
           )
         : TextStyle(
             fontFamily: AppTextStyles.displayFontFamily,
-            fontSize: variation.size,
-            fontWeight: variation.weight,
+            fontSize: fontSize,
+            fontWeight: _chosenWeight,
+            letterSpacing: tracking,
             color: AppColors.primary,
           );
 
     return Container(
       key: Key(
         'typography_' +
-            (isHeading ? 'heading_' : 'title_') +
+            (isHeading ? 'heading_tracking_' : 'title_tracking_') +
             index.toString(),
       ),
       margin: const EdgeInsets.only(bottom: 12),
@@ -307,9 +303,9 @@ class TypographyComparisonScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Variation ' +
-                index.toString() +
-                (isOriginal ? ' — Figma Original' : ''),
+            'Variation ' + index.toString() +
+                ' — Letter spacing ' + trackingLabel + 'px' +
+                (isCurrentTracking ? ' (Current app spacing)' : ''),
             style: const TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 14,
@@ -319,10 +315,10 @@ class TypographyComparisonScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            variation.size.toStringAsFixed(0) +
-                'px · ' +
-                weightLabel +
-                (simulated ? ' (simulated / requested)' : ' (genuine w500)'),
+            'Helvetica Neue LT Std · ' +
+                fontSize.toStringAsFixed(0) +
+                'px · w800 (requested) · tracking ' + trackingLabel + 'px' +
+                (isHeading ? ' · line height 1.22' : ''),
             style: const TextStyle(
               fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 12,
@@ -339,11 +335,4 @@ class TypographyComparisonScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class _TypeVariation {
-  const _TypeVariation(this.size, this.weight);
-
-  final double size;
-  final FontWeight weight;
 }
