@@ -4,8 +4,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_centered_taxonomy_label.dart';
 
-/// Temporary, read-only typography comparison. Do not apply these styles to
-/// onboarding, login, filter or settings until the design is selected.
+/// Read-only typography comparison of the now-approved title styles and
+/// alternative tracking values. This screen never changes live typography.
 class TypographyComparisonScreen extends StatelessWidget {
   const TypographyComparisonScreen({super.key, required this.onBack});
 
@@ -19,8 +19,7 @@ class TypographyComparisonScreen extends StatelessWidget {
   static const double _titleSize = 24;
 
   // Compare exactly the same letter-spacing steps in both sections.
-  // Keep -0.5px marked as the live heading reference, and 0px as the
-  // current Settings/Filter title reference.
+  // Both live styles now use +0.3px (variation 4).
   static const List<double> _headingTracking = [
     -0.5, -0.3, 0, 0.3, 0.5, 0.7, 1, 1.3, 1.5, 2,
   ];
@@ -74,12 +73,11 @@ class TypographyComparisonScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  'Helvetica Neue LT Std 65 Medium is the only registered '
-                  'Chosen font: Helvetica Neue LT Std, w800 (Variation 6). '
-                  'Only Helvetica 65 Medium (w500) is registered, so w800 '
-                  'is requested/simulated and may not look like a genuine '
-                  'Helvetica Extra Bold file. Compare tracking below; '
-                  'no changes will be made to the live app.',
+                  'Selected: Helvetica Neue LT Std, w800 (weight variation 6) '
+                  'with +0.3px tracking (spacing variation 4). Only Helvetica '
+                  '65 Medium (w500) is registered, so w800 may be synthesized '
+                  'rather than a genuine Extra Bold font. This screen is '
+                  'read-only; changing preview variations never edits the app.',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 13,
@@ -92,7 +90,7 @@ class TypographyComparisonScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Selected: Helvetica · 34px · w800 (requested) · '
-                  'line height 1.22. Current app tracking: -0.5px.',
+                  'line height 1.22. Current app tracking: +0.3px.',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 12,
@@ -112,7 +110,7 @@ class TypographyComparisonScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Selected: Helvetica · 24px · w800 (requested). '
-                  'Current app tracking: default (approximately 0px).',
+                  'Current app tracking: +0.3px.',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 12,
@@ -268,7 +266,7 @@ class TypographyComparisonScreen extends StatelessWidget {
     required bool isHeading,
   }) {
     final fontSize = isHeading ? _headingSize : _titleSize;
-    final referenceTracking = isHeading ? -0.5 : 0.0;
+    const referenceTracking = 0.3;
     final isCurrentTracking = tracking == referenceTracking;
     final trackingLabel = tracking > 0 ? '+' + tracking.toString() : tracking.toString();
 

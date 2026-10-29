@@ -22,12 +22,14 @@ abstract final class AppTextStyles {
     color: AppColors.primary,
   );
 
+  // Approved Onboarding / Animation / Login headings (weight variation 6,
+  // tracking variation 4); preserve existing size, color and line height.
   static const TextStyle onboardingHeading = TextStyle(
     fontFamily: displayFontFamily,
     fontSize: 34,
-    letterSpacing: -0.5,
+    letterSpacing: 0.3,
     height: 1.22,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w800,
     color: AppColors.primary,
   );
 
