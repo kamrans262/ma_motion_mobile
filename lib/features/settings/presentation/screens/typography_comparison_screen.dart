@@ -15,30 +15,26 @@ class TypographyComparisonScreen extends StatelessWidget {
   // line height 1.22 / letter spacing -0.5px.
   // Settings/Filter reference: 24px / w500. Its line height and tracking
   // are not explicitly set in the current app reference.
+  // Compare font weights only. Keep the current reference sizes fixed:
+  // 34px for Onboarding/Login headings and 24px for Settings/Filter titles.
   static const List<_TypeVariation> _headingVariations = [
+    _TypeVariation(34, FontWeight.w300),
+    _TypeVariation(34, FontWeight.w400),
     _TypeVariation(34, FontWeight.w500),
-    _TypeVariation(33, FontWeight.w400),
-    _TypeVariation(32, FontWeight.w500),
-    _TypeVariation(30, FontWeight.w600),
-    _TypeVariation(28, FontWeight.w400),
-    _TypeVariation(35, FontWeight.w400),
-    _TypeVariation(36, FontWeight.w500),
-    _TypeVariation(38, FontWeight.w600),
-    _TypeVariation(40, FontWeight.w500),
-    _TypeVariation(42, FontWeight.w600),
+    _TypeVariation(34, FontWeight.w600),
+    _TypeVariation(34, FontWeight.w700),
+    _TypeVariation(34, FontWeight.w800),
+    _TypeVariation(34, FontWeight.w900),
   ];
 
   static const List<_TypeVariation> _titleVariations = [
+    _TypeVariation(24, FontWeight.w300),
+    _TypeVariation(24, FontWeight.w400),
     _TypeVariation(24, FontWeight.w500),
-    _TypeVariation(23, FontWeight.w400),
-    _TypeVariation(22, FontWeight.w500),
-    _TypeVariation(21, FontWeight.w600),
-    _TypeVariation(20, FontWeight.w400),
-    _TypeVariation(25, FontWeight.w400),
-    _TypeVariation(26, FontWeight.w500),
-    _TypeVariation(28, FontWeight.w600),
-    _TypeVariation(30, FontWeight.w500),
-    _TypeVariation(32, FontWeight.w600),
+    _TypeVariation(24, FontWeight.w600),
+    _TypeVariation(24, FontWeight.w700),
+    _TypeVariation(24, FontWeight.w800),
+    _TypeVariation(24, FontWeight.w900),
   ];
 
   // Preview-only border opacity variations; leave Settings unchanged.
@@ -88,9 +84,10 @@ class TypographyComparisonScreen extends StatelessWidget {
                 const SizedBox(height: 18),
                 Text(
                   'Helvetica Neue LT Std 65 Medium is the only registered '
-                  'Helvetica font file. w500 is genuine; w400 and w600 are '
-                  'requested/simulated weights, not separate font files. '
-                  'They may render like w500 on some devices.',
+                  'Helvetica font file. Only w500 is genuine; w300, w400, '
+                  'w600, w700, w800 and w900 are requested weights without '
+                  'matching font files. They may be simulated or render '
+                  'similarly to w500 on some devices.',
                   style: TextStyle(
                     fontFamily: AppTextStyles.bodyFontFamily,
                     fontSize: 13,
@@ -276,16 +273,12 @@ class TypographyComparisonScreen extends StatelessWidget {
     required String sample,
     required bool isHeading,
   }) {
-    final isOriginal = index == 1;
-    final simulated = variation.weight != FontWeight.w500;
-    final weightLabel = variation.weight == FontWeight.w400
-        ? 'w400'
-        : variation.weight == FontWeight.w600
-        ? 'w600'
-        : 'w500';
+    final isOriginal = variation.weight == FontWeight.w500;
+    final simulated = !isOriginal;
+    final weightLabel = 'w${(variation.weight.index + 1) * 100}';
 
-    // Variation 1 of the heading section copies the actual shared text style;
-    // no other screen or global theme is modified.
+    // The w500 heading preview matches the current shared heading token.
+    // No actual screen or global theme is modified.
     final previewStyle = isHeading
         ? AppTextStyles.onboardingHeading.copyWith(
             fontSize: variation.size,
