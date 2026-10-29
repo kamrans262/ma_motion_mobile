@@ -18,13 +18,14 @@ class TypographyComparisonScreen extends StatelessWidget {
   static const double _headingSize = 34;
   static const double _titleSize = 24;
 
-  // Show the existing -0.5px heading tracking as a baseline, followed by
-  // the requested 0–2px letter-spacing comparisons.
+  // Compare exactly the same letter-spacing steps in both sections.
+  // Keep -0.5px marked as the live heading reference, and 0px as the
+  // current Settings/Filter title reference.
   static const List<double> _headingTracking = [
-    -0.5, 0, 0.5, 1, 1.5, 2,
+    -0.5, -0.3, 0, 0.3, 0.5, 0.7, 1, 1.3, 1.5, 2,
   ];
   static const List<double> _titleTracking = [
-    0, 0.5, 1, 1.5, 2,
+    -0.5, -0.3, 0, 0.3, 0.5, 0.7, 1, 1.3, 1.5, 2,
   ];
 
   // Preview-only border opacity variations; leave Settings unchanged.
