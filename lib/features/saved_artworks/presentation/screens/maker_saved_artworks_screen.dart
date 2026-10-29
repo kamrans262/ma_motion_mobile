@@ -131,9 +131,7 @@ class _MakerSavedArtworksScreenState
                               alignment: Alignment.center,
                               child: Text(
                                 'Saved',
-                                style: AppTextStyles.onboardingHeading.copyWith(
-                                  fontSize: 22,
-                                ),
+                                style: AppTextStyles.pageTitle,
                               ),
                             ),
                           ),

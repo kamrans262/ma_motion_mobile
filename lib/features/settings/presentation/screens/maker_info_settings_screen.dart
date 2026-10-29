@@ -736,12 +736,7 @@ class _MakerInfoSettingsScreenState
                 Flexible(
                   child: Text(
                     'Maker Info Settings',
-                    style: const TextStyle(
-                      fontFamily: AppTextStyles.bodyFontFamily,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.pageTitle,
                   ),
                 ),
               ],

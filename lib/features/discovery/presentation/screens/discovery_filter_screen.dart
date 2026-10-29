@@ -349,12 +349,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       'Filter',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppTextStyles.bodyFontFamily,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primary,
-                      ),
+                      style: AppTextStyles.pageTitle,
                     ),
                   ),
                   InkWell(

@@ -372,12 +372,7 @@ class _AppreciatorSettingsModalState
           const Text(
             'Settings',
             key: Key('appreciator_settings_heading'),
-            style: TextStyle(
-              fontFamily: AppTextStyles.bodyFontFamily,
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primary,
-            ),
+            style: AppTextStyles.pageTitle,
           ),
           const SizedBox(height: 18),
           _SettingsField(

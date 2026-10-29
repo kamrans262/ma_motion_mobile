@@ -136,12 +136,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         ),
         title: const Text(
           'Notifications',
-          style: TextStyle(
-            fontFamily: AppTextStyles.bodyFontFamily,
-            fontWeight: FontWeight.w500,
-            color: AppColors.primary,
-            fontSize: 24,
-          ),
+          style: AppTextStyles.pageTitle,
         ),
         actions: [
           if (_unreadCount > 0)

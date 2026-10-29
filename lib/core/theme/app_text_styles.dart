@@ -11,6 +11,17 @@ abstract final class AppTextStyles {
   static const String fontFamily = displayFontFamily;
   static const double bodyTracking = 0.2;
 
+  // Selected page title typography (Helvetica Neue LT Std, 24px, w800,
+  // +0.3px tracking). The registered font file is w500; heavy weight may
+  // be synthesized until a matching font file is supplied.
+  static const TextStyle pageTitle = TextStyle(
+    fontFamily: displayFontFamily,
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 0.3,
+    color: AppColors.primary,
+  );
+
   static const TextStyle onboardingHeading = TextStyle(
     fontFamily: displayFontFamily,
     fontSize: 34,
