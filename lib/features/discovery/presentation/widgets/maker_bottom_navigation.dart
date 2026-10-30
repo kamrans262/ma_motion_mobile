@@ -211,9 +211,8 @@ class _SvgNavigationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected
-        ? AppColors.primary
-        : AppColors.primary.withValues(alpha: 0.78);
+    // Match Search and Filter icons: full-opacity MA purple in both states.
+    const color = AppColors.primary;
 
     return Semantics(
       button: true,
