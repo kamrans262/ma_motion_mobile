@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -223,13 +224,15 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
                     pageKey: item.isSalonImage
                         ? const Key('artwork_display_salon_image')
                         : Key('artwork_display_artwork_${item.id}'),
-                    description: item.description,
+                    title: item.isSalonImage ? null : item.title,
+                    description: item.isSalonImage ? null : item.description,
                     media: item.primaryMedia,
                     active: index == _currentPage,
                   );
                 }
 
                 return _ArtworkMediaPage(
+                  title: artwork.title,
                   description: artwork.description,
                   media: legacyMedia[index],
                   active: index == _currentPage,
@@ -288,12 +291,14 @@ class _ViewerCloseButton extends StatelessWidget {
 
 class _ArtworkMediaPage extends StatelessWidget {
   const _ArtworkMediaPage({
+    required this.title,
     required this.description,
     required this.media,
     required this.active,
     this.pageKey,
   });
 
+  final String? title;
   final String? description;
   final DiscoveryArtworkMedia? media;
   final bool active;
@@ -301,12 +306,59 @@ class _ArtworkMediaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final title = this.title?.trim() ?? '';
     final description = this.description?.trim() ?? '';
+    final hasTitle = title.isNotEmpty;
     final hasDescription = description.isNotEmpty;
+    final hasCaption = hasTitle || hasDescription;
+
+    // Reuse the existing artwork title and description typography.
+    const titleStyle = TextStyle(
+      fontFamily: 'Fraunces',
+      fontSize: 17,
+      height: 1.25,
+      fontWeight: FontWeight.w500,
+      color: Color(0xFFF0F0F0),
+    );
+    final descriptionStyle = TextStyle(
+      fontFamily: AppTextStyles.bodyFontFamily,
+      fontSize: 14,
+      height: 1.625,
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.italic,
+      color: AppColors.white.withValues(alpha: 0.70),
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bottomReserve = hasDescription ? 86.0 : 38.0;
+        final maxDescriptionLines = constraints.maxHeight < 620 ? 2 : 3;
+
+        // Reserve only the space actually needed by the title/description
+        // while keeping the original image and page-indicator placement.
+        double measure(String text, TextStyle style, int maxLines) {
+          final painter = TextPainter(
+            text: TextSpan(text: text, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            maxLines: maxLines,
+            ellipsis: '…',
+          )..layout(maxWidth: constraints.maxWidth);
+          final height = painter.height;
+          painter.dispose();
+          return height;
+        }
+
+        final titleHeight = hasTitle ? measure(title, titleStyle, 2) : 0.0;
+        final descriptionHeight = hasDescription
+            ? measure(description, descriptionStyle, maxDescriptionLines)
+            : 0.0;
+        final captionGap = hasTitle && hasDescription ? 3.0 : 0.0;
+        final bottomReserve = hasCaption
+            ? math.max(
+                86.0,
+                31.0 + titleHeight + captionGap + descriptionHeight + 5.0,
+              )
+            : 38.0;
 
         return Stack(
           key: pageKey,
@@ -321,25 +373,36 @@ class _ArtworkMediaPage extends StatelessWidget {
                 ),
               ),
             ),
-            if (hasDescription)
+            if (hasCaption)
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 31,
-                child: Text(
-                  description,
-                  key: const Key('artwork_viewer_description'),
-                  textAlign: TextAlign.center,
-                  maxLines: constraints.maxHeight < 620 ? 2 : 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.bodyFontFamily,
-                    fontSize: 14,
-                    height: 1.625,
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.italic,
-                    color: AppColors.white.withValues(alpha: 0.70),
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (hasTitle)
+                      Text(
+                        title,
+                        key: const Key('artwork_viewer_artwork_title'),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: titleStyle,
+                      ),
+                    if (hasTitle && hasDescription)
+                      const SizedBox(height: 3),
+                    if (hasDescription)
+                      Text(
+                        description,
+                        key: const Key('artwork_viewer_description'),
+                        textAlign: TextAlign.center,
+                        maxLines: maxDescriptionLines,
+                        overflow: TextOverflow.ellipsis,
+                        style: descriptionStyle,
+                      ),
+                  ],
                 ),
               ),
           ],

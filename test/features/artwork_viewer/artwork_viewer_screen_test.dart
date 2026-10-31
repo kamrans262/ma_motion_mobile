@@ -67,6 +67,12 @@ void main() {
         const Color(0xFFF0F0F0),
       );
 
+      final artworkTitle = tester.widget<Text>(
+        find.byKey(const Key('artwork_viewer_artwork_title')),
+      );
+      expect(artworkTitle.data, 'Tide Register No. 4');
+      expect(artworkTitle.style?.fontFamily, 'Fraunces');
+
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
       );
@@ -112,6 +118,10 @@ void main() {
         find.byKey(const Key('artwork_viewer_description')),
       );
       expect(dotsRect.top - descriptionRect.bottom, closeTo(26, 0.1));
+      final titleRect = tester.getRect(
+        find.byKey(const Key('artwork_viewer_artwork_title')),
+      );
+      expect(titleRect.bottom, lessThan(descriptionRect.top));
       final firstDotRect = tester.getRect(activeDot);
       final secondDotRect = tester.getRect(inactiveDot);
       expect(secondDotRect.left - firstDotRect.right, closeTo(8, 0.1));
@@ -177,21 +187,26 @@ void main() {
         const Color(0xFF1C1C1C),
       );
 
-      expect(find.text('Tide Register No. 4'), findsOneWidget);
-      expect(find.text('Mara Vellan · 2024'), findsOneWidget);
+      // The final page contains artist information, never the artwork title
+      // or the artwork-specific year.
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('artwork_maker_info_card')),
+          matching: find.text('Tide Register No. 4'),
+        ),
+        findsNothing,
+      );
+      expect(find.text('Mara Vellan'), findsOneWidget);
+      expect(find.text('Mara Vellan · 2024'), findsNothing);
+      expect(find.byKey(const Key('artwork_maker_info_meta')), findsNothing);
 
       final title = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_title')),
       );
+      expect(title.data, 'Mara Vellan');
       expect(title.style?.fontFamily, 'Fraunces');
       expect(title.style?.fontSize, 24);
       expect(title.style?.fontWeight, FontWeight.w500);
-
-      final meta = tester.widget<Text>(
-        find.byKey(const Key('artwork_maker_info_meta')),
-      );
-      expect(meta.style?.fontFamily, 'Instrument Sans');
-      expect(meta.style?.fontSize, 15);
 
       expect(
         tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
@@ -284,14 +299,10 @@ void main() {
       expect(value.style?.fontFamily, 'Fraunces', reason: key);
     }
 
-    for (final key in <String>[
-      'artwork_maker_info_meta',
-      'artwork_maker_info_bio',
-    ]) {
-      if (key == 'artwork_maker_info_meta') continue;
-      final text = tester.widget<Text>(find.byKey(Key(key)));
-      expect(text.style?.fontFamily, 'Instrument Sans', reason: key);
-    }
+    final bio = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_bio')),
+    );
+    expect(bio.style?.fontFamily, 'Instrument Sans');
 
     for (final label in <String>['Website', 'Email', 'Current Show']) {
       final text = tester.widget<Text>(find.text(label));
@@ -391,6 +402,8 @@ void main() {
 
     expect(dots().count, 4);
     expect(dots().currentIndex, 0);
+    expect(find.text('Tapped Content 3'), findsOneWidget);
+    expect(find.text('Tapped artwork description'), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
@@ -398,6 +411,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(dots().currentIndex, 1);
+    expect(find.text('Content 2'), findsOneWidget);
+    expect(find.text('Second slot'), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
@@ -405,6 +420,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(dots().currentIndex, 2);
+    expect(find.text('Content 4'), findsOneWidget);
+    expect(find.text('Fourth slot'), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
@@ -413,6 +430,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(dots().currentIndex, 3);
     expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('artwork_maker_info_card')),
+        matching: find.text('Tapped Content 3'),
+      ),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 

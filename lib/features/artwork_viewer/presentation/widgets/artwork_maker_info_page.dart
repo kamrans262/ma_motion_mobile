@@ -52,34 +52,23 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 42),
-                      child: Text(
-                        artwork.title,
-                        key: const Key('artwork_maker_info_title'),
-                        style: const TextStyle(
-                          fontFamily: 'Fraunces',
-                          fontSize: 24,
-                          height: 1.08,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFFF0F0F0),
+                    // The final carousel page is about the maker, not the
+                    // currently selected artwork or its creation year.
+                    if ((maker?.name ?? '').trim().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 42),
+                        child: Text(
+                          maker!.name.trim(),
+                          key: const Key('artwork_maker_info_title'),
+                          style: const TextStyle(
+                            fontFamily: 'Fraunces',
+                            fontSize: 24,
+                            height: 1.08,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFF0F0F0),
+                          ),
                         ),
                       ),
-                    ),
-                    if (_makerMeta(artwork).isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        _makerMeta(artwork),
-                        key: const Key('artwork_maker_info_meta'),
-                        style: const TextStyle(
-                          fontFamily: 'Instrument Sans',
-                          fontSize: 15,
-                          height: 1.2,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFFF0F0F0),
-                        ),
-                      ),
-                    ],
                     if ((maker?.bio ?? '').isNotEmpty) ...[
                       const SizedBox(height: 20),
                       Text(
@@ -256,16 +245,6 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
     );
   }
 
-  static String _makerMeta(ArtworkDetail artwork) {
-    final makerName = artwork.maker?.name.trim() ?? '';
-    final year = artwork.createdAt?.year;
-
-    if (makerName.isEmpty) {
-      return year == null ? '' : '$year';
-    }
-
-    return year == null ? makerName : '$makerName · $year';
-  }
 }
 
 class _InfoLabel extends StatelessWidget {
