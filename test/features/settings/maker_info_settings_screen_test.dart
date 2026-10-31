@@ -415,6 +415,45 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Maker Settings requires a name instead of an email address', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(
+            onClose: () => repository.closeCalls++,
+          ),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    await tester.enterText(
+      find.byKey(const Key('maker_settings_name')),
+      'artist@example.com',
+    );
+    await tester.pump();
+
+    final settingsList = find.byKey(const Key('maker_settings_scroll'));
+    final saveButton = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: saveButton,
+      scrollView: settingsList,
+    );
+    await tester.tap(saveButton);
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('not your email address'), findsOneWidget);
+    expect(repository.saveCalls, 0);
+    expect(repository.closeCalls, 0);
+  });
+
   testWidgets(
     'Current & Upcoming Shows reveals styled fields and plus adds another show',
     (WidgetTester tester) async {

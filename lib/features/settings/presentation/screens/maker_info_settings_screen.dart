@@ -195,6 +195,18 @@ class _MakerInfoSettingsScreenState
   Future<void> _saveAndClose() async {
     if (_saving) return;
 
+    // Do not save an email address in the artist-name field. Check before
+    // media changes so invalid profile details cannot cause partial saves.
+    final artistName = _nameController.text.trim();
+    if (artistName.isEmpty || artistName.contains('@')) {
+      setState(() {
+        _errorMessage = artistName.isEmpty
+            ? 'Please enter your artist name before saving.'
+            : 'Please enter your artist name in Name, not your email address.';
+      });
+      return;
+    }
+
     final showEntries = <MakerInfoShowEntry>[];
     for (final editor in _showEditors) {
       final description = editor.description.text.trim();
@@ -344,13 +356,6 @@ class _MakerInfoSettingsScreenState
             _captionControllers[slot]!.text = artwork?.description ?? '';
           }
         });
-      }
-
-      if (_nameController.text.trim().isEmpty) {
-        setState(() {
-          _errorMessage = 'Content was saved, but please enter your Maker name before closing.';
-        });
-        return;
       }
 
       if (_selectedTypes.isEmpty || _selectedStyles.isEmpty) {

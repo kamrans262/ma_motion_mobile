@@ -308,6 +308,15 @@ void main() {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontFamily, 'Instrument Sans', reason: label);
     }
+    expect(
+      tester.widget<Text>(find.byKey(const Key('artwork_maker_info_title'))).data,
+      'Mara Vellan',
+    );
+    expect(find.text('contact@artist.com'), findsOneWidget);
+    expect(
+      tester.widget<Text>(find.byKey(const Key('artwork_maker_info_email'))).data,
+      'contact@artist.com',
+    );
 
     final share = tester.widget<Text>(
       find.descendant(
@@ -316,6 +325,95 @@ void main() {
       ),
     );
     expect(share.style?.fontFamily, 'Instrument Sans');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Artist Info never uses a stored login email as its heading', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: ArtworkMakerInfoPage(
+              artwork: ArtworkDetail(
+                id: 41,
+                title: 'A Work',
+                media: <DiscoveryArtworkMedia>[],
+                maker: ArtworkDetailMaker(
+                  id: 7,
+                  name: 'artist@example.com',
+                  contactEmail: 'artist@example.com',
+                  showShowsOnInfoPage: false,
+                ),
+              ),
+              isSaved: false,
+              isSaving: false,
+              onSavedTap: _noop,
+              onShare: _noop,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final heading = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_title')),
+    );
+    expect(heading.data, 'Artist');
+    expect(heading.style?.fontFamily, 'Fraunces');
+    expect(heading.style?.fontSize, 24);
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('artist@example.com'), findsOneWidget);
+    final email = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_email')),
+    );
+    expect(email.data, 'artist@example.com');
+    expect(email.style?.fontFamily, 'Fraunces');
+  });
+
+  testWidgets('Artist Info fetches updated Maker Settings name on reopen', (
+    tester,
+  ) async {
+    final repository = _ChangingMakerNameRepository();
+
+    Widget viewer(String viewerKey) => ProviderScope(
+      overrides: [
+        artworkDetailRepositoryProvider.overrideWithValue(repository),
+        savedArtworksRepositoryProvider.overrideWithValue(
+          _FakeSavedArtworksRepository(),
+        ),
+      ],
+      child: MaterialApp(
+        home: ArtworkViewerScreen(
+          key: ValueKey(viewerKey),
+          artworkId: 41,
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(viewer('first'));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Original Artist Name'), findsOneWidget);
+
+    repository.name = 'Updated Artist Name';
+    await tester.pumpWidget(viewer('second'));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Updated Artist Name'), findsOneWidget);
+    expect(find.text('Original Artist Name'), findsNothing);
+    expect(repository.fetchCalls, greaterThanOrEqualTo(2));
     expect(tester.takeException(), isNull);
   });
 
@@ -671,6 +769,26 @@ void main() {
     expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _ChangingMakerNameRepository implements ArtworkDetailRepositoryContract {
+  String name = 'Original Artist Name';
+  int fetchCalls = 0;
+
+  @override
+  Future<ArtworkDetail> fetch(int artworkId) async {
+    fetchCalls++;
+    return ArtworkDetail(
+      id: artworkId,
+      title: 'A Work',
+      media: const <DiscoveryArtworkMedia>[],
+      maker: ArtworkDetailMaker(
+        id: 7,
+        name: name,
+        showShowsOnInfoPage: false,
+      ),
+    );
+  }
 }
 
 class _SalonImageArtDisplayRepository

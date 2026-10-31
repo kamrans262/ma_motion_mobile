@@ -26,6 +26,13 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final maker = artwork.maker;
+    // Legacy accounts sometimes store their login email as users.name.
+    // Never use an email address as the Artist Info heading. The real
+    // artist name is saved via Maker Settings -> Name.
+    final storedName = maker?.name.trim() ?? '';
+    final artistName = storedName.isEmpty || storedName.contains('@')
+        ? 'Artist'
+        : storedName;
     final configuredShows = maker?.currentUpcomingShows ?? const [];
     final currentShow =
         maker == null ||
@@ -54,11 +61,11 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                   children: [
                     // The final carousel page is about the maker, not the
                     // currently selected artwork or its creation year.
-                    if ((maker?.name ?? '').trim().isNotEmpty)
+                    if (maker != null)
                       Padding(
                         padding: const EdgeInsets.only(right: 42),
                         child: Text(
-                          maker!.name.trim(),
+                          artistName,
                           key: const Key('artwork_maker_info_title'),
                           style: const TextStyle(
                             fontFamily: 'Fraunces',

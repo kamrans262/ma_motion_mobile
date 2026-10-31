@@ -48,8 +48,10 @@ class _ArtworkViewerScreenState extends ConsumerState<ArtworkViewerScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    // The same viewer is used by Maker and Appreciator. Check the current
-    // account's saved state whenever an artwork is reopened.
+    // The same viewer is used by Maker and Appreciator. Refresh the artwork
+    // detail on reopen so changes saved in Maker Settings (including the
+    // artist's name, website and contact-email visibility) are not stale.
+    ref.invalidate(artworkDetailProvider(widget.artworkId));
     ref.invalidate(artworkSavedStatusProvider(widget.artworkId));
   }
 
