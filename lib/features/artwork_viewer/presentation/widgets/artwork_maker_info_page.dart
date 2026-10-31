@@ -33,6 +33,10 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
     final artistName = storedName.isEmpty || storedName.contains('@')
         ? 'Artist'
         : storedName;
+    // Maker Settings -> Location is already returned in maker.location.
+    // Keep the saved city/state text (for example, "New York, NY") rather
+    // than guessing or generating a state abbreviation.
+    final artistLocation = maker?.location?.trim() ?? '';
     final configuredShows = maker?.currentUpcomingShows ?? const [];
     final currentShow =
         maker == null ||
@@ -76,6 +80,13 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                           ),
                         ),
                       ),
+                    if (artistLocation.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      _InfoLabel(
+                        artistLocation,
+                        key: const Key('artwork_maker_info_location'),
+                      ),
+                    ],
                     if ((maker?.bio ?? '').isNotEmpty) ...[
                       const SizedBox(height: 20),
                       Text(
@@ -255,7 +266,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
 }
 
 class _InfoLabel extends StatelessWidget {
-  const _InfoLabel(this.text);
+  const _InfoLabel(this.text, {super.key});
 
   final String text;
 

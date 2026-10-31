@@ -208,6 +208,24 @@ void main() {
       expect(title.style?.fontSize, 24);
       expect(title.style?.fontWeight, FontWeight.w500);
 
+      final locationWidget = find.byKey(
+        const Key('artwork_maker_info_location'),
+      );
+      expect(locationWidget, findsOneWidget);
+      final locationText = tester.widget<Text>(
+        find.descendant(of: locationWidget, matching: find.byType(Text)),
+      );
+      final locationRect = tester.getRect(locationWidget);
+      final titleRect = tester.getRect(
+        find.byKey(const Key('artwork_maker_info_title')),
+      );
+      expect(locationText.data, 'New York, NY');
+      expect(locationRect.top, greaterThan(titleRect.bottom));
+      expect(locationText.style?.fontFamily, 'Instrument Sans');
+      expect(locationText.style?.fontSize, 13);
+      expect(locationText.style?.fontWeight, FontWeight.w500);
+      expect(locationText.style?.color, const Color(0xFFBDBDBD));
+
       expect(
         tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
         const Size(24, 24),
@@ -256,6 +274,7 @@ void main() {
                   id: 7,
                   name: 'Mara Vellan',
                   bio: 'A contemporary artist exploring form and color.',
+                  location: 'New York, NY',
                   websiteUrl: 'www.artist.com',
                   contactEmail: 'contact@artist.com',
                 ),
@@ -308,6 +327,16 @@ void main() {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontFamily, 'Instrument Sans', reason: label);
     }
+    final location = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('artwork_maker_info_location')),
+        matching: find.byType(Text),
+      ),
+    );
+    final websiteLabel = tester.widget<Text>(find.text('Website'));
+    expect(location.data, 'New York, NY');
+    expect(location.style, websiteLabel.style);
+
     expect(
       tester.widget<Text>(find.byKey(const Key('artwork_maker_info_title'))).data,
       'Mara Vellan',
@@ -364,6 +393,7 @@ void main() {
     expect(heading.data, 'Artist');
     expect(heading.style?.fontFamily, 'Fraunces');
     expect(heading.style?.fontSize, 24);
+    expect(find.byKey(const Key('artwork_maker_info_location')), findsNothing);
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('artist@example.com'), findsOneWidget);
     final email = tester.widget<Text>(
