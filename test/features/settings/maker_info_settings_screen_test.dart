@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/api_exception.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_legal_link.dart';
@@ -454,6 +455,41 @@ void main() {
     expect(repository.closeCalls, 0);
   });
 
+  testWidgets('shows the actual server validation error when saving', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository()
+      ..saveProfileError = const ApiException(
+        message: 'The given data was invalid.',
+        statusCode: 422,
+        fieldErrors: <String, List<String>>{
+          'current_upcoming_shows.0.location': <String>[
+            'The event location is too long.',
+          ],
+        },
+      );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(onClose: () => repository.closeCalls++),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final scroll = find.byKey(const Key('maker_settings_scroll'));
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(tester, target: save, scrollView: scroll);
+    await tester.tap(save.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(find.text('The event location is too long.'), findsOneWidget);
+    expect(repository.closeCalls, 0);
+  });
+
   testWidgets('Show entries accept description-only without event location', (
     tester,
   ) async {
@@ -886,6 +922,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int saveArtworkCalls = 0;
   int deleteArtworkCalls = 0;
   MakerInfoSettingsDraft? lastDraft;
+  ApiException? saveProfileError;
   final Set<int> confirmedSlots = <int>{};
   String artworkModerationStatus = 'pending';
 
@@ -955,6 +992,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   Future<void> saveProfile(MakerInfoSettingsDraft draft) async {
     saveCalls++;
     lastDraft = draft;
+    if (saveProfileError != null) throw saveProfileError!;
   }
 
   @override

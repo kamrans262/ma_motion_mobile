@@ -11,6 +11,25 @@ import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repo
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 
 void main() {
+  test('omits empty optional show fields', () {
+    expect(
+      const MakerInfoShowEntry(description: '', location: 'Brooklyn, NY')
+          .toMap(),
+      <String, dynamic>{'location': 'Brooklyn, NY'},
+    );
+    expect(
+      const MakerInfoShowEntry(
+        description: 'Winter exhibition',
+        location: '',
+      ).toMap(),
+      <String, dynamic>{'description': 'Winter exhibition'},
+    );
+    expect(
+      const MakerInfoShowEntry(description: '', location: '').toMap(),
+      isEmpty,
+    );
+  });
+
   test(
     'loads private profile, statistics, taxonomy and artwork slots',
     () async {

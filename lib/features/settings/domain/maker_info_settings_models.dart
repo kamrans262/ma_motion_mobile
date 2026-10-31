@@ -33,10 +33,15 @@ class MakerInfoShowEntry {
     );
   }
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
-    'description': description.trim(),
-    'location': location.trim(),
-  };
+  Map<String, dynamic> toMap() {
+    final showDescription = description.trim();
+    final eventLocation = location.trim();
+    // Do not transmit empty values for optional show fields.
+    return <String, dynamic>{
+      if (showDescription.isNotEmpty) 'description': showDescription,
+      if (eventLocation.isNotEmpty) 'location': eventLocation,
+    };
+  }
 }
 
 class MakerCarouselItem {

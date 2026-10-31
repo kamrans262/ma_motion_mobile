@@ -445,11 +445,15 @@ class _MakerInfoSettingsScreenState
       if (!mounted) return;
       setState(() {
         _failedUploadSlot = activeArtworkSlot;
+        // Show Laravel's field-specific message instead of a generic 422.
         final fieldError =
             error.fieldErrors['media']?.firstOrNull ??
-            error.fieldErrors['media.0']?.firstOrNull;
+            error.fieldErrors['media.0']?.firstOrNull ??
+            (error.fieldErrors.isEmpty
+                ? null
+                : error.fieldErrors.values.first.firstOrNull);
         _errorMessage = activeArtworkSlot == null
-            ? error.message
+            ? (fieldError ?? error.message)
             : 'Content $activeArtworkSlot: ${fieldError ?? error.message}';
       });
     } catch (_) {
