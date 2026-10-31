@@ -216,14 +216,6 @@ class _MakerInfoSettingsScreenState
         continue;
       }
 
-      if (description.isEmpty || location.isEmpty) {
-        setState(() {
-          _errorMessage =
-              'Please enter both a show description and event location.';
-        });
-        return;
-      }
-
       showEntries.add(
         MakerInfoShowEntry(description: description, location: location),
       );

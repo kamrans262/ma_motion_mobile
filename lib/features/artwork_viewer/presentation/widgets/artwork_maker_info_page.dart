@@ -140,25 +140,29 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         index < configuredShows.length;
                         index++
                       ) ...[
-                        Text(
-                          configuredShows[index].description,
-                          key: Key('artwork_maker_configured_show_$index'),
-                          style: const _InfoValueStyle(),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          configuredShows[index].location,
-                          key: Key(
-                            'artwork_maker_configured_show_location_$index',
+                        if (configuredShows[index].description.trim().isNotEmpty)
+                          Text(
+                            configuredShows[index].description,
+                            key: Key('artwork_maker_configured_show_$index'),
+                            style: const _InfoValueStyle(),
                           ),
-                          style: const TextStyle(
-                            fontFamily: 'Instrument Sans',
-                            fontSize: 14,
-                            height: 1.25,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFFBDBDBD),
+                        if (configuredShows[index].description.trim().isNotEmpty &&
+                            configuredShows[index].location.trim().isNotEmpty)
+                          const SizedBox(height: 3),
+                        if (configuredShows[index].location.trim().isNotEmpty)
+                          Text(
+                            configuredShows[index].location,
+                            key: Key(
+                              'artwork_maker_configured_show_location_$index',
+                            ),
+                            style: const TextStyle(
+                              fontFamily: 'Instrument Sans',
+                              fontSize: 14,
+                              height: 1.25,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFFBDBDBD),
+                            ),
                           ),
-                        ),
                         if (index < configuredShows.length - 1)
                           const SizedBox(height: 10),
                       ],

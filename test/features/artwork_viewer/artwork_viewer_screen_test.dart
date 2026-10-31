@@ -357,6 +357,54 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Artist Info shows only the populated show fields', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: ArtworkMakerInfoPage(
+              artwork: ArtworkDetail(
+                id: 41,
+                title: 'A Work',
+                media: <DiscoveryArtworkMedia>[],
+                maker: ArtworkDetailMaker(
+                  id: 7,
+                  name: 'Example Artist',
+                  currentUpcomingShows: <ArtworkDetailMakerShow>[
+                    ArtworkDetailMakerShow(
+                      description: 'Solo exhibition',
+                      location: '',
+                    ),
+                    ArtworkDetailMakerShow(
+                      description: '',
+                      location: 'Brooklyn, NY',
+                    ),
+                  ],
+                ),
+              ),
+              isSaved: false,
+              isSaving: false,
+              onSavedTap: _noop,
+              onShare: _noop,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Current & Upcoming Shows'), findsOneWidget);
+    expect(find.text('Solo exhibition'), findsOneWidget);
+    expect(find.text('Brooklyn, NY'), findsOneWidget);
+    expect(find.byKey(const Key('artwork_maker_configured_show_0')), findsOneWidget);
+    expect(find.byKey(const Key('artwork_maker_configured_show_location_0')), findsNothing);
+    expect(find.byKey(const Key('artwork_maker_configured_show_1')), findsNothing);
+    expect(find.byKey(const Key('artwork_maker_configured_show_location_1')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Artist Info never uses a stored login email as its heading', (
     tester,
   ) async {

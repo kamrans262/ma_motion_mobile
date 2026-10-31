@@ -454,6 +454,88 @@ void main() {
     expect(repository.closeCalls, 0);
   });
 
+  testWidgets('Show entries accept description-only without event location', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(onClose: () => repository.closeCalls++),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final scroll = find.byKey(const Key('maker_settings_scroll'));
+    final add = find.byKey(const Key('maker_settings_add_show'));
+    await _scrollIntoSafeTapRegion(tester, target: add, scrollView: scroll);
+    await tester.tap(add.hitTestable());
+    await tester.pump();
+
+    await tester.enterText(
+      find.byKey(const Key('maker_settings_show_description_1')),
+      'New exhibition with no location',
+    );
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(tester, target: save, scrollView: scroll);
+    await tester.tap(save.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(repository.saveCalls, 1);
+    expect(repository.lastDraft?.currentUpcomingShows, hasLength(2));
+    expect(repository.lastDraft?.currentUpcomingShows.last.description,
+        'New exhibition with no location');
+    expect(repository.lastDraft?.currentUpcomingShows.last.location, isEmpty);
+    expect(repository.closeCalls, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Show entries accept location-only and ignore blank entries', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(onClose: () => repository.closeCalls++),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final scroll = find.byKey(const Key('maker_settings_scroll'));
+    final add = find.byKey(const Key('maker_settings_add_show'));
+    await _scrollIntoSafeTapRegion(tester, target: add, scrollView: scroll);
+    await tester.tap(add.hitTestable());
+    await tester.pump();
+    await tester.enterText(
+      find.byKey(const Key('maker_settings_show_location_1')),
+      'Brooklyn, NY',
+    );
+    await _scrollIntoSafeTapRegion(tester, target: add, scrollView: scroll);
+    await tester.tap(add.hitTestable()); // Third show left entirely blank.
+    await tester.pump();
+
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(tester, target: save, scrollView: scroll);
+    await tester.tap(save.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(repository.saveCalls, 1);
+    expect(repository.lastDraft?.currentUpcomingShows, hasLength(2));
+    expect(repository.lastDraft?.currentUpcomingShows.last.description, isEmpty);
+    expect(repository.lastDraft?.currentUpcomingShows.last.location, 'Brooklyn, NY');
+    expect(repository.closeCalls, 1);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'Current & Upcoming Shows reveals styled fields and plus adds another show',
     (WidgetTester tester) async {
