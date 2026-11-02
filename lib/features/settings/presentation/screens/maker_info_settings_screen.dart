@@ -736,7 +736,7 @@ class _MakerInfoSettingsScreenState
               children: [
                 Flexible(
                   child: Text(
-                    'Maker Info Settings',
+                    'Maker Settings',
                     style: AppTextStyles.pageTitle,
                   ),
                 ),
