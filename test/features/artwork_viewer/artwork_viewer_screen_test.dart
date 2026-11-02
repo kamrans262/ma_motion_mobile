@@ -229,7 +229,7 @@ void main() {
       expect(locationText.style?.fontFamily, 'Instrument Sans');
       expect(locationText.style?.fontSize, 13);
       expect(locationText.style?.fontWeight, FontWeight.w500);
-      expect(locationText.style?.color, AppColors.mutedText);
+      expect(locationText.style?.color, const Color(0xFF909090));
 
       expect(
         tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
@@ -336,7 +336,7 @@ void main() {
     for (final label in <String>['Website', 'Email', 'Current Show']) {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontFamily, 'Instrument Sans', reason: label);
-      expect(text.style?.color, AppColors.mutedText, reason: label);
+      expect(text.style?.color, const Color(0xFF909090), reason: label);
     }
     final location = tester.widget<Text>(
       find.descendant(
@@ -347,7 +347,7 @@ void main() {
     final websiteLabel = tester.widget<Text>(find.text('Website'));
     expect(location.data, 'New York, NY');
     expect(location.style, websiteLabel.style);
-    expect(location.style?.color, AppColors.mutedText);
+    expect(location.style?.color, const Color(0xFF909090));
 
     expect(
       tester.widget<Text>(find.byKey(const Key('artwork_maker_info_title'))).data,
@@ -411,7 +411,7 @@ void main() {
     final showsLabel = tester.widget<Text>(
       find.text('Current & Upcoming Shows'),
     );
-    expect(showsLabel.style?.color, AppColors.mutedText);
+    expect(showsLabel.style?.color, const Color(0xFF909090));
     expect(find.text('Solo exhibition'), findsOneWidget);
     final showDescription = tester.widget<Text>(
       find.byKey(const Key('artwork_maker_configured_show_0')),

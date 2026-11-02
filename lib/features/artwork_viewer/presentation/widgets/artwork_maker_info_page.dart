@@ -283,7 +283,7 @@ class _InfoLabel extends StatelessWidget {
         fontSize: 13,
         height: 1.2,
         fontWeight: FontWeight.w500,
-        color: AppColors.mutedText,
+        color: Color(0xFF909090),
       ),
     );
   }
