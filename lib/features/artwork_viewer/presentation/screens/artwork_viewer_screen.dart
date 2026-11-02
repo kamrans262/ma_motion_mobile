@@ -315,12 +315,12 @@ class _ArtworkMediaPage extends StatelessWidget {
     final hasCaption = hasTitle || hasDescription;
 
     // Reuse the existing artwork title and description typography.
-    const titleStyle = TextStyle(
+    final titleStyle = TextStyle(
       fontFamily: AppTextStyles.bodyFontFamily,
-      fontSize: 17,
+      fontSize: 14,
       height: 1.25,
       fontWeight: FontWeight.w600,
-      color: Color(0xFFF0F0F0),
+      color: AppColors.white.withValues(alpha: 0.70),
     );
     final descriptionStyle = TextStyle(
       fontFamily: AppTextStyles.bodyFontFamily,

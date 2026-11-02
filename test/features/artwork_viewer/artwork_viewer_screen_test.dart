@@ -72,10 +72,13 @@ void main() {
       );
       expect(artworkTitle.data, 'Tide Register No. 4');
       expect(artworkTitle.style?.fontFamily, 'Instrument Sans');
-      expect(artworkTitle.style?.fontSize, 17);
+      expect(artworkTitle.style?.fontSize, 14);
       expect(artworkTitle.style?.fontWeight, FontWeight.w600);
       expect(artworkTitle.style?.height, 1.25);
-      expect(artworkTitle.style?.color, const Color(0xFFF0F0F0));
+      expect(
+        artworkTitle.style?.color,
+        AppColors.white.withValues(alpha: 0.70),
+      );
       expect(artworkTitle.style?.fontStyle, isNot(FontStyle.italic));
 
       final description = tester.widget<Text>(
@@ -83,6 +86,8 @@ void main() {
       );
       expect(description.style?.fontFamily, 'Instrument Sans');
       expect(description.style?.fontSize, 14);
+      expect(artworkTitle.style?.fontSize, description.style?.fontSize);
+      expect(artworkTitle.style?.color, description.style?.color);
       expect(description.style?.fontWeight, FontWeight.w400);
       expect(description.style?.fontStyle, FontStyle.italic);
       expect(description.style?.height, 1.625);
