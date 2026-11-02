@@ -71,7 +71,12 @@ void main() {
         find.byKey(const Key('artwork_viewer_artwork_title')),
       );
       expect(artworkTitle.data, 'Tide Register No. 4');
-      expect(artworkTitle.style?.fontFamily, 'Fraunces');
+      expect(artworkTitle.style?.fontFamily, 'Instrument Sans');
+      expect(artworkTitle.style?.fontSize, 17);
+      expect(artworkTitle.style?.fontWeight, FontWeight.w500);
+      expect(artworkTitle.style?.height, 1.25);
+      expect(artworkTitle.style?.color, const Color(0xFFF0F0F0));
+      expect(artworkTitle.style?.fontStyle, isNot(FontStyle.italic));
 
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
@@ -224,7 +229,7 @@ void main() {
       expect(locationText.style?.fontFamily, 'Instrument Sans');
       expect(locationText.style?.fontSize, 13);
       expect(locationText.style?.fontWeight, FontWeight.w500);
-      expect(locationText.style?.color, const Color(0xFFBDBDBD));
+      expect(locationText.style?.color, AppColors.mutedText);
 
       expect(
         tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
@@ -308,24 +313,30 @@ void main() {
     );
     expect(dividerRect.top, greaterThan(bioRect.bottom));
 
-    for (final key in <String>[
-      'artwork_maker_info_title',
-      'artwork_maker_info_website',
-      'artwork_maker_info_email',
-      'artwork_maker_current_show',
-    ]) {
-      final value = tester.widget<Text>(find.byKey(Key(key)));
-      expect(value.style?.fontFamily, 'Fraunces', reason: key);
-    }
+    final artistTitle = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_title')),
+    );
+    expect(artistTitle.style?.fontFamily, 'Fraunces');
+    expect(artistTitle.style?.fontSize, 24);
 
     final bio = tester.widget<Text>(
       find.byKey(const Key('artwork_maker_info_bio')),
     );
     expect(bio.style?.fontFamily, 'Instrument Sans');
 
+    for (final key in <String>[
+      'artwork_maker_info_website',
+      'artwork_maker_info_email',
+      'artwork_maker_current_show',
+    ]) {
+      final value = tester.widget<Text>(find.byKey(Key(key)));
+      expect(value.style, bio.style, reason: key);
+    }
+
     for (final label in <String>['Website', 'Email', 'Current Show']) {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontFamily, 'Instrument Sans', reason: label);
+      expect(text.style?.color, AppColors.mutedText, reason: label);
     }
     final location = tester.widget<Text>(
       find.descendant(
@@ -336,6 +347,7 @@ void main() {
     final websiteLabel = tester.widget<Text>(find.text('Website'));
     expect(location.data, 'New York, NY');
     expect(location.style, websiteLabel.style);
+    expect(location.style?.color, AppColors.mutedText);
 
     expect(
       tester.widget<Text>(find.byKey(const Key('artwork_maker_info_title'))).data,
@@ -396,7 +408,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Current & Upcoming Shows'), findsOneWidget);
+    final showsLabel = tester.widget<Text>(
+      find.text('Current & Upcoming Shows'),
+    );
+    expect(showsLabel.style?.color, AppColors.mutedText);
     expect(find.text('Solo exhibition'), findsOneWidget);
+    final showDescription = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_configured_show_0')),
+    );
+    expect(showDescription.style?.fontFamily, 'Instrument Sans');
+    expect(showDescription.style?.fontSize, 14);
+    expect(showDescription.style?.fontWeight, FontWeight.w500);
+    expect(showDescription.style?.height, 1.45);
+    expect(showDescription.style?.color, const Color(0xFFF0F0F0));
     expect(find.text('Brooklyn, NY'), findsOneWidget);
     expect(find.byKey(const Key('artwork_maker_configured_show_0')), findsOneWidget);
     expect(find.byKey(const Key('artwork_maker_configured_show_location_0')), findsNothing);
@@ -448,7 +472,7 @@ void main() {
       find.byKey(const Key('artwork_maker_info_email')),
     );
     expect(email.data, 'artist@example.com');
-    expect(email.style?.fontFamily, 'Fraunces');
+    expect(email.style?.fontFamily, 'Instrument Sans');
   });
 
   testWidgets('Artist Info fetches updated Maker Settings name on reopen', (

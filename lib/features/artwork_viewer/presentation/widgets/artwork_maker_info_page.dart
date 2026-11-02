@@ -283,7 +283,7 @@ class _InfoLabel extends StatelessWidget {
         fontSize: 13,
         height: 1.2,
         fontWeight: FontWeight.w500,
-        color: Color(0xFFBDBDBD),
+        color: AppColors.mutedText,
       ),
     );
   }
@@ -292,9 +292,9 @@ class _InfoLabel extends StatelessWidget {
 class _InfoValueStyle extends TextStyle {
   const _InfoValueStyle()
     : super(
-        fontFamily: 'Fraunces',
-        fontSize: 17,
-        height: 1.25,
+        fontFamily: 'Instrument Sans',
+        fontSize: 14,
+        height: 1.45,
         fontWeight: FontWeight.w500,
         color: const Color(0xFFF0F0F0),
       );

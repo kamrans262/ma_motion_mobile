@@ -316,7 +316,7 @@ class _ArtworkMediaPage extends StatelessWidget {
 
     // Reuse the existing artwork title and description typography.
     const titleStyle = TextStyle(
-      fontFamily: 'Fraunces',
+      fontFamily: AppTextStyles.bodyFontFamily,
       fontSize: 17,
       height: 1.25,
       fontWeight: FontWeight.w500,
