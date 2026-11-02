@@ -319,7 +319,7 @@ class _ArtworkMediaPage extends StatelessWidget {
       fontFamily: AppTextStyles.bodyFontFamily,
       fontSize: 17,
       height: 1.25,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
       color: Color(0xFFF0F0F0),
     );
     final descriptionStyle = TextStyle(

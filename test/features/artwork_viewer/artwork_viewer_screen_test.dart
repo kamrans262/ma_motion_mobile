@@ -73,7 +73,7 @@ void main() {
       expect(artworkTitle.data, 'Tide Register No. 4');
       expect(artworkTitle.style?.fontFamily, 'Instrument Sans');
       expect(artworkTitle.style?.fontSize, 17);
-      expect(artworkTitle.style?.fontWeight, FontWeight.w500);
+      expect(artworkTitle.style?.fontWeight, FontWeight.w600);
       expect(artworkTitle.style?.height, 1.25);
       expect(artworkTitle.style?.color, const Color(0xFFF0F0F0));
       expect(artworkTitle.style?.fontStyle, isNot(FontStyle.italic));
