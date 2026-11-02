@@ -248,7 +248,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             'Share',
                             style: TextStyle(
                               fontFamily: 'Instrument Sans',
-                              fontSize: 18,
+                              fontSize: 16,
                               height: 1,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFFF0F0F0),

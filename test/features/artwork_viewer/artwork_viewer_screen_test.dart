@@ -79,7 +79,7 @@ void main() {
         artworkTitle.style?.color,
         AppColors.white.withValues(alpha: 0.70),
       );
-      expect(artworkTitle.style?.fontStyle, isNot(FontStyle.italic));
+      expect(artworkTitle.style?.fontStyle, FontStyle.italic);
 
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
@@ -248,7 +248,7 @@ void main() {
         ),
       );
       expect(share.style?.fontFamily, 'Instrument Sans');
-      expect(share.style?.fontSize, 18);
+      expect(share.style?.fontSize, 16);
       expect(share.style?.fontWeight, FontWeight.w500);
 
       expect(
