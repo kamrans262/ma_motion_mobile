@@ -33,6 +33,25 @@ class DiscoveryArtworkTile extends StatelessWidget {
                 ),
               if (media?.isVideo ?? false)
                 const Center(child: _VideoPlayIndicator()),
+              if (artwork.maker?.hasCurrentOrUpcomingShow ?? false)
+                Positioned(
+                  right: 10,
+                  bottom: 10,
+                  child: IgnorePointer(
+                    child: Semantics(
+                      label: 'Maker has a current or upcoming show',
+                      child: Container(
+                        key: Key('artwork_show_indicator_${artwork.id}'),
+                        width: 12,
+                        height: 12,
+                        decoration: const BoxDecoration(
+                          color: AppColors.showIndicatorOrange,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

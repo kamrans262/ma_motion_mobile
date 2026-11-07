@@ -107,6 +107,7 @@ class DiscoveryMakerPreview {
     this.bio,
     this.profileImageUrl,
     this.savedCount = 0,
+    this.hasCurrentOrUpcomingShow = false,
   });
 
   final int id;
@@ -114,6 +115,7 @@ class DiscoveryMakerPreview {
   final String? bio;
   final String? profileImageUrl;
   final int savedCount;
+  final bool hasCurrentOrUpcomingShow;
 
   factory DiscoveryMakerPreview.fromMap(Map<String, dynamic> map) {
     return DiscoveryMakerPreview(
@@ -122,6 +124,7 @@ class DiscoveryMakerPreview {
       bio: nullableString(map['bio']),
       profileImageUrl: nullableString(map['profile_image_url']),
       savedCount: asInt(map['saved_count']) ?? 0,
+      hasCurrentOrUpcomingShow: asBool(map['has_current_or_upcoming_show']),
     );
   }
 }

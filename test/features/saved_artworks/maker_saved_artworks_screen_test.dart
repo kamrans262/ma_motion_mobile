@@ -53,7 +53,8 @@ void main() {
       find.byKey(const Key('maker_saved_artworks_screen')),
     );
     expect(scaffold.backgroundColor, AppColors.artworkNavBackground);
-    expect(AppColors.savedBackground, const Color(0xFF0F2519));
+    expect(AppColors.savedBackground, AppColors.artworkNavBackground);
+    expect(AppColors.savedBackground, const Color(0xFF0B1A12));
 
     final artistBar = find.byKey(const Key('saved_artwork_artist_bar_91'));
     final artistName = find.byKey(const Key('saved_artwork_artist_name_91'));

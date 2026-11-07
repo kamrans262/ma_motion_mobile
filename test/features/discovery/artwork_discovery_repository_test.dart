@@ -24,6 +24,7 @@ void main() {
               'id': 3,
               'name': 'Maya Linwood',
               'saved_count': 7,
+              'has_current_or_upcoming_show': true,
             },
           },
         ],
@@ -50,6 +51,7 @@ void main() {
     expect(api.lastQuery?['type_ids'], '2');
     expect(api.lastQuery?['show_statuses'], 'current');
     expect(page.items.single.title, 'Purple Geometry');
+    expect(page.items.single.maker?.hasCurrentOrUpcomingShow, isTrue);
     expect(page.meta.hasNextPage, isTrue);
   });
 }
