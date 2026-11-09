@@ -988,30 +988,6 @@ class _MakerInfoSettingsScreenState
               ),
             ),
             const SizedBox(height: 8),
-            // Temporary typography preview; existing settings fields are untouched.
-            TextButton(
-              key: const Key('maker_settings_typography_preview'),
-              onPressed: () => context.push('/maker/typography-preview'),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                overlayColor: Colors.transparent,
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.zero,
-                foregroundColor: AppColors.primary,
-                minimumSize: const Size(44, 32),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: const Text(
-                'Typography Preview',
-                style: TextStyle(
-                  fontFamily: AppTextStyles.bodyFontFamily,
-                  fontSize: 14,
-                  color: AppColors.primary,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.primary,
-                ),
-              ),
-            ),
             const SizedBox(height: 8),
             TextButton(
               key: const Key('maker_settings_delete_account'),
