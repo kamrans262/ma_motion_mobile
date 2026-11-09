@@ -41,7 +41,7 @@ void main() {
       find.descendant(of: indicatorFinder, matching: find.byType(SvgPicture)),
       findsOneWidget,
     );
-    expect(tester.getSize(indicatorFinder), const Size.square(15));
+    expect(tester.getSize(indicatorFinder), const Size.square(16));
     final tileRect = tester.getRect(find.byKey(const Key('artwork_tile_42')));
     final indicatorRect = tester.getRect(indicatorFinder);
     expect(tileRect.right - indicatorRect.right, 10);
