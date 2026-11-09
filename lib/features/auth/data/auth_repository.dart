@@ -1,5 +1,4 @@
 import '../../../core/network/api_envelope.dart';
-import '../../notifications/application/ma_push_notifications.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/network/api_gateway.dart';
 import '../../../core/network/api_paths.dart';
@@ -103,7 +102,6 @@ class AuthRepository {
 
   Future<void> logout() async {
     try {
-      await MaPushNotifications.instance.unregister();
       await api.post(ApiPaths.logout);
     } finally {
       await tokenStore.clear();

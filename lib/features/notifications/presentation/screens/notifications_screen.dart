@@ -6,9 +6,8 @@ import '../../../../core/network/api_paths.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../application/ma_push_notifications.dart';
 
-/// MA Motion's existing database inbox, accessible when a push is opened.
+/// MA Motion's server-backed notification inbox.
 /// It uses existing app colors and does not modify discovery layout.
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key, required this.onBack});
@@ -30,16 +29,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    MaPushNotifications.instance.inboxChanges.addListener(_onPush);
     _load();
-  }
-
-  void _onPush() => _load();
-
-  @override
-  void dispose() {
-    MaPushNotifications.instance.inboxChanges.removeListener(_onPush);
-    super.dispose();
   }
 
   Future<void> _load() async {

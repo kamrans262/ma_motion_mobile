@@ -23,7 +23,6 @@ abstract final class ApiPaths {
   static const String password = '/me/password';
   static const String account = '/me/account';
   static const String makerStatistics = '/me/maker-statistics';
-  static const String pushTokens = '/me/push-tokens';
   static const String notifications = '/me/notifications';
   static const String notificationsReadAll = '/me/notifications/read-all';
   static const String notificationSettings = '/me/notification-settings';
