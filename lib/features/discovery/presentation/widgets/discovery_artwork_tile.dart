@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/discovery_artwork.dart';
@@ -40,13 +41,13 @@ class DiscoveryArtworkTile extends StatelessWidget {
                   child: IgnorePointer(
                     child: Semantics(
                       label: 'Maker has a current or upcoming show',
-                      child: Container(
+                      child: SizedBox(
                         key: Key('artwork_show_indicator_${artwork.id}'),
                         width: 12,
                         height: 12,
-                        decoration: const BoxDecoration(
-                          color: AppColors.showIndicatorOrange,
-                          shape: BoxShape.circle,
+                        child: SvgPicture.asset(
+                          'assets/icons/MA_OrangeDot.svg',
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

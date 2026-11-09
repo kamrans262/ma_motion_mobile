@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ma_motion_mobile/core/theme/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ma_motion_mobile/features/discovery/domain/discovery_artwork.dart';
 import 'package:ma_motion_mobile/features/discovery/presentation/widgets/discovery_artwork_tile.dart';
 
@@ -37,10 +37,10 @@ void main() {
     );
     expect(indicatorFinder, findsOneWidget);
 
-    final indicator = tester.widget<Container>(indicatorFinder);
-    final decoration = indicator.decoration! as BoxDecoration;
-    expect(decoration.color, AppColors.showIndicatorOrange);
-    expect(decoration.shape, BoxShape.circle);
+    expect(
+      find.descendant(of: indicatorFinder, matching: find.byType(SvgPicture)),
+      findsOneWidget,
+    );
     expect(tester.getSize(indicatorFinder), const Size.square(12));
     final tileRect = tester.getRect(find.byKey(const Key('artwork_tile_42')));
     final indicatorRect = tester.getRect(indicatorFinder);
