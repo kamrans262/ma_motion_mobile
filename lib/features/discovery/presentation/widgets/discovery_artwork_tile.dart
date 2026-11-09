@@ -43,8 +43,8 @@ class DiscoveryArtworkTile extends StatelessWidget {
                       label: 'Maker has a current or upcoming show',
                       child: SizedBox(
                         key: Key('artwork_show_indicator_${artwork.id}'),
-                        width: 12,
-                        height: 12,
+                        width: 15,
+                        height: 15,
                         child: SvgPicture.asset(
                           'assets/icons/MA_OrangeDot.svg',
                           fit: BoxFit.contain,
