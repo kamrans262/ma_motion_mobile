@@ -1,0 +1,105 @@
+%PDF-1.4
+1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj
+2 0 obj<< /Type /Pages /Count 1 /Kids [3 0 R] >>endobj
+3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>endobj
+4 0 obj<< /Length 2187 >>stream
+/F1 20 Tf
+1 0 0 1 48 760 Tm
+(MA Motion) Tj
+/F1 14 Tf
+1 0 0 1 48 734 Tm
+(Android upload keystore record) Tj
+/F1 10 Tf
+1 0 0 1 48 716 Tm
+(Created 10 November 2026. Passwords are not written in this PDF.) Tj
+/F1 12 Tf
+1 0 0 1 48 694 Tm
+(Application) Tj
+/F1 11 Tf
+1 0 0 1 48 678 Tm
+(Android application id: com.mamotion.ma_motion_mobile) Tj
+/F1 11 Tf
+1 0 0 1 48 663 Tm
+(Namespace: com.mamotion.ma_motion_mobile) Tj
+/F1 11 Tf
+1 0 0 1 48 648 Tm
+(iOS bundle id, recorded separately: com.mamotion.maMotionMobile) Tj
+/F1 11 Tf
+1 0 0 1 48 633 Tm
+(Version at creation: 1.0.0+1) Tj
+/F1 12 Tf
+1 0 0 1 48 611 Tm
+(Keystore) Tj
+/F1 11 Tf
+1 0 0 1 48 595 Tm
+(File: android/upload-keystore.jks) Tj
+/F1 11 Tf
+1 0 0 1 48 580 Tm
+(Store type: JKS) Tj
+/F1 11 Tf
+1 0 0 1 48 565 Tm
+(Alias: upload) Tj
+/F1 11 Tf
+1 0 0 1 48 550 Tm
+(Key algorithm: RSA 2048, signature SHA384withRSA) Tj
+/F1 11 Tf
+1 0 0 1 48 535 Tm
+(Validity: 10000 days) Tj
+/F1 11 Tf
+1 0 0 1 48 520 Tm
+(Subject: CN=MA Motion Mobile, OU=Android, O=MA Motion, C=US) Tj
+/F1 11 Tf
+1 0 0 1 48 505 Tm
+(Serial: 79b06a5701d718e) Tj
+/F1 11 Tf
+1 0 0 1 48 490 Tm
+(Valid from: Tue Nov 10 10:51:58 PKT 2026 until: Sat Mar 28 10:51:58 PKT 2054) Tj
+/F1 11 Tf
+1 0 0 1 48 475 Tm
+(Store password and key password: same value, only in android/key.properties) Tj
+/F1 12 Tf
+1 0 0 1 48 453 Tm
+(Certificate fingerprints) Tj
+/F1 11 Tf
+1 0 0 1 48 437 Tm
+(SHA-1: 3E:2E:E2:FB:33:86:3D:A8:58:F4:0A:5B:27:6E:CC:6E:00:7D:B6:2B) Tj
+/F1 9 Tf
+1 0 0 1 48 422 Tm
+(SHA-256: 99:39:85:9A:16:59:70:8A:70:62:CF:6B:A3:89:EF:28:29:1E:18:8A:E0:40:7E:83:4D:04:9F:6E:B1:9E:D3:34) Tj
+/F1 12 Tf
+1 0 0 1 48 400 Tm
+(Gradle) Tj
+/F1 11 Tf
+1 0 0 1 48 384 Tm
+(android/app/build.gradle.kts reads android/key.properties for release builds.) Tj
+/F1 11 Tf
+1 0 0 1 48 369 Tm
+(storeFile=../upload-keystore.jks, resolved from the app module.) Tj
+/F1 11 Tf
+1 0 0 1 48 354 Tm
+(Release uses signingConfigs.release. Debug builds stay on the debug key.) Tj
+/F1 12 Tf
+1 0 0 1 48 332 Tm
+(Backup) Tj
+/F1 11 Tf
+1 0 0 1 48 316 Tm
+(Back up upload-keystore.jks and key.properties together, outside git.) Tj
+/F1 11 Tf
+1 0 0 1 48 301 Tm
+(Both files are gitignored. Losing them blocks later updates with this upload key.) Tj
+
+endstream
+endobj
+5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000111 00000 n 
+0000000235 00000 n 
+0000002472 00000 n 
+trailer<< /Size 6 /Root 1 0 R >>
+startxref
+2540
+%%EOF

@@ -54,6 +54,6 @@ app.*.map.json
 .ma_motion_backups/
 
 # Firebase platform config is generated locally; never commit service account keys.
-/android/app/google-services.json
-/ios/Runner/GoogleService-Info.plist
-**/firebase-service-account*.json
+#/android/app/google-services.json
+#/ios/Runner/GoogleService-Info.plist
+#**/firebase-service-account*.json

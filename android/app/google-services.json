@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "526178737054",
+    "project_id": "ma-motion",
+    "storage_bucket": "ma-motion.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526178737054:android:4de938baa5ade8a67f148f",
+        "android_client_info": {
+          "package_name": "com.mamotion.ma_motion_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhzJkUvOJGVTiR8Zuwt2UIGQ6mB2exzEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
