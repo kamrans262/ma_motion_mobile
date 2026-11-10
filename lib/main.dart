@@ -1,17 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/providers/core_providers.dart';
+import 'features/notifications/application/ma_push_notifications.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await MaPushNotifications.instance.initialize();
 
   runApp(const ProviderScope(child: MaMotionApp()));
 }
 
-class MaMotionApp extends StatefulWidget {
+class MaMotionApp extends ConsumerStatefulWidget {
   const MaMotionApp({
     super.key,
     this.splashAutoPlay = true,
@@ -22,10 +27,11 @@ class MaMotionApp extends StatefulWidget {
   final Duration splashDuration;
 
   @override
-  State<MaMotionApp> createState() => _MaMotionAppState();
+  ConsumerState<MaMotionApp> createState() => _MaMotionAppState();
 }
 
-class _MaMotionAppState extends State<MaMotionApp> {
+class _MaMotionAppState extends ConsumerState<MaMotionApp>
+    with WidgetsBindingObserver {
   late final GoRouter _router;
 
   @override
@@ -36,10 +42,25 @@ class _MaMotionAppState extends State<MaMotionApp> {
       splashAutoPlay: widget.splashAutoPlay,
       splashDuration: widget.splashDuration,
     );
+    WidgetsBinding.instance.addObserver(this);
+    MaPushNotifications.instance.bind(
+      api: ref.read(apiGatewayProvider),
+      tokens: ref.read(authTokenStoreProvider),
+      onOpenInbox: () => _router.go('/appreciator/notifications'),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(MaPushNotifications.instance.syncToken());
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    MaPushNotifications.instance.dispose();
     _router.dispose();
     super.dispose();
   }

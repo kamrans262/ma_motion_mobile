@@ -3,19 +3,97 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ma_motion_mobile/core/network/api_exception.dart';
 import 'package:ma_motion_mobile/core/theme/app_colors.dart';
 import 'package:ma_motion_mobile/core/theme/app_text_styles.dart';
 import 'package:ma_motion_mobile/core/widgets/ma_legal_link.dart';
-import 'package:ma_motion_mobile/core/widgets/ma_centered_taxonomy_label.dart';
 import 'package:ma_motion_mobile/features/settings/data/maker_info_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/maker_info_settings_models.dart';
 import 'package:ma_motion_mobile/features/onboarding/presentation/widgets/ma_choice_chip.dart';
 import 'package:ma_motion_mobile/features/settings/presentation/screens/maker_info_settings_screen.dart';
 
 void main() {
+  testWidgets('Maker Settings popup uses transparent, inset-free form', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(
+            _FakeSettingsRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(
+            popupLayout: true,
+            onClose: () {},
+          ),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('maker_info_settings_screen')),
+    );
+    expect(scaffold.backgroundColor, Colors.transparent);
+    final list = tester.widget<ListView>(
+      find.byKey(const Key('maker_settings_scroll')),
+    );
+    expect(list.padding, EdgeInsets.zero);
+    final chipFinder = find.byKey(const Key('maker_settings_type_1'));
+    await tester.dragUntilVisible(
+      chipFinder,
+      find.byKey(const Key('maker_settings_scroll')),
+      const Offset(0, -160),
+    );
+    await tester.pump();
+    final chip = tester.widget<MaChoiceChip>(chipFinder);
+    expect(chip.verticalOffset, 0);
+    expect(chip.fontSize, 12);
+    expect(chip.padding, const EdgeInsets.symmetric(horizontal: 12, vertical: 4));
+
+    final carousel = find.text('Carousel Images');
+    await tester.scrollUntilVisible(
+      carousel,
+      260,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('maker_settings_scroll')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    final carouselTitle = tester.widget<Text>(carousel);
+    expect(carouselTitle.style?.fontSize, 18);
+
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await tester.scrollUntilVisible(
+      save,
+      240,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('maker_settings_scroll')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(
+      find.ancestor(
+        of: save,
+        matching: find.byKey(const Key('maker_settings_scroll')),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester.widget<Text>(find.text('Save & Close')).style?.fontSize,
+      16,
+    );
+    expect(
+      tester.getCenter(find.text('Save & Close')).dy,
+      closeTo(tester.getCenter(save).dy, 1),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   WidgetController.hitTestWarningShouldBeFatal = true;
 
-  testWidgets('renders Maker Info Setting and saves profile changes', (
+  testWidgets('renders Maker Settings and saves profile changes', (
     WidgetTester tester,
   ) async {
     final repository = _FakeSettingsRepository();
@@ -49,6 +127,10 @@ void main() {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       _expectMakerSettingsInputStyle(field);
     }
+    final locationField = tester.widget<TextField>(
+      find.byKey(const Key('maker_settings_location')),
+    );
+    expect(locationField.decoration?.hintText, 'Enter city or ZIP code');
     final save = tester.widget<OutlinedButton>(
       find.byKey(const Key('maker_settings_save_close')),
     );
@@ -81,19 +163,43 @@ void main() {
       await tester.pump();
       final chip = tester.widget<MaChoiceChip>(target);
       expect(chip.unselectedBackgroundColor, const Color(0xFF020202));
+      expect(chip.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(chip.verticalOffset, 0);
       final chipContainer = tester.widget<AnimatedContainer>(
         find.descendant(of: target, matching: find.byType(AnimatedContainer)),
       );
       expect(
         chipContainer.padding,
-        const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       );
       expect(chipContainer.constraints, isNull);
       final chipText = tester.widget<Text>(
         find.descendant(of: target, matching: find.text(choice.$2)),
       );
-      expect(chipText.style?.fontSize, 14);
-      expect(chipText.style?.height, 1.1);
+      expect(chipText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+      expect(chipText.style?.fontSize, 12);
+      expect(chip.selectedFontWeight, FontWeight.w500);
+      expect(chip.selected, isTrue);
+      expect(
+        chip.unselectedBorderColor,
+        AppColors.primary.withValues(alpha: 0.30),
+      );
+      Border chipBorder() =>
+          (tester
+                      .widget<AnimatedContainer>(
+                        find.descendant(
+                          of: target,
+                          matching: find.byType(AnimatedContainer),
+                        ),
+                      )
+                      .decoration as BoxDecoration)
+                  .border!
+              as Border;
+      expect(chipBorder().top.color, AppColors.primary);
+      expect(chipBorder().top.width, 1.1);
+      expect(chipText.style?.fontWeight, FontWeight.w500);
+      expect(chipText.style?.height, 16 / 12);
+      final originalChipRect = tester.getRect(target);
       final center = tester.getCenter(find.byKey(Key(choice.$1)));
       final textCenter = tester.getCenter(find.text(choice.$2));
       expect(textCenter.dx, closeTo(center.dx, 1));
@@ -103,19 +209,39 @@ void main() {
       );
       expect(
         textCenter.dy,
-        closeTo(center.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+        closeTo(center.dy, 1),
+      );
+      await tester.tap(target.hitTestable());
+      await tester.pumpAndSettle();
+      expect(tester.getRect(target), originalChipRect);
+      expect(tester.widget<MaChoiceChip>(target).selected, isFalse);
+      expect(chipBorder().top.color, AppColors.primary.withValues(alpha: 0.30));
+      expect(chipBorder().top.width, 1.1);
+      expect(
+        tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
+        FontWeight.w500,
+      );
+      // Restore the selection so the rest of this save-flow test is unchanged.
+      await tester.tap(target.hitTestable());
+      await tester.pumpAndSettle();
+      expect(tester.getRect(target), originalChipRect);
+      expect(tester.widget<MaChoiceChip>(target).selected, isTrue);
+      expect(chipBorder().top.color, AppColors.primary);
+      expect(
+        tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
+        FontWeight.w500,
       );
     }
 
     await tester.dragUntilVisible(
-      find.text('Maker Info Setting'),
+      find.text('Maker Settings'),
       settingsList,
       const Offset(0, 160),
     );
     await tester.pump();
-    expect(find.text('Maker Info Setting'), findsOneWidget);
-    final settingsTitle = tester.widget<Text>(find.text('Maker Info Setting'));
-    expect(settingsTitle.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(find.text('Maker Settings'), findsOneWidget);
+    final settingsTitle = tester.widget<Text>(find.text('Maker Settings'));
+    expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
@@ -169,8 +295,45 @@ void main() {
       scrollView: settingsList,
     );
 
+    // Figma switch: 48x24 track and 16px thumb; no Material Switch.
+    expect(tester.getSize(emailSwitch), const Size(48, 24));
+    final trackFinder = find.descendant(
+      of: emailSwitch,
+      matching: find.byType(AnimatedContainer),
+    );
+    final alignmentFinder = find.descendant(
+      of: emailSwitch,
+      matching: find.byType(AnimatedAlign),
+    );
+    final thumbFinder = find.descendant(
+      of: alignmentFinder,
+      matching: find.byType(Container),
+    );
+    BoxDecoration trackDecoration() =>
+        tester.widget<AnimatedContainer>(trackFinder).decoration!
+            as BoxDecoration;
+    BoxDecoration thumbDecoration() =>
+        tester.widget<Container>(thumbFinder).decoration! as BoxDecoration;
+
+    expect(trackDecoration().color, Colors.white.withValues(alpha: 0.2));
+    expect(trackDecoration().borderRadius, BorderRadius.circular(12));
+    expect(thumbDecoration().color, Colors.white);
+    expect(thumbDecoration().shape, BoxShape.circle);
+    expect(tester.getSize(thumbFinder), const Size(16, 16));
+    expect(
+      tester.widget<AnimatedAlign>(alignmentFinder).alignment,
+      Alignment.centerLeft,
+    );
+
     await tester.tap(emailSwitch.hitTestable());
-    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(trackDecoration().color, Colors.white);
+    expect(thumbDecoration().color, Colors.black);
+    expect(
+      tester.widget<AnimatedAlign>(alignmentFinder).alignment,
+      Alignment.centerRight,
+    );
 
     final hidePage = find.byKey(const Key('maker_settings_hide_page'));
     await _scrollIntoSafeTapRegion(
@@ -264,6 +427,162 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Maker Settings requires a name instead of an email address', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(
+            onClose: () => repository.closeCalls++,
+          ),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    await tester.enterText(
+      find.byKey(const Key('maker_settings_name')),
+      'artist@example.com',
+    );
+    await tester.pump();
+
+    final settingsList = find.byKey(const Key('maker_settings_scroll'));
+    final saveButton = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: saveButton,
+      scrollView: settingsList,
+    );
+    await tester.tap(saveButton);
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('not your email address'), findsOneWidget);
+    expect(repository.saveCalls, 0);
+    expect(repository.closeCalls, 0);
+  });
+
+  testWidgets('shows the actual server validation error when saving', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository()
+      ..saveProfileError = const ApiException(
+        message: 'The given data was invalid.',
+        statusCode: 422,
+        fieldErrors: <String, List<String>>{
+          'current_upcoming_shows.0.location': <String>[
+            'The event location is too long.',
+          ],
+        },
+      );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(onClose: () => repository.closeCalls++),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final scroll = find.byKey(const Key('maker_settings_scroll'));
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(tester, target: save, scrollView: scroll);
+    await tester.tap(save.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(find.text('The event location is too long.'), findsOneWidget);
+    expect(repository.closeCalls, 0);
+  });
+
+  testWidgets('Show entries accept description-only without event location', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(onClose: () => repository.closeCalls++),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final scroll = find.byKey(const Key('maker_settings_scroll'));
+    final add = find.byKey(const Key('maker_settings_add_show'));
+    await _scrollIntoSafeTapRegion(tester, target: add, scrollView: scroll);
+    await tester.tap(add.hitTestable());
+    await tester.pump();
+
+    await tester.enterText(
+      find.byKey(const Key('maker_settings_show_description_1')),
+      'New exhibition with no location',
+    );
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(tester, target: save, scrollView: scroll);
+    await tester.tap(save.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(repository.saveCalls, 1);
+    expect(repository.lastDraft?.currentUpcomingShows, hasLength(2));
+    expect(repository.lastDraft?.currentUpcomingShows.last.description,
+        'New exhibition with no location');
+    expect(repository.lastDraft?.currentUpcomingShows.last.location, isEmpty);
+    expect(repository.closeCalls, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Show entries accept location-only and ignore blank entries', (
+    tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(onClose: () => repository.closeCalls++),
+        ),
+      ),
+    );
+    await _finishInitialLoad(tester);
+
+    final scroll = find.byKey(const Key('maker_settings_scroll'));
+    final add = find.byKey(const Key('maker_settings_add_show'));
+    await _scrollIntoSafeTapRegion(tester, target: add, scrollView: scroll);
+    await tester.tap(add.hitTestable());
+    await tester.pump();
+    await tester.enterText(
+      find.byKey(const Key('maker_settings_show_location_1')),
+      'Brooklyn, NY',
+    );
+    await _scrollIntoSafeTapRegion(tester, target: add, scrollView: scroll);
+    await tester.tap(add.hitTestable()); // Third show left entirely blank.
+    await tester.pump();
+
+    final save = find.byKey(const Key('maker_settings_save_close'));
+    await _scrollIntoSafeTapRegion(tester, target: save, scrollView: scroll);
+    await tester.tap(save.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(repository.saveCalls, 1);
+    expect(repository.lastDraft?.currentUpcomingShows, hasLength(2));
+    expect(repository.lastDraft?.currentUpcomingShows.last.description, isEmpty);
+    expect(repository.lastDraft?.currentUpcomingShows.last.location, 'Brooklyn, NY');
+    expect(repository.closeCalls, 1);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'Current & Upcoming Shows reveals styled fields and plus adds another show',
     (WidgetTester tester) async {
@@ -343,6 +662,46 @@ void main() {
     },
   );
 
+  for (final status in <String>['approved', 'pending']) {
+    testWidgets('Maker Settings hides approved status only: $status', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeSettingsRepository()
+        ..confirmedSlots.add(2)
+        ..artworkModerationStatus = status;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+          ],
+          child: const MaterialApp(
+            home: MakerInfoSettingsScreen(onClose: _noop),
+          ),
+        ),
+      );
+      await _finishInitialLoad(tester);
+
+      final artwork = find.byKey(const Key('maker_settings_carousel_2'));
+      await tester.dragUntilVisible(
+        artwork,
+        find.byKey(const Key('maker_settings_scroll')),
+        const Offset(0, -220),
+      );
+      await tester.pump();
+
+      expect(artwork, findsOneWidget);
+      final statusText = find.byKey(const Key('maker_settings_artwork_status_2'));
+      if (status == 'approved') {
+        expect(statusText, findsNothing);
+        expect(find.text('Status: approved'), findsNothing);
+      } else {
+        expect(statusText, findsOneWidget);
+        expect(find.text('Status: pending'), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('Maker settings has no overflow on 320x520 viewport', (
     WidgetTester tester,
   ) async {
@@ -362,7 +721,7 @@ void main() {
 
     await _finishInitialLoad(tester);
 
-    expect(find.text('Maker Info Setting'), findsOneWidget);
+    expect(find.text('Maker Settings'), findsOneWidget);
     expect(find.byKey(const Key('maker_settings_save_close')), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -578,13 +937,13 @@ Future<void> _scrollIntoSafeTapRegion(
 
 void _expectMakerSettingsInputStyle(TextField field) {
   expect(field.decoration?.fillColor, AppColors.filterInputFill);
-  expect(field.style?.fontFamily, AppTextStyles.fontFamily);
+  expect(field.style?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.style?.fontSize, 16);
   expect(field.style?.fontWeight, FontWeight.w500);
   expect(field.style?.height, 1);
   expect(field.style?.letterSpacing, AppTextStyles.bodyTracking);
   expect(field.style?.color, AppColors.white);
-  expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+  expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
   expect(field.decoration?.hintStyle?.fontSize, 16);
   expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
   expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);
@@ -623,7 +982,9 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   int saveArtworkCalls = 0;
   int deleteArtworkCalls = 0;
   MakerInfoSettingsDraft? lastDraft;
+  ApiException? saveProfileError;
   final Set<int> confirmedSlots = <int>{};
+  String artworkModerationStatus = 'pending';
 
   @override
   Future<MakerInfoSettingsData> load() async {
@@ -660,7 +1021,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
                 styleId: 2,
                 locationId: 3,
                 locationText: 'Chicago, IL',
-                moderationStatus: 'pending',
+                moderationStatus: artworkModerationStatus,
                 isVisible: true,
                 media: <MakerSettingsArtworkMedia>[
                   MakerSettingsArtworkMedia(
@@ -691,6 +1052,7 @@ class _FakeSettingsRepository implements MakerInfoSettingsRepositoryContract {
   Future<void> saveProfile(MakerInfoSettingsDraft draft) async {
     saveCalls++;
     lastDraft = draft;
+    if (saveProfileError != null) throw saveProfileError!;
   }
 
   @override

@@ -60,7 +60,7 @@ class ArtworkDetailMaker {
           )
           .where(
             (item) =>
-                item.description.trim().isNotEmpty &&
+                item.description.trim().isNotEmpty ||
                 item.location.trim().isNotEmpty,
           )
           .toList(growable: false),

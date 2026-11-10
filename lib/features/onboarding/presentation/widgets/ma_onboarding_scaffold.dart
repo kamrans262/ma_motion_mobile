@@ -26,6 +26,8 @@ class MaOnboardingScaffold extends StatelessWidget {
     this.nextLabel = 'Next',
     this.busyLabel = 'Saving...',
     this.contentTopWidthFactor = 0.555,
+    this.centerContentVertically = false,
+    this.headingSubtitleGap = 6,
     this.childGap = 20,
     this.contentBottom = 36,
   });
@@ -43,6 +45,9 @@ class MaOnboardingScaffold extends StatelessWidget {
   final String nextLabel;
   final String busyLabel;
   final double contentTopWidthFactor;
+  // Opt-in for the Figma onboarding layout; other steps keep their positions.
+  final bool centerContentVertically;
+  final double headingSubtitleGap;
   final double childGap;
   final double contentBottom;
 
@@ -93,47 +98,79 @@ class MaOnboardingScaffold extends StatelessWidget {
                   return Column(
                     children: [
                       Expanded(
-                        child: SingleChildScrollView(
-                          key: const Key('maker_onboarding_scroll'),
-                          keyboardDismissBehavior:
-                              ScrollViewKeyboardDismissBehavior.onDrag,
-                          padding: EdgeInsets.fromLTRB(
-                            20,
-                            contentTop,
-                            20,
-                            resolvedContentBottom,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                heading,
-                                key: const Key('maker_step_heading'),
-                                style:
-                                    headingStyle ?? AppTextStyles.onboardingHeading,
+                        child: LayoutBuilder(
+                          builder: (context, viewport) {
+                            // Figma centers this step's entire content block
+                            // between the 32px top inset and the footer. If
+                            // the content is too tall, scrolling still works.
+                            final topInset = centerContentVertically
+                                ? 32.0
+                                : contentTop;
+                            final minimumContentHeight = centerContentVertically
+                                ? math.max(
+                                    0.0,
+                                    viewport.maxHeight -
+                                        topInset -
+                                        resolvedContentBottom,
+                                  )
+                                : 0.0;
+
+                            return SingleChildScrollView(
+                              key: const Key('maker_onboarding_scroll'),
+                              keyboardDismissBehavior:
+                                  ScrollViewKeyboardDismissBehavior.onDrag,
+                              padding: EdgeInsets.fromLTRB(
+                                20,
+                                topInset,
+                                20,
+                                resolvedContentBottom,
                               ),
-                              const SizedBox(height: 6),
-                              Text(
-                                subtitle,
-                                key: const Key('maker_step_subtitle'),
-                                style: AppTextStyles.onboardingHelper.copyWith(
-                                  fontFamily: AppTextStyles.bodyFontFamily,
-                                  letterSpacing: 0,
-                                  color: AppColors.white.withValues(alpha: 0.60),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: minimumContentHeight,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: centerContentVertically
+                                      ? MainAxisAlignment.center
+                                      : MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      heading,
+                                      key: const Key('maker_step_heading'),
+                                      style: headingStyle ??
+                                          AppTextStyles.onboardingHeading,
+                                    ),
+                                    SizedBox(height: headingSubtitleGap),
+                                    Text(
+                                      subtitle,
+                                      key: const Key('maker_step_subtitle'),
+                                      style: AppTextStyles.onboardingHelper
+                                          .copyWith(
+                                            fontFamily:
+                                                AppTextStyles.bodyFontFamily,
+                                            letterSpacing: 0,
+                                            color: AppColors.white
+                                                .withValues(alpha: 0.60),
+                                          ),
+                                    ),
+                                    SizedBox(height: childGap),
+                                    child,
+                                    if (validationMessage != null) ...[
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        validationMessage!,
+                                        key: const Key(
+                                          'maker_validation_message',
+                                        ),
+                                        style: AppTextStyles.onboardingError,
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
-                              SizedBox(height: childGap),
-                              child,
-                              if (validationMessage != null) ...[
-                                const SizedBox(height: 10),
-                                Text(
-                                  validationMessage!,
-                                  key: const Key('maker_validation_message'),
-                                  style: AppTextStyles.onboardingError,
-                                ),
-                              ],
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
                       Padding(

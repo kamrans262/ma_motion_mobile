@@ -22,8 +22,12 @@ class FlutterSecureAuthTokenStore implements AuthTokenStore {
     }
 
     await _storage.write(key: _tokenKey, value: trimmed);
+    authSessionChanges.add(true);
   }
 
   @override
-  Future<void> clear() => _storage.delete(key: _tokenKey);
+  Future<void> clear() async {
+    await _storage.delete(key: _tokenKey);
+    authSessionChanges.add(false);
+  }
 }

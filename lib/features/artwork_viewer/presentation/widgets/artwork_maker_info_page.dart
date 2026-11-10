@@ -26,6 +26,17 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final maker = artwork.maker;
+    // Legacy accounts sometimes store their login email as users.name.
+    // Never use an email address as the Artist Info heading. The real
+    // artist name is saved via Maker Settings -> Name.
+    final storedName = maker?.name.trim() ?? '';
+    final artistName = storedName.isEmpty || storedName.contains('@')
+        ? 'Artist'
+        : storedName;
+    // Maker Settings -> Location is already returned in maker.location.
+    // Keep the saved city/state text (for example, "New York, NY") rather
+    // than guessing or generating a state abbreviation.
+    final artistLocation = maker?.location?.trim() ?? '';
     final configuredShows = maker?.currentUpcomingShows ?? const [];
     final currentShow =
         maker == null ||
@@ -52,32 +63,28 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 42),
-                      child: Text(
-                        artwork.title,
-                        key: const Key('artwork_maker_info_title'),
-                        style: const TextStyle(
-                          fontFamily: 'Fraunces',
-                          fontSize: 24,
-                          height: 1.08,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFFF0F0F0),
+                    // The final carousel page is about the maker, not the
+                    // currently selected artwork or its creation year.
+                    if (maker != null)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 42),
+                        child: Text(
+                          artistName,
+                          key: const Key('artwork_maker_info_title'),
+                          style: const TextStyle(
+                            fontFamily: 'Fraunces',
+                            fontSize: 24,
+                            height: 1.08,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFF0F0F0),
+                          ),
                         ),
                       ),
-                    ),
-                    if (_makerMeta(artwork).isNotEmpty) ...[
+                    if (artistLocation.isNotEmpty) ...[
                       const SizedBox(height: 6),
-                      Text(
-                        _makerMeta(artwork),
-                        key: const Key('artwork_maker_info_meta'),
-                        style: const TextStyle(
-                          fontFamily: 'Instrument Sans',
-                          fontSize: 15,
-                          height: 1.2,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFFF0F0F0),
-                        ),
+                      _InfoLabel(
+                        artistLocation,
+                        key: const Key('artwork_maker_info_location'),
                       ),
                     ],
                     if ((maker?.bio ?? '').isNotEmpty) ...[
@@ -133,25 +140,29 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                         index < configuredShows.length;
                         index++
                       ) ...[
-                        Text(
-                          configuredShows[index].description,
-                          key: Key('artwork_maker_configured_show_$index'),
-                          style: const _InfoValueStyle(),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          configuredShows[index].location,
-                          key: Key(
-                            'artwork_maker_configured_show_location_$index',
+                        if (configuredShows[index].description.trim().isNotEmpty)
+                          Text(
+                            configuredShows[index].description,
+                            key: Key('artwork_maker_configured_show_$index'),
+                            style: const _InfoValueStyle(),
                           ),
-                          style: const TextStyle(
-                            fontFamily: 'Instrument Sans',
-                            fontSize: 14,
-                            height: 1.25,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFFBDBDBD),
+                        if (configuredShows[index].description.trim().isNotEmpty &&
+                            configuredShows[index].location.trim().isNotEmpty)
+                          const SizedBox(height: 3),
+                        if (configuredShows[index].location.trim().isNotEmpty)
+                          Text(
+                            configuredShows[index].location,
+                            key: Key(
+                              'artwork_maker_configured_show_location_$index',
+                            ),
+                            style: const TextStyle(
+                              fontFamily: 'Instrument Sans',
+                              fontSize: 14,
+                              height: 1.25,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFFBDBDBD),
+                            ),
                           ),
-                        ),
                         if (index < configuredShows.length - 1)
                           const SizedBox(height: 10),
                       ],
@@ -237,7 +248,7 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
                             'Share',
                             style: TextStyle(
                               fontFamily: 'Instrument Sans',
-                              fontSize: 18,
+                              fontSize: 16,
                               height: 1,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFFF0F0F0),
@@ -256,20 +267,10 @@ class ArtworkMakerInfoPage extends ConsumerWidget {
     );
   }
 
-  static String _makerMeta(ArtworkDetail artwork) {
-    final makerName = artwork.maker?.name.trim() ?? '';
-    final year = artwork.createdAt?.year;
-
-    if (makerName.isEmpty) {
-      return year == null ? '' : '$year';
-    }
-
-    return year == null ? makerName : '$makerName · $year';
-  }
 }
 
 class _InfoLabel extends StatelessWidget {
-  const _InfoLabel(this.text);
+  const _InfoLabel(this.text, {super.key});
 
   final String text;
 
@@ -282,7 +283,7 @@ class _InfoLabel extends StatelessWidget {
         fontSize: 13,
         height: 1.2,
         fontWeight: FontWeight.w500,
-        color: Color(0xFFBDBDBD),
+        color: Color(0xFF909090),
       ),
     );
   }
@@ -291,9 +292,9 @@ class _InfoLabel extends StatelessWidget {
 class _InfoValueStyle extends TextStyle {
   const _InfoValueStyle()
     : super(
-        fontFamily: 'Fraunces',
-        fontSize: 17,
-        height: 1.25,
+        fontFamily: 'Instrument Sans',
+        fontSize: 14,
+        height: 1.45,
         fontWeight: FontWeight.w500,
         color: const Color(0xFFF0F0F0),
       );

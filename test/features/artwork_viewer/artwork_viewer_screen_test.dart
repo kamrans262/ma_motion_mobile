@@ -67,11 +67,27 @@ void main() {
         const Color(0xFFF0F0F0),
       );
 
+      final artworkTitle = tester.widget<Text>(
+        find.byKey(const Key('artwork_viewer_artwork_title')),
+      );
+      expect(artworkTitle.data, 'Tide Register No. 4');
+      expect(artworkTitle.style?.fontFamily, 'Instrument Sans');
+      expect(artworkTitle.style?.fontSize, 14);
+      expect(artworkTitle.style?.fontWeight, FontWeight.w600);
+      expect(artworkTitle.style?.height, 1.25);
+      expect(
+        artworkTitle.style?.color,
+        AppColors.white.withValues(alpha: 0.70),
+      );
+      expect(artworkTitle.style?.fontStyle, FontStyle.italic);
+
       final description = tester.widget<Text>(
         find.byKey(const Key('artwork_viewer_description')),
       );
       expect(description.style?.fontFamily, 'Instrument Sans');
       expect(description.style?.fontSize, 14);
+      expect(artworkTitle.style?.fontSize, description.style?.fontSize);
+      expect(artworkTitle.style?.color, description.style?.color);
       expect(description.style?.fontWeight, FontWeight.w400);
       expect(description.style?.fontStyle, FontStyle.italic);
       expect(description.style?.height, 1.625);
@@ -112,6 +128,10 @@ void main() {
         find.byKey(const Key('artwork_viewer_description')),
       );
       expect(dotsRect.top - descriptionRect.bottom, closeTo(26, 0.1));
+      final titleRect = tester.getRect(
+        find.byKey(const Key('artwork_viewer_artwork_title')),
+      );
+      expect(titleRect.bottom, lessThan(descriptionRect.top));
       final firstDotRect = tester.getRect(activeDot);
       final secondDotRect = tester.getRect(inactiveDot);
       expect(secondDotRect.left - firstDotRect.right, closeTo(8, 0.1));
@@ -177,21 +197,44 @@ void main() {
         const Color(0xFF1C1C1C),
       );
 
-      expect(find.text('Tide Register No. 4'), findsOneWidget);
-      expect(find.text('Mara Vellan · 2024'), findsOneWidget);
+      // The final page contains artist information, never the artwork title
+      // or the artwork-specific year.
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('artwork_maker_info_card')),
+          matching: find.text('Tide Register No. 4'),
+        ),
+        findsNothing,
+      );
+      expect(find.text('Mara Vellan'), findsOneWidget);
+      expect(find.text('Mara Vellan · 2024'), findsNothing);
+      expect(find.byKey(const Key('artwork_maker_info_meta')), findsNothing);
 
       final title = tester.widget<Text>(
         find.byKey(const Key('artwork_maker_info_title')),
       );
+      expect(title.data, 'Mara Vellan');
       expect(title.style?.fontFamily, 'Fraunces');
       expect(title.style?.fontSize, 24);
       expect(title.style?.fontWeight, FontWeight.w500);
 
-      final meta = tester.widget<Text>(
-        find.byKey(const Key('artwork_maker_info_meta')),
+      final locationWidget = find.byKey(
+        const Key('artwork_maker_info_location'),
       );
-      expect(meta.style?.fontFamily, 'Instrument Sans');
-      expect(meta.style?.fontSize, 15);
+      expect(locationWidget, findsOneWidget);
+      final locationText = tester.widget<Text>(
+        find.descendant(of: locationWidget, matching: find.byType(Text)),
+      );
+      final locationRect = tester.getRect(locationWidget);
+      final titleRect = tester.getRect(
+        find.byKey(const Key('artwork_maker_info_title')),
+      );
+      expect(locationText.data, 'New York, NY');
+      expect(locationRect.top, greaterThan(titleRect.bottom));
+      expect(locationText.style?.fontFamily, 'Instrument Sans');
+      expect(locationText.style?.fontSize, 13);
+      expect(locationText.style?.fontWeight, FontWeight.w500);
+      expect(locationText.style?.color, const Color(0xFF909090));
 
       expect(
         tester.getSize(find.byKey(const Key('artwork_maker_info_heart'))),
@@ -205,7 +248,7 @@ void main() {
         ),
       );
       expect(share.style?.fontFamily, 'Instrument Sans');
-      expect(share.style?.fontSize, 18);
+      expect(share.style?.fontSize, 16);
       expect(share.style?.fontWeight, FontWeight.w500);
 
       expect(
@@ -241,6 +284,7 @@ void main() {
                   id: 7,
                   name: 'Mara Vellan',
                   bio: 'A contemporary artist exploring form and color.',
+                  location: 'New York, NY',
                   websiteUrl: 'www.artist.com',
                   contactEmail: 'contact@artist.com',
                 ),
@@ -274,29 +318,51 @@ void main() {
     );
     expect(dividerRect.top, greaterThan(bioRect.bottom));
 
+    final artistTitle = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_title')),
+    );
+    expect(artistTitle.style?.fontFamily, 'Fraunces');
+    expect(artistTitle.style?.fontSize, 24);
+
+    final bio = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_bio')),
+    );
+    expect(bio.style?.fontFamily, 'Instrument Sans');
+
     for (final key in <String>[
-      'artwork_maker_info_title',
       'artwork_maker_info_website',
       'artwork_maker_info_email',
       'artwork_maker_current_show',
     ]) {
       final value = tester.widget<Text>(find.byKey(Key(key)));
-      expect(value.style?.fontFamily, 'Fraunces', reason: key);
-    }
-
-    for (final key in <String>[
-      'artwork_maker_info_meta',
-      'artwork_maker_info_bio',
-    ]) {
-      if (key == 'artwork_maker_info_meta') continue;
-      final text = tester.widget<Text>(find.byKey(Key(key)));
-      expect(text.style?.fontFamily, 'Instrument Sans', reason: key);
+      expect(value.style, bio.style, reason: key);
     }
 
     for (final label in <String>['Website', 'Email', 'Current Show']) {
       final text = tester.widget<Text>(find.text(label));
       expect(text.style?.fontFamily, 'Instrument Sans', reason: label);
+      expect(text.style?.color, const Color(0xFF909090), reason: label);
     }
+    final location = tester.widget<Text>(
+      find.descendant(
+        of: find.byKey(const Key('artwork_maker_info_location')),
+        matching: find.byType(Text),
+      ),
+    );
+    final websiteLabel = tester.widget<Text>(find.text('Website'));
+    expect(location.data, 'New York, NY');
+    expect(location.style, websiteLabel.style);
+    expect(location.style?.color, const Color(0xFF909090));
+
+    expect(
+      tester.widget<Text>(find.byKey(const Key('artwork_maker_info_title'))).data,
+      'Mara Vellan',
+    );
+    expect(find.text('contact@artist.com'), findsOneWidget);
+    expect(
+      tester.widget<Text>(find.byKey(const Key('artwork_maker_info_email'))).data,
+      'contact@artist.com',
+    );
 
     final share = tester.widget<Text>(
       find.descendant(
@@ -305,6 +371,156 @@ void main() {
       ),
     );
     expect(share.style?.fontFamily, 'Instrument Sans');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Artist Info shows only the populated show fields', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: ArtworkMakerInfoPage(
+              artwork: ArtworkDetail(
+                id: 41,
+                title: 'A Work',
+                media: <DiscoveryArtworkMedia>[],
+                maker: ArtworkDetailMaker(
+                  id: 7,
+                  name: 'Example Artist',
+                  currentUpcomingShows: <ArtworkDetailMakerShow>[
+                    ArtworkDetailMakerShow(
+                      description: 'Solo exhibition',
+                      location: '',
+                    ),
+                    ArtworkDetailMakerShow(
+                      description: '',
+                      location: 'Brooklyn, NY',
+                    ),
+                  ],
+                ),
+              ),
+              isSaved: false,
+              isSaving: false,
+              onSavedTap: _noop,
+              onShare: _noop,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Current & Upcoming Shows'), findsOneWidget);
+    final showsLabel = tester.widget<Text>(
+      find.text('Current & Upcoming Shows'),
+    );
+    expect(showsLabel.style?.color, const Color(0xFF909090));
+    expect(find.text('Solo exhibition'), findsOneWidget);
+    final showDescription = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_configured_show_0')),
+    );
+    expect(showDescription.style?.fontFamily, 'Instrument Sans');
+    expect(showDescription.style?.fontSize, 14);
+    expect(showDescription.style?.fontWeight, FontWeight.w500);
+    expect(showDescription.style?.height, 1.45);
+    expect(showDescription.style?.color, const Color(0xFFF0F0F0));
+    expect(find.text('Brooklyn, NY'), findsOneWidget);
+    expect(find.byKey(const Key('artwork_maker_configured_show_0')), findsOneWidget);
+    expect(find.byKey(const Key('artwork_maker_configured_show_location_0')), findsNothing);
+    expect(find.byKey(const Key('artwork_maker_configured_show_1')), findsNothing);
+    expect(find.byKey(const Key('artwork_maker_configured_show_location_1')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Artist Info never uses a stored login email as its heading', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: ArtworkMakerInfoPage(
+              artwork: ArtworkDetail(
+                id: 41,
+                title: 'A Work',
+                media: <DiscoveryArtworkMedia>[],
+                maker: ArtworkDetailMaker(
+                  id: 7,
+                  name: 'artist@example.com',
+                  contactEmail: 'artist@example.com',
+                  showShowsOnInfoPage: false,
+                ),
+              ),
+              isSaved: false,
+              isSaving: false,
+              onSavedTap: _noop,
+              onShare: _noop,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final heading = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_title')),
+    );
+    expect(heading.data, 'Artist');
+    expect(heading.style?.fontFamily, 'Fraunces');
+    expect(heading.style?.fontSize, 24);
+    expect(find.byKey(const Key('artwork_maker_info_location')), findsNothing);
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('artist@example.com'), findsOneWidget);
+    final email = tester.widget<Text>(
+      find.byKey(const Key('artwork_maker_info_email')),
+    );
+    expect(email.data, 'artist@example.com');
+    expect(email.style?.fontFamily, 'Instrument Sans');
+  });
+
+  testWidgets('Artist Info fetches updated Maker Settings name on reopen', (
+    tester,
+  ) async {
+    final repository = _ChangingMakerNameRepository();
+
+    Widget viewer(String viewerKey) => ProviderScope(
+      overrides: [
+        artworkDetailRepositoryProvider.overrideWithValue(repository),
+        savedArtworksRepositoryProvider.overrideWithValue(
+          _FakeSavedArtworksRepository(),
+        ),
+      ],
+      child: MaterialApp(
+        home: ArtworkViewerScreen(
+          key: ValueKey(viewerKey),
+          artworkId: 41,
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(viewer('first'));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Original Artist Name'), findsOneWidget);
+
+    repository.name = 'Updated Artist Name';
+    await tester.pumpWidget(viewer('second'));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const Key('artwork_viewer_page_view')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Updated Artist Name'), findsOneWidget);
+    expect(find.text('Original Artist Name'), findsNothing);
+    expect(repository.fetchCalls, greaterThanOrEqualTo(2));
     expect(tester.takeException(), isNull);
   });
 
@@ -391,6 +607,8 @@ void main() {
 
     expect(dots().count, 4);
     expect(dots().currentIndex, 0);
+    expect(find.text('Tapped Content 3'), findsOneWidget);
+    expect(find.text('Tapped artwork description'), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
@@ -398,6 +616,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(dots().currentIndex, 1);
+    expect(find.text('Content 2'), findsOneWidget);
+    expect(find.text('Second slot'), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
@@ -405,6 +625,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(dots().currentIndex, 2);
+    expect(find.text('Content 4'), findsOneWidget);
+    expect(find.text('Fourth slot'), findsOneWidget);
 
     await tester.drag(
       find.byKey(const Key('artwork_viewer_page_view')),
@@ -413,6 +635,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(dots().currentIndex, 3);
     expect(find.byKey(const Key('artwork_maker_info_card')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('artwork_maker_info_card')),
+        matching: find.text('Tapped Content 3'),
+      ),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -647,6 +876,26 @@ void main() {
     expect(find.byKey(const Key('artwork_viewer_page_view')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _ChangingMakerNameRepository implements ArtworkDetailRepositoryContract {
+  String name = 'Original Artist Name';
+  int fetchCalls = 0;
+
+  @override
+  Future<ArtworkDetail> fetch(int artworkId) async {
+    fetchCalls++;
+    return ArtworkDetail(
+      id: artworkId,
+      title: 'A Work',
+      media: const <DiscoveryArtworkMedia>[],
+      maker: ArtworkDetailMaker(
+        id: 7,
+        name: name,
+        showShowsOnInfoPage: false,
+      ),
+    );
+  }
 }
 
 class _SalonImageArtDisplayRepository

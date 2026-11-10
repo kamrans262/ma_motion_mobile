@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -23,11 +24,15 @@ class MakerInfoSettingsScreen extends ConsumerStatefulWidget {
     required this.onClose,
     this.onAccountDeleted,
     this.onLoggedOut,
+    this.popupLayout = false,
   });
 
   final VoidCallback onClose;
   final VoidCallback? onAccountDeleted;
   final VoidCallback? onLoggedOut;
+
+  /// Use transparent, inset-free content inside MaGlassPopup.
+  final bool popupLayout;
 
   @override
   ConsumerState<MakerInfoSettingsScreen> createState() =>
@@ -191,6 +196,18 @@ class _MakerInfoSettingsScreenState
   Future<void> _saveAndClose() async {
     if (_saving || _loggingOut) return;
 
+    // Do not save an email address in the artist-name field. Check before
+    // media changes so invalid profile details cannot cause partial saves.
+    final artistName = _nameController.text.trim();
+    if (artistName.isEmpty || artistName.contains('@')) {
+      setState(() {
+        _errorMessage = artistName.isEmpty
+            ? 'Please enter your artist name before saving.'
+            : 'Please enter your artist name in Name, not your email address.';
+      });
+      return;
+    }
+
     final showEntries = <MakerInfoShowEntry>[];
     for (final editor in _showEditors) {
       final description = editor.description.text.trim();
@@ -198,14 +215,6 @@ class _MakerInfoSettingsScreenState
 
       if (description.isEmpty && location.isEmpty) {
         continue;
-      }
-
-      if (description.isEmpty || location.isEmpty) {
-        setState(() {
-          _errorMessage =
-              'Please enter both a show description and event location.';
-        });
-        return;
       }
 
       showEntries.add(
@@ -342,13 +351,6 @@ class _MakerInfoSettingsScreenState
         });
       }
 
-      if (_nameController.text.trim().isEmpty) {
-        setState(() {
-          _errorMessage = 'Content was saved, but please enter your Maker name before closing.';
-        });
-        return;
-      }
-
       if (_selectedTypes.isEmpty || _selectedStyles.isEmpty) {
         setState(() {
           _errorMessage = 'Content was saved, but select at least one Type and one Style before closing.';
@@ -444,11 +446,15 @@ class _MakerInfoSettingsScreenState
       if (!mounted) return;
       setState(() {
         _failedUploadSlot = activeArtworkSlot;
+        // Show Laravel's field-specific message instead of a generic 422.
         final fieldError =
             error.fieldErrors['media']?.firstOrNull ??
-            error.fieldErrors['media.0']?.firstOrNull;
+            error.fieldErrors['media.0']?.firstOrNull ??
+            (error.fieldErrors.isEmpty
+                ? null
+                : error.fieldErrors.values.first.firstOrNull);
         _errorMessage = activeArtworkSlot == null
-            ? error.message
+            ? (fieldError ?? error.message)
             : 'Content $activeArtworkSlot: ${fieldError ?? error.message}';
       });
     } catch (_) {
@@ -519,7 +525,10 @@ class _MakerInfoSettingsScreenState
                   ),
                   title: const Text(
                     'Choose image',
-                    style: TextStyle(color: AppColors.white),
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontFamily: AppTextStyles.bodyFontFamily,
+                    ),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.image),
                 ),
@@ -530,7 +539,10 @@ class _MakerInfoSettingsScreenState
                   ),
                   title: const Text(
                     'Choose video (5 seconds max)',
-                    style: TextStyle(color: AppColors.white),
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontFamily: AppTextStyles.bodyFontFamily,
+                    ),
                   ),
                   onTap: () => Navigator.of(context).pop(_MediaChoice.video),
                 ),
@@ -642,8 +654,14 @@ class _MakerInfoSettingsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       key: const Key('maker_info_settings_screen'),
-      backgroundColor: AppColors.artworkBackground,
+      backgroundColor: widget.popupLayout
+          ? Colors.transparent
+          : AppColors.artworkBackground,
       body: SafeArea(
+        top: !widget.popupLayout,
+        bottom: !widget.popupLayout,
+        left: !widget.popupLayout,
+        right: !widget.popupLayout,
         child: _loading
             ? const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
@@ -652,42 +670,76 @@ class _MakerInfoSettingsScreenState
             ? _LoadError(message: _errorMessage!, onRetry: _load)
             : _buildForm(),
       ),
-      bottomNavigationBar: _loading || _data == null
-          ? null
-          : SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
-                child: SizedBox(
-                  height: 48,
-                  child: OutlinedButton(
-                    key: const Key('maker_settings_save_close'),
-                    onPressed: _saving || _loggingOut ? null : _saveAndClose,
-                    style: AppButtonStyles.filterAction(),
-                    child: _saving
-                        ? const SizedBox.square(
-                            dimension: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.darkGray,
-                            ),
-                          )
-                        : Transform.translate(
-                            offset: const Offset(0, 2),
-                            child: const Text(
-                              'Save & Close',
-                              style: TextStyle(
-                                fontFamily: AppTextStyles.fontFamily,
-                                fontSize: 16,
-                                height: 1.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
+      bottomNavigationBar: !widget.popupLayout && !_loading && _data != null
+          ? _buildSaveButton()
+          : null,
+    );
+  }
+
+  Widget _buildSaveButton() {
+    final style = widget.popupLayout
+        ? AppButtonStyles.filterAction().copyWith(
+            padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+              EdgeInsets.symmetric(vertical: 12),
+            ),
+          )
+        : AppButtonStyles.filterAction();
+    return SafeArea(
+      top: false,
+      bottom: !widget.popupLayout,
+      child: Padding(
+        padding: widget.popupLayout ? const EdgeInsets.only(top: 16) : const EdgeInsets.fromLTRB(20, 10, 20, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('maker_settings_close_button'),
+                onPressed: _saving ? null : widget.onClose,
+                style: style,
+                child: const Text(
+                        'Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ),
             ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('maker_settings_save_close'),
+                onPressed: _saving ? null : _saveAndClose,
+                style: style,
+                child: _saving
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.darkGray,
+                        ),
+                      )
+                    : const Text(
+                        'Save & Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -700,24 +752,21 @@ class _MakerInfoSettingsScreenState
 
         return ListView(
           key: const Key('maker_settings_scroll'),
-          padding: EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
+          padding: widget.popupLayout
+              ? EdgeInsets.zero
+              : EdgeInsets.fromLTRB(horizontal, 24, horizontal, 28),
           children: [
             Row(
               children: [
                 Flexible(
                   child: Text(
-                    'Maker Info Setting',
-                    style: const TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
-                    ),
+                    'Maker Settings',
+                    style: AppTextStyles.pageTitle,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 16),
             _LabeledField(
               label: 'Name',
               keyName: 'maker_settings_name',
@@ -728,7 +777,7 @@ class _MakerInfoSettingsScreenState
               label: 'Location',
               keyName: 'maker_settings_location',
               controller: _locationController,
-              hintText: 'City/ZIP Code',
+              hintText: 'Enter city or ZIP code',
             ),
             _LabeledField(
               label: 'Statement',
@@ -737,13 +786,16 @@ class _MakerInfoSettingsScreenState
               hintText: 'Tell people about your work',
               minLines: 3,
               maxLines: 6,
+              // Figma places the saved-count message 8px after Statement.
+              bottomPadding: 8,
             ),
             Text.rich(
               key: const Key('maker_settings_saved_count'),
               TextSpan(
                 style: AppTextStyles.onboardingHelper.copyWith(
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.primary,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
                 children: [
                   const TextSpan(text: 'Your Work Has Been Saved By '),
@@ -758,15 +810,17 @@ class _MakerInfoSettingsScreenState
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Text(
               'Keyword',
               key: const Key('maker_settings_keyword_label'),
               style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
+                fontSize: 12,
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 8),
             _TaxonomySection(
               label: 'Type',
               options: data.availableTypes,
@@ -778,7 +832,7 @@ class _MakerInfoSettingsScreenState
                 });
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             _TaxonomySection(
               label: 'Style',
               options: data.availableStyles,
@@ -790,7 +844,7 @@ class _MakerInfoSettingsScreenState
                 });
               },
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
             _VisibilityField(
               label: 'Website',
               controller: _websiteController,
@@ -863,14 +917,15 @@ class _MakerInfoSettingsScreenState
                   label: Text(
                     'Add Another Show',
                     style: AppTextStyles.onboardingHelper.copyWith(
+                      fontFamily: AppTextStyles.bodyFontFamily,
                       color: AppColors.primary,
                       fontSize: 14,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
             ],
+            const SizedBox(height: 16),
             _VisibilityOnlyRow(
               key: const Key('maker_settings_hide_page'),
               label: 'Hide Maker Page',
@@ -883,18 +938,19 @@ class _MakerInfoSettingsScreenState
                       });
                     },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Divider(
               height: 1,
               thickness: 1,
               color: Colors.white.withValues(alpha: 0.4),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Text(
               'Carousel Images',
               style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             const SizedBox(height: 12),
@@ -922,7 +978,7 @@ class _MakerInfoSettingsScreenState
                 onChoose: () => _chooseMedia(slot),
                 onRemove: () => _removeSlot(slot),
               ),
-              SizedBox(height: slot == 4 ? 11 : 22),
+              const SizedBox(height: 12),
             ],
             const Align(
               alignment: Alignment.centerLeft,
@@ -931,7 +987,7 @@ class _MakerInfoSettingsScreenState
                 url: MaLegalUrls.terms,
                 textKey: Key('maker_settings_terms_text'),
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                   color: AppColors.darkGray,
                   decoration: TextDecoration.underline,
@@ -947,7 +1003,7 @@ class _MakerInfoSettingsScreenState
                 url: MaLegalUrls.privacy,
                 textKey: Key('maker_settings_privacy_text'),
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                   color: AppColors.darkGray,
                   decoration: TextDecoration.underline,
@@ -955,6 +1011,7 @@ class _MakerInfoSettingsScreenState
                 ),
               ),
             ),
+            const SizedBox(height: 8),
             const SizedBox(height: 8),
             TextButton(
               key: const Key('maker_settings_delete_account'),
@@ -971,7 +1028,7 @@ class _MakerInfoSettingsScreenState
               child: const Text(
                 'Delete Your Account',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
                   decorationColor: AppColors.darkGray,
@@ -1014,12 +1071,13 @@ class _MakerInfoSettingsScreenState
                 key: const Key('maker_settings_error'),
                 style: const TextStyle(
                   color: AppColors.error,
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                 ),
               ),
             ],
-            const SizedBox(height: 12),
+            if (!widget.popupLayout) const SizedBox(height: 12),
+            if (widget.popupLayout) _buildSaveButton(),
           ],
         );
       },
@@ -1077,15 +1135,19 @@ class _MakerInfoSettingsScreenState
 
 TextStyle _makerSettingsInputStyle() {
   return AppTextStyles.field.copyWith(
+    fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.white,
     fontSize: 16,
+    fontWeight: FontWeight.w500,
   );
 }
 
 TextStyle _makerSettingsHintStyle() {
   return AppTextStyles.fieldHint.copyWith(
+    fontFamily: AppTextStyles.bodyFontFamily,
     color: AppColors.darkGray,
     fontSize: 16,
+    fontWeight: FontWeight.w500,
   );
 }
 
@@ -1111,7 +1173,7 @@ class _LabeledField extends StatelessWidget {
     this.minLines = 1,
     this.maxLines = 1,
     this.onChanged,
-    this.bottomPadding = 12,
+    this.bottomPadding = 16,
     this.inputLineHeight,
     this.inputContentPadding,
   });
@@ -1144,10 +1206,12 @@ class _LabeledField extends StatelessWidget {
             Text(
               label,
               style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
+                fontSize: 12,
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 8),
           ],
           TextField(
             key: Key(keyName),
@@ -1227,6 +1291,7 @@ class _ShowEntryEditor extends StatelessWidget {
               child: Text(
                 'Show ${index + 1}',
                 style: AppTextStyles.onboardingHelper.copyWith(
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.primary,
                   fontSize: 14,
                 ),
@@ -1357,7 +1422,7 @@ class _EventLocationAutocompleteFieldState
             horizontal: 16,
             vertical: 12,
           ),
-          bottomPadding: _suggestions.isEmpty ? 12 : 0,
+          bottomPadding: _suggestions.isEmpty ? 16 : 0,
         ),
         if (_suggestions.isNotEmpty)
           Container(
@@ -1425,7 +1490,7 @@ class _VisibilityField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
           Row(
@@ -1436,7 +1501,9 @@ class _VisibilityField extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.onboardingHelper.copyWith(
+                    fontFamily: AppTextStyles.bodyFontFamily,
                     color: AppColors.primary,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -1453,8 +1520,10 @@ class _VisibilityField extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.right,
                         style: AppTextStyles.onboardingHelper.copyWith(
+                          fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.primary,
-                          fontSize: 14,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -1469,7 +1538,7 @@ class _VisibilityField extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           _LabeledField(
             label: '',
             keyName: keyName,
@@ -1498,14 +1567,16 @@ class _VisibilityOnlyRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.zero,
       child: Row(
         children: [
           Expanded(
             child: Text(
               label,
               style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
+                fontSize: 12,
               ),
             ),
           ),
@@ -1524,6 +1595,8 @@ class _CompactVisibilityToggle extends StatelessWidget {
     required this.onChanged,
   });
 
+  static const Duration _transition = Duration(milliseconds: 160);
+
   final bool value;
   final ValueChanged<bool>? onChanged;
 
@@ -1533,24 +1606,32 @@ class _CompactVisibilityToggle extends StatelessWidget {
 
     return Semantics(
       button: true,
+      enabled: enabled,
       toggled: value,
       child: InkWell(
         onTap: enabled ? () => onChanged!(!value) : null,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         overlayColor: AppButtonStyles.purpleInkOverlay,
-        child: SizedBox(
-          width: 50,
-          height: 28,
-          child: IgnorePointer(
-            child: Transform.scale(
-              scale: 0.72,
-              alignment: Alignment.center,
-              child: Switch(
-                value: value,
-                onChanged: enabled ? (_) {} : null,
-                activeThumbColor: AppColors.white,
-                activeTrackColor: AppColors.primary,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: AnimatedContainer(
+          duration: _transition,
+          curve: Curves.easeInOut,
+          width: 48,
+          height: 24,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: value ? Colors.white : Colors.white.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: AnimatedAlign(
+            duration: _transition,
+            curve: Curves.easeInOut,
+            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: value ? Colors.black : Colors.white,
               ),
             ),
           ),
@@ -1584,7 +1665,10 @@ class _TaxonomySection extends StatelessWidget {
         Text(
           label,
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(height: 8),
@@ -1594,11 +1678,18 @@ class _TaxonomySection extends StatelessWidget {
           children: [
             for (final option in options)
               MaChoiceChip(
+                fontFamily: AppTextStyles.bodyFontFamily,
+                selectedFontWeight: FontWeight.w600,
+                unselectedFontWeight: FontWeight.w600,
+                fontSize: 12,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                verticalOffset: 0,
                 key: Key('${keyPrefix}_${option.id}'),
                 label: option.name,
                 selected: selectedIds.contains(option.id),
                 selectedTextColor: AppColors.white,
                 unselectedBackgroundColor: const Color(0xFF020202),
+                unselectedBorderColor: AppColors.primary.withValues(alpha: 0.40),
                 onTap: () => onToggle(option.id),
               ),
           ],
@@ -1653,22 +1744,28 @@ class _CarouselEditor extends StatelessWidget {
         Text(
           label,
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
           ),
         ),
         Text(
           'Image or Video (5 sec. or less) JPEG, PNG, MP4, MOV, GIF',
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             fontSize: 14,
             color: Colors.white.withValues(alpha: 0.4),
           ),
         ),
-        if (isArtwork && moderationStatus != null) ...[
+        if (isArtwork &&
+            moderationStatus != null &&
+            moderationStatus!.trim().isNotEmpty &&
+            moderationStatus!.trim().toLowerCase() != 'approved') ...[
           const SizedBox(height: 2),
           Text(
             'Status: $moderationStatus',
             key: Key('maker_settings_artwork_status_$slot'),
             style: AppTextStyles.onboardingHelper.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: 14,
               color: AppColors.mutedText,
             ),
@@ -1747,6 +1844,7 @@ class _CarouselEditor extends StatelessWidget {
             errorMessage!,
             key: Key('maker_settings_carousel_error_$slot'),
             style: AppTextStyles.onboardingError.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.white,
             ),
           ),
@@ -1756,6 +1854,7 @@ class _CarouselEditor extends StatelessWidget {
           Text(
             'Artwork Title:',
             style: AppTextStyles.onboardingHelper.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.primary,
               fontSize: 14,
             ),
@@ -1770,7 +1869,7 @@ class _CarouselEditor extends StatelessWidget {
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               counterText: '',
-              hintText: 'Artwork Title',
+              hintText: 'Artwork title',
               hintStyle: _makerSettingsHintStyle(),
               filled: true,
               fillColor: AppColors.filterInputFill,
@@ -1790,6 +1889,7 @@ class _CarouselEditor extends StatelessWidget {
         Text(
           isArtwork ? 'Artwork Description:' : 'A Sentence About the Content:',
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
             fontSize: 14,
           ),
@@ -1804,7 +1904,7 @@ class _CarouselEditor extends StatelessWidget {
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             counterText: '',
-            hintText: 'Optional Caption',
+            hintText: 'Optional caption',
             hintStyle: _makerSettingsHintStyle(),
             filled: true,
             fillColor: AppColors.filterInputFill,
@@ -2036,15 +2136,17 @@ class _LoadError extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTextStyles.onboardingHelper,
+              style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
+                ),
             ),
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text('Try Again'),
+              child: const Text(
+                'Try Again',
+                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
               ),
             ),
           ],

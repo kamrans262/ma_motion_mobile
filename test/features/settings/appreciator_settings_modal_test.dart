@@ -45,7 +45,7 @@ void main() {
     ]) {
       final field = tester.widget<TextField>(find.byKey(Key(fieldKey)));
       expect(field.decoration?.fillColor, AppColors.filterInputFill);
-      expect(field.style?.fontFamily, AppTextStyles.fontFamily);
+      expect(field.style?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(field.style?.fontSize, 16);
       expect(field.style?.fontWeight, FontWeight.w500);
       expect(field.style?.height, 1);
@@ -56,7 +56,7 @@ void main() {
         field.decoration?.contentPadding,
         const EdgeInsets.fromLTRB(16, 12.5, 16, 15.5),
       );
-      expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+      expect(field.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
       expect(field.decoration?.hintStyle?.fontSize, 16);
       expect(field.decoration?.hintStyle?.fontWeight, FontWeight.w500);
       expect(field.decoration?.hintStyle?.fontStyle, FontStyle.normal);
@@ -95,7 +95,7 @@ void main() {
     expect(tester.widget<Text>(find.text('Save & Close')).style?.fontSize, 16);
     expect(find.text('Settings'), findsOneWidget);
     final settingsTitle = tester.widget<Text>(find.text('Settings'));
-    expect(settingsTitle.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(settingsTitle.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
     expect(settingsTitle.style?.height, isNull);

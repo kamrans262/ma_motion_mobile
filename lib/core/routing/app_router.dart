@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../widgets/ma_glass_popup.dart';
+
 import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
 import '../../features/auth/presentation/screens/ma_email_login_screen.dart';
@@ -13,6 +15,7 @@ import '../../features/discovery/presentation/screens/maker_artwork_discovery_sc
 import '../../features/onboarding/presentation/screens/appreciator_registration_flow_screen.dart';
 import '../../features/onboarding/presentation/screens/ma_role_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/maker_registration_flow_screen.dart';
+import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/onboarding/presentation/widgets/ma_onboarding_journey_shell.dart';
 import '../../features/saved_artworks/presentation/screens/maker_saved_artworks_screen.dart';
 import '../../features/settings/presentation/screens/maker_info_settings_screen.dart';
@@ -85,6 +88,33 @@ CustomTransitionPage<void> _premiumPage({
       );
     },
     child: child,
+  );
+}
+
+CustomTransitionPage<void> _glassPopupPage({
+  required GoRouterState state,
+  required Widget child,
+  required VoidCallback onDismiss,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    opaque: false,
+    transitionDuration: _premiumTransitionDuration,
+    reverseTransitionDuration: _premiumReverseTransitionDuration,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) {
+        return child;
+      }
+      return FadeTransition(
+        opacity: CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        ),
+        child: child,
+      );
+    },
+    child: MaGlassPopup(onDismiss: onDismiss, child: child),
   );
 }
 
@@ -225,6 +255,15 @@ GoRouter createAppRouter({
         ),
       ),
       GoRoute(
+        path: '/appreciator/notifications',
+        pageBuilder: (context, state) => _premiumPage(
+          state: state,
+          child: NotificationsScreen(
+            onBack: () => context.go('/appreciator/discovery'),
+          ),
+        ),
+      ),
+      GoRoute(
         path: '/appreciator/saved-artworks',
         pageBuilder: (context, state) => _stationarySavedPage(
           state: state,
@@ -250,9 +289,11 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/appreciator/discovery/filter',
-        pageBuilder: (context, state) => _premiumPage(
+        pageBuilder: (context, state) => _glassPopupPage(
           state: state,
+          onDismiss: () => context.pop(),
           child: DiscoveryFilterScreen(
+            popupLayout: true,
             onClose: () => context.pop(),
             onApplied: () => context.pop(),
           ),
@@ -331,9 +372,11 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/maker/discovery/filter',
-        pageBuilder: (context, state) => _premiumPage(
+        pageBuilder: (context, state) => _glassPopupPage(
           state: state,
+          onDismiss: () => context.pop(),
           child: DiscoveryFilterScreen(
+            popupLayout: true,
             onClose: () => context.pop(),
             onApplied: () => context.pop(),
           ),
@@ -341,9 +384,11 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/maker/settings',
-        pageBuilder: (context, state) => _premiumPage(
+        pageBuilder: (context, state) => _glassPopupPage(
           state: state,
+          onDismiss: () => context.pop(),
           child: MakerInfoSettingsScreen(
+            popupLayout: true,
             onClose: () => context.pop(),
             onAccountDeleted: () => context.go('/login'),
             onLoggedOut: () => context.go('/login'),

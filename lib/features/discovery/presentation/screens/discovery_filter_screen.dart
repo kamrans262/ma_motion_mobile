@@ -9,15 +9,24 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/ma_centered_taxonomy_label.dart';
 import '../../application/artwork_discovery_controller.dart';
 import '../../data/discovery_filter_repository.dart';
+import '../../../settings/data/event_location_autocomplete_repository.dart';
 import '../../domain/discovery_artwork.dart';
 import '../../domain/discovery_filter_models.dart';
 import '../../domain/discovery_query.dart';
 
 class DiscoveryFilterScreen extends ConsumerStatefulWidget {
-  const DiscoveryFilterScreen({super.key, this.onClose, this.onApplied});
+  const DiscoveryFilterScreen({
+    super.key,
+    this.onClose,
+    this.onApplied,
+    this.popupLayout = false,
+  });
 
   final VoidCallback? onClose;
   final VoidCallback? onApplied;
+
+  /// Use transparent, inset-free content inside MaGlassPopup.
+  final bool popupLayout;
 
   @override
   ConsumerState<DiscoveryFilterScreen> createState() =>
@@ -34,6 +43,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   DiscoveryFilterOptions? _options;
   DiscoveryLocation? _selectedLocation;
   List<DiscoveryLocation> _locationSuggestions = const <DiscoveryLocation>[];
+  int _locationRequestVersion = 0;
+  bool _showGoogleAttribution = false;
 
   late Set<int> _selectedTypeIds;
   late Set<int> _selectedStyleIds;
@@ -126,66 +137,92 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
   void _searchLocations(String value) {
     _locationDebounce?.cancel();
+    final version = ++_locationRequestVersion;
     final text = value.trim();
-
-    if (text.isEmpty) {
-      setState(() {
-        _selectedLocation = null;
-        _locationSuggestions = const <DiscoveryLocation>[];
-        _loadingLocations = false;
-      });
-      return;
-    }
-
     if (_selectedLocation?.label == text) return;
-
     setState(() {
       _selectedLocation = null;
+      _locationSuggestions = const <DiscoveryLocation>[];
+      _loadingLocations = false;
+      _showGoogleAttribution = false;
     });
-
+    if (text.length < 2 || text.length > 120) return;
+    // Same 350ms delay as Settings > Event Location.
     _locationDebounce = Timer(
-      const Duration(milliseconds: 300),
-      () => _loadLocations(text),
+      const Duration(milliseconds: 350),
+      () => unawaited(_loadLocations(text, version)),
     );
   }
 
-  Future<void> _loadLocations(String text) async {
-    if (!mounted) return;
-
-    setState(() {
-      _loadingLocations = true;
-    });
-
+  Future<List<DiscoveryLocation>> _knownLocations(String text) async {
     try {
-      final page = await ref
+      final result = await ref
           .read(discoveryFilterRepositoryProvider)
           .searchLocations(text);
-
-      if (!mounted || _locationSearchController.text.trim() != text.trim()) {
-        return;
-      }
-
-      setState(() {
-        _locationSuggestions = page.items;
-        _loadingLocations = false;
-      });
+      return result.items;
     } catch (_) {
-      if (!mounted) return;
-
-      setState(() {
-        _locationSuggestions = const <DiscoveryLocation>[];
-        _loadingLocations = false;
-      });
+      return const <DiscoveryLocation>[];
     }
   }
 
-  void _selectLocation(DiscoveryLocation location) {
-    FocusScope.of(context).unfocus();
+  Future<List<String>> _googlePlaces(String text) async {
+    try {
+      // Reuse Settings > Current & Upcoming Shows > Event Location.
+      return await ref
+          .read(eventLocationAutocompleteRepositoryProvider)
+          .search(text);
+    } catch (_) {
+      return const <String>[];
+    }
+  }
 
+  Future<void> _loadLocations(String text, int version) async {
+    if (!mounted || version != _locationRequestVersion) return;
+    setState(() => _loadingLocations = true);
+    // Both requests begin at once. Discovery results also work as fallback.
+    final knownFuture = _knownLocations(text);
+    final placesFuture = _googlePlaces(text);
+    final known = await knownFuture;
+    final places = await placesFuture;
+    if (!mounted ||
+        version != _locationRequestVersion ||
+        _locationSearchController.text.trim() != text) {
+      return;
+    }
+    final knownByLabel = <String, DiscoveryLocation>{
+      for (final item in known) item.label.trim().toLowerCase(): item,
+    };
+    final merged = <DiscoveryLocation>[];
+    final seen = <String>{};
+    for (final place in places) {
+      final label = place.trim();
+      if (label.isEmpty || !seen.add(label.toLowerCase())) continue;
+      // Keep existing IDs/coordinates for exact matches.
+      merged.add(knownByLabel[label.toLowerCase()] ??
+          DiscoveryLocation(id: 0, label: label));
+    }
+    for (final item in known) {
+      final label = item.label.trim().toLowerCase();
+      if (label.isEmpty || !seen.add(label)) continue;
+      merged.add(item);
+    }
+    setState(() {
+      _locationSuggestions = merged;
+      _showGoogleAttribution = places.isNotEmpty;
+      _loadingLocations = false;
+    });
+  }
+
+  void _selectLocation(DiscoveryLocation location) {
+    _locationDebounce?.cancel();
+    _locationRequestVersion++;
+    FocusScope.of(context).unfocus();
     setState(() {
       _selectedLocation = location;
       _locationSearchController.text = location.label;
       _locationSuggestions = const <DiscoveryLocation>[];
+      _loadingLocations = false;
+      _showGoogleAttribution = false;
     });
   }
 
@@ -214,12 +251,16 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
   }
 
   void _clearAll() {
+    _locationDebounce?.cancel();
+    _locationRequestVersion++;
     setState(() {
       _selectedTypeIds.clear();
       _selectedStyleIds.clear();
       _selectedStatuses.clear();
       _selectedLocation = null;
       _locationSuggestions = const <DiscoveryLocation>[];
+      _showGoogleAttribution = false;
+      _loadingLocations = false;
       _locationSearchController.clear();
       _radiusMiles = _defaultRadiusMiles;
       _errorMessage = null;
@@ -233,7 +274,12 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     final rawLocation = _locationSearchController.text.trim();
     final canUseRadius =
         location?.latitude != null && location?.longitude != null;
-    final looksPostal = _looksLikePostal(rawLocation);
+    // Places suggestions provide descriptions, not GPS coordinates.
+    final knownLocation = canUseRadius || (location != null && location.id > 0);
+    final searchLocation = location != null && !knownLocation
+        ? rawLocation.split(',').first.trim()
+        : rawLocation;
+    final looksPostal = _looksLikePostal(searchLocation);
 
     final query = DiscoveryQuery(
       typeIds: Set<int>.from(_selectedTypeIds),
@@ -246,10 +292,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           : null,
       locationLabel:
           location?.label ?? (rawLocation.isEmpty ? null : rawLocation),
-      city: location == null && rawLocation.isNotEmpty && !looksPostal
-          ? rawLocation
+      city: !knownLocation && searchLocation.isNotEmpty && !looksPostal
+          ? searchLocation
           : '',
-      postalCode: location == null && looksPostal ? rawLocation : '',
+      postalCode: !knownLocation && looksPostal ? searchLocation : '',
       countryCode: location?.countryCode,
       latitude: canUseRadius ? location!.latitude : null,
       longitude: canUseRadius ? location!.longitude : null,
@@ -281,12 +327,20 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     final options = _options;
     return Scaffold(
       key: const Key('discovery_filter_screen'),
-      backgroundColor: AppColors.artworkBackground,
+      backgroundColor: widget.popupLayout
+          ? Colors.transparent
+          : AppColors.artworkBackground,
       body: SafeArea(
+        top: !widget.popupLayout,
+        bottom: !widget.popupLayout,
+        left: !widget.popupLayout,
+        right: !widget.popupLayout,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+              padding: widget.popupLayout
+                  ? const EdgeInsets.only(bottom: 16)
+                  : const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -295,12 +349,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       'Filter',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primary,
-                      ),
+                      style: AppTextStyles.pageTitle,
                     ),
                   ),
                   InkWell(
@@ -314,8 +363,8 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                       child: Text(
                         'Clear Filters',
                         style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 14,
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: AppColors.white.withValues(alpha: 0.50),
                         ),
@@ -340,42 +389,80 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                     )
                   : _buildForm(options),
             ),
-            if (options != null)
-              SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: OutlinedButton(
-                      key: const Key('filter_apply_button'),
-                      onPressed: _applying ? null : _apply,
-                      style: AppButtonStyles.filterAction(),
-                      child: _applying
-                          ? const SizedBox.square(
-                              dimension: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.darkGray,
-                              ),
-                            )
-                          : Transform.translate(
-                              offset: const Offset(0, 1),
-                              child: const Text(
-                                'Apply Filters',
-                                style: TextStyle(
-                                  fontFamily: AppTextStyles.fontFamily,
-                                  fontSize: 16,
-                                  height: 1.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
+            if (!widget.popupLayout && options != null) _buildApplyButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildApplyButton() {
+    final style = widget.popupLayout
+        ? AppButtonStyles.filterAction().copyWith(
+            padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+              EdgeInsets.symmetric(vertical: 12),
+            ),
+          )
+        : AppButtonStyles.filterAction();
+    return SafeArea(
+      top: false,
+      bottom: !widget.popupLayout,
+      child: Padding(
+        padding: widget.popupLayout ? const EdgeInsets.only(top: 24) : const EdgeInsets.fromLTRB(20, 10, 20, 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('filter_close_button'),
+                onPressed: _applying ? null : () {
+                        if (widget.onClose != null) {
+                          widget.onClose!();
+                        } else {
+                          Navigator.of(context).maybePop();
+                        }
+                      },
+                style: style,
+                child: const Text(
+                        'Close',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                key: const Key('filter_apply_button'),
+                onPressed: _applying ? null : _apply,
+                style: style,
+                child: _applying
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.darkGray,
+                        ),
+                      )
+                    : const Text(
+                        'Apply Filters',
+                        style: TextStyle(
+                          fontFamily: AppTextStyles.bodyFontFamily,
+                          fontSize: 16,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+              ),
+            ),
           ],
         ),
       ),
@@ -391,48 +478,50 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
 
     return ListView(
       key: const Key('filter_scroll'),
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 26),
+      padding: widget.popupLayout
+          ? EdgeInsets.zero
+          : const EdgeInsets.fromLTRB(20, 8, 20, 26),
       children: [
         _sectionTitle('Type'),
         Wrap(
           spacing: 8,
-          runSpacing: 7,
+          runSpacing: 8,
           children: [
             for (final type in options.types)
               _ChoicePill(
                 key: Key('filter_type_${type.id}'),
                 label: type.name,
                 selected: _selectedTypeIds.contains(type.id),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
                 darkBackground: true,
                 onTap: () => _toggleType(type.id),
               ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         _sectionTitle('Style'),
         Wrap(
           spacing: 8,
-          runSpacing: 7,
+          runSpacing: 8,
           children: [
             for (final style in options.styles)
               _ChoicePill(
                 key: Key('filter_style_${style.id}'),
                 label: style.name,
                 selected: _selectedStyleIds.contains(style.id),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
                 darkBackground: true,
                 onTap: () => _toggleStyle(style.id),
               ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         _sectionTitle('Show Status'),
         Wrap(
           spacing: 8,
-          runSpacing: 7,
+          runSpacing: 8,
           children: [
             for (final status in options.showStatuses)
               if (status.value != 'past')
@@ -440,23 +529,27 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                   key: Key('filter_status_${status.value}'),
                   label: status.label,
                   selected: _selectedStatuses.contains(status.value),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                   darkBackground: true,
                   onTap: () => _toggleStatus(status.value),
                 ),
           ],
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 16),
         _sectionTitle('Location'),
         TextField(
           key: const Key('filter_location_search'),
           controller: _locationSearchController,
           onChanged: _searchLocations,
-          style: AppTextStyles.field.copyWith(fontSize: 16),
+          style: AppTextStyles.field.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
           cursorColor: AppColors.primary,
           decoration: _inputDecoration(
-            hintText: 'Enter City or ZIP Code',
+            hintText: 'Enter city or ZIP code',
             suffixIcon: _loadingLocations
                 ? const Padding(
                     padding: EdgeInsets.all(13),
@@ -472,46 +565,68 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
           ),
         ),
         if (_locationSuggestions.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Material(
-              key: const Key('filter_location_suggestions'),
+          Container(
+            key: const Key('filter_location_suggestions'),
+            decoration: const BoxDecoration(
               color: AppColors.filterInputFill,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-                side: BorderSide(color: AppColors.primary),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (final suggestion in _locationSuggestions.take(8))
-                    ListTile(
-                      key: Key('location_suggestion_${suggestion.id}'),
-                      dense: true,
-                      title: Text(
-                        suggestion.label,
-                        style: AppTextStyles.onboardingHelper.copyWith(
+              borderRadius: BorderRadius.zero,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0;
+                    index < _locationSuggestions.length && index < 8;
+                    index++)
+                  InkWell(
+                    key: Key(_locationSuggestions[index].id > 0
+                        ? 'location_suggestion_' +
+                            _locationSuggestions[index].id.toString()
+                        : 'location_suggestion_google_' + index.toString()),
+                    onTap: () => _selectLocation(_locationSuggestions[index]),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        _locationSuggestions[index].label,
+                        style: AppTextStyles.field.copyWith(
+                          fontFamily: AppTextStyles.bodyFontFamily,
                           color: AppColors.white,
-                          fontSize: 14,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      onTap: () => _selectLocation(suggestion),
                     ),
-                ],
-              ),
+                  ),
+                if (_showGoogleAttribution)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                    child: Text(
+                      'Google Maps',
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.fieldHint.copyWith(
+                        fontFamily: AppTextStyles.bodyFontFamily,
+                        color: AppColors.darkGray,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
         Text(
           'Radius (miles)',
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 8),
         Row(
           key: const Key('filter_radius_control_row'),
           children: [
@@ -558,6 +673,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
                 key: const Key('filter_radius_value'),
                 textAlign: TextAlign.right,
                 style: AppTextStyles.onboardingHelper.copyWith(
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   color: AppColors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -566,6 +682,7 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
             ),
           ],
         ),
+        if (widget.popupLayout) _buildApplyButton(),
       ],
     );
   }
@@ -576,9 +693,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
       child: Text(
         title,
         style: AppTextStyles.onboardingHelper.copyWith(
+          fontFamily: AppTextStyles.bodyFontFamily,
           color: AppColors.primary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
@@ -591,8 +709,10 @@ class _DiscoveryFilterScreenState extends ConsumerState<DiscoveryFilterScreen> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: AppTextStyles.fieldHint.copyWith(
+        fontFamily: AppTextStyles.bodyFontFamily,
         color: AppColors.darkGray,
         fontSize: 16,
+        fontWeight: FontWeight.w500,
       ),
       suffixIcon: suffixIcon,
       filled: true,
@@ -633,7 +753,7 @@ class _ChoicePill extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.fontSize = 14,
+    this.fontSize = 12,
     this.fontWeight,
     this.darkBackground = false,
   });
@@ -657,19 +777,22 @@ class _ChoicePill extends StatelessWidget {
         onTap: onTap,
         overlayColor: AppButtonStyles.purpleInkOverlay,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             border: Border.all(
-              color: selected ? AppColors.white : AppColors.darkGray,
+              color: selected
+                  ? AppColors.white
+                  : AppColors.white.withValues(alpha: 0.30),
               width: 0.8,
             ),
           ),
           child: MaCenteredTaxonomyLabel(
             label: label,
+            verticalOffset: 0,
             style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
+              fontFamily: AppTextStyles.bodyFontFamily,
               fontSize: fontSize,
-              height: 1.1,
+              height: 16 / 12,
               fontWeight: fontWeight ?? FontWeight.w500,
               color: selected ? AppColors.black : AppColors.white,
             ),
@@ -697,15 +820,17 @@ class _LoadError extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTextStyles.onboardingHelper,
+              style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
+              ),
             ),
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onRetry,
               style: AppButtonStyles.outlineAction(),
-              child: Transform.translate(
-                offset: const Offset(0, 1),
-                child: const Text('Try Again'),
+              child: const Text(
+                'Try Again',
+                style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
               ),
             ),
           ],

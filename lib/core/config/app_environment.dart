@@ -1,7 +1,7 @@
 abstract final class AppEnvironment {
   static const String _rawApiBaseUrl = String.fromEnvironment(
     'MA_API_BASE_URL',
-    defaultValue: 'https://slategray-fly-111965.hostingersite.com',
+    defaultValue: 'https://app.ma-spaceforart.com',
   );
 
   static const String _connectTimeoutSeconds = String.fromEnvironment(
@@ -20,7 +20,7 @@ abstract final class AppEnvironment {
     final raw = _rawApiBaseUrl.trim();
 
     if (raw.isEmpty) {
-      return 'https://slategray-fly-111965.hostingersite.com/api/v1';
+      return 'https://app.ma-spaceforart.com/api/v1';
     }
 
     var normalized = raw;

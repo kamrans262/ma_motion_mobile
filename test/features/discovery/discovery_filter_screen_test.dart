@@ -14,6 +14,79 @@ import 'package:ma_motion_mobile/features/discovery/domain/discovery_query.dart'
 import 'package:ma_motion_mobile/features/discovery/presentation/screens/discovery_filter_screen.dart';
 
 void main() {
+  testWidgets('popup Filter keeps its typography and field geometry', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          discoveryFilterRepositoryProvider.overrideWithValue(
+            _FakeFilterRepository(),
+          ),
+          artworkDiscoveryRepositoryProvider.overrideWithValue(
+            _FakeArtworkRepository(),
+          ),
+        ],
+        child: const MaterialApp(
+          home: DiscoveryFilterScreen(popupLayout: true),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    final scaffold = tester.widget<Scaffold>(
+      find.byKey(const Key('discovery_filter_screen')),
+    );
+    expect(scaffold.backgroundColor, Colors.transparent);
+    final list = tester.widget<ListView>(find.byKey(const Key('filter_scroll')));
+    expect(list.padding, EdgeInsets.zero);
+
+    final title = tester.widget<Text>(find.text('Filter'));
+    expect(title.style?.fontSize, 24);
+    expect(title.style?.fontWeight, FontWeight.w500);
+    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    final typePill = find.byKey(const Key('filter_type_1'));
+    expect(typePill, findsOneWidget);
+    final label = tester.widget<MaCenteredTaxonomyLabel>(
+      find.descendant(
+        of: typePill,
+        matching: find.byType(MaCenteredTaxonomyLabel),
+      ),
+    );
+    expect(label.verticalOffset, 0);
+
+    final apply = find.byKey(const Key('filter_apply_button'));
+    await tester.scrollUntilVisible(
+      apply,
+      180,
+      scrollable: _verticalFilterScrollable(),
+    );
+    expect(
+      find.ancestor(
+        of: apply,
+        matching: find.byKey(const Key('filter_scroll')),
+      ),
+      findsOneWidget,
+    );
+    final applyPadding = tester.widget<Padding>(
+      find.ancestor(of: apply, matching: find.byType(Padding)).first,
+    );
+    expect(applyPadding.padding, const EdgeInsets.only(top: 24));
+    expect(
+      tester.getTopLeft(apply).dy -
+          tester.getBottomLeft(find.byKey(const Key('filter_radius_control_row'))).dy,
+      closeTo(24, 1),
+    );
+    expect(
+      tester.getCenter(find.text('Apply Filters')).dy,
+      closeTo(tester.getCenter(apply).dy, 1),
+    );
+    final applyText = tester.widget<Text>(find.text('Apply Filters'));
+    expect(applyText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(applyText.style?.fontSize, 16);
+    expect(applyText.style?.fontWeight, FontWeight.w500);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('applies taxonomy, status and radius filters', (tester) async {
     final artworkRepository = _FakeArtworkRepository();
 
@@ -132,12 +205,12 @@ void main() {
     expect(find.text('Filter'), findsOneWidget);
 
     final title = tester.widget<Text>(find.text('Filter'));
-    expect(title.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(title.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(title.style?.fontWeight, FontWeight.w500);
     expect(title.style?.fontSize, 24);
     final clearText = tester.widget<Text>(find.text('Clear Filters'));
-    expect(clearText.style?.fontFamily, AppTextStyles.fontFamily);
-    expect(clearText.style?.fontSize, 14);
+    expect(clearText.style?.fontFamily, AppTextStyles.bodyFontFamily);
+    expect(clearText.style?.fontSize, 12);
     expect(clearText.style?.fontWeight, FontWeight.w500);
     expect(
       clearText.style?.color,
@@ -199,13 +272,14 @@ void main() {
 
     final locationField = tester.widget<TextField>(locationSearch);
     expect(locationField.decoration?.fillColor, const Color(0xFF0E071A));
-    expect(locationField.style?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.style?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.style?.fontSize, 16);
     expect(locationField.style?.fontWeight, FontWeight.w500);
     expect(locationField.style?.height, 1);
     expect(locationField.style?.letterSpacing, AppTextStyles.bodyTracking);
-    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.fontFamily);
+    expect(locationField.decoration?.hintStyle?.fontFamily, AppTextStyles.bodyFontFamily);
     expect(locationField.decoration?.hintStyle?.fontSize, 16);
+    expect(locationField.decoration?.hintStyle?.fontWeight, FontWeight.w500);
     expect(locationField.decoration?.hintStyle?.fontStyle, FontStyle.normal);
     expect(locationField.decoration?.hintStyle?.color, AppColors.darkGray);
 
@@ -275,7 +349,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Filter text stays at or above 14px and options are opaque', (
+  testWidgets('Filter labels and chips match Figma 12px styles', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(430, 1500));
@@ -305,8 +379,8 @@ void main() {
       'Radius (miles)',
     ]) {
       final text = tester.widget<Text>(find.text(label));
-      expect(text.style?.fontSize, 14);
-      expect(text.style?.fontWeight, FontWeight.w500);
+      expect(text.style?.fontSize, 12);
+      expect(text.style?.fontWeight, FontWeight.w400);
     }
 
     final typeText = tester.widget<Text>(
@@ -315,7 +389,7 @@ void main() {
         matching: find.text('Painting'),
       ),
     );
-    expect(typeText.style?.fontSize, 14);
+    expect(typeText.style?.fontSize, 12);
     expect(typeText.style?.fontWeight, FontWeight.w500);
 
     final styleText = tester.widget<Text>(
@@ -324,7 +398,7 @@ void main() {
         matching: find.text('Minimal'),
       ),
     );
-    expect(styleText.style?.fontSize, 14);
+    expect(styleText.style?.fontSize, 12);
     expect(styleText.style?.fontWeight, FontWeight.w500);
 
     for (final choice in <(String, String)>[
@@ -336,13 +410,16 @@ void main() {
       expect(labelCenter.dx, closeTo(buttonCenter.dx, 1));
       expect(
         labelCenter.dy,
-        closeTo(buttonCenter.dy + MaCenteredTaxonomyLabel.opticalOffsetY, 1),
+        closeTo(
+          buttonCenter.dy,
+          1,
+        ),
       );
     }
 
     for (final text in <String>['Currently Showing Work', 'Upcoming Show']) {
       final widget = tester.widget<Text>(find.text(text));
-      expect(widget.style?.fontSize, 14);
+      expect(widget.style?.fontSize, 12);
       expect(widget.style?.fontWeight, FontWeight.w500);
     }
     expect(find.byKey(const Key('filter_status_past')), findsNothing);
@@ -367,6 +444,21 @@ void main() {
     );
     expect(currentPill.color, const Color(0xFF020202));
 
+    // All unselected Filter chips use translucent white outlines.
+    for (final key in <String>[
+      'filter_type_1',
+      'filter_style_2',
+      'filter_status_current',
+    ]) {
+      final pill = find.byKey(Key(key));
+      final borderBox = tester.widget<Container>(
+        find.descendant(of: pill, matching: find.byType(Container)).first,
+      );
+      final border = (borderBox.decoration! as BoxDecoration).border! as Border;
+      expect(border.top.color, AppColors.white.withValues(alpha: 0.30));
+      expect(border.top.width, 0.8);
+    }
+
     // Selected Type, Style and Show Status buttons are white with black text.
     for (final choice in <(String, String)>[
       ('filter_type_1', 'Painting'),
@@ -386,9 +478,15 @@ void main() {
       );
       final border = (borderBox.decoration! as BoxDecoration).border! as Border;
       expect(border.top.color, AppColors.white);
+      final selectedLabel = tester.widget<Text>(find.text(choice.$2));
+      expect(selectedLabel.style?.color, AppColors.black);
+      expect(selectedLabel.style?.fontWeight, FontWeight.w500);
+      // Selected and unselected chips retain the same 500 weight.
+      await tester.tap(pill);
+      await tester.pump();
       expect(
-        tester.widget<Text>(find.text(choice.$2)).style?.color,
-        AppColors.black,
+        tester.widget<Text>(find.text(choice.$2)).style?.fontWeight,
+        FontWeight.w500,
       );
     }
     final slider = tester.widget<SliderTheme>(

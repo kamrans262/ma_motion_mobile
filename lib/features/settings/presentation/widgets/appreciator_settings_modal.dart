@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_button_styles.dart';
@@ -253,6 +254,12 @@ class _AppreciatorSettingsModalState
     Navigator.of(context).pop();
   }
 
+  void _openNotifications() {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.go('/appreciator/notifications');
+  }
+
   Future<void> _deleteAccount() async {
     if (_busy) return;
     final deleted = await showMaDeleteAccountDialog(context);
@@ -386,12 +393,7 @@ class _AppreciatorSettingsModalState
           const Text(
             'Settings',
             key: Key('appreciator_settings_heading'),
-            style: TextStyle(
-              fontFamily: AppTextStyles.fontFamily,
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primary,
-            ),
+            style: AppTextStyles.pageTitle,
           ),
           const SizedBox(height: 18),
           _SettingsField(
@@ -438,7 +440,32 @@ class _AppreciatorSettingsModalState
               child: Text(
                 _switching ? 'Switching…' : 'Switch to Maker',
                 style: const TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.mutedText,
+                  color: AppColors.mutedText,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('appreciator_settings_notifications'),
+              onPressed: _busy ? null : _openNotifications,
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
+                foregroundColor: AppColors.mutedText,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 20),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text('Notifications',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
                   decorationColor: AppColors.mutedText,
@@ -455,7 +482,7 @@ class _AppreciatorSettingsModalState
               url: MaLegalUrls.terms,
               textKey: Key('appreciator_settings_terms_text'),
               style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 fontSize: 14,
                 color: AppColors.darkGray,
                 decoration: TextDecoration.underline,
@@ -471,7 +498,7 @@ class _AppreciatorSettingsModalState
               url: MaLegalUrls.privacy,
               textKey: Key('appreciator_settings_privacy_text'),
               style: TextStyle(
-                fontFamily: AppTextStyles.fontFamily,
+                fontFamily: AppTextStyles.bodyFontFamily,
                 fontSize: 14,
                 color: AppColors.darkGray,
                 decoration: TextDecoration.underline,
@@ -496,7 +523,7 @@ class _AppreciatorSettingsModalState
               child: const Text(
                 'Delete Your Account',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.fontFamily,
+                  fontFamily: AppTextStyles.bodyFontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,
                   decorationColor: AppColors.darkGray,
@@ -540,7 +567,8 @@ class _AppreciatorSettingsModalState
             Text(
               _errorMessage!,
               key: const Key('appreciator_settings_error'),
-              style: AppTextStyles.error.copyWith(fontSize: 14),
+              style: AppTextStyles.error.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,fontSize: 14),
             ),
           ],
           if (_successMessage != null) ...[
@@ -549,12 +577,34 @@ class _AppreciatorSettingsModalState
               _successMessage!,
               key: const Key('appreciator_settings_success'),
               style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
                 color: AppColors.primary,
                 fontSize: 14,
               ),
             ),
           ],
           const SizedBox(height: 18),
+          SizedBox(
+            height: 48,
+            child: OutlinedButton(
+              key: const Key('appreciator_settings_close_button'),
+              onPressed: _busy ? null : () => Navigator.of(context).pop(),
+              style: AppButtonStyles.filterAction(),
+              child: Transform.translate(
+                offset: const Offset(0, 2),
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.bodyFontFamily,
+                    fontSize: 16,
+                    height: 1.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           SizedBox(
             height: 48,
             child: OutlinedButton(
@@ -574,7 +624,7 @@ class _AppreciatorSettingsModalState
                       child: const Text(
                         'Save & Close',
                         style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
+                          fontFamily: AppTextStyles.bodyFontFamily,
                           fontSize: 16,
                           height: 1.0,
                           fontWeight: FontWeight.w500,
@@ -630,6 +680,7 @@ class _SettingsField extends StatelessWidget {
         Text(
           label,
           style: AppTextStyles.onboardingHelper.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.primary,
           ),
         ),
@@ -642,6 +693,7 @@ class _SettingsField extends StatelessWidget {
           textInputAction: textInputAction,
           onChanged: onChanged,
           style: AppTextStyles.field.copyWith(
+            fontFamily: AppTextStyles.bodyFontFamily,
             color: AppColors.white,
             fontSize: 16,
           ),
@@ -649,8 +701,10 @@ class _SettingsField extends StatelessWidget {
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             errorText: errorText,
-            errorStyle: AppTextStyles.error.copyWith(fontSize: 14),
+            errorStyle: AppTextStyles.error.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,fontSize: 14),
             hintStyle: AppTextStyles.fieldHint.copyWith(
+              fontFamily: AppTextStyles.bodyFontFamily,
               color: AppColors.darkGray,
               fontSize: 16,
             ),
@@ -699,7 +753,9 @@ class _LoadFailure extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTextStyles.onboardingHelper,
+              style: AppTextStyles.onboardingHelper.copyWith(
+                fontFamily: AppTextStyles.bodyFontFamily,
+                ),
             ),
             const SizedBox(height: 16),
             OutlinedButton(
@@ -708,7 +764,10 @@ class _LoadFailure extends StatelessWidget {
               style: AppButtonStyles.outlineAction(),
               child: Transform.translate(
                 offset: const Offset(0, 1),
-                child: const Text('Try Again'),
+                child: const Text(
+                    'Try Again',
+                    style: TextStyle(fontFamily: AppTextStyles.bodyFontFamily),
+                  ),
               ),
             ),
           ],

@@ -32,6 +32,80 @@ class MakerBottomNavigation extends StatelessWidget {
         final barHeight = (65 * scale).clamp(58.0, 72.0).toDouble();
         final metrics = DiscoveryLayoutMetrics.fromWidth(constraints.maxWidth);
         final iconSize = metrics.toolbarIconSize;
+        // Keep outer icon edges aligned with Search and Filter. Aim for 50
+        // logical pixels from each icon center to its adjacent number, while
+        // fitting four independently tappable numbers on narrower screens.
+        const sideItemWidth = 40.0;
+        const toolbarButtonWidth = 48.0;
+        const heartIconSize = 22.0;
+        const settingsIconSize = 24.0;
+        const filterIconSize = 24.0;
+        // Align the bottom icons' outer bounds to the top toolbar's
+        // Search and Filter icons at every supported screen width.
+        final searchIconInsetWithinButton =
+            (toolbarButtonWidth - iconSize) / 2;
+        const filterIconInsetWithinButton =
+            (toolbarButtonWidth - filterIconSize) / 2;
+        final heartOffset =
+            searchIconInsetWithinButton +
+            heartIconSize / 2 -
+            sideItemWidth / 2;
+        final settingsOffset =
+            sideItemWidth / 2 -
+            settingsIconSize / 2 -
+            filterIconInsetWithinButton;
+        final screenWidth = constraints.maxWidth;
+        final horizontalPadding = metrics.gridHorizontalPadding;
+        final numberGroupWidth =
+            screenWidth - 2 * horizontalPadding - 2 * sideItemWidth;
+        final heartCenterX =
+            horizontalPadding + searchIconInsetWithinButton + heartIconSize / 2;
+        final settingsCenterX =
+            screenWidth -
+            horizontalPadding -
+            filterIconInsetWithinButton -
+            settingsIconSize / 2;
+        final iconCenterSpan = settingsCenterX - heartCenterX;
+
+        // Reserve at least 40 logical pixels for each number's tap target
+        // where screen width permits it. On very narrow widths the targets
+        // shrink evenly rather than overflowing the Row.
+        final minimumNumberWidth = (numberGroupWidth / 4)
+            .clamp(0.0, 40.0)
+            .toDouble();
+        final maximumOuterGap =
+            ((iconCenterSpan - 3 * minimumNumberWidth) / 2)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+        final outerGap = 50.0.clamp(0.0, maximumOuterGap).toDouble();
+        final numberCenterSpacing = (iconCenterSpan - 2 * outerGap) / 3;
+        final numberGroupLeftX = horizontalPadding + sideItemWidth;
+        final numberGroupRightX = screenWidth - horizontalPadding - sideItemWidth;
+        // Allow the number touch targets to contract on extremely small
+        // screens without drifting the end numbers off their intended centers.
+        final maxWidthAtLeftEdge =
+            2 * (heartCenterX + outerGap - numberGroupLeftX);
+        final maxWidthAtRightEdge =
+            2 * (numberGroupRightX - (settingsCenterX - outerGap));
+        final numberItemWidth = [
+          48.0,
+          numberCenterSpacing,
+          maxWidthAtLeftEdge,
+          maxWidthAtRightEdge,
+        ]
+            .reduce((a, b) => a < b ? a : b)
+            .clamp(0.0, double.infinity)
+            .toDouble();
+        final numberLeftInset =
+            (heartCenterX + outerGap - numberGroupLeftX - numberItemWidth / 2)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+        final numberRightInset =
+            (numberGroupRightX -
+                    (settingsCenterX - outerGap) -
+                    numberItemWidth / 2)
+                .clamp(0.0, double.infinity)
+                .toDouble();
 
         return Material(
           key: const Key('maker_bottom_navigation_material'),
@@ -47,35 +121,54 @@ class MakerBottomNavigation extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: sideItemWidth,
                       child: _SvgNavigationItem(
                         itemKey: const Key('maker_nav_saved'),
                         iconKey: const Key('maker_nav_saved_svg'),
                         assetName: 'assets/heart.svg',
                         fallbackAssetName: 'assets/icons/heart.svg',
                         semanticsLabel: 'Saved artwork',
-                        iconSize: iconSize,
+                        iconSize: heartIconSize,
+                        horizontalVisualOffset: heartOffset,
                         selected: heartSelected,
                         filledHeart: heartSelected,
                         onTap: onSavedTap,
                       ),
                     ),
-                    for (var columnCount = 1; columnCount <= 4; columnCount++)
-                      Expanded(
-                        child: _ColumnCountItem(
-                          columnCount: columnCount,
-                          selected: columnCount == selectedColumnCount,
-                          onTap: () => onColumnCountSelected?.call(columnCount),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: numberLeftInset,
+                          right: numberRightInset,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            for (var columnCount = 1; columnCount <= 4; columnCount++)
+                              SizedBox(
+                                width: numberItemWidth,
+                                child: _ColumnCountItem(
+                                  columnCount: columnCount,
+                                  selected: columnCount == selectedColumnCount,
+                                  onTap: () =>
+                                      onColumnCountSelected?.call(columnCount),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                    Expanded(
+                    ),
+                    SizedBox(
+                      width: sideItemWidth,
                       child: _SvgNavigationItem(
                         itemKey: const Key('maker_nav_settings'),
                         iconKey: const Key('maker_nav_settings_svg'),
                         assetName: 'assets/setting.svg',
                         fallbackAssetName: 'assets/icons/setting.svg',
                         semanticsLabel: settingsSemanticsLabel,
-                        iconSize: iconSize,
+                        iconSize: settingsIconSize,
+                        horizontalVisualOffset: settingsOffset,
                         selected: settingsSelected,
                         onTap: onSettingsTap,
                       ),
@@ -101,6 +194,7 @@ class _SvgNavigationItem extends StatelessWidget {
     required this.iconSize,
     required this.selected,
     this.filledHeart = false,
+    this.horizontalVisualOffset = 0,
     required this.onTap,
   });
 
@@ -112,13 +206,13 @@ class _SvgNavigationItem extends StatelessWidget {
   final double iconSize;
   final bool selected;
   final bool filledHeart;
+  final double horizontalVisualOffset;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final color = selected
-        ? AppColors.primary
-        : AppColors.primary.withValues(alpha: 0.78);
+    // Match Search and Filter icons: full-opacity MA purple in both states.
+    const color = AppColors.primary;
 
     return Semantics(
       button: true,
@@ -134,23 +228,26 @@ class _SvgNavigationItem extends StatelessWidget {
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
         child: Center(
-          child: SizedBox(
-            key: iconKey,
-            width: iconSize,
-            height: iconSize,
-            child: filledHeart
-                ? Icon(
-                    Icons.favorite_rounded,
-                    key: const Key('maker_nav_saved_filled'),
-                    size: iconSize,
-                    color: AppColors.primary,
-                  )
-                : MaSvgAsset(
-                    assetName: assetName,
-                    fallbackAssetName: fallbackAssetName,
-                    fit: BoxFit.contain,
-                    color: color,
-                  ),
+          // Adjust only the visual icon position, preserving tap targets
+          // and the positions of numbers 1–4.
+          child: Transform.translate(
+            offset: Offset(horizontalVisualOffset, 0),
+            child: SizedBox(
+              key: iconKey,
+              width: iconSize,
+              height: iconSize,
+              // The selected Heart uses the same original SVG outline,
+              // filled instead of falling back to a larger Material glyph.
+              child: MaSvgAsset(
+                key: filledHeart ? const Key('maker_nav_saved_filled') : null,
+                assetName: filledHeart ? 'assets/heart_filled.svg' : assetName,
+                fallbackAssetName: filledHeart
+                    ? 'assets/icons/heart_filled.svg'
+                    : fallbackAssetName,
+                fit: BoxFit.contain,
+                color: color,
+              ),
+            ),
           ),
         ),
       ),
@@ -185,16 +282,21 @@ class _ColumnCountItem extends StatelessWidget {
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
         child: Center(
-          child: Text(
-            '$columnCount',
-            key: Key('maker_nav_column_text_$columnCount'),
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLTStd',
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: selected
-                  ? AppColors.primary
-                  : AppColors.primary.withValues(alpha: 0.50),
+          // Helvetica Neue's numeral glyphs appear optically high when
+          // mathematically centered beside the navigation icons.
+          child: Transform.translate(
+            offset: const Offset(0, 2),
+            child: Text(
+              '$columnCount',
+              key: Key('maker_nav_column_text_$columnCount'),
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLTStd',
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: selected
+                    ? AppColors.primary
+                    : AppColors.primary.withValues(alpha: 0.50),
+              ),
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/discovery_artwork.dart';
@@ -33,6 +34,25 @@ class DiscoveryArtworkTile extends StatelessWidget {
                 ),
               if (media?.isVideo ?? false)
                 const Center(child: _VideoPlayIndicator()),
+              if (artwork.maker?.hasCurrentOrUpcomingShow ?? false)
+                Positioned(
+                  right: 10,
+                  bottom: 10,
+                  child: IgnorePointer(
+                    child: Semantics(
+                      label: 'Maker has a current or upcoming show',
+                      child: SizedBox(
+                        key: Key('artwork_show_indicator_${artwork.id}'),
+                        width: 16,
+                        height: 16,
+                        child: SvgPicture.asset(
+                          'assets/icons/MA_OrangeDot.svg',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
