@@ -176,6 +176,10 @@ class MaPushNotifications {
       }
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null || token.isEmpty) return;
+      // Visible only in local debug builds for Firebase Console test delivery.
+      if (kDebugMode) {
+        debugPrint('MA Motion FCM test token: $token');
+      }
       if (!force && _registeredToken == token) return;
 
       await _api!.post(ApiPaths.pushTokens, data: {
