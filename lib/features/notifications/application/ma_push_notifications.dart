@@ -10,12 +10,31 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../../core/network/api_gateway.dart';
 import '../../../core/network/api_paths.dart';
 import '../../../core/storage/auth_token_store.dart';
+import '../../../firebase_options.dart';
+
+/// Android reads `google-services.json` through the Google Services plugin.
+/// iOS has no equivalent Gradle step, so the generated Dart options are required.
+FirebaseOptions? _firebaseOptions() {
+  if (!kIsWeb && Platform.isIOS) {
+    return DefaultFirebaseOptions.currentPlatform;
+  }
+  return null;
+}
+
+Future<void> _initializeFirebase() async {
+  final options = _firebaseOptions();
+  if (options != null) {
+    await Firebase.initializeApp(options: options);
+    return;
+  }
+  await Firebase.initializeApp();
+}
 
 /// The OS presents notification payloads in the background. Never make
 /// authenticated API calls from a background isolate.
 @pragma('vm:entry-point')
 Future<void> maFirebaseBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await _initializeFirebase();
 }
 
 /// Handles FCM foreground/background/open, safe token rotation, and
@@ -48,10 +67,7 @@ class MaPushNotifications {
   Future<void> initialize() async {
     if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
     try {
-      // Android reads the app-specific Firebase configuration generated from
-      // android/app/google-services.json by the Google Services Gradle plugin.
-      // This avoids a dependency on locally generated firebase_options.dart.
-      await Firebase.initializeApp();
+      await _initializeFirebase();
       FirebaseMessaging.onBackgroundMessage(maFirebaseBackgroundHandler);
       await _local.initialize(
         settings: const InitializationSettings(

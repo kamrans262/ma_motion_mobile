@@ -11,12 +11,7 @@ val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-// Existing development builds continue without a Firebase config file.
-// Once FlutterFire creates google-services.json, Google Services is applied.
-if (file("google-services.json").exists()) {
-    apply(plugin = "com.google.gms.google-services")
 }
-
 android {
     namespace = "com.mamotion.ma_motion_mobile"
     compileSdk = 37
@@ -75,3 +70,10 @@ dependencies {
 flutter {
     source = "../.."
 }
+
+// Apply whenever the FlutterFire config exists, including debug builds that
+// have no release keystore.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
