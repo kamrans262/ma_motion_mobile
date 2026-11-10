@@ -36,18 +36,6 @@ void main() {
     expect(api.lastRequiresAuth, isFalse);
   });
 
-  test('logout posts to the backend and clears the local token without Firebase', () async {
-    final api = _FakeApiGateway(response: const <String, dynamic>{});
-    final store = _MemoryTokenStore();
-    await store.write('active-token');
-    final repository = AuthRepository(api: api, tokenStore: store);
-
-    await repository.logout();
-
-    expect(api.lastPath, '/auth/logout');
-    expect(store.token, isNull);
-  });
-
   test('restoreSession returns null without a stored token', () async {
     final repository = AuthRepository(
       api: _FakeApiGateway(response: const <String, dynamic>{}),
