@@ -101,6 +101,9 @@ class _FakeAppreciatorSettingsRepository
       onboardingCompleted: true,
     );
   }
+
+  @override
+  Future<void> logout() async {}
 }
 
 class _FakeExperienceSwitchRepository

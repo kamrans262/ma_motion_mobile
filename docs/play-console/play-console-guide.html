@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>MA Motion — Google Play Console</title>
+  <style>
+    @page { size: letter; margin: 0.65in 0.7in; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body {
+      margin: 0;
+      color: #1c241f;
+      font-family: "Segoe UI", Calibri, sans-serif;
+      font-size: 12.5pt;
+      line-height: 1.45;
+    }
+    h1 { font-size: 26pt; line-height: 1.15; margin: 0 0 8px; color: #0f2419; }
+    h2 {
+      font-size: 16pt;
+      margin: 28px 0 8px;
+      padding-top: 8px;
+      border-top: 2px solid #0f2419;
+      color: #0f2419;
+      page-break-after: avoid;
+    }
+    h3 { font-size: 13pt; margin: 16px 0 4px; color: #0f2419; page-break-after: avoid; }
+    p { margin: 0 0 8px; }
+    .lede { font-size: 13.5pt; margin-bottom: 14px; }
+    .meta { color: #4d5b54; font-size: 11pt; margin-bottom: 18px; }
+    ol, ul { margin: 4px 0 10px; padding-left: 1.2em; }
+    li { margin: 3px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; page-break-inside: avoid; }
+    th, td { text-align: left; vertical-align: top; padding: 7px 8px; border-bottom: 1px solid #d5ddd8; }
+    th { width: 34%; color: #3d4a44; font-weight: 600; background: #f4f7f5; }
+    .answer { font-weight: 650; }
+    .note, .stop, .paste {
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 8px 0 12px;
+      page-break-inside: avoid;
+    }
+    .note { background: #f4f7f5; }
+    .stop { background: #fff4f0; border-left: 4px solid #b42318; }
+    .paste { background: #f7f4ff; border-left: 4px solid #904aff; font-family: Consolas, "Courier New", monospace; font-size: 11pt; white-space: pre-wrap; }
+    .label { font-family: "Segoe UI", Calibri, sans-serif; font-size: 10.5pt; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: #5b4478; margin-bottom: 4px; }
+    .where { color: #3d4a44; }
+    img.asset { display: block; margin: 8px 0 4px; border: 1px solid #d5ddd8; }
+    img.icon { width: 160px; height: 160px; }
+    img.feature { width: 100%; max-width: 640px; height: auto; }
+    .path { font-family: Consolas, "Courier New", monospace; font-size: 10.5pt; }
+    .small { color: #4d5b54; font-size: 11pt; }
+    code { font-family: Consolas, "Courier New", monospace; font-size: 10.5pt; }
+  </style>
+</head>
+<body>
+  <h1>MA Motion on Google Play</h1>
+  <p class="lede">Follow this from the top. Each section tells you where to click and exactly what to type. Do not publish to production yet.</p>
+  <p class="meta">10 November 2026 · Package <span class="path">com.mamotion.ma_motion_mobile</span> · Version 1.0.0 (1)</p>
+
+  <div class="note">
+    <strong>Do these in order.</strong> Create the app. Fill in the policy questions. Fill in the store listing. Upload an internal test build. Stop there.
+  </div>
+
+  <h2>Answers you will reuse</h2>
+  <table>
+    <tr><th>App name</th><td class="answer">MA Motion</td></tr>
+    <tr><th>Language</th><td class="answer">English (United States)</td></tr>
+    <tr><th>App or game</th><td class="answer">App</td></tr>
+    <tr><th>Price</th><td class="answer">Free</td></tr>
+    <tr><th>Package name</th><td class="answer path">com.mamotion.ma_motion_mobile</td></tr>
+    <tr><th>Category</th><td class="answer">Art &amp; Design</td></tr>
+    <tr><th>Ads</th><td class="answer">No</td></tr>
+    <tr><th>Payments inside the app</th><td class="answer">No</td></tr>
+    <tr><th>For children</th><td class="answer">No. Age group is 18 and older only.</td></tr>
+  </table>
+  <p>The package name is locked the first time you upload a build. Upload a build made from this project only.</p>
+
+  <h2>1. Create the app</h2>
+  <p class="where">Open play.google.com/console with the Google account that should own MA Motion.</p>
+  <ol>
+    <li>Click <strong>Create app</strong>.</li>
+    <li>App name: <strong>MA Motion</strong></li>
+    <li>Default language: <strong>English (United States)</strong></li>
+    <li>Choose <strong>App</strong>.</li>
+    <li>Choose <strong>Free</strong>.</li>
+    <li>Tick the policy boxes. The export-law box is fine: the app only uses normal HTTPS.</li>
+    <li>Click <strong>Create app</strong>.</li>
+  </ol>
+  <p>Play opens a dashboard of tasks. Work through sections 2, 3, and 4 next. Leave production alone.</p>
+
+  <h2>2. Policy questions</h2>
+  <p class="where">In the left menu open <strong>Policy and programs</strong>, then <strong>App content</strong>.</p>
+
+  <h3>Privacy policy</h3>
+  <div class="stop">
+    <strong>Stop here until you have a real web page.</strong> Play will not accept the app without a public privacy policy link. The app collects a name, email, password, and salon photo. Paste that page’s address when it exists. Do not type a fake link.
+  </div>
+
+  <h3>App access</h3>
+  <p>Choose <strong>All or some functionality is restricted</strong>. Google’s reviewer has to be able to sign in.</p>
+  <p>Instructions to type:</p>
+  <div class="paste">Install the app. Sign in with the Maker demo account. The account should already have a finished Maker profile so discovery opens.</div>
+  <p>Leave the demo email and password blank until you have a real Maker login on the live API.</p>
+
+  <h3>Ads</h3>
+  <p>Answer <strong>No</strong>. This app does not show ads.</p>
+
+  <h3>Content rating</h3>
+  <p>Start the questionnaire. Pick the art and design category, not a game.</p>
+  <ul>
+    <li><strong>No</strong> to violence, sex, bad language, drugs, gambling, and crude humor.</li>
+    <li><strong>Yes</strong> to people sharing images. Makers upload a salon photo, and other people can see artwork.</li>
+  </ul>
+  <p>Submit it and apply the rating Play gives back.</p>
+
+  <h3>Age</h3>
+  <ul>
+    <li>Target age: <strong>18 and older</strong> only.</li>
+    <li>The app is <strong>not</strong> made for children.</li>
+    <li>Do not join Designed for Families.</li>
+  </ul>
+
+  <h3>News, government, money, health</h3>
+  <p>Answer <strong>No</strong> to all of these. MA Motion is not a news app, a government app, a payments app, or a health app.</p>
+
+  <h3>Data safety</h3>
+  <p>The app sends account details to your own server over HTTPS. It does not sell data. It does not use data for ads.</p>
+  <table>
+    <tr><th>Name</th><td>Collected. Not shared. Used for the account.</td></tr>
+    <tr><th>Email</th><td>Collected. Not shared. Used for the account.</td></tr>
+    <tr><th>Password</th><td>Collected. Not shared. Used only to register or sign in.</td></tr>
+    <tr><th>Photos</th><td>Collected. Not shared. This is the salon image from the photo library.</td></tr>
+    <tr><th>Location, crashes, how people tap</th><td>Not collected in this version.</td></tr>
+  </table>
+  <ul>
+    <li>Encrypted in transit: <strong>Yes</strong>.</li>
+    <li>Can users ask for their data to be deleted: <strong>Yes, by emailing support</strong>. Do not say there is a delete button in the app. There isn’t one yet.</li>
+  </ul>
+
+  <h2>3. Store settings</h2>
+  <p class="where">Left menu: <strong>Grow users</strong>, then <strong>Store presence</strong>, then <strong>Store settings</strong>.</p>
+  <ul>
+    <li>Category: <strong>Art &amp; Design</strong></li>
+    <li>Email: a mailbox you actually read</li>
+    <li>Phone: fill it in if the form asks</li>
+    <li>Website: optional</li>
+  </ul>
+
+  <h2>4. Store listing</h2>
+  <p class="where">Left menu: <strong>Grow users</strong>, then <strong>Store presence</strong>, then <strong>Store listings</strong>. Open the English (United States) listing.</p>
+
+  <h3>Name</h3>
+  <div class="paste">MA Motion</div>
+
+  <h3>Short description</h3>
+  <p class="small">56 characters. The limit is 80.</p>
+  <div class="paste">Join as a Maker, set up your salon, and discover artwork.</div>
+
+  <h3>Full description</h3>
+  <div class="paste">MA Motion is a place where art and design live.
+
+Join as a Maker. Create your account, write your profile, and choose a salon image from your photo library. Add your location, website, and contact email, then choose the types and styles that describe your work.
+
+When your profile is ready, discover artwork, search the collection, and filter by type, style, and location.
+
+This release is the Maker app. Sign in with a Maker account to use it.</div>
+  <p>Do not write about the Appreciator button. In this build it does nothing.</p>
+
+  <h3>App icon</h3>
+  <p>Upload this picture. Play will round the corners. Do not round them yourself.</p>
+  <img class="asset icon" src="icon-512.png" alt="MA Motion app icon" />
+  <p class="path">docs\play-console\icon-512.png</p>
+  <p class="small">512 × 512. Made from assets\logo.png, on the app’s dark green.</p>
+
+  <h3>Feature graphic</h3>
+  <p>The wide banner at the top of the store page. Upload this picture.</p>
+  <img class="asset feature" src="feature-graphic-1024x500.png" alt="MA Motion feature graphic" />
+  <p class="path">docs\play-console\feature-graphic-1024x500.png</p>
+  <p class="small">1024 × 500. Same logo.</p>
+
+  <h3>Phone screenshots</h3>
+  <div class="stop">
+    <strong>Not ready.</strong> Play needs at least two phone screenshots. Send them and they will be added here. Useful shots: splash, sign in, Maker registration, discovery, and filters.
+  </div>
+
+  <h2>5. App signing</h2>
+  <p class="where">Left menu: <strong>Test and release</strong>, then <strong>App integrity</strong>.</p>
+  <p>Choose <strong>Play App Signing</strong>. Google keeps the key that proves the app is yours. This project uses a separate upload key to send builds to Google.</p>
+  <table>
+    <tr><th>Upload key file</th><td class="path">android\upload-keystore.jks</td></tr>
+    <tr><th>Alias</th><td class="answer">upload</td></tr>
+    <tr><th>SHA-1</th><td class="path">3E:2E:E2:FB:33:86:3D:A8:58:F4:0A:5B:27:6E:CC:6E:00:7D:B6:2B</td></tr>
+    <tr><th>SHA-256</th><td class="path">99:39:85:9A:16:59:70:8A:70:62:CF:6B:A3:89:EF:28:29:1E:18:8A:E0:40:7E:83:4D:04:9F:6E:B1:9E:D3:34</td></tr>
+    <tr><th>Valid</th><td>10 November 2026 through 28 March 2054</td></tr>
+  </table>
+  <p>The password is only in <span class="path">android\key.properties</span>. Release builds already use this key. Do not reset it.</p>
+
+  <h2>6. Build the file Play wants</h2>
+  <p>On your computer, in the project folder, run this. Replace the web address with the real API.</p>
+  <div class="paste">flutter build appbundle --release --dart-define=MA_API_BASE_URL=https://YOUR_API_HOST</div>
+  <p>Upload this file:</p>
+  <p class="path">build\app\outputs\bundle\release\app-release.aab</p>
+  <div class="note">If you leave out <code>MA_API_BASE_URL</code>, sign-in goes to a fake address and the reviewer cannot log in.</div>
+
+  <h2>7. Internal testing</h2>
+  <p class="where">Left menu: <strong>Test and release</strong>, then <strong>Testing</strong>, then <strong>Internal testing</strong>.</p>
+  <ol>
+    <li>Choose the countries for testers.</li>
+    <li>Create a release.</li>
+    <li>Upload <span class="path">app-release.aab</span>.</li>
+    <li>Release name: <strong>1.0.0 (1)</strong></li>
+    <li>Release notes: paste the line below.</li>
+    <li>Check the package is <span class="path">com.mamotion.ma_motion_mobile</span> and the version is 1.0.0 (1).</li>
+    <li>Roll out to <strong>internal testing only</strong>.</li>
+  </ol>
+  <div class="paste">First Maker release. Create an account, set up your salon profile, and discover artwork.</div>
+  <p>Add tester email addresses and send them the opt-in link.</p>
+  <div class="note">A new personal Play account often cannot go to production until 12 testers have joined a closed test for 14 days. The dashboard will say if this applies. Stay on internal testing until that is done, or until Play says you do not need it.</div>
+
+  <h2>Do not publish yet</h2>
+  <p>These are still missing:</p>
+  <ul>
+    <li>Privacy policy web address</li>
+    <li>Support email, and a phone number if Play asks</li>
+    <li>Maker demo login for the reviewer</li>
+    <li>Phone screenshots</li>
+    <li>The real API address inside the uploaded build</li>
+    <li>A delete-account button. The server can delete an account. The app does not show that yet.</li>
+  </ul>
+  <p>The name, descriptions, icon, and feature graphic are ready to paste now.</p>
+</body>
+</html>

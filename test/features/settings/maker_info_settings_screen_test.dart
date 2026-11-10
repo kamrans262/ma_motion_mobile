@@ -118,8 +118,6 @@ void main() {
     expect(settingsTitle.style?.fontFamily, AppTextStyles.fontFamily);
     expect(settingsTitle.style?.fontSize, 24);
     expect(settingsTitle.style?.fontWeight, FontWeight.w500);
-    expect(find.byKey(const Key('maker_settings_logout')), findsNothing);
-    expect(find.text('Logout'), findsNothing);
     expect(find.byKey(const Key('maker_settings_saved_count')), findsOneWidget);
     final savedCount = tester.widget<Text>(
       find.byKey(const Key('maker_settings_saved_count')),
@@ -160,20 +158,6 @@ void main() {
       eventLocationField.decoration?.contentPadding,
       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
-    for (final (keyName, expectedUrl) in <(String, String)>[
-      ('maker_settings_terms_text', MaLegalUrls.terms),
-      ('maker_settings_privacy_text', MaLegalUrls.privacy),
-    ]) {
-      expect(
-        tester.widget<MaLegalLink>(
-          find.ancestor(
-            of: find.byKey(Key(keyName)),
-            matching: find.byType(MaLegalLink),
-          ),
-        ).url,
-        expectedUrl,
-      );
-    }
     expect(find.byKey(const Key('maker_settings_add_show')), findsOneWidget);
 
     final emailSwitch = find.byKey(
@@ -194,17 +178,33 @@ void main() {
       target: hidePage,
       scrollView: settingsList,
     );
-    await tester.tap(hidePage.hitTestable());
+    await tester.tap(
+      find.descendant(of: hidePage, matching: find.byType(InkWell)).hitTestable(),
+    );
     await tester.pump();
 
     final legalTerms = find.byKey(const Key('maker_settings_terms_text'));
-    await tester.dragUntilVisible(
-      legalTerms,
-      settingsList,
-      const Offset(0, -240),
+    final logout = find.byKey(const Key('maker_settings_logout'));
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: logout,
+      scrollView: settingsList,
     );
-    await tester.pump();
     expect(legalTerms, findsOneWidget);
+    for (final (keyName, expectedUrl) in <(String, String)>[
+      ('maker_settings_terms_text', MaLegalUrls.terms),
+      ('maker_settings_privacy_text', MaLegalUrls.privacy),
+    ]) {
+      expect(
+        tester.widget<MaLegalLink>(
+          find.ancestor(
+            of: find.byKey(Key(keyName)),
+            matching: find.byType(MaLegalLink),
+          ),
+        ).url,
+        expectedUrl,
+      );
+    }
     final legalPrivacy = find.byKey(const Key('maker_settings_privacy_text'));
     final deleteAccount = find.byKey(
       const Key('maker_settings_delete_account'),
@@ -221,6 +221,17 @@ void main() {
       tester.getTopLeft(deleteAccount).dy,
       greaterThan(tester.getTopLeft(legalPrivacy).dy),
     );
+    expect(logout, findsOneWidget);
+    expect(
+      tester.getTopLeft(logout).dy,
+      greaterThan(tester.getTopLeft(deleteAccount).dy),
+    );
+    final logoutText = tester.widget<Text>(
+      find.descendant(of: logout, matching: find.byType(Text)),
+    );
+    expect(logoutText.data, 'Logout');
+    expect(logoutText.style?.color, AppColors.darkGray);
+    expect(logoutText.style?.decoration, TextDecoration.underline);
     final deleteText = tester.widget<Text>(
       find.descendant(of: deleteAccount, matching: find.byType(Text)),
     );
@@ -496,6 +507,55 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('Logout sits under Delete Your Account and ends the session', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeSettingsRepository();
+    var loggedOut = false;
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          makerInfoSettingsRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: MakerInfoSettingsScreen(
+            onClose: _noop,
+            onLoggedOut: () {
+              loggedOut = true;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await _finishInitialLoad(tester);
+
+    final logout = find.byKey(const Key('maker_settings_logout'));
+    final deleteAccount = find.byKey(
+      const Key('maker_settings_delete_account'),
+    );
+    final settingsList = find.byKey(const Key('maker_settings_scroll'));
+    await _scrollIntoSafeTapRegion(
+      tester,
+      target: logout,
+      scrollView: settingsList,
+    );
+
+    expect(
+      tester.getTopLeft(logout).dy,
+      greaterThan(tester.getTopLeft(deleteAccount).dy),
+    );
+
+    await tester.tap(logout.hitTestable());
+    await tester.pumpAndSettle();
+
+    expect(repository.logoutCalls, 1);
+    expect(repository.saveCalls, 0);
+    expect(loggedOut, isTrue);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 Future<void> _scrollIntoSafeTapRegion(

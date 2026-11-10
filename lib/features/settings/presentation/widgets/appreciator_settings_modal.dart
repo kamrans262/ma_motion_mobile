@@ -68,11 +68,12 @@ class _AppreciatorSettingsModalState
   bool _loading = true;
   bool _saving = false;
   bool _switching = false;
+  bool _loggingOut = false;
   String? _errorMessage;
   String? _successMessage;
   final Map<String, String> _fieldErrors = <String, String>{};
 
-  bool get _busy => _saving || _switching;
+  bool get _busy => _saving || _switching || _loggingOut;
 
   @override
   void initState() {
@@ -256,6 +257,26 @@ class _AppreciatorSettingsModalState
     if (_busy) return;
     final deleted = await showMaDeleteAccountDialog(context);
     if (!mounted || !deleted) return;
+    Navigator.of(context).pop(MakerEntryDestination.join);
+  }
+
+  Future<void> _logout() async {
+    if (_busy) return;
+
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _loggingOut = true;
+      _errorMessage = null;
+      _successMessage = null;
+    });
+
+    try {
+      await ref.read(appreciatorSettingsRepositoryProvider).logout();
+    } catch (_) {
+      // Auth logout clears the local session even when the server call fails.
+    }
+
+    if (!mounted) return;
     Navigator.of(context).pop(MakerEntryDestination.join);
   }
 
@@ -475,6 +496,34 @@ class _AppreciatorSettingsModalState
               child: const Text(
                 'Delete Your Account',
                 style: TextStyle(
+                  fontFamily: AppTextStyles.fontFamily,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.darkGray,
+                  decorationStyle: TextDecorationStyle.solid,
+                  decorationThickness: 1.5,
+                  color: AppColors.darkGray,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('appreciator_settings_logout'),
+              onPressed: _busy ? null : _logout,
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                overlayColor: Colors.transparent,
+                foregroundColor: AppColors.darkGray,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 20),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                _loggingOut ? 'Logging out…' : 'Logout',
+                style: const TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
                   fontSize: 14,
                   decoration: TextDecoration.underline,

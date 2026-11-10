@@ -5,11 +5,15 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/network/api_gateway.dart';
 import '../../../core/network/api_paths.dart';
 import '../../../core/providers/core_providers.dart';
+import '../../auth/data/auth_repository.dart';
 import '../domain/appreciator_settings_models.dart';
 
 final appreciatorSettingsRepositoryProvider =
     Provider<AppreciatorSettingsRepositoryContract>((ref) {
-      return AppreciatorSettingsRepository(api: ref.watch(apiGatewayProvider));
+      return AppreciatorSettingsRepository(
+        api: ref.watch(apiGatewayProvider),
+        auth: ref.watch(authRepositoryProvider),
+      );
     });
 
 abstract interface class AppreciatorSettingsRepositoryContract {
@@ -18,13 +22,16 @@ abstract interface class AppreciatorSettingsRepositoryContract {
   Future<AppreciatorSettingsData> save(AppreciatorSettingsDraft draft);
 
   Future<int?> resolveLocationId(String query);
+
+  Future<void> logout();
 }
 
 class AppreciatorSettingsRepository
     implements AppreciatorSettingsRepositoryContract {
-  const AppreciatorSettingsRepository({required this.api});
+  const AppreciatorSettingsRepository({required this.api, required this.auth});
 
   final ApiGateway api;
+  final AuthRepository auth;
 
   @override
   Future<AppreciatorSettingsData> load() async {
@@ -87,6 +94,9 @@ class AppreciatorSettingsRepository
     final first = Map<String, dynamic>.from(locations.first as Map);
     return _asInt(first['id']);
   }
+
+  @override
+  Future<void> logout() => auth.logout();
 }
 
 int? _asInt(Object? value) {

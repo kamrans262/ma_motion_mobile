@@ -105,8 +105,9 @@ void main() {
     final deleteAccount = find.byKey(
       const Key('appreciator_settings_delete_account'),
     );
-    expect(find.byKey(const Key('appreciator_settings_logout')), findsNothing);
-    expect(find.text('Logout'), findsNothing);
+    final logout = find.byKey(const Key('appreciator_settings_logout'));
+    expect(logout, findsOneWidget);
+    expect(find.text('Logout'), findsOneWidget);
     for (final (keyName, expectedUrl) in <(String, String)>[
       ('appreciator_settings_terms_text', MaLegalUrls.terms),
       ('appreciator_settings_privacy_text', MaLegalUrls.privacy),
@@ -133,6 +134,10 @@ void main() {
     expect(
       tester.getTopLeft(deleteAccount).dy,
       greaterThan(tester.getTopLeft(privacy).dy),
+    );
+    expect(
+      tester.getTopLeft(logout).dy,
+      greaterThan(tester.getTopLeft(deleteAccount).dy),
     );
     expect(
       tester.widget<Text>(
@@ -309,6 +314,38 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Logout sits under Delete Your Account and ends the session', (
+    tester,
+  ) async {
+    final repository = _FakeAppreciatorSettingsRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appreciatorSettingsRepositoryProvider.overrideWithValue(repository),
+          experienceSwitchRepositoryProvider.overrideWithValue(
+            _FakeExperienceSwitchRepository(),
+          ),
+        ],
+        child: const MaterialApp(home: _ModalHarness()),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('open_appreciator_settings')));
+    await tester.pumpAndSettle();
+
+    final logout = find.byKey(const Key('appreciator_settings_logout'));
+    await tester.ensureVisible(logout);
+    await tester.tap(logout);
+    await tester.pumpAndSettle();
+
+    expect(repository.logoutCount, 1);
+    expect(repository.saveCount, 0);
+    expect(find.byKey(const Key('appreciator_settings_card')), findsNothing);
+    expect(find.text('maker destination: join'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 class _ModalHarness extends StatefulWidget {
@@ -378,6 +415,8 @@ class _FakeAppreciatorSettingsRepository
     return query.trim() == 'Brooklyn, NY' ? 12 : null;
   }
 
+  int logoutCount = 0;
+
   @override
   Future<AppreciatorSettingsData> save(AppreciatorSettingsDraft draft) async {
     savedDraft = draft;
@@ -390,6 +429,11 @@ class _FakeAppreciatorSettingsRepository
       locationId: draft.locationId,
       onboardingCompleted: true,
     );
+  }
+
+  @override
+  Future<void> logout() async {
+    logoutCount++;
   }
 }
 

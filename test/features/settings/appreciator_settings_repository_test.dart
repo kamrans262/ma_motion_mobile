@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ma_motion_mobile/core/network/api_gateway.dart';
 import 'package:ma_motion_mobile/core/network/api_paths.dart';
+import 'package:ma_motion_mobile/core/storage/auth_token_store.dart';
+import 'package:ma_motion_mobile/features/auth/data/auth_repository.dart';
 import 'package:ma_motion_mobile/features/settings/data/appreciator_settings_repository.dart';
 import 'package:ma_motion_mobile/features/settings/domain/appreciator_settings_models.dart';
 
@@ -9,7 +11,10 @@ void main() {
     'loads current Appreciator settings from protected profile API',
     () async {
       final api = _FakeGateway();
-      final repository = AppreciatorSettingsRepository(api: api);
+      final repository = AppreciatorSettingsRepository(
+        api: api,
+        auth: AuthRepository(api: api, tokenStore: _MemoryTokenStore()),
+      );
 
       final data = await repository.load();
 
@@ -23,7 +28,10 @@ void main() {
 
   test('resolves changed location and saves normalized account data', () async {
     final api = _FakeGateway();
-    final repository = AppreciatorSettingsRepository(api: api);
+    final repository = AppreciatorSettingsRepository(
+      api: api,
+      auth: AuthRepository(api: api, tokenStore: _MemoryTokenStore()),
+    );
 
     final locationId = await repository.resolveLocationId('Brooklyn, NY');
     final saved = await repository.save(
@@ -43,6 +51,17 @@ void main() {
     expect(api.lastPatchData?['email'], 'ari@example.com');
     expect(saved.locationText, 'Brooklyn, NY');
   });
+}
+
+class _MemoryTokenStore implements AuthTokenStore {
+  @override
+  Future<void> clear() async {}
+
+  @override
+  Future<String?> read() async => null;
+
+  @override
+  Future<void> write(String token) async {}
 }
 
 class _FakeGateway implements ApiGateway {
