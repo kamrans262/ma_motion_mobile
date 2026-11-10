@@ -43,12 +43,14 @@ class MaPushNotifications {
   bool _pendingOpen = false;
   String? _registeredToken;
   bool _registering = false;
+  bool _syncRequestedWhileRegistering = false;
 
   Future<void> initialize() async {
     if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
     try {
-      // The Firebase project is configured using FlutterFire CLI on the
-      // developer's machine; do not hardcode project IDs or credentials.
+      // Android reads the app-specific Firebase configuration generated from
+      // android/app/google-services.json by the Google Services Gradle plugin.
+      // This avoids a dependency on locally generated firebase_options.dart.
       await Firebase.initializeApp();
       FirebaseMessaging.onBackgroundMessage(maFirebaseBackgroundHandler);
       await _local.initialize(
@@ -112,6 +114,7 @@ class MaPushNotifications {
         _pendingOpen = true;
       }
       firebaseReady = true;
+      debugPrint('MA Motion Firebase push initialized on ${Platform.isAndroid ? 'Android' : 'iOS'}.');
     } catch (error) {
       // The app must still open before the Firebase platform files are added.
       debugPrint('MA Motion push is awaiting Firebase platform setup: $error');
@@ -148,7 +151,13 @@ class MaPushNotifications {
   }
 
   Future<void> syncToken({bool force = false}) async {
-    if (!firebaseReady || _registering || _api == null || _tokens == null) return;
+    if (!firebaseReady || _api == null || _tokens == null) return;
+    if (_registering) {
+      // Sign-in and FCM refresh can happen during an existing registration.
+      // Retry afterward rather than silently dropping the newer session/token.
+      _syncRequestedWhileRegistering = true;
+      return;
+    }
     _registering = true;
     try {
       final session = await _tokens!.read();
@@ -174,10 +183,15 @@ class MaPushNotifications {
         'platform': Platform.isIOS ? 'ios' : 'android',
       });
       _registeredToken = token;
+      debugPrint('MA Motion FCM device token registered with the API.');
     } catch (error) {
       debugPrint('MA Motion could not register push token: $error');
     } finally {
       _registering = false;
+      if (_syncRequestedWhileRegistering) {
+        _syncRequestedWhileRegistering = false;
+        unawaited(syncToken(force: true));
+      }
     }
   }
 

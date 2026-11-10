@@ -7,16 +7,24 @@ The Flutter app now includes Firebase Cloud Messaging integration. The existing 
 Android package ID: com.mamotion.ma_motion_mobile
 iOS bundle ID: com.mamotion.maMotionMobile
 
-On your Mac in the MA Motion Flutter repository:
+Android setup (Windows PowerShell; iOS deferred):
 
-1. Install and sign in to Firebase CLI using: firebase login
-2. Install FlutterFire CLI using: dart pub global activate flutterfire_cli
-3. Run: flutterfire configure --platforms=android,ios
-4. Select the **Ma motion** Firebase project and register the existing Android and iOS bundle IDs.
-5. Run: flutter pub get
-6. Run: flutter run
+1. Switch to feature/maker-onboarding-ui-polish-firebase-push.
+2. Run: flutter pub get
+3. Run: firebase projects:list and confirm project **ma-motion** is listed.
+4. Run: flutterfire configure --project=ma-motion --platforms=android
+5. Confirm that lib/firebase_options.dart and android/app/google-services.json both exist.
+6. Run: flutter run on an Android device or an emulator with Google Play services.
 
-The Android build will automatically use Firebase when the generated android/app/google-services.json exists. Without native configuration, push stays unavailable but the app continues launching. The generated native platform configuration files are excluded from Git to prevent environment mix-ups.
+Android package ID: com.mamotion.ma_motion_mobile (must match the Android app registered in Firebase). The existing older Firebase app named com.ma.spaceforart is **not** the configuration for this Flutter package.
+
+The Android implementation uses Firebase.initializeApp() with the Google Services Gradle plugin and the matching android/app/google-services.json. An import of the locally generated firebase_options.dart is **not required for Android**. Keep that generated file locally for future FlutterFire platform configuration. Both the Android JSON and iOS plist remain excluded from Git.
+
+The app requests Android notification permission after sign-in (where the OS requires permission), registers the FCM token with Laravel, displays incoming foreground notifications, and opens the existing notification inbox when a notification is tapped. No separate permission control is added to the inbox.
+
+If the app cannot initialize Firebase or register a token, inspect the flutter run debug console for messages beginning "MA Motion". Successful registration logs "MA Motion FCM device token registered with the API."; the token itself is never logged.
+
+When you are ready for iOS, run FlutterFire with --platforms=android,ios and complete Apple APNs and Xcode configuration. Do not use an Android-only generated options file to initialize Firebase on iOS.
 
 For iOS, open ios/Runner.xcworkspace in Xcode, ensure Push Notifications and Background Modes / Remote notifications capabilities are enabled, confirm signing and APNs entitlement for the chosen build, and upload an APNs authentication key in Firebase Project settings > Cloud Messaging. A physical iPhone is required for a complete APNs delivery test.
 
