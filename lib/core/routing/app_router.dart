@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/ma_glass_popup.dart';
@@ -8,6 +9,7 @@ import '../widgets/ma_glass_popup.dart';
 import '../../features/artwork_viewer/presentation/screens/artwork_viewer_screen.dart';
 import '../../features/auth/domain/maker_entry_destination.dart';
 import '../../features/auth/presentation/screens/ma_email_login_screen.dart';
+import '../../features/discovery/application/artwork_discovery_controller.dart';
 import '../../features/discovery/domain/discovery_artwork.dart';
 import '../../features/discovery/presentation/screens/appreciator_artwork_discovery_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_filter_screen.dart';
@@ -332,9 +334,19 @@ GoRouter createAppRouter({
         pageBuilder: (context, state) => _premiumPage(
           state: state,
           child: MakerArtworkDiscoveryScreen(
+            includeOwnArtworks: true,
             onFilterTap: () => context.push('/maker/discovery/filter'),
             onSavedTap: () => context.push('/maker/saved-artworks'),
-            onSettingsTap: () => context.push('/maker/settings'),
+            onSettingsTap: () async {
+              await context.push('/maker/settings');
+              if (context.mounted) {
+                unawaited(
+                  ProviderScope.containerOf(context)
+                      .read(artworkDiscoveryControllerProvider.notifier)
+                      .refresh(),
+                );
+              }
+            },
             onArtworkTap: (artwork) {
               final url = artwork.primaryMedia?.url.trim() ?? '';
               if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {

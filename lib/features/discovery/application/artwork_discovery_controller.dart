@@ -70,7 +70,9 @@ class ArtworkDiscoveryController extends Notifier<ArtworkDiscoveryState> {
     final effectiveQuery = query ?? state.query;
     final effectivePerPage = perPage ?? state.perPage;
     final previous = state;
-    final hasExistingArtwork = previous.items.isNotEmpty;
+    // Do not reuse owner-only artwork while switching to a public view.
+    final hasExistingArtwork = previous.items.isNotEmpty &&
+        previous.query.includeOwnArtworks == effectiveQuery.includeOwnArtworks;
 
     state = hasExistingArtwork
         ? previous.copyWith(

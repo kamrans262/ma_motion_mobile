@@ -19,6 +19,7 @@ class DiscoveryQuery {
     this.latitude,
     this.longitude,
     this.radiusKm,
+    this.includeOwnArtworks = false,
   });
 
   final String search;
@@ -33,6 +34,9 @@ class DiscoveryQuery {
   final double? latitude;
   final double? longitude;
   final double? radiusKm;
+
+  /// Used only by the signed-in Maker grid; never by the public feed.
+  final bool includeOwnArtworks;
 
   bool get hasFilters =>
       typeIds.isNotEmpty ||
@@ -71,6 +75,25 @@ class DiscoveryQuery {
       latitude: latitude,
       longitude: longitude,
       radiusKm: radiusKm,
+      includeOwnArtworks: includeOwnArtworks,
+    );
+  }
+
+  DiscoveryQuery withOwnedArtworks(bool include) {
+    return DiscoveryQuery(
+      search: search,
+      typeIds: Set<int>.from(typeIds),
+      styleIds: Set<int>.from(styleIds),
+      showStatuses: Set<String>.from(showStatuses),
+      locationId: locationId,
+      locationLabel: locationLabel,
+      city: city,
+      postalCode: postalCode,
+      countryCode: countryCode,
+      latitude: latitude,
+      longitude: longitude,
+      radiusKm: radiusKm,
+      includeOwnArtworks: include,
     );
   }
 
@@ -82,6 +105,7 @@ class DiscoveryQuery {
   }) {
     final query = <String, dynamic>{'page': page, 'per_page': perPage};
 
+    if (includeOwnArtworks) query['include_owned'] = 1;
     if (search.trim().isNotEmpty) query['search'] = search.trim();
     if (typeIds.isNotEmpty) {
       query['type_ids'] = (typeIds.toList()..sort()).join(',');

@@ -35,7 +35,7 @@ class ArtworkDiscoveryRepository implements ArtworkDiscoveryRepositoryContract {
   }) async {
     final response = await api.get(
       ApiPaths.discoveryArtworks,
-      requiresAuth: false,
+      requiresAuth: query.includeOwnArtworks,
       queryParameters: query.toQueryParameters(page: page, perPage: perPage),
     );
 

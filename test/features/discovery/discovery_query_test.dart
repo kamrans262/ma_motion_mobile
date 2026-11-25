@@ -43,4 +43,15 @@ void main() {
     expect(params.containsKey('latitude'), isFalse);
     expect(params.containsKey('radius_km'), isFalse);
   });
+
+  test('owned artwork requests are opt-in and survive search changes', () {
+    const publicQuery = DiscoveryQuery(search: 'sample');
+    expect(publicQuery.toQueryParameters(page: 1, perPage: 48)
+        .containsKey('include_owned'), isFalse);
+
+    final makerQuery = publicQuery.withOwnedArtworks(true).withSearch('updated');
+    expect(makerQuery.includeOwnArtworks, isTrue);
+    expect(makerQuery.toQueryParameters(page: 1, perPage: 48)['include_owned'], 1);
+    expect(makerQuery.withOwnedArtworks(false).includeOwnArtworks, isFalse);
+  });
 }

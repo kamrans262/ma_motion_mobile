@@ -21,6 +21,7 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
     this.onSavedTap,
     this.onSettingsTap,
     this.onBottomNavigationTap,
+    this.includeOwnArtworks = false,
     this.settingsSemanticsLabel = 'Maker settings',
   });
 
@@ -28,6 +29,7 @@ class MakerArtworkDiscoveryScreen extends ConsumerStatefulWidget {
   final VoidCallback? onFilterTap;
   final VoidCallback? onSavedTap;
   final VoidCallback? onSettingsTap;
+  final bool includeOwnArtworks;
   final String settingsSemanticsLabel;
 
   /// Kept for compatibility with the existing Maker navigation contract.
@@ -118,7 +120,8 @@ class _MakerArtworkDiscoveryScreenState
     ArtworkDiscoveryState state,
     DiscoveryQuery filters,
   ) {
-    if (state.meta.currentPage != null ||
+    if ((state.meta.currentPage != null &&
+            state.query.includeOwnArtworks == widget.includeOwnArtworks) ||
         state.isLoadingInitial ||
         _initialLoadScheduled) {
       return;
@@ -132,7 +135,8 @@ class _MakerArtworkDiscoveryScreenState
       await ref
           .read(artworkDiscoveryControllerProvider.notifier)
           .loadInitial(
-            query: filters.withSearch(_searchController.text),
+            query: filters.withSearch(_searchController.text)
+                .withOwnedArtworks(widget.includeOwnArtworks),
             perPage: _discoveryPerPage,
           );
 
@@ -183,7 +187,8 @@ class _MakerArtworkDiscoveryScreenState
     return ref
         .read(artworkDiscoveryControllerProvider.notifier)
         .loadInitial(
-          query: filters.withSearch(value),
+          query: filters.withSearch(value)
+              .withOwnedArtworks(widget.includeOwnArtworks),
           perPage: _discoveryPerPage,
         );
   }

@@ -610,12 +610,6 @@ class _MakerInfoSettingsScreenState
         caption: _captionControllers[slot]!.text,
       );
 
-      if (slot >= 2 && _artworkTitleControllers[slot]!.text.trim().isEmpty) {
-        final baseName = file.name.replaceFirst(RegExp(r'\.[^.]+$'), '');
-        _artworkTitleControllers[slot]!.text = baseName
-            .replaceAll(RegExp(r'[_-]+'), ' ')
-            .trim();
-      }
     });
   }
 

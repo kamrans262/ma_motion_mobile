@@ -54,6 +54,23 @@ void main() {
     expect(page.items.single.maker?.hasCurrentOrUpcomingShow, isTrue);
     expect(page.meta.hasNextPage, isTrue);
   });
+
+  test('Maker grid sends authenticated include_owned flag', () async {
+    final api = _FakeApiGateway(
+      response: <String, dynamic>{
+        'data': <dynamic>[],
+        'meta': <String, dynamic>{'current_page': 1, 'last_page': 1},
+      },
+    );
+    await ArtworkDiscoveryRepository(api: api).fetchPage(
+      page: 1,
+      query: const DiscoveryQuery(includeOwnArtworks: true),
+    );
+
+    expect(api.lastPath, ApiPaths.discoveryArtworks);
+    expect(api.lastRequiresAuth, isTrue);
+    expect(api.lastQuery?['include_owned'], 1);
+  });
 }
 
 class _FakeApiGateway implements ApiGateway {
