@@ -11,7 +11,9 @@ void main() {
     final detail = await repository.fetch(41);
 
     expect(api.lastPath, '${ApiPaths.discoveryArtworks}/41');
-    expect(api.lastRequiresAuth, isFalse);
+    // The same endpoint stays public, but attaches a stored Maker token when
+    // available so the owner can open pending artwork tiles.
+    expect(api.lastRequiresAuth, isTrue);
 
     expect(detail.id, 41);
     expect(detail.title, 'Tide Register No. 4');

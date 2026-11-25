@@ -367,7 +367,16 @@ GoRouter createAppRouter({
           child: Builder(
             builder: (savedContext) => MakerSavedArtworksScreen(
               onBack: () => savedContext.pop(),
-              onSettingsTap: () => savedContext.push('/maker/settings'),
+              onSettingsTap: () async {
+                await savedContext.push('/maker/settings');
+                if (savedContext.mounted) {
+                  unawaited(
+                    ProviderScope.containerOf(savedContext)
+                        .read(artworkDiscoveryControllerProvider.notifier)
+                        .refresh(),
+                  );
+                }
+              },
               onArtworkTap: (artwork) {
                 final url = artwork.primaryMedia?.url.trim() ?? '';
                 if (url.isNotEmpty && artwork.primaryMedia?.isVideo != true) {

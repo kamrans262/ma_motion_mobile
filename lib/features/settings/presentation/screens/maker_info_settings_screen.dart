@@ -609,7 +609,6 @@ class _MakerInfoSettingsScreenState
         kind: choice == _MediaChoice.video ? 'video' : 'image',
         caption: _captionControllers[slot]!.text,
       );
-
     });
   }
 

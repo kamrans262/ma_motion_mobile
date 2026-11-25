@@ -200,6 +200,11 @@ class _MakerArtworkDiscoveryScreenState
     final filterCount = filters.activeFilterCount;
 
     _scheduleInitialLoad(state, filters);
+    // Never briefly display private Maker artwork while switching to the
+    // Appreciator/public grid backed by the same discovery controller.
+    final visibleState = state.query.includeOwnArtworks == widget.includeOwnArtworks
+        ? state
+        : const ArtworkDiscoveryState(isLoadingInitial: true);
 
     return Scaffold(
       key: const Key('maker_artwork_discovery_screen'),
@@ -381,7 +386,7 @@ class _MakerArtworkDiscoveryScreenState
                   child: ColoredBox(
                     color: AppColors.artworkNavBackground,
                     child: _DiscoveryBody(
-                      state: state,
+                      state: visibleState,
                       scrollController: _scrollController,
                       horizontalPadding: 20,
                       gridSpacing: metrics.gridSpacing,

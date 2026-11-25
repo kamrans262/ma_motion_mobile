@@ -24,7 +24,7 @@ class ArtworkDetailRepository implements ArtworkDetailRepositoryContract {
   Future<ArtworkDetail> fetch(int artworkId) async {
     final response = await api.get(
       '${ApiPaths.discoveryArtworks}/$artworkId',
-      requiresAuth: false,
+      requiresAuth: true,
     );
 
     return ArtworkDetail.fromMap(ApiEnvelope(raw: response).dataMap);
